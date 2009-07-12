@@ -36,7 +36,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) "0.8.1b1"
+set option(release_version) "0.8.1a1.3"
 
 array set start_options {--uninstall 0}
 foreach argumente $argv {set start_options($argumente) 1}
