@@ -174,3 +174,11 @@ mcset $lang \
 mcset $lang \
 	{Current position / File length} \
 	{Aktuelle Position / Länge der Aufnahme}
+
+mcset $lang \
+	{Move x=%} \
+	{Bild bewegen x=%s}
+
+mcset $lang \
+	{Move y=%} \
+	{Bild bewegen y=%s}

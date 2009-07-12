@@ -175,3 +175,11 @@ mcset $lang \
 mcset $lang \
 	{Current position / File length} \
 	{Current position / File length}
+
+mcset $lang \
+	{Move x=%} \
+	{Move x=%s}
+
+mcset $lang \
+	{Move y=%} \
+	{Move y=%s}

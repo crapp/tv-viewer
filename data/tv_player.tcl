@@ -608,10 +608,10 @@ proc tv_playerMoveVideo {dir} {
 		flush $::logf_tv_open_append
 		set ::data(movevidX) [expr $::data(movevidX) + 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=$::data(movevidX)"]]
+			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=$::data(movevidX)"]]
+			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		return
 	}
@@ -622,10 +622,10 @@ proc tv_playerMoveVideo {dir} {
 		flush $::logf_tv_open_append
 		set ::data(movevidY) [expr $::data(movevidY) + 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=$::data(movevidY)"]]
+			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidY)]]
 		}
 		if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=$::data(movevidY)"]]
+			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidY)]]
 		}
 		return
 	}
@@ -636,10 +636,10 @@ proc tv_playerMoveVideo {dir} {
 		flush $::logf_tv_open_append
 		set ::data(movevidX) [expr $::data(movevidX) - 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=$::data(movevidX)"]]
+			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=$::data(movevidX)"]]
+			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		return
 	}
@@ -650,10 +650,10 @@ proc tv_playerMoveVideo {dir} {
 		flush $::logf_tv_open_append
 		set ::data(movevidY) [expr $::data(movevidY) - 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=$::data(movevidY)"]]
+			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidY)]]
 		}
 		if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=$::data(movevidY)"]]
+			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidY)]]
 		}
 		return
 	}
