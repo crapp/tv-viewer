@@ -1,0 +1,109 @@
+#
+#      Translation file for TV-Viewer
+#      Record wizard dialog.
+#
+
+mcset $lang \
+	{New recording} \
+	{New recording}
+
+mcset $lang \
+	{Status} \
+	{Status}
+
+mcset $lang \
+	{Scheduler status:} \
+	{Scheduler status:}
+
+mcset $lang \
+	{Currently recording:} \
+	{Currently recording:}
+
+mcset $lang \
+	{Stop recording} \
+	{Stop recording}
+
+mcset $lang \
+	{Stop Scheduler} \
+	{Stop Scheduler}
+
+mcset $lang \
+	{Start Scheduler} \
+	{Start Scheduler}
+
+mcset $lang \
+	{Record Wizard} \
+	{Record Wizard}
+
+mcset $lang \
+	{Job ID} \
+	{Job ID}
+
+mcset $lang \
+	{Time} \
+	{Time}
+
+mcset $lang \
+	{Date} \
+	{Date}
+
+mcset $lang \
+	{Duration} \
+	{Duration}
+
+mcset $lang \
+	{Resolution} \
+	{Resolution}
+
+mcset $lang \
+	{Output file} \
+	{Output file}
+
+mcset $lang \
+	{% -- ends % at %} \
+	{%s -- ends %s at %s}
+
+mcset $lang \
+	{Running} \
+	{Running}
+
+mcset $lang \
+	{Stopped} \
+	{Stopped}
+
+mcset $lang \
+	{Add a scheduled recording or
+start recording immediately.} \
+	{Add a scheduled recording or
+start recording immediately.}
+
+
+mcset $lang \
+	{Delete selected recordings.} \
+	{Delete selected recordings.}
+
+mcset $lang \
+	{Edit selected recording.} \
+	{Edit selected recording.}
+
+mcset $lang \
+	{Indicates whether the Scheduler
+is running or not.} \
+	{Indicates whether the Scheduler
+is running or not.}
+
+mcset $lang \
+	{Provides informations about the
+current recording.} \
+	{Provides informations about the
+current recording.}
+
+mcset $lang \
+	{If there is a running recording,
+click here to stop it.} \
+	{If there is a running recording,
+click here to stop it.}
+
+mcset $lang \
+	{Exit Record Wizard} \
+	{Exit Record Wizard}

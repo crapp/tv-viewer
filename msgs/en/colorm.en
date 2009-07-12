@@ -1,0 +1,52 @@
+#
+#      Translation file for TV-Viewer
+#      Color management dialog.
+#
+
+mcset $lang \
+	{Brightness} \
+	{Brightness}
+
+mcset $lang \
+	{Contrast} \
+	{Contrast}
+
+mcset $lang \
+	{Hue} \
+	{Hue}
+
+mcset $lang \
+	{Saturation} \
+	{Saturation}
+
+mcset $lang \
+	{Default} \
+	{Default}
+
+mcset $lang \
+	{Set brightness, this is a global value.} \
+	{Set brightness, this is a global value.}
+
+mcset $lang \
+	{Set contrast, this is a global value.} \
+	{Set contrast, this is a global value.}
+
+mcset $lang \
+	{Set hue, this is a global value.} \
+	{Set hue, this is a global value.}
+
+mcset $lang \
+	{Set saturation, this is a global value.} \
+	{Set saturation, this is a global value.}
+
+mcset $lang \
+	{Save values and close color management.} \
+	{Save values and close color management.}
+
+mcset $lang \
+	{Load default values.} \
+	{Load default values.}
+
+mcset $lang \
+	{Close color management without saving changes.} \
+	{Close color management without saving changes.}

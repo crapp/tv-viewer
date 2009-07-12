@@ -1,0 +1,168 @@
+#
+#      Translation file for TV-Viewer
+#      Record add/edit dialog.
+#
+
+mcset $lang \
+	{Record options} \
+	{Record options}
+
+mcset $lang \
+	{Time:} \
+	{Time:}
+
+mcset $lang \
+	{Date:} \
+	{Date:}
+
+mcset $lang \
+	{Duration:} \
+	{Duration:}
+
+mcset $lang \
+	{Resolution:} \
+	{Resolution:}
+
+mcset $lang \
+	{Add a new recording} \
+	{Add a new recording}
+
+mcset $lang \
+	{Choose station to record.} \
+	{Choose station to record.}
+
+mcset $lang \
+	{Time when recording should start. (Hour)} \
+	{Time when recording should start. (Hour)}
+
+mcset $lang \
+	{Time when recording should start. (Minute)} \
+	{Time when recording should start. (Minute)}
+
+mcset $lang \
+	{Choose date on which recording should occur.} \
+	{Choose date on which recording should occur.}
+
+mcset $lang \
+	{Duration for the recording. (Hours)} \
+	{Duration for the recording. (Hours)}
+
+mcset $lang \
+	{Duration for the recording. (Minutes)} \
+	{Duration for the recording. (Minutes)}
+
+mcset $lang \
+	{Duration for the recording. (Seconds)} \
+	{Duration for the recording. (Seconds)}
+
+mcset $lang \
+	{Resolution (width) in which the recording
+should be made. In most cases it doesn't
+make sense to change this value. It is better
+to convert the file afterwards.} \
+	{Resolution (width) in which the recording
+should be made. In most cases it doesn't
+make sense to change this value. It is better
+to convert the file afterwards.}
+
+mcset $lang \
+	{Resolution (height) in which the recording
+should be made. In most cases it doesn't
+make sense to change this value. It is better
+to convert the file afterwards.} \
+	{Resolution (height) in which the recording
+should be made. In most cases it doesn't
+make sense to change this value. It is better
+to convert the file afterwards.}
+
+mcset $lang \
+	{Output file for recording. If you omit
+this value TV-Viewer will determine a name
+and store the file in the default record path.} \
+	{Output file for recording. If you omit
+this value TV-Viewer will determine a name
+and store the file in the default record path.}
+
+mcset $lang \
+	{Choose date} \
+	{Choose date}
+
+mcset $lang \
+	{Previous year.} \
+	{Previous year.}
+
+mcset $lang \
+	{Previous month.} \
+	{Previous month.}
+
+mcset $lang \
+	{Next month.} \
+	{Next month.}
+
+mcset $lang \
+	{Next year.} \
+	{Next year.}
+
+mcset $lang \
+	{Apply your changes and exit the dialogue.} \
+	{Apply your changes and exit the dialogue.}
+
+mcset $lang \
+	{Exit the dialogue without changes.} \
+	{Exit the dialogue without changes.}
+
+mcset $lang \
+	{Time format incorrect (hour)!} \
+	{Time format incorrect (hour)!}
+
+mcset $lang \
+	{Time format incorrect (min)!} \
+	{Time format incorrect (min)!}
+
+mcset $lang \
+	{Date format incorrect (year)!} \
+	{Date format incorrect (year)!}
+
+mcset $lang \
+	{Date format incorrect (month)!} \
+	{Date format incorrect (month)!}
+
+mcset $lang \
+	{Date format incorrect (day)!} \
+	{Date format incorrect (day)!}
+
+mcset $lang \
+	{Chosen date is in the past!} \
+	{Chosen date is in the past!}
+
+mcset $lang \
+	{Time is in the past!} \
+	{Time is in the past!}
+
+mcset $lang \
+	{Duration not specified correctly!} \
+	{Duration not specified correctly!}
+
+mcset $lang \
+	{Duration not specified correctly (hour)!} \
+	{Duration not specified correctly (hour)!}
+
+mcset $lang \
+	{Duration not specified correctly (min)!} \
+	{Duration not specified correctly (min)!}
+
+mcset $lang \
+	{Duration not specified correctly (sec)!} \
+	{Duration not specified correctly (sec)!}
+
+mcset $lang \
+	{You have to specify the duration!} \
+	{You have to specify the duration!}
+
+mcset $lang \
+	{Resolution format incorrect!} \
+	{Resolution format incorrect!}
+
+mcset $lang \
+	{Choose ouput file} \
+	{Choose ouput file}

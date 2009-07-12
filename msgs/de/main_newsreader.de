@@ -1,0 +1,8 @@
+#
+#      Translation file for TV-Viewer
+#      Newsreader dialog.
+#
+
+mcset $lang \
+	{Homepage} \
+	{Homepage}

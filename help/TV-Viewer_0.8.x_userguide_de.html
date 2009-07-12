@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head><meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title>TV-Viewer 0.8.x Handbuch</title><style type="text/css">
+body {
+  margin-right: auto;
+  margin-left: auto;
+  width: 900px;
+  background-color: white;
+  color: black;
+}
+
+</style></head>
+<body><big>TV-Viewer Handbuch (version 0.8.1a1)</big><br><a name="inhalt"></a><br><a href="#1._Systemvoraussetungen">1. Systemvoraussetzungen</a><br><a href="#2._Installation">2. Installation</a><br><a href="#3._General_Usage">3. General Usage</a><br>&nbsp;&nbsp;&nbsp; <a href="#3.1_Hauptfenster">3.1 Hauptfenster</a><br>&nbsp;&nbsp;&nbsp; <a href="#3.2_Einstellungen">3.2 Einstellungen</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.1_Allgemein">3.2.1 Allgemein</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.2_Analog">3.2.2 Analog</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.3_DVB">3.2.3 DVB</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.4_Video">3.2.4 Video</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.5_Audio">3.2.5 Audio</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.6_Radio">3.2.6 Radio</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.7_Interface">3.2.7 Interface</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.8_Aufnahme">3.2.8 Aufnahme</a><br>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="#3.2.9_Erweitert">3.2.9 Erweitert</a><br>&nbsp;&nbsp;&nbsp; <a href="#3.3_Sendereditor">3.3 Sendereditor</a><br>&nbsp;&nbsp;&nbsp; <a href="#3.4_Farbverwaltung">3.4 Farbverwaltung</a><br>&nbsp;&nbsp;&nbsp; <a href="#3.5_Aufnahme-Assistent">3.5 Aufnahme Assistent</a><br><a href="#4._Fernbedienung">4. Fernbedienung</a><br><a href="#5._Tastaturkombinationen">5. Tasturkombinationen</a><br><a href="#6._FAQ">6. FAQ</a><br><a href="#7._Lizenz">7. Lizenz</a><br><a href="#8._Kontakt">8. Kontakt</a><br><a href="#9._Danksagungen">9. Danksagungen<br></a><br><br><span style="font-weight: bold; text-decoration: underline;"><a name="1._Systemvoraussetungen"></a>1. Systemvoraussetungen</span><br><br>Minimum:<br><ul><li>Die
+TV-Karte muss korrekt eingerichtet sein und auf dem System müssen sich
+ivtv-tune und v4l2-ctl befinden. Diese beiden Tools sind Teil des <a href="http://ivtvdriver.org/index.php/Main_Page">ivtv Treibers</a>, und meist in dem Paket ivtv-utils enthalten.</li><li>Tcl / Tk &gt;= 8.5 muss installiert sein. Dieses sollte bei jeder Distribution mitgeliefert werden. Alternativ kann man <a href="http://www.activestate.com/Products/activetcl/index.mhtml">ActiveTCL</a> verwenden, welches auch sehr einfach zu installieren ist.</li><li>Der integrierte
+Videoplayer&nbsp;basiert auf MPlayer. Deshalb muss mindestens MPlayer
+&gt;= 1.0rc2 installiert werden. Es wird empfohlen eine möglichst
+aktuelle Version zu installieren.</li></ul>Empfohlene Zusatzpakete:<br><ul><li>Das
+Programm bietet an verschiedenen Stellen eine direkte Verknüpfung auf
+Internetseiten oder Dateien an. Damit man dieses Feature nutzen kann
+müssen sich die&nbsp;<a href="http://portland.freedesktop.org/wiki/">xdg-utils</a> auf dem System befinden.</li><li>Setzt man Tcl/Tk &lt; 8.6 ein braucht man das&nbsp;Paket <a href="http://sourceforge.net/projects/tkimg/">tkimg</a>
+damit die GUI png Icons verwenden kann. Sollte das Paket nicht
+installiert sein verwendet TV-Viewer gifs, welche aber eine deutlich
+geringere Qualität haben. Auf Debian
+basierten System heißt dieses Paket libtk-img.</li><li>Man kann TV-Viewer auch mit einer Fernbedienung steuern. Dafür muss <a href="http://www.lirc.org/">LIRC</a> auf dem System, korrekt eingerichtet sein.&nbsp;Siehe auch Punkt 4 <a href="#4._Fernbedienung">Fernbedienung</a></li></ul><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div><span style="text-decoration: underline; font-weight: bold;"><br><a name="2._Installation"></a>2. Installation</span><br><br>Wenn es keine fertigen Pakete für deine Distribution gibt, kannst du <a href="http://home.arcor.de/saedelaere/download.html">hier</a>
+das letzte Release herunterladen. Entpacke die Datei in einem
+Verzeichnis deiner Wahl. In dem Verzeichnis sollte sich die Datei
+"tv-viewer_install.sh" befinden.<br><br>Öffne ein Terminal und führe die Datei als root aus:<br><br>./tv-viewer_install.sh<br><br>Dieser Befehl installiert TV-Viewer nach "/usr/local/share/tv-viewer", die Konfiguration befindet sich in "~/.tv-viewer".<br>Sollte
+die Installation nicht klappen dann überprüfe bitte ob dein System alle
+Voraussetzungen erfüllt. Du kannst einen Fehlerbericht auf <a href="https://sourceforge.net/tracker2/?group_id=238442">sourceforge.net</a> erstellen.<br>Will man das Programm wieder entfernen führt man, ebenfalls als root, folgenden Befehl aus:<br><br>&gt; ./tv-viewer_install.sh --uninstall<br><br>Das Installationsscript erstellt automatisch eine Verknüpfung im Menü unter "Multimedia/TV".<br><br>Nach der Installation sollte man die Einstellungen überprüfen um dann mit dem Sendereditor nach Programmen&nbsp;zu suchen.<br><br><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div><br><span style="text-decoration: underline; font-weight: bold;"><a name="3._General_Usage"></a>3. General Usage</span><br><br><br><span style="text-decoration: underline;"><a name="3.1_Hauptfenster"></a>3.1 Hauptfenster</span><br><br>Über
+die Menubar kann man alle Teile des Programmes finden. So zum Beispiel
+die Einstellungen, der Sendereditor, die Farbverwaltung ...<br><br>Timeshift: Diese Funktion ist in Version 0.8.1a1 deaktiviert. Sie wird ab Version 0.8.1 zur Verfügung stehen.<br><br>Aufnahme:
+Startet den <a href="#3.5_Aufnahme-Assistent">Aufnahme-Assistent</a>.<br><br>EPG: Führt das Programm aus welches zum Empfang des Fernsehprogrammes ausgewählt wurde.<br><br>Start
+TV: Fernsehwiedergabe starten/anhalten. Dieser Button wird deaktiviert
+wenn MPlayer vom Programm nicht erkannt wurde oder wenn eine Aufnahme
+läuft.<br><br><a name="3.2_Einstellungen"></a><br><span style="text-decoration: underline;">3.2 Einstellungen</span><br><br><br><span style="text-decoration: underline;"><a name="3.2.1_Allgemein"></a>3.2.1 Allgemein</span><br><br>Hier werden allgemeine Dinge für TV-Viewer eingestellt.<br><br>Sprache: Hier Sprache wählen, falls man mit der automatischen Erkennung nicht zufrieden ist.<br><br>Fernsehwiedergabe beim&nbsp;Programmstart: Führt dazu, dass die Fernsehwiedergabe automatisch beim Programmstart gestartet wird.<br><br>Newsreader:
+Aktiviert den Newsreader. Dieser sucht, mit dem eingestellten Intervall
+(Tage), nach Neuigkeiten über das Projekt auf der Homepage.<br><br>Electronic Program Guide: Wähle hier ein Programm, mit welchem du&nbsp;das Fernsehprogramm abrufen willst.  Standard ist <a href="http://www.tvbrowser.org/">TV-Browser</a>. Man kann aber auch einfach "firefox http://www.tvspielfilm.de/" nehmen.<br><br><br><a name="3.2.2_Analog"></a><br><span style="text-decoration: underline;">3.2.2 Analog</span><br><br>Video
+Device: Das passende video device auswählen. Wenn man sich nicht sicher bist
+welches Device man wählen soll, dann kann man "dmesg" zusammen mit
+"grep" verwenden um zu sehen welche Devices der Treiber anlegt.<br><br>Video
+Standard: Hier wählt man&nbsp;den Video Standard und die Frequenztabelle. Beides
+hängt davon ab wo man sich befindet. "Video Standard erzwingen" kann
+nützlich sein wenn der Treiber den falschen Standard auswählt.<br><br>Video
+Eingang: Legt den standard Video Eingang fest. Im Sendereditor kann für jeden Sender der Videoeingang festgelegt werden.<br>Man kann die Tastenkombinationen "Strg-I" / "Strg-Alt-I" dazu verwenden um den Video Eingang zu ändern.<br><br>Videostream:
+Definiere hier
+die Videobitrate bzw. Videobitrate (peak),&nbsp;Temporal filter und
+Hardware Lautstärke.
+Bitte bedenkt, dass die Videobitrate nie höher sein darf als Peak und
+Peak nie kleiner als Videobitrate. Der Temporal filter kann das Bild
+verbessern wenn es verwaschen erscheint. Die Hardware Lautstärke
+beeinflusst die Lautstärke des Videostreams. Die standard Werte für
+diese Einstellungen werden empfohlen.<br><br><br><span style="text-decoration: underline;"><a name="3.2.3_DVB"></a>3.2.3 DVB</span><br><br>TV-Viewer wird DVB ab Version 0.9.x unterstützen.<br><br><br><span style="text-decoration: underline;"><a name="3.2.4_Video"></a>3.2.4 Video</span><br><br>Die
+hier verfügbaren Einstellungen beziehen sich alle auf MPlayer. Die
+Tooltips zeigen für alle Optionen grundlegende Informationen an. Eine
+entsprechende Anleitung kann <a href="http://www.mplayerhq.hu/DOCS/man/en/mplayer.1.html">hier</a> gefunden werden.<br><br><br><span style="text-decoration: underline;"><a name="3.2.5_Audio"></a>3.2.5 Audio</span><br><br>Der
+Audio Ausgabe Treibe bezieht sich auf MPlayer. Alsa wird empfohlen.
+Wenn man den Sofware mixer verwendet wird die systemweite Lautstärke
+nicht beeinflusst. Die Einstellung Audio Kanäle verwendet MPlayer und
+versucht&nbsp;den Ton in die angegebenen Kanäle zu decodieren.<br><br><br><span style="text-decoration: underline;"><a name="3.2.6_Radio"></a>3.2.6 Radio</span><br><br>Radio wird ab Version 0.8.2 unterstützt.<br><br><br><span style="text-decoration: underline;"><a name="3.2.7_Interface"></a>3.2.7 Interface</span><br><br>Thema: Thema für die Oberfläche von TV-Viewer auswählen.<br><br>Tooltips: Schaltet die Tooltips für die entsprechenden Bereiche von TV-Viewer ein oder aus.<br><br>Splash Screen: Splash Screen beim Starten des Programms anzeigen oder nicht.<br><br>Senderliste: Senderliste nach dem Programmstart anzeigen.<br><br>Fenstereigenschaften:<br><br>Videofenster:<br>Videofenster
+mit dem Hauptfenster logisch verknüpfen: Wenn man diese Option
+aktiviert bekommt das Videofenster keinen eigenen Eintrag in der
+Taskbar überschreibt aber auch die Einstellung Videofenster docken.<br><br>Videofenster im Vollbild Modus starten.<br><br>Ausrichtung Senderliste. Legt fest ob die Senderliste im Vollbild-Modus auf der linken oder rechten Seite angezeigt werden soll.<br><br>System Tray:<br>Videofenster docken: Das aktivieren dieser Option führt dazu, dass das Videofenster ebenfalls in den System Tray gedockt wird.<br><br>TV-Viewer nach dem Programmstart docken: Dockt TV-Viewer in den System Tray nach dem Programmstart.<br><br>On
+screen Display. Das On screen Display zeigt die Laustärke, den
+aktuellen Sender, den Zoomfaktur und den derzeitig ausgewählten
+Videoeingang an.<br><br><br><span style="text-decoration: underline;"><a name="3.2.8_Aufnahme"></a>3.2.8 Aufnahme</span><br><br>Standardpfad: Legt den Standardpfad für Aufnahmen fest.<br><br>Standard
+Aufnahmedauer: Standard Aufnahmedauer für das Aufzeichnen von
+Sendungen. Format: hh:mm:ss Beispiel 02:30:00 (Aufnahme dauert 2
+Stunden, 30 Minuten und 0 Sekunden.)<br><br>Senderwechsel während Aufnahme erlauben: Erlaubt das wechseln des Senders während der Aufnahme.<br><br>Scheduler
+automatisch starten: Startet den Scheduler automatisch als Daemon wenn
+das Betriebssystem gestartet wird. Das ist wichtig falls man Aufnahmen
+plant und sollte auf alle Fälle aktiviert werden.<br><br><br><a name="3.2.9_Erweitert"></a><span style="text-decoration: underline;">3.2.9 Erweitert</span><br><br>Optionen
+für Mplayer: Hier kann man zusätzlich komandozeilen Optionen für
+MPlayer angeben, so wie weitere Video- und Audiofilter definieren. Das<a href="http://www.mplayerhq.hu/DOCS/man/en/mplayer.1.html"> Handbuch von MPlayer</a> bietet weitere Infos.<br><br>Logging:
+Hier kann man&nbsp;das Protokollieren von TV-Viewer, MPlayer und Scheduler Meldungen
+aktivieren. Unter Hilfe findest du&nbsp;die passenden Logviewer. Diese
+Logfiles sind wichtig wenn du einen <a href="https://sourceforge.net/tracker2/?group_id=238442">Fehlerbericht auf sourceforge.net</a> erstellen willst. Fehler- und Warnmeldungen werden im Logviewer "fett" dargestellt.<br><br><a name="3.3_Sendereditor"></a><br style="text-decoration: underline;"><span style="text-decoration: underline;">3.3 Sendereditor</span><br><br>Der Sendereditor wird dazu verwendet eine Senderliste anzulegen.<br><br>Sendersuchlauf:
+Startet die Sendersuch Oberfläche. Hier kann man auswählen auf welchem
+Videoeingang gesucht werden soll, ob die gefunden Sender an die
+vorhandene Liste angehängt werden sollen oder ob der gesamte
+Frequenzbereich durchsucht werden soll.<br><br>Hinzufügen: Fügt einen neuen Sender hinzu. Man muss dabei einen Namen, die Frequenz und den Videoeingang angeben.<br><br>Löschen: Löscht den ausgewählten Sender.<br><br>Bearbeiten: Den ausgewählten Sender anpassen.<br><br>(De)Aktivieren: Aktiviert bzw. deaktiviert den ausgewählten Sender. Deaktivierte Kanäle werden rot markiert.<br><br>Hoch / Runter : Ändert die Reihenfolge der Kanäle.<br><br>Vorschau:
+Aktiviert die Fernsehwiedergabe. Damit kann man sehen ob die gewählte
+Frequenz in Ordnung ist und man findet den entsprechenden Sendernamen.<br><br>Man kann auch mehrere Sender mit Hilfe der Shift und Strg Taste auswählen.<br><br><br><span style="text-decoration: underline;"><a name="3.4_Farbverwaltung"></a>3.4 Farbverwaltung</span><br><br>Hier kann man die Werte für Helligkeit, Sättigung, Kontrast und Farbton festlegen. Diese Werte gelten für alle Kanäle.<br><br><br><a name="3.5_Aufnahme-Assistent"></a><span style="text-decoration: underline;">3.5 Aufnahme-Assistent</span><br><br>Der Aufnahme-Assistent ist eine GUI zur planung und verwaltung von Aufnahmen.<br><br>Neue Aufnahme: Eine neue Aufnahme erstellen.<br><br><ul><li>Wähle den aufzunehmenden Sender aus der Senderliste.</li><li>Zeit: Die Uhrzeit angeben an der die Aufnahme beginnen soll. Wenn hier nichts angegeben wird startet die Aufnahme sofort.</li><li>Datum:
+Datum angeben an welchem die Aufnahme stattfinden soll. Wenn kein Datum
+angeben wird, wird das aktuelle Datum verwendet.&nbsp;Format:
+yyyy-mm-dd Beispiel: 2009-08-20</li><li>Dauer: Dauer der Aufnahme festlegen. Format: hh:mm:ss Beispiel: 02:30:00</li><li>Auflösung:
+Videoauflösung. Wird nichts angeben, wird die standard Auflösung
+verwendet. In den meisten Fällen sollte es nicht nötig sein diesen Wert
+zu verändern. Es ist besser hinterher eine Software wie Avidemux zu
+verwenden, um das Video zu bearbeiten.</li><li>Ausgabedatei:
+Ausgabedatei und Pfad angeben. Wird nichts angegeben, wird die Aufnahme
+im standard Pfad für Aufnahmen gespeichert.</li></ul>Löschen: Lösche eine oder mehrere Aufnahmen.<br><br>Bearbeiten: Eine Aufnahme bearbeiten.<br><br>Jedes
+mal wenn man eine Aufnahme hinzufügt, bearbeitet oder löscht wird der
+Scheduler angehalten und neu gestartet. &nbsp;Wenn man eine Aufnahme
+plant und man den Rechner neu startet wird der Scheduler nicht
+automatisch gestartet. Dafür muss man die&nbsp;entsprechende Option in
+den Einstellungen aktivieren.<br>Der Scheduler beendet sich automatisch wenn es keine Jobs mehr gibt.<br>Den
+Status des Schedulers und aktive Aufnahmen sieht man in der
+Statuszeile. Den Button "Aufnahme anhalten" kann man dazu verwenden um
+eine Aufnahme vorzeitig zu beenden.<br><br>Während eine Aufnähme läuft
+kann TV-Viewer nur im Dateiwiedergabe Modus betrieben werden. Dabei
+kann man die Aufnahme anschauen. Dieser Modus kann dann beendet werden
+wenn es keine aktive Aufnahme mehr gibt indem man die Fernsehwiedergabe
+startet.<br><br><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div><br><span style="text-decoration: underline; font-weight: bold;"><a name="4._Fernbedienung"></a>4. Fernbedienung</span><br><br>TV-Viewer kann auch durch eine Fernbedienung gesteuert werden. Die Fernbedienung muss&nbsp;mit Hilfe von <a href="http://www.lirc.org/">LIRC</a> eingerichtet sein.<br><br>Zuerst sollte man dafür sorgen, dass beim Systemstart das Programm irexec als Daemon ausgeführt wird. "irexec -d"<br><br>Dann legt man sich im Homeverzeichnis, wenn sie nicht bereits exisitiert, die Datei ".lircrc" an.<br><br>Mögliche Aktionen für die Fernbedienung:<br><ul><li>teleview (Fernsehwiedergabe starten/stoppen.)</li><li>station_up (Einen Sender hoch schalten.)</li><li>station_down (Einen Sender runter schalten.)</li><li>station_jump (Zwischen den letzten beiden Sendern hin und herwechseln.)</li><li>key_[0-9] (Tasten 0 - 9 um Sendernummer zu wählen.)</li><li>fullscreen (In den Vollbildmodus wechseln, bzw. diesen wieder verlassen.)</li><li>quit (TV-Viewer beenden.)</li><li>zoom_incr (Den Zoom vergrößern.)</li><li>zoom_decr (Den Zoom verkleinern.)</li><li>zoom_wide (Autozoom 16:9)</li><li>zoom_stnd (Standard Zoom.)</li><li>record (Aufnahme des aktuellen Kanals starten.)</li><li>volume_incr (Lautstärke steigern.)</li><li>volume_decr (Lautstärke verringern.)</li><li>mute (Stummschaltung ein/aus.)</li></ul>Die folgenden Aktionen gelten nur für die Wiedergabe einer Aufnahme:<ul><li>pause (Videowiedergabe pausieren/fortsetzen)</li><li>stop (Videowiedergabe anhalten - Aufnahme wird fortgesetzt.)</li><li>start (Videowiedergabe starten.)</li><li>forward_10s (10 sek. vorspulen.)</li><li>forward_1m (1 min. vorspulen.)</li><li>forward_10m (10 min. vorspulen.)</li><li>forward_end (Zum Ende der Wiedergabe springen.)</li><li>rewind_10s (10 sek. zurückspringen.)</li><li>rewind_1m (1 min. zurückspringen.)</li><li>rewind_10m (10 min. zurückspringen.)</li><li>rewind_start (Zum Anfang der Wiedergabe springen.)</li></ul>Hier ein Beispiel für die Konfiguration der ".lircrc":<br><br>##################################<br>begin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remote = Hauppauge #Name der Fernbedienung<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prog = irexec<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; button = TV #Bezeichnung des Buttons von
+der Fernbedieung, der für diese Funktione genutzt werden soll.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config = tv-viewer&nbsp;&amp; #Startet TV-Viewer, vergesst nicht das&nbsp;"&amp;" Zeichen.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mode = tv-viewer #Hiermit kann man einen
+separaten Modus für TV-Viewer starten. Dadurch werden andere Programme
+nicht beeinflusst.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat = 0 #Soll die Taste wiederholt werden?<br>
+&nbsp;&nbsp;&nbsp; end<br>
+<br>
+begin tv-viewer #Markiert den Beginn des Modus tv-viewer<br>
+<br>
+begin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remote = Hauppauge<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prog = irexec<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; button = Channel_UP <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config
+= tv-viewer_lirc station_up&nbsp;#Um einen Sender hoch schalten.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat = 0<br>
+&nbsp;&nbsp;&nbsp; end<br>
+<br>
+begin<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remote = Hauppauge<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prog = irexec<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; button = Channel_DOWN<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config
+=tv-viewer_lirc station_down #Um einen Sender runter schalten.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat = 0<br>
+&nbsp;&nbsp;&nbsp; end<br><br>begin<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remote = Hauppauge<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prog = irexec<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; button = Back/Exit<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config =&nbsp;tv-viewer_lirc quit #TV-Viewer beenden.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flags = mode #Den Modus tv-viewer verlassen.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeat = 0<br>&nbsp;&nbsp;&nbsp; end<br>
+<br>
+end tv-viewer #Markiert das Ende des Modus TV-Viewer.<br>########################################<br><br>Weitere Aktionen findet man in der Liste weiter oben.<br><br><div style="text-align: right;"><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div></div><br><a name="5._Tastaturkombinationen"></a><span style="text-decoration: underline; font-weight: bold;">5. Tastenkombinationen</span><br><br>TV-Viewer kann zum gröten Teil über Tastenkombinationen gesteuert werden. Eine Übersicht findet man im Menü Hilfe.<br><br><div style="text-align: right;"><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div></div><br><span style="text-decoration: underline; font-weight: bold;"><a name="6._FAQ"></a>6. FAQ</span><br><br><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div><br><span style="text-decoration: underline; font-weight: bold;"><a name="7._Lizenz"></a>7. Lizenz</span><br><br>TV-Viewer
+is distributed under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version. A copy of this license
+can be found in /usr/local/share/tv-viewer/help/license_gpl-2.0.txt.<br>The icons distributed with TV-Viewer are under different licenses. See /usr/local/share/tv-viewer/help/icons_license.txt<br><br>Tktray:<br><br>The library "<a href="http://sw4me.com/wiki/Tktray">libtktray1.1.so</a>" is copyrighted by Anton Kovalenko under the BSD license.<br><br><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div><br><span style="font-weight: bold; text-decoration: underline;"><a name="8._Kontakt"></a>8. Kontakt</span><br><br>Wenn ihr Fragen habt oder Verbesserungsvorschläge, dann verwendet bitte die <a href="https://sourceforge.net/forum/?group_id=238442">Foren</a> auf sourceforge.net. Falls ihr einen Fehlerbericht machen möchtet verwendet bitte den <a href="https://sourceforge.net/tracker2/?group_id=238442">Bugtracker</a>. Vergesst nicht die Ausgabedatei des Diagnoseprogramms anzuhängen, sowie die Logfiles.<br><br><div style="text-align: right;"><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div></div><br><span style="text-decoration: underline; font-weight: bold;"><span style="text-decoration: underline; font-weight: bold;"><a name="9._Danksagungen"></a>9. Danksagung</span>en</span><br><ul><li>Alle Nutzer des irc Kanals #tcl auf irc.freenode.net</li><li>Martin Dauskardt</li><li>Matthias Klostermair</li></ul><div style="text-align: right;"><div style="text-align: right;"><a href="#inhalt">Inhalt</a></div></div><hr style="width: 100%; height: 2px;">Zuletzt aktualisiert 29.05.2009<br>Copyright 2007 -2009 Christian Rapp.<br>saedelaere{at}arcor{dot}de<br></body></html>

@@ -1,0 +1,177 @@
+#
+#      Translation file for TV-Viewer
+#      TV and file playback
+#
+
+
+mcset $lang \
+	{TV-Viewer playing - %} \
+	{TV-Viewer playing - %s}
+
+mcset $lang \
+	{Pan&Scan} \
+	{Pan&Scan}
+
+mcset $lang \
+	{Zoom +} \
+	{Zoom +}
+
+mcset $lang \
+	{Zoom -} \
+	{Zoom -}
+
+mcset $lang \
+	{Pan&Scan (16:9 / 4:3)} \
+	{Pan&Scan (16:9 / 4:3)}
+
+mcset $lang \
+	{Pan&Scan 16:9} \
+	{Pan&Scan 16:9}
+
+mcset $lang \
+	{Pan&Scan 4:3} \
+	{Pan&Scan 4:3}
+
+mcset $lang \
+	{Move up} \
+	{Move up}
+
+mcset $lang \
+	{Move down} \
+	{Move down}
+
+mcset $lang \
+	{Move left} \
+	{Move left}
+
+mcset $lang \
+	{Move right} \
+	{Move right}
+
+mcset $lang \
+	{Size} \
+	{Size}
+
+mcset $lang \
+	{Ctrl+1} \
+	{Ctrl+1}
+
+mcset $lang \
+	{Ctrl+2} \
+	{Ctrl+2}
+
+mcset $lang \
+	{Stay on top} \
+	{Stay on top}
+
+mcset $lang \
+	{Never} \
+	{Never}
+
+mcset $lang \
+	{Always} \
+	{Always}
+
+mcset $lang \
+	{While playback} \
+	{While playback}
+
+mcset $lang \
+	{TV playback} \
+	{TV playback}
+
+mcset $lang \
+	{Mute} \
+	{Mute}
+
+mcset $lang \
+	{-10 seconds} \
+	{-10 seconds}
+
+mcset $lang \
+	{-1 minute} \
+	{-1 minute}
+
+mcset $lang \
+	{-10 minutes} \
+	{-10 minutes}
+
+mcset $lang \
+	{+10 seconds} \
+	{+10 seconds}
+
+mcset $lang \
+	{+1 minute} \
+	{+1 minute}
+
+mcset $lang \
+	{+10 minutes} \
+	{+10 minutes}
+
+mcset $lang \
+	{Left} \
+	{Left}
+
+mcset $lang \
+	{Shift+Left} \
+	{Shift+Left}
+
+mcset $lang \
+	{Ctrl+Shift+Left} \
+	{Ctrl+Shift+Left}
+
+mcset $lang \
+	{Right} \
+	{Right}
+
+mcset $lang \
+	{Shift+Right} \
+	{Shift+Right}
+
+mcset $lang \
+	{Ctrl+Shift+Right} \
+	{Ctrl+Shift+Right}
+
+mcset $lang \
+	{Start playback.} \
+	{Start playback.}
+
+mcset $lang \
+	{Pause playback.} \
+	{Pause playback.}
+
+mcset $lang \
+	{Stop playback.} \
+	{Stop playback.}
+
+mcset $lang \
+	{Jump to the beginning.} \
+	{Jump to the beginning.}
+
+mcset $lang \
+	{Seek back.} \
+	{Seek back.}
+
+mcset $lang \
+	{Choose amount of seek back.} \
+	{Choose amount of seek back.}
+
+mcset $lang \
+	{Seek forward.} \
+	{Seek forward.}
+
+mcset $lang \
+	{Choose amount of seek forward.} \
+	{Choose amount of seek forward.}
+
+mcset $lang \
+	{Jump to the end.} \
+	{Jump to the end.}
+
+mcset $lang \
+	{Toggle fullscreen.} \
+	{Toggle fullscreen.}
+
+mcset $lang \
+	{Current position / File length} \
+	{Current position / File length}

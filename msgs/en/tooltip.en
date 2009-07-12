@@ -1,0 +1,44 @@
+#
+#      Translation file for TV-Viewer
+#      Tooltips for main frontend.
+#
+
+mcset $lang \
+	{Tune up.} \
+	{Tune up.}
+
+mcset $lang \
+	{Tune down.} \
+	{Tune down.}
+
+mcset $lang \
+	{Zap among the last two stations.} \
+	{Zap among the last two stations.}
+
+mcset $lang \
+	{Show/hide station list.} \
+	{Show/hide station list.}
+
+mcset $lang \
+	{Alter volume.} \
+	{Alter volume.}
+
+mcset $lang \
+	{Toggle mute.} \
+	{Toggle mute.}
+
+mcset $lang \
+	{Start/Stop timeshift.} \
+	{Start/Stop timeshift.}
+
+mcset $lang \
+	{Start/Stop record.} \
+	{Start/Stop record.}
+
+mcset $lang \
+	{Execute the selected epg application.} \
+	{Execute the selected epg application.}
+
+mcset $lang \
+	{Start/Stop tv playback.} \
+	{Start/stop tv playback.}

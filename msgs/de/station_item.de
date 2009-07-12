@@ -1,0 +1,40 @@
+#
+#      Translation file for TV-Viewer
+#      Station add/edit item dialog.
+#
+
+mcset $lang \
+	{Station:} \
+	{Sender:}
+
+mcset $lang \
+	{Frequency:} \
+	{Frequenz:}
+
+mcset $lang \
+	{Please specify name and frequency for each station} \
+	{Bitte einen Namen und eine Frequenz für den Kanal angeben.}
+
+mcset $lang \
+	{Edit Station / Frequency} \
+	{Kanal / Frequenz bearbeiten}
+
+mcset $lang \
+	{Provide a name for the television station.} \
+	{Einen Namen für den Sender angeben.}
+
+mcset $lang \
+	{Frequency for the station. E.g. 175.250} \
+	{Frequenz für den Sender angeben, z.B. 175.250}
+
+mcset $lang \
+	{Apply changes and close window.} \
+	{Änderungen übernehmen und Fenster schließen.}
+
+mcset $lang \
+	{Exit without changes.} \
+	{Beenden ohne Änderungen zu übernehmen.}
+
+mcset $lang \
+	{Add a new station} \
+	{Neuen Kanal hinzufügen}

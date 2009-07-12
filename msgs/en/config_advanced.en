@@ -1,0 +1,102 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard advanced section.
+#
+
+mcset $lang \
+	{Additional options for MPlayer} \
+	{Additional options for MPlayer}
+
+mcset $lang \
+	{Additional MPlayer options} \
+	{Additional MPlayer options}
+
+mcset $lang \
+	{Additional video filter options} \
+	{Additional video filter options}
+
+mcset $lang \
+	{Additional audio filter options} \
+	{Additional audio filter options}
+
+mcset $lang \
+	{Here you may provide additional command line options for MPlayer.
+Separate the different options with spaces.
+See the MPlayer man pages for more informations.} \
+	{Here you may provide additional command line options for MPlayer.
+Separate the different options with spaces.
+See the MPlayer man pages for more informations.}
+
+mcset $lang \
+	{Additional video filter options must be separated with commas.
+E.g. scale=512:-2,eq2=1.1
+See the MPlayer man pages for more informations.} \
+	{Additional video filter options must be separated with commas.
+E.g. scale=512:-2,eq2=1.1
+See the MPlayer man pages for more informations.}
+
+mcset $lang \
+	{Additional audio filter options must be separated with commas.
+E.g. resample=44100:0:0,volnorm
+See the MPlayer man pages for more informations.} \
+	{Additional audio filter options must be separated with commas.
+E.g. resample=44100:0:0,volnorm
+See the MPlayer man pages for more informations.}
+
+mcset $lang \
+	{Logs} \
+	{Logs}
+
+mcset $lang \
+	{Enable Logging} \
+	{Enable Logging}
+
+mcset $lang \
+	{MPlayer logfile size in kBytes} \
+	{MPlayer logfile size in kBytes}
+
+mcset $lang \
+	{TV-Viewer logfile size in kBytes} \
+	{TV-Viewer logfile size in kBytes}
+
+mcset $lang \
+	{Scheduler logfile size in kBytes} \
+	{Scheduler logfile size in kBytes}
+
+mcset $lang \
+	{Check this to enable logging of TV-Viewer, Scheduler and MPlayer events.
+You can find the three logfiles in %/log/
+Refer to the 'Help' section of the main interface for the log viewers.} \
+	{Check this to enable logging of TV-Viewer, Scheduler and MPlayer events.
+You can find the three logfiles in %s/log/
+Refer to the 'Help' section of the main interface for the log viewers.}
+
+mcset $lang \
+	{Specify the amount of space in kBytes the MPlayer logfile can claim.
+If this limit is reached, the file will be deleted and TV-Viewer
+restarts the log cycle.
+Minimum: 100kb Maximum: 1000kb} \
+	{Specify the amount of space in kBytes the MPlayer logfile can claim.
+If this limit is reached, the file will be deleted and TV-Viewer
+restarts the log cycle.
+Minimum: 100kb Maximum: 1000kb}
+
+mcset $lang \
+	{Specify the amount of space in kBytes the TV-Viewer logfile can claim.
+If this limit is reached, the file will be deleted and TV-Viewer
+restarts the log cycle.
+Minimum: 100kb Maximum: 1000kb} \
+	{Specify the amount of space in kBytes the TV-Viewer logfile can claim.
+If this limit is reached, the file will be deleted and TV-Viewer
+restarts the log cycle.
+Minimum: 100kb Maximum: 1000kb}
+
+mcset $lang \
+	{Specify the amount of space in kBytes the Scheduler logfile can claim.
+If this limit is reached, the file will be deleted and TV-Viewer
+restarts the log cycle.
+Minimum: 100kb Maximum: 1000kb} \
+	{Specify the amount of space in kBytes the Scheduler logfile can claim.
+If this limit is reached, the file will be deleted and TV-Viewer
+restarts the log cycle.
+Minimum: 100kb Maximum: 1000kb}

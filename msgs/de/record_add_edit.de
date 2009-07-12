@@ -1,0 +1,169 @@
+#
+#      Translation file for TV-Viewer
+#      Record add/edit dialog.
+#
+
+mcset $lang \
+	{Record options} \
+	{Aufnahme Optionen}
+
+mcset $lang \
+	{Time:} \
+	{Zeit:}
+
+mcset $lang \
+	{Date:} \
+	{Datum:}
+
+mcset $lang \
+	{Duration:} \
+	{Dauer:}
+
+mcset $lang \
+	{Resolution:} \
+	{Auflösung:}
+
+mcset $lang \
+	{Add a new recording} \
+	{Eine neue Aufnahme hinzufügen}
+
+mcset $lang \
+	{Choose station to record.} \
+	{Sender wählen der aufgenommen werden soll.}
+
+mcset $lang \
+	{Time when recording should start. (Hour)} \
+	{Uhrzeit, wann die Aufnahme beginnen soll. (Stunde)}
+
+mcset $lang \
+	{Time when recording should start. (Minute)} \
+	{Uhrzeit, wann die Aufnahme beginnen soll. (Minute)}
+
+mcset $lang \
+	{Choose date on which recording should occur.} \
+	{Wähle das Datum, wann die Aufnahme stattfinden soll.}
+
+mcset $lang \
+	{Duration for the recording. (Hours)} \
+	{Dauer der Aufnahme. (Stunden)}
+
+mcset $lang \
+	{Duration for the recording. (Minutes)} \
+	{Dauer der Aufnahme. (Minuten)}
+
+mcset $lang \
+	{Duration for the recording. (Seconds)} \
+	{Dauer der Aufnahme. (Sekunden)}
+
+mcset $lang \
+	{Resolution (width) in which the recording
+should be made. In most cases it doesn't
+make sense to change this value. It is better
+to convert the file afterwards.} \
+	{Auflösung (Weite) in der die Aufnahme gemacht
+werden soll. Es ist meist nicht sinnvoll
+diese zu ändern, da Aufnahmen auch später
+noch entsprechend bearbeitet werden können.}
+
+mcset $lang \
+	{Resolution (height) in which the recording
+should be made. In most cases it doesn't
+make sense to change this value. It is better
+to convert the file afterwards.} \
+	{Auflösung (Höhe) in der die Aufnahme gemacht
+werden soll. Es ist meist nicht sinnvoll
+diese zu ändern, da Aufnahmen auch später
+noch entsprechend bearbeitet werden können.}
+
+mcset $lang \
+	{Output file for recording. If you omit
+this value TV-Viewer will determine a name
+and store the file in the default record path.} \
+	{Ausgabe Datei für die Aufnahme. Wenn
+keine Datei angegeben wird, bestimmt TV-Viewer
+einen Namen und speichert die Datei im Standardpfad
+für Aufnahmen.}
+
+mcset $lang \
+	{Choose date} \
+	{Datum wählen}
+
+mcset $lang \
+	{Previous year.} \
+	{Vorheriges Jahr.}
+
+mcset $lang \
+	{Previous month.} \
+	{Vorheriger Monat.}
+
+mcset $lang \
+	{Next month.} \
+	{Nächster Monat.}
+
+mcset $lang \
+	{Next year.} \
+	{Nächstes Jahr.}
+
+mcset $lang \
+	{Apply your changes and exit the dialogue.} \
+	{Änderungen übernehmen und Dialog schließen.}
+
+mcset $lang \
+	{Exit the dialogue without changes.} \
+	{Dialog beenden ohne Änderungen.}
+
+mcset $lang \
+	{Time format incorrect (hour)!} \
+	{Zeit Format falsch (Stunde)!}
+
+mcset $lang \
+	{Time format incorrect (min)!} \
+	{Zeit Format falsch (Minute)!}
+
+mcset $lang \
+	{Date format incorrect (year)!} \
+	{Datumsformat falsch (Jahr)!}
+
+mcset $lang \
+	{Date format incorrect (month)!} \
+	{Datumsformat falsch (Monat)!}
+
+mcset $lang \
+	{Date format incorrect (day)!} \
+	{Datumsformat falscht (Tag)!}
+
+mcset $lang \
+	{Chosen date is in the past!} \
+	{Gewähltes Datum liegt in der Vergangenheit!}
+
+mcset $lang \
+	{Time is in the past!} \
+	{Gewählte Zeit ist vergangen!}
+
+mcset $lang \
+	{Duration not specified correctly!} \
+	{Dauer nicht korrekt angegeben!}
+
+mcset $lang \
+	{Duration not specified correctly (hour)!} \
+	{Dauer nicht korrekt angegeben (Stunde)!}
+
+mcset $lang \
+	{Duration not specified correctly (min)!} \
+	{Dauer nicht korrekt angegeben (Minute)!}
+
+mcset $lang \
+	{Duration not specified correctly (sec)!} \
+	{Dauer nicht korrekt angegeben (Sekunde)!}
+
+mcset $lang \
+	{You have to specify the duration!} \
+	{Bitte Dauer der Aufnahme angeben!}
+
+mcset $lang \
+	{Resolution format incorrect!} \
+	{Format der Auflösung falsch!}
+
+mcset $lang \
+	{Choose ouput file} \
+	{Ausgabedatei wählen}

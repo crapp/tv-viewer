@@ -1,0 +1,76 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard general section.
+#
+
+mcset $lang \
+	{General Settings} \
+	{General Settings}
+
+mcset $lang \
+	{Language} \
+	{Language}
+
+mcset $lang \
+	{Autodetect} \
+	{Autodetect}
+
+mcset $lang \
+	{English (en)} \
+	{English (en)}
+
+mcset $lang \
+	{German (de)} \
+	{German (de)}
+
+mcset $lang \
+	{Start TV on startup} \
+	{Start TV on startup}
+
+mcset $lang \
+	{Enable} \
+	{Enable}
+
+mcset $lang \
+	{Newsreader} \
+	{Newsreader}
+
+mcset $lang \
+	{Time interval in days} \
+	{Time interval in days}
+
+mcset $lang \
+	{Electronic Program Guide} \
+	{Electronic Program Guide}
+
+mcset $lang \
+	{Choose a program} \
+	{Choose a program}
+
+mcset $lang \
+	{Choose an EPG application} \
+	{Choose an EPG application}
+
+mcset $lang \
+	{Choose your language.
+You'll need to restart TV-Viewer for changes to take effect.} \
+	{Choose your language.
+You'll need to restart TV-Viewer for changes to take effect.}
+
+mcset $lang \
+	{Autostart tv playback on program start.} \
+	{Autostart tv playback on program start.}
+
+mcset $lang \
+	{Activate Newsreader.
+The Newsreader will check for news about TV-Viewer.} \
+	{Activate Newsreader.
+The Newsreader will check for news about TV-Viewer.}
+
+mcset $lang \
+	{Choose time intervall in days for Newsreader. Range 1 to 30.} \
+	{Choose time intervall in days for Newsreader. Range 1 to 30.}
+
+mcset $lang \
+	{Specify a program to retrieve the television program.} \
+	{Specify a program to retrieve the television program.}

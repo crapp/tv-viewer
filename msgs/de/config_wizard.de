@@ -1,0 +1,56 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard general things.
+#
+
+mcset $lang \
+	{Preferences} \
+	{Einstellungen}
+
+mcset $lang \
+	{Apply your changes and exit preferences dialog.} \
+	{Änderungen übernehmen und Einstellungen verlassen.}
+
+mcset $lang \
+	{Load default values, for the corresponding section.} \
+	{Standard Werte laden für den entsprechenden Abschnitt.}
+
+mcset $lang \
+	{Discard changes and close preferences dialog.} \
+	{Änderungen verwerfen und Einstellungen verlassen.}
+
+mcset $lang \
+	{Preferences} \
+	{Einstellungen}
+
+mcset $lang \
+	{General} \
+	{Allgemein}
+
+mcset $lang \
+	{Analog} \
+	{Analog}
+
+mcset $lang \
+	{DVB} \
+	{DVB}
+
+mcset $lang \
+	{Audio} \
+	{Audio}
+
+mcset $lang \
+	{Radio} \
+	{Radio}
+
+mcset $lang \
+	{Interface} \
+	{Interface}
+
+mcset $lang \
+	{Record} \
+	{Aufnahme}
+
+mcset $lang \
+	{Advanced} \
+	{Erweitert}

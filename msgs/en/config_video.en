@@ -1,0 +1,128 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard video section.
+#
+
+mcset $lang \
+	{Video Settings} \
+	{Video Settings}
+
+mcset $lang \
+	{Video} \
+	{Video}
+
+mcset $lang \
+	{Video output driver} \
+	{Video output driver}
+
+mcset $lang \
+	{Deinterlacing filter} \
+	{Deinterlacing filter}
+
+mcset $lang \
+	{Postprocessing level} \
+	{Postprocessing level}
+
+mcset $lang \
+	{Cache size (kb)} \
+	{Cache size (kb)}
+
+mcset $lang \
+	{Direct Rendering} \
+	{Direct Rendering}
+
+mcset $lang \
+	{Double Buffering} \
+	{Double Buffering}
+
+mcset $lang \
+	{Slice Mode} \
+	{Slice Mode}
+
+mcset $lang \
+	{Framedrop} \
+	{Framedrop}
+
+mcset $lang \
+	{Hard Framedrop} \
+	{Hard Framedrop}
+
+mcset $lang \
+	{Disable Screensaver} \
+	{Disable Screensaver}
+
+mcset $lang \
+	{Use MPlayer} \
+	{Use MPlayer}
+
+mcset $lang \
+	{Use Heartbeat function} \
+	{Use Heartbeat function}
+
+mcset $lang \
+	{Select the video ouput driver.
+xv should provide the best performance.} \
+	{Select the video ouput driver.
+xv should provide the best performance.}
+
+mcset $lang \
+	{Select the deinterlace filter.} \
+	{Select the deinterlace filter.}
+
+mcset $lang \
+	{Changes the level of postprocesseing.
+A value of 0 deactivates postprocessing.} \
+	{Changes the level of postprocesseing.
+A value of 0 deactivates postprocessing.}
+
+mcset $lang \
+	{Specify how much memory (in kBytes) should be used for TV playback.
+The lower this value is the faster you may switch between stations.
+But a low value could cause other problems.
+A value of 0 will deactivate cache use.} \
+	{Specify how much memory (in kBytes) should be used for TV playback.
+The lower this value is the faster you may switch between stations.
+But a low value could cause other problems.
+A value of 0 will deactivate cache use.}
+
+mcset $lang \
+	{If checked, enables direct rendering. This is not supported
+for all video ouput drivers.} \
+	{If checked, enables direct rendering. This is not supported
+for all video ouput drivers.}
+
+mcset $lang \
+	{Double buffering fixes flicker by storing two frames in memory
+and displaying one, while decoding another.} \
+	{Double buffering fixes flicker by storing two frames in memory
+and displaying one, while decoding another.}
+
+mcset $lang \
+	{Enable / Disable drawing video by 16-pixel height slices/bands.
+May help in better video playback.} \
+	{Enable / Disable drawing video by 16-pixel height slices/bands.
+May help in better video playback.}
+
+mcset $lang \
+	{Skip displaying some frames to maintain A/V sync.} \
+	{Skip displaying some frames to maintain A/V sync.}
+
+mcset $lang \
+	{More intense frame dropping. May lead to image distortion.} \
+	{More intense frame dropping. May lead to image distortion.}
+
+mcset $lang \
+	{Enable / Disable screensaver while playback.} \
+	{Enable / Disable screensaver while playback.}
+
+mcset $lang \
+	{Use MPlayer to deactivate the screensaver.} \
+	{Use MPlayer to deactivate the screensaver.}
+
+mcset $lang \
+	{If MPlayer can't deactivate your screensaver, use this heartbeat hack.} \
+	{If MPlayer can't deactivate your screensaver, use this heartbeat hack.}
+
+mcset $lang \
+	{Missing requirements} \
+	{Missing requirements}

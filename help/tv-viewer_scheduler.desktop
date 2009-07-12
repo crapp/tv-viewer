@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=TV-Viewer Scheduler
+Exec=tv-viewer_scheduler
+Icon=system-run
+Comment=

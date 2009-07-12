@@ -1,0 +1,78 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard record section.
+#
+
+mcset $lang \
+	{Record Settings} \
+	{Record Settings}
+
+mcset $lang \
+	{Standard folder} \
+	{Standard folder}
+
+mcset $lang \
+	{Default record duration} \
+	{Default record duration}
+
+mcset $lang \
+	{Autostart scheduler} \
+	{Autostart scheduler}
+
+mcset $lang \
+	{Allow station change while recording} \
+	{Allow station change while recording}
+
+mcset $lang \
+	{Timeshift} \
+	{Timeshift}
+
+mcset $lang \
+	{Timeshift folder} \
+	{Timeshift folder}
+
+mcset $lang \
+	{Space to be left free} \
+	{Space to be left free}
+
+mcset $lang \
+	{Choose a directory} \
+	{Choose a directory}
+
+mcset $lang \
+	{Define the default duration for recordings (Hours).} \
+	{Define the default duration for recordings (Hours).}
+
+mcset $lang \
+	{Define the default duration for recordings (Minutes).} \
+	{Define the default duration for recordings (Minutes).}
+
+mcset $lang \
+	{Define the default duration for recordings (Seconds).} \
+	{Define the default duration for recordings (Seconds).}
+
+mcset $lang \
+	{Autostart the scheduler.
+This is necessary for scheduled recordings.} \
+	{Autostart the scheduler.
+This is necessary for scheduled recordings.}
+
+mcset $lang \
+	{Set the default directory for all recordings.} \
+	{Set the default directory for all recordings.}
+
+mcset $lang \
+	{Allow station change during recording.} \
+	{Allow station change during recording.}
+
+mcset $lang \
+	{Choose path where Timeshift events will be cached.} \
+	{Choose path where Timeshift events will be cached.}
+
+mcset $lang \
+	{Define the minimum free disk space.
+If free disk space is falling below this value
+timeshift will automatically be stopped.} \
+	{Define the minimum free disk space.
+If free disk space is falling below this value
+timeshift will automatically be stopped.}

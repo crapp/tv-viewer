@@ -1,0 +1,136 @@
+#
+#      Translation file for TV-Viewer
+#      Main frontend.
+#
+
+mcset $lang \
+	{Diagnostic Routine} \
+	{Diagnoseprogramm}
+
+mcset $lang \
+	{Options} \
+	{Optionen}
+
+mcset $lang \
+	{Help} \
+	{Hilfe}
+
+mcset $lang \
+	{Color Management} \
+	{Farbverwaltung}
+
+mcset $lang \
+	{Preferences} \
+	{Einstellungen}
+
+mcset $lang \
+	{Station Editor} \
+	{Sendereditor}
+
+mcset $lang \
+	{Newsreader} \
+	{Newsreader}
+
+mcset $lang \
+	{System Tray} \
+	{System Tray}
+
+mcset $lang \
+	{Exit} \
+	{Beenden}
+
+mcset $lang \
+	{User Guide} \
+	{Handbuch}
+
+mcset $lang \
+	{Key Sequences} \
+	{Tastenkombinationen}
+
+mcset $lang \
+	{MPlayer Log} \
+	{MPlayer Log}
+
+mcset $lang \
+	{Scheduler Log} \
+	{Scheduler Log}
+
+mcset $lang \
+	{TV-Viewer Log} \
+	{TV-Viewer Log}
+
+mcset $lang \
+	{Info} \
+	{Info}
+
+mcset $lang \
+	{Ctrl+P} \
+	{Strg+P}
+
+mcset $lang \
+	{Ctrl+M} \
+	{Strg+M}
+
+mcset $lang \
+	{Ctrl+E} \
+	{Strg+E}
+
+mcset $lang \
+	{Ctrl+X} \
+	{Strg+X}
+
+mcset $lang \
+	{Diagnostic Routine is checking your system.
+Please wait...} \
+	{Das Diagnoseprogramm überprüft das System.
+Bitte warten...}
+
+mcset $lang \
+	{Diagnostic Routine finished} \
+	{Diagnoseprogramm beendet}
+
+mcset $lang \
+	{Generated file:} \
+	{Ausgabedatei:}
+
+mcset $lang \
+	{Create a bug report on } \
+	{Erstelle einen Fehlerbericht auf }
+
+mcset $lang \
+	{and attach the generated file.} \
+	{und hänge die Datei an.}
+
+mcset $lang \
+	{TV-Viewer %} \
+	{TV-Viewer %s}
+
+mcset $lang \
+	{A small and simple frontend to watch and record television.} \
+	{Ein kleines und einfaches Programm zum Fernsehen und Aufnehmen.}
+
+mcset $lang \
+	{© Copyright 2007 - 2009
+Christian Rapp} \
+	{© Copyright 2007 - 2009
+Christian Rapp}
+
+mcset $lang \
+	{Credits} \
+	{Credits}
+
+mcset $lang \
+	{License} \
+	{Lizenz}
+
+mcset $lang \
+	{Changelog} \
+	{Changelog}
+
+mcset $lang \
+	{About TV-Viewer} \
+	{Über TV-Viewer}
+
+mcset $lang \
+	{TV-Viewer idle} \
+	{TV-Viewer idle}

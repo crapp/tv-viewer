@@ -1,0 +1,30 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard audio section.
+#
+
+mcset $lang \
+	{Audio Settings} \
+	{Audio Settings}
+
+mcset $lang \
+	{Audio output driver} \
+	{Audio output driver}
+
+mcset $lang \
+	{Audio channels} \
+	{Audio channels}
+
+mcset $lang \
+	{Use software mixer} \
+	{Use software mixer}
+
+mcset $lang \
+	{Choose an audio output driver, alsa is recommended.} \
+	{Choose an audio output driver, alsa is recommended.}
+
+mcset $lang \
+	{Check this option to use the software mixer,
+instead of the hardware mixer.} \
+	{Check this option to use the software mixer,
+instead of the hardware mixer.}

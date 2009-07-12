@@ -1,0 +1,107 @@
+#
+#      Translation file for TV-Viewer
+#      Record wizard dialog.
+#
+
+mcset $lang \
+	{New recording} \
+	{Neue Aufnahme}
+
+mcset $lang \
+	{Status} \
+	{Status}
+
+mcset $lang \
+	{Scheduler status:} \
+	{Scheduler Status:}
+
+mcset $lang \
+	{Currently recording:} \
+	{Aktuelle Aufnahme:}
+
+mcset $lang \
+	{Stop recording} \
+	{Aufnahme anhalten}
+
+mcset $lang \
+	{Stop Scheduler} \
+	{Scheduler anhalten}
+
+mcset $lang \
+	{Start Scheduler} \
+	{Scheduler starten}
+
+mcset $lang \
+	{Record Wizard} \
+	{Aufnahme Assistent}
+
+mcset $lang \
+	{Job ID} \
+	{Job ID}
+
+mcset $lang \
+	{Time} \
+	{Zeit}
+
+mcset $lang \
+	{Date} \
+	{Datum}
+
+mcset $lang \
+	{Duration} \
+	{Dauer}
+
+mcset $lang \
+	{Resolution} \
+	{Auflösung}
+
+mcset $lang \
+	{Output file} \
+	{Ausgabedatei}
+
+mcset $lang \
+	{% -- ends % at %} \
+	{%s -- endet am %s um %s}
+
+mcset $lang \
+	{Running} \
+	{Läuft}
+
+mcset $lang \
+	{Stopped} \
+	{Angehalten}
+
+mcset $lang \
+	{Add a scheduled recording or
+start recording immediately.} \
+	{Eine geplante Aufnahme hinzufügen,
+oder eine Aufnahme sofort starten.}
+
+
+mcset $lang \
+	{Delete selected recordings.} \
+	{Ausgewählte Aufnahme(n) löschen.}
+
+mcset $lang \
+	{Edit selected recording.} \
+	{Gewählte Aufnahme bearbeiten.}
+
+mcset $lang \
+	{Indicates whether the Scheduler
+is running or not.} \
+	{Zeigt ob der Scheduler läuft oder nicht.}
+
+mcset $lang \
+	{Provides informations about the
+current recording.} \
+	{Zeigt Informationen über eine
+laufende Aufnahme.}
+
+mcset $lang \
+	{If there is a running recording,
+click here to stop it.} \
+	{Beendet eine Aufnahme.}
+
+mcset $lang \
+	{Exit Record Wizard} \
+	{Aufnahme Assistent beenden}

@@ -1,0 +1,229 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard interface section.
+#
+
+mcset $lang \
+	{Interface Settings} \
+	{Interface Einstellungen}
+
+mcset $lang \
+	{Theme} \
+	{Thema}
+
+mcset $lang \
+	{Enable Tooltips} \
+	{Tooltips aktivieren}
+
+mcset $lang \
+	{Main Gui} \
+	{Hauptfenster}
+
+mcset $lang \
+	{Preferences} \
+	{Einstellungen}
+
+mcset $lang \
+	{Station Editor} \
+	{Sender Editor}
+
+mcset $lang \
+	{Splash Screen} \
+	{Splash Screen}
+
+mcset $lang \
+	{Show Splash Screen on initialization.} \
+	{Splash Screen beim Programmstart anzeigen.}
+
+mcset $lang \
+	{Station List} \
+	{Senderliste}
+
+mcset $lang \
+	{Show Station List on initialization.} \
+	{Senderliste nach dem Programmstart anzeigen.}
+
+mcset $lang \
+	{On screen Display} \
+	{On screen Display}
+
+mcset $lang \
+	{Choose your preferred theme.} \
+	{Bevorzugtes Thema auswählen.}
+
+mcset $lang \
+	{Video player} \
+	{Video Player}
+
+mcset $lang \
+	{Check this if you want to see tooltips.} \
+	{Tooltips anzeigen.}
+
+mcset $lang \
+	{Tooltips for the main Interface.} \
+	{Tooltips für das Hauptfenster.}
+
+mcset $lang \
+	{Tooltips for the preferences.} \
+	{Tooltips für die Einstellungen.}
+
+mcset $lang \
+	{Tooltips for the Station Editor.} \
+	{Tooltips für den Sendereditor.}
+
+mcset $lang \
+	{Tooltips for the Color Management.} \
+	{Tooltips für die Farbverwaltung.}
+
+mcset $lang \
+	{Tooltips for the Video Player.} \
+	{Tooltips für den Video Player.}
+
+mcset $lang \
+	{Tooltips for the Record Wizard.} \
+	{Tooltips für den Aufnahme-Assistent.}
+
+mcset $lang \
+	{Check this if you want to see the splash screen at the start of TV-Viewer.} \
+	{Auswählen falls man beim Programmstart den Splash Screen sehen will.}
+
+mcset $lang \
+	{If enabled the station list will be shown after the start up.} \
+	{Senderliste nach dem Programmstart anzeigen.}
+
+mcset $lang \
+	{Video window} \
+	{Videofenster}
+
+mcset $lang \
+	{Attach video window to main window} \
+	{Videofenster mit dem Hauptfenster logisch verknüpfen}
+
+mcset $lang \
+	{Start in full-screen mode} \
+	{Im Vollbild-Modus starten}
+
+mcset $lang \
+	{Station list alignment} \
+	{Ausrichtung Senderliste}
+
+mcset $lang \
+	{Window Properties} \
+	{Fenstereigenschaften}
+
+mcset $lang \
+	{Dock video window} \
+	{Videofenster docken}
+
+mcset $lang \
+	{Dock TV-Viewer after initialization} \
+	{TV-Viewer nach dem Programmstart docken}
+
+mcset $lang \
+	{Minimize to Tray} \
+	{Minimieren in den System Tray}
+
+mcset $lang \
+	{Windowed mode} \
+	{Fenstermodus}
+
+mcset $lang \
+	{Full-screen mode} \
+	{Vollbildmodus}
+
+mcset $lang \
+	{Volume | Video input | Pan&Scan} \
+	{Volume | Video input | Pan&Scan}
+
+mcset $lang \
+	{Key Input} \
+	{Key Input}
+
+mcset $lang \
+	{OSD Station list mouse} \
+	{OSD Senderliste Maus}
+
+mcset $lang \
+	{OSD Station list lirc} \
+	{OSD Senderliste lirc}
+
+mcset $lang \
+	{This option makes sure, that there will be no
+separate entry in taskbar for the video window.
+On the other hand it will be logically linked
+to the main window. For example the video window
+will also dock to the system tray regardless of
+the option "Dock video window".
+Requires a restart of TV-Viewer.} \
+	{Diese Option sorgt dafür, dass das Videofenster
+keinen eigenen Eintrag in der Taskbar bekommt.
+Auf der anderen Seite wird es logisch mit dem Haupt-
+fenster verknüpft. Das bedeutet unter anderem, dass
+das Videofenster ebenfalls in den System Tray gedockt
+wird.
+Benötigt einen Neustart von TV-Viewer.}
+
+mcset $lang \
+	{Start TV-Viewer in full-screen mode.} \
+	{TV-Viewer im Vollbild-Modus starten.}
+
+mcset $lang \
+	{With this option enabled, the video window will be
+docked to the system tray with the rest of TV-Viewer.} \
+	{Ist diese Option aktiviert, wird das Videofenster
+ebenfalls in das System Tray gedockt.}
+
+mcset $lang \
+	{Enable this option if you want to dock TV-Viewer after initialization.} \
+	{Aktiviere diese Option, wenn TV-Viewer nach dem Programmstart
+in den System Tray gedockt werden soll.}
+
+mcset $lang \
+	{Docks the application into the system tray if the
+main window is minimized.} \
+	{Die Anwendung wird in den System Tray gedockt wenn
+das Hauptfenster minimiert wird.}
+
+mcset $lang \
+	{OSD for station name in windowed mode.} \
+	{OSD Sendername im Fenstermodus.}
+
+	mcset $lang \
+	{OSD for station name in full-screen mode.} \
+	{OSD Sendername im Vollbildmodus.}
+
+	mcset $lang \
+	{Change font, color and alignment.} \
+	{Schrift, Farbe, Ausrichtung wählen.}
+
+	mcset $lang \
+	{OSD for Volume; Pan&Scan; Video input in windowed mode.} \
+	{OSD Volume; Pan&Scan; Video input im Fenstermodus.}
+
+	mcset $lang \
+	{OSD for Volume; Pan&Scan; Video input in full-screen mode.} \
+	{OSD Volume; Pan&Scan; Video input im Vollbildmodus.}
+
+	mcset $lang \
+	{OSD for change stations via numbers input in windowed mode.} \
+	{OSD Senderwahl über Ziffern im Fenstermodus.}
+
+	mcset $lang \
+	{OSD for change stations via numbers input in full-screen mode.} \
+	{OSD Senderwahl über Ziffern im Vollbildmodus.}
+
+	mcset $lang \
+	{OSD station list invoked by the mouse cursor in windowed mode.} \
+	{OSD Senderliste über Maus im Fenstermodus.}
+
+	mcset $lang \
+	{OSD station list invoked by the mouse cursor in full-screen mode.} \
+	{OSD Senderliste über Maus im Vollbildmodus.}
+
+	mcset $lang \
+	{Alignment of the station list. Specifies where the widget
+should popup and where you have to move the
+mouse cursor to invoke it.} \
+	{Ausrichtung der Senderliste. Legt fest wo das Widget
+erscheinen soll und wohin man den Mauscursor bewegen
+muss um dieses Ereignis auszulösen.}

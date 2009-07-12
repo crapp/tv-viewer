@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=TV-Viewer
+Name[de]=TV-Viewer
+GenericName=Watch TV on your PC
+GenericName[de]=Watch TV on your PC
+Comment=Watch TV on your PC
+Comment[de]=Watch TV on your PC
+Exec=tv-viewer
+Icon=tv-viewer
+Terminal=false
+Categories=AudioVideo;TV;
+StartupNotify=true
+X-KDE-StartupNotify=false

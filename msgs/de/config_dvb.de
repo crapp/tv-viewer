@@ -1,0 +1,12 @@
+#
+#      Translation file for TV-Viewer
+#      Config wizard dvb section.
+#
+
+mcset $lang \
+	{DVB Settings} \
+	{DVB Einstellungen}
+
+mcset $lang \
+	{Expect more soon} \
+	{Bald mehr}
