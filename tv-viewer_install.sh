@@ -92,7 +92,7 @@ TV-Viewer is not installed!
 
 	puts "\n \n ############################################################################"
 	puts " ####                                                                    ####"
-	puts " ####           Installation of TV-Viewer $option(release_version)                        ####"
+	puts " ####           Installation of TV-Viewer $option(release_version)                      ####"
 	puts " ####                                                                    ####"
 	puts " ############################################################################"
 
@@ -174,26 +174,25 @@ after 1000
 	}
 }
 
-set status_file_tvviewer [catch {file copy -force "$where_is/tv-viewer_main.tcl" "$target/tv-viewer/"} resultat_tvviewerfile]
+set status_file_tvviewer [catch {file copy -force "$where_is/tv-viewer_main.sh" "$target/tv-viewer/"} resultat_tvviewerfile]
 if { $status_file_tvviewer != 0 } {
 	puts "
-Could not copy file: tv-viewer_main.tcl
+Could not copy file: tv-viewer_main.sh
 
 Error message: $resultat_tvviewerfile
 "
 	exit 1
 } else {
 	after 300
-	puts "$target/tv-viewer/tv-viewer_main.tcl"
-	set status_permissions_tvviewer [catch {file attributes "$target/tv-viewer/tv-viewer_main.tcl" -permissions rwxr-xr-x} resultat_permissions_tvviewer]
+	puts "$target/tv-viewer/tv-viewer_main.sh"
+	set status_permissions_tvviewer [catch {file attributes "$target/tv-viewer/tv-viewer_main.sh" -permissions rwxr-xr-x} resultat_permissions_tvviewer]
 	if {$status_permissions_tvviewer != 0} {
 		puts "
-Could not change permissions for: $target/tv-viewer/tv-viewer_main.tcl
+Could not change permissions for: $target/tv-viewer/tv-viewer_main.sh
 
 Error message: $resultat_permissions_tvviewer"
 		exit 1
 	}
-	catch {file rename -force "$target/tv-viewer/tv-viewer_main.tcl" "$target/tv-viewer/tv-viewer_main.sh"}
 }
 
 set filelist [lsort [glob "$where_is/icons/16x16/*"]]
