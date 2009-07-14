@@ -59,9 +59,9 @@ namespace import msgcat::mc
 wm withdraw .
 
 if {[file type [info script]] == "link" } {
-	set where_is [file dirname [file normalize [file readlink [info script]]]]
+	set where_is [file dirname [file dirname [file normalize [file readlink [info script]]]]]
 } else {
-	set where_is [file dirname [file normalize [info script]]]
+	set where_is [file dirname [file dirname [file normalize [info script]]]]
 }
 #~ Test starting with symlink.
 #~ [file dirname [file dirname [file normalize [file join [info script] bogus]]]]
@@ -69,14 +69,14 @@ if {[file type [info script]] == "link" } {
 set where_is_home "$::env(HOME)/.tv-viewer"
 
 if {"$::tcl_platform(machine)" == "x86_64"} {
-	catch {load $where_is/tktray/64/libtktray1.1.so} load_lib_tray
+	catch {load $where_is/extensions/tktray/64/libtktray1.1.so} load_lib_tray
 	puts "loading $::tcl_platform(machine) library"
 	if {[string length [string trim $load_lib_tray]] > 1} {
 		puts "ERROR:
 $load_lib_tray"
 	}
 } else {
-	catch {load $where_is/tktray/32/libtktray1.1.so} load_lib_tray
+	catch {load $where_is/extensions/tktray/32/libtktray1.1.so} load_lib_tray
 	puts "loading $::tcl_platform(machine) library"
 	if {[string length [string trim $load_lib_tray]] > 1} {
 		puts "ERROR:
@@ -99,7 +99,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.3"
+set option(release_version) "0.8.1a1.5"
 
 puts "This is TV-Viewer $option(release_version) ..."
 
@@ -206,13 +206,13 @@ An instance of TV-Viewer is already running."
 }
 unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
 #source autoscroll function for scrollbars and load package autoscroll
-source $::where_is/autoscroll/autoscroll.tcl
+source $::where_is/extensions/autoscroll/autoscroll.tcl
 package require autoscroll
 namespace import ::autoscroll::autoscroll
 #source calendar widget
-source $::where_is/callib/callib.tcl
+source $::where_is/extensions/callib/callib.tcl
 #append fsdialog to auto_path
-set auto_path [linsert $auto_path 0 "$::where_is/fsdialog"]
+set auto_path [linsert $auto_path 0 "$::where_is/extensions/fsdialog"]
 #source read_config to read all config values
 source $::where_is/data/main_read_config.tcl
 #source start options

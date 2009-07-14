@@ -256,14 +256,14 @@ proc option_screen_7 {} {
 			if {$::choice(cb_sched_auto) == 1} {
 				if {[file isdirectory "$::env(HOME)/.config"]} {
 					if {[file isdirectory "$::env(HOME)/.config/autostart"]} {
-						file copy -force "$::where_is/help/tv-viewer_scheduler.desktop" "$::env(HOME)/.config/autostart/"
+						file copy -force "$::where_is/data/tv-viewer_scheduler.desktop" "$::env(HOME)/.config/autostart/"
 					} else {
 						file mkdir "$::env(HOME)/.config/autostart/"
-						file copy -force "$::where_is/help/tv-viewer_scheduler.desktop" "$::env(HOME)/.config/autostart/"
+						file copy -force "$::where_is/data/tv-viewer_scheduler.desktop" "$::env(HOME)/.config/autostart/"
 					}
 				} else {
 					file mkdir "$::env(HOME)/.config/" "$::env(HOME)/.config/autostart/"
-					file copy -force "$::where_is/help/tv-viewer_scheduler.desktop" "$::env(HOME)/.config/autostart/"
+					file copy -force "$::where_is/data/tv-viewer_scheduler.desktop" "$::env(HOME)/.config/autostart/"
 				}
 			} else {
 				catch {file delete "$::env(HOME)/.config/autostart/tv-viewer_scheduler.desktop"}

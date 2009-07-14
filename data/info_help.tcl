@@ -268,7 +268,7 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag configure link_icons -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_icons <Any-Enter> "$nb3.t_license tag configure link_icons $hylink_enter; $nb3.t_license configure -cursor hand1"
 		$nb3.t_license tag bind link_icons <Any-Leave> "$nb3.t_license tag configure link_icons $hylink_leave; $nb3.t_license configure -cursor {}"
-		$nb3.t_license tag bind link_icons <Button-1> {catch {exec sh -c "xdg-open $::where_is/help/icons_license.txt" &}}
+		$nb3.t_license tag bind link_icons <Button-1> {catch {exec sh -c "xdg-open $::where_is/license/icons_license.txt" &}}
 		
 		$nb3.t_license tag configure link_tktray -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_tktray <Any-Enter> "$nb3.t_license tag configure link_tktray $hylink_enter; $nb3.t_license configure -cursor hand1"
@@ -283,7 +283,7 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag configure link_autoscr -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_autoscr <Any-Enter> "$nb3.t_license tag configure link_autoscr $hylink_enter; $nb3.t_license configure -cursor hand1"
 		$nb3.t_license tag bind link_autoscr <Any-Leave> "$nb3.t_license tag configure link_autoscr $hylink_leave; $nb3.t_license configure -cursor {}"
-		$nb3.t_license tag bind link_autoscr <Button-1> {catch {exec sh -c "xdg-open $::where_is/autoscroll/license.terms" &}}
+		$nb3.t_license tag bind link_autoscr <Button-1> {catch {exec sh -c "xdg-open $::where_is/extensions/autoscroll/license.terms" &}}
 		
 		$nb3.t_license tag configure link_fsdialog -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_fsdialog <Any-Enter> "$nb3.t_license tag configure link_fsdialog $hylink_enter; $nb3.t_license configure -cursor hand1"
@@ -291,22 +291,22 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag bind link_fsdialog <Button-1> {catch {exec sh -c "xdg-open http://wiki.tcl.tk/15897" &}}
 		$nb3.t_license configure -state disabled
 		
-		$nb4.t_changelog tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $nb4.t_changelog -size] bold"
+		#~ $nb4.t_changelog tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $nb4.t_changelog -size] bold"
 		
-		set changelog_open [open $::where_is/help/CHANGELOG r]
-		while {[gets $changelog_open line]!=-1} {
-			foreach lines [split $line \n] {
-				if {[string match "*.*.* (\[0-9\].\[0-9\]*)" $lines]} {
-					$nb4.t_changelog insert end "
-$lines
-
-" new_day
-				} else {
-					$nb4.t_changelog insert end "$lines \n"
-				}
-			}
-		}
-		close $changelog_open
+		#~ set changelog_open [open $::where_is/help/CHANGELOG r]
+		#~ while {[gets $changelog_open line]!=-1} {
+			#~ foreach lines [split $line \n] {
+				#~ if {[string match "*.*.* (\[0-9\].\[0-9\]*)" $lines]} {
+					#~ $nb4.t_changelog insert end "
+#~ $lines
+#~ 
+#~ " new_day
+				#~ } else {
+					#~ $nb4.t_changelog insert end "$lines \n"
+				#~ }
+			#~ }
+		#~ }
+		#~ close $changelog_open
 		$nb4.t_changelog configure -state disabled
 		tkwait visibility $w
 		grab $w

@@ -47,9 +47,9 @@ License
 TV-Viewer is distributed under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2 of the
 License, or (at your option) any later version. A copy of this license
-can be found in .../tv-viewer/help/license_gpl-2.0.txt.
+can be found in .../tv-viewer/license/license_gpl-2.0.txt.
 The icons, distributed with TV-Viewer, are covered by different licenses. See 
-.../tv-viewer/help/icons_license.txt
+.../tv-viewer/license/icons_license.txt
 --
 tktray:
 

@@ -839,8 +839,8 @@ proc tv_playerPlayback {tv_bg tv_cont} {
 		}
 	}
 	set winid [expr [winfo id $tv_cont]]
-	#~ lappend mcommand -zoom -nokeepaspect -input conf=$::where_is/help/input.conf {*}{-monitorpixelaspect 1} {*}{-osdlevel 0} -nocorrect-pts {*}{-vf-add screenshot} {*}{-vid 0} {*}{-aid 0} {*}{-channels 2} {*}{-af scaletempo,equalizer=0:0:0:0:0:0:0:0:0:0}
-	lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/help/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
+	#~ lappend mcommand -zoom -nokeepaspect -input conf=$::where_is/shortcuts/input.conf {*}{-monitorpixelaspect 1} {*}{-osdlevel 0} -nocorrect-pts {*}{-vf-add screenshot} {*}{-vid 0} {*}{-aid 0} {*}{-channels 2} {*}{-af scaletempo,equalizer=0:0:0:0:0:0:0:0:0:0}
+	lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/shortcuts/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
 	
 	lappend mcommand -channels [lindex $::option(player_audio_channels) 0]
 	
@@ -1008,8 +1008,8 @@ proc tv_playerPlaybackFile {tv_bg tv_cont handler file} {
 			}
 		}
 		set winid [expr [winfo id $tv_cont]]
-		#~ lappend mcommand -zoom -nokeepaspect -input conf=$::where_is/help/input.conf {*}{-monitorpixelaspect 1} {*}{-osdlevel 0} -nocorrect-pts {*}{-vf-add screenshot} {*}{-vid 0} {*}{-aid 0} {*}{-channels 2} {*}{-af scaletempo,equalizer=0:0:0:0:0:0:0:0:0:0}
-		lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/help/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
+		#~ lappend mcommand -zoom -nokeepaspect -input conf=$::where_is/shortcuts/input.conf {*}{-monitorpixelaspect 1} {*}{-osdlevel 0} -nocorrect-pts {*}{-vf-add screenshot} {*}{-vid 0} {*}{-aid 0} {*}{-channels 2} {*}{-af scaletempo,equalizer=0:0:0:0:0:0:0:0:0:0}
+		lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/shortcuts/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
 		
 		lappend mcommand -channels [lindex $::option(player_audio_channels) 0]
 		
