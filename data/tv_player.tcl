@@ -1889,7 +1889,7 @@ proc tv_playerUi {} {
 		bind $mw <Key-F1> [list info_helpHelp]
 		bind $mw <Control-Key-x> {main_frontendExitViewer}
 		bind $mw <ButtonPress-3> [list tk_popup $mw.rightclickViewer %X %Y]
-		bind $mw <y> {font_chooserUi}
+		bind $mw <y> {puts [info globals]}
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations list, will not activate station selector for video window."

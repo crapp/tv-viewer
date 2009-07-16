@@ -190,7 +190,7 @@ proc station_itemEdit {w} {
 			$wfe.mbVinput add radiobutton \
 			-variable item(mbVinput) \
 			-label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
-			-command [list station_itemVideoNumber $i]
+			-command [list station_itemVideoNumber $i $wfe.e_freq entry_freq]
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
@@ -351,7 +351,7 @@ proc station_itemAdd {w} {
 			$wfe.mbVinput add radiobutton \
 			-variable item(mbVinput) \
 			-label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
-			-command [list station_itemVideoNumber $i]
+			-command [list station_itemVideoNumber $i $wfe.e_freq entry_freq_apply]
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
@@ -447,6 +447,22 @@ proc station_itemDeactivate {w} {
 	}
 }
 
-proc station_itemVideoNumber {vinputnr} {
+proc station_itemVideoNumber {vinputnr widget var} {
 	set ::item(mbVinput_nr) $vinputnr
+	if {[info exists ::choice($var)]} {
+		if {"[string trim $::choice($var)]" != {} && "$::choice($var)" != "xxx"} {
+			set ::item(last_freq) $::choice($var)
+		}
+	}
+	if {$vinputnr != 0} {
+		set ::choice($var) xxx
+		$widget state disabled
+	} else {
+		$widget state !disabled
+		if {[info exists ::item(last_freq)]} {
+			set ::choice($var) $::item(last_freq)
+		} else {
+			set ::choice($var) {}
+		}
+	}
 }

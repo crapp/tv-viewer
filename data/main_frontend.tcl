@@ -688,26 +688,30 @@ proc main_frontendUiTvviewer {} {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 2500 {wm deiconify . ; destroy .splash ; tv_playerUi ; record_schedulerRec record}
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_schedulerRec record}
 				} else {
-					after 2500 {wm deiconify . ; destroy .splash ; tv_playerUi ; event generate . <<teleview>>}
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; event generate . <<teleview>>}
 				}
 			} else {
 				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start tv playback, MPlayer is not installed on this system."
 				flush $::logf_tv_open_append
-				after 2500 {wm deiconify . ; destroy .splash ; tv_playerUi}
+				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
+				$wftop.button_timeshift state disabled
+				$wfbar.mOptions entryconfigure 4 -state disabled
 				event delete <<record>>
 				event delete <<teleview>>
 				bind . <<record>> {}
 				bind . <<teleview>> {}
 			}
 		} else {
-			after 2500 {wm deiconify . ; destroy .splash ; ttv_playerUi}
+			after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; ttv_playerUi}
 			if {[string trim [auto_execok mplayer]] == {}} {
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
+				$wftop.button_timeshift state disabled
+				$wfbar.mOptions entryconfigure 4 -state disabled
 				puts $::logf_tv_open_append "#
 # <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Deactivating Button \"Start TV\" because MPlayer is not installed.
 #"
@@ -728,6 +732,8 @@ proc main_frontendUiTvviewer {} {
 				after 1500 {wm deiconify . ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
+				$wftop.button_timeshift state disabled
+				$wfbar.mOptions entryconfigure 4 -state disabled
 				event delete <<record>>
 				event delete <<teleview>>
 				bind . <<record>> {}
@@ -737,6 +743,8 @@ proc main_frontendUiTvviewer {} {
 			if {[string trim [auto_execok mplayer]] == {}} {
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
+				$wftop.button_timeshift state disabled
+				$wfbar.mOptions entryconfigure 4 -state disabled
 				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Deactivating Button \"Start TV\" because MPlayer is not installed."
 				flush $::logf_tv_open_append
 				event delete <<record>>
