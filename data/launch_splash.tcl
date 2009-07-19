@@ -19,19 +19,19 @@
 proc launch_splash_screen {} {
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching splash screen..."
 	flush $::logf_tv_open_append
-	#~ set img_list [launch_splashAnigif /home/saedelaere/Projekte/tv-viewer/grundlagen/roller.gif]
+	set img_list [launch_splashAnigif "$::where_is/icons/extras/animated_loading.gif"]
 	set w [toplevel .splash -borderwidth 0 -relief raised -highlightthickness 0]
 	set f_img [frame $w.f_img -background #414141]
 	set f_pb [frame $w.f_pb -background #414141]
-	label $f_img.l -image $::icon_e(logo_splash_tux_tv-viewer08x) -borderwidth 0
-	#~ label $f_pb.l -image [lindex $img_list 0] -borderwidth 0 -background #414141 -foreground #414141
+	label $f_img.l -image $::icon_e(logo-tv-viewer08x-noload) -borderwidth 0
+	label $f_pb.l -image [lindex $img_list 0] -borderwidth 0 -background #414141 -foreground #414141
 	
 	grid $f_img -in $w -row 0 -column 0 \
 	-sticky nesw
 	grid $f_img.l -in $f_img -row 0 -column 0 \
 	-sticky nesw
-	#~ grid $f_pb.l -in $f_pb -row 0 -column 0 \
-	#~ -sticky nesw
+	grid $f_pb.l -in $f_pb -row 0 -column 0 \
+	-sticky nesw
 	grid rowconfigure $f_img 0 -weight 1
 	grid rowconfigure $f_pb 0 -weight 1
 	grid columnconfigure $f_img 0 -weight 1
@@ -40,9 +40,9 @@ proc launch_splash_screen {} {
 	wm overrideredirect $w 1
 	::tk::PlaceWindow $w
 	tkwait visibility $w
-	#~ place $f_pb -in $w -anchor se -relx 1.0 -rely 1.0 -x -4 -y -3
-	#~ set img_list_length [llength $img_list]
-	#~ after 0 [list launch_splashPlay $img_list $img_list_length 1 $f_pb.l]
+	place $f_pb -in $w -anchor se -relx 1.0 -rely 1.0 -x -4 -y -3
+	set img_list_length [llength $img_list]
+	after 0 [list launch_splashPlay $img_list $img_list_length 1 $f_pb.l]
 }
 
 proc launch_splashAnigif {gif} {
@@ -69,5 +69,5 @@ proc launch_splashPlay {img_list img_list_length index container} {
 		set index 0
 	}
 	$container configure -image [lindex $img_list $index]
-	set ::splash(after_id) [after 250 [list launch_splashPlay $img_list $img_list_length [incr index] $container]]
+	set ::splash(after_id) [after 100 [list launch_splashPlay $img_list $img_list_length [incr index] $container]]
 }

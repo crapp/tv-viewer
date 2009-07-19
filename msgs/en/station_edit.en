@@ -130,10 +130,6 @@ mcset $lang \
 	{Start}
 
 mcset $lang \
-	{Choose video input on which stations should be searched.} \
-	{Choose video input on which stations should be searched.}
-
-mcset $lang \
 	{Append stations to existing list.
 Otherwise the existing list will be deleted.} \
 	{Append stations to existing list.

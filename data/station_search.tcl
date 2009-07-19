@@ -32,16 +32,6 @@ proc station_searchUi {tree} {
 	ttk::labelframe $mf.lf_search \
 	-text [mc "Station search options"]
 	
-	#~ ttk::label $mf.l_lf_vinput \
-	#~ -text [mc "Video input:"]
-	#~ 
-	#~ ttk::menubutton $mf.mb_lf_vinput \
-	#~ -menu $mf.mbVinput \
-	#~ -textvariable search(mbVinput)
-	#~ menu $mf.mbVinput \
-	#~ -tearoff 0 \
-	#~ -background $::option(theme_$::option(use_theme))
-	
 	ttk::checkbutton $mf.cb_lf_search_append \
 	-text [mc "Append stations to existing list"] \
 	-variable search(append)
@@ -95,14 +85,6 @@ proc station_searchUi {tree} {
 	-sticky ew \
 	-padx 3 \
 	-pady "5 0"
-	#~ grid $mf.l_lf_vinput -in $mf.lf_search -row 0 -column 0 \
-	#~ -sticky w \
-	#~ -padx 3 \
-	#~ -pady 3
-	#~ grid $mf.mb_lf_vinput -in $mf.lf_search -row 0 -column 1 \
-	#~ -sticky ew \
-	#~ -padx 3 \
-	#~ -pady "0 3"
 	grid $mf.cb_lf_search_append -in $mf.lf_search -row 0 -column 0 \
 	-columnspan 2 \
 	-sticky w \
@@ -152,10 +134,6 @@ proc station_searchUi {tree} {
 	if {$status_vid_inputs == 0} {
 		set i 0
 		foreach vi [split $resultat_vid_inputs \n] {
-			#~ $mf.mbVinput add radiobutton \
-			#~ -variable search(mbVinput) \
-			#~ -label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
-			#~ -command [list station_searchVideoNumber $i]
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
@@ -174,7 +152,6 @@ proc station_searchUi {tree} {
 	}
 	if {$::option(tooltips) == 1} {
 		if {$::option(tooltips_editor) == 1} {
-			#~ settooltip $mf.mb_lf_vinput [mc "Choose video input on which stations should be searched."]
 			settooltip $mf.cb_lf_search_append [mc "Append stations to existing list.
 Otherwise the existing list will be deleted."]
 			settooltip $mf.cb_lf_search_full [mc "Perform a full frequency sweep.
@@ -191,7 +168,6 @@ enough time to report if there is a signal on the current frequency.
 As a result not all stations will be found."]
 			settooltip $bf.b_ok [mc "Start station search."]
 		} else {
-			#~ settooltip $mf.mb_lf_vinput {}
 			settooltip $mf.cb_lf_search_append {}
 			settooltip $mf.cb_lf_search_full {}
 			settooltip $mf.mb_lf_search_full_dist {}
@@ -199,7 +175,6 @@ As a result not all stations will be found."]
 			settooltip $bf.b_ok {}
 		}
 	} else {
-		#~ settooltip $mf.mb_lf_vinput {}
 		settooltip $mf.cb_lf_search_append {}
 		settooltip $mf.cb_lf_search_full {}
 		settooltip $mf.mb_lf_search_full_dist {}
