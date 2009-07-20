@@ -149,7 +149,6 @@ proc config_wizardMainUi {} {
 	
 	tkwait visibility $w
 	grab $w
-	focus $w
 }
 
 proc config_wizardListbox {} {

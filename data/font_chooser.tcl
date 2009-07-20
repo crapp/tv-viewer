@@ -277,8 +277,8 @@ proc font_chooserUiCol {pre_entry} {
 }
 
 proc font_chooserUiAlign {value cvar} {
-	set ::choice($cvar) [lreplace $::choice($cvar) 4 4 [lindex $value 1]]
 	set ::font_chooser(mb_align) [lindex $value 0]
+	set ::font_chooser(mb_align_value) [lindex $value 1]
 }
 
 proc font_chooserUiApply {lb1 lb2 lb3 returnw cvar} {
@@ -290,7 +290,7 @@ proc font_chooserUiApply {lb1 lb2 lb3 returnw cvar} {
 	} else {
 		$returnw configure -text "$font - $style | $size"
 	}
-	set ::choice($cvar) [list [lindex $::choice($cvar) 0] $font $style $size [lindex $::choice($cvar) 4] [$::icon_e(pick-color3) cget -foreground]]
+	set ::choice($cvar) [list [lindex $::choice($cvar) 0] $font $style $size $::font_chooser(mb_align_value) [$::icon_e(pick-color3) cget -foreground]]
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen font $::choice($cvar)"
 	flush $::logf_tv_open_append
 	grab release .config_wizard.fontchooser

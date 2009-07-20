@@ -400,13 +400,14 @@ proc option_screen_6 {} {
 			$frame_nb3.mbOsd_mouse_w add radiobutton \
 			-label "$key" \
 			-value "{$key} $elem" \
+			-variable config_int(radiobutton_osd_mouse_w) \
 			-command [list config_interfaceAlign "{$key} $elem" osd_mouse_w]
 			$frame_nb3.mbOsd_mouse_f add radiobutton \
 			-label "$key" \
 			-value "{$key} $elem" \
+			-variable config_int(radiobutton_osd_mouse_f) \
 			-command [list config_interfaceAlign "{$key} $elem" osd_mouse_f]
 		}
-		
 		# Subprocs
 		
 		proc config_interfaceTheme {theme} {

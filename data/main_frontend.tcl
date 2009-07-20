@@ -126,6 +126,15 @@ proc main_frontendShowslist {w} {
 			bind $wflbox.listbox_slist <Key-Prior> {break}
 			bind $wflbox.listbox_slist <Key-Next> {break}
 			$wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
+			bind . <Configure> {
+				if {[winfo ismapped .frame_slistbox]} {
+					if {[winfo height .frame_slistbox] < 36} {
+						bind . <Configure> {}
+						main_frontendShowslist .bottom_buttons
+						.bottom_buttons.button_showslist state !pressed
+					}
+				}
+			}
 			$wflbox.listbox_slist see [$wflbox.listbox_slist curselection]
 			set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 			set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
@@ -156,10 +165,22 @@ proc main_frontendShowslist {w} {
 				wm geometry . [winfo width .]x$newheight
 				wm resizable . 1 1
 			}
+			bind . <Configure> {
+				if {[winfo ismapped .frame_slistbox]} {
+					if {[winfo height .frame_slistbox] < 36} {
+						bind . <Configure> {}
+						main_frontendShowslist .bottom_buttons
+						.bottom_buttons.button_showslist state !pressed
+					}
+				}
+			}
 		} else {
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing station list from grid manager."
 			flush $::logf_tv_open_append
 			set ::main(slist_height) [winfo height $wflbox]
+			if {$::main(slist_height) < 36} {
+				set ::main(slist_height) 37
+			}
 			set newheight [expr [winfo height .] - $::main(slist_height)]
 			grid remove $wflbox
 			wm geometry . [lindex [wm minsize .] 0]x$newheight
@@ -762,7 +783,11 @@ proc main_frontendUiTvviewer {} {
 			settooltip .tray [mc "TV-Viewer idle"]
 		}
 		tkwait visibility .
-		 main_systemTrayToggle
+		wm minsize . [winfo reqwidth .] [winfo reqheight .]
+		main_systemTrayToggle
+	} else {
+		tkwait visibility .
+		wm minsize . [winfo reqwidth .] [winfo reqheight .]
 	}
 	if {$::option(show_slist) == 1} {
 		main_frontendShowslist $wfbottom
@@ -781,5 +806,4 @@ proc main_frontendUiTvviewer {} {
 		bind . <Unmap> {}
 		bind . <Map> {}
 	}
-	wm minsize . [winfo reqwidth .] [winfo reqheight .]
 }

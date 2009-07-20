@@ -22,14 +22,24 @@ proc tv_playerFullscreen {mw tv_cont tv_bg} {
 		if {[winfo exists .tv.file_play_bar] == 1} {
 			if {[string trim [grid info .tv.file_play_bar]] != {}} {
 				grid remove .tv.file_play_bar
-				bind $tv_cont <Motion> {tv_playerCursorHide .tv.bg.w 0
-										tv_playerCursorPlaybar %Y}
-				bind $tv_bg <Motion> {tv_playerCursorHide .tv.bg 0
-									  tv_playerCursorPlaybar %Y}
+				bind $tv_cont <Motion> {
+					tv_playerCursorHide .tv.bg.w 0
+					tv_playerCursorPlaybar %Y
+				}
+				bind $tv_bg <Motion> {
+					tv_playerCursorHide .tv.bg 0
+					tv_playerCursorPlaybar %Y
+				}
 				.tv.file_play_bar.b_fullscreen configure -image $::icon_m(nofullscreen)
 			} else {
-				bind $tv_cont <Motion> {tv_playerCursorHide .tv.bg.w 0}
-				bind $tv_bg <Motion> {tv_playerCursorHide .tv.bg 0}
+				bind $tv_cont <Motion> {
+					tv_playerCursorHide .tv.bg.w 0
+					tv_playerCursorSlist %X %Y
+				}
+				bind $tv_bg <Motion> {
+					tv_playerCursorHide .tv.bg 0
+					tv_playerCursorSlist %X %Y
+				}
 			}
 			bind $mw <ButtonPress-1> {.tv.bg.w configure -cursor arrow
 									  .tv.bg configure -cursor arrow}
@@ -48,12 +58,18 @@ proc tv_playerFullscreen {mw tv_cont tv_bg} {
 			flush $::logf_tv_open_append
 			return
 		} else {
-			bind $tv_cont <Motion> {tv_playerCursorHide .tv.bg.w 0
-									tv_playerCursorSlist %X %Y}
-			bind $tv_bg <Motion> {tv_playerCursorHide .tv.bg 0
-								  tv_playerCursorSlist %X %Y}
-			bind $mw <ButtonPress-1> {.tv.bg.w configure -cursor arrow
-									  .tv.bg configure -cursor arrow}
+			bind $tv_cont <Motion> {
+				tv_playerCursorHide .tv.bg.w 0
+				tv_playerCursorSlist %X %Y
+			}
+			bind $tv_bg <Motion> {
+				tv_playerCursorHide .tv.bg 0
+				tv_playerCursorSlist %X %Y
+			}
+			bind $mw <ButtonPress-1> {
+				.tv.bg.w configure -cursor arrow
+				.tv.bg configure -cursor arrow
+			}
 			set ::cursor($tv_cont) ""
 			set ::cursor($tv_bg) ""
 			tv_playerCursorHide $tv_cont 0
@@ -94,8 +110,8 @@ proc tv_playerFullscreen {mw tv_cont tv_bg} {
 			focus .tv
 			place forget .tv.slist_lirc
 		}
-		bind $tv_cont <Motion> {}
-		bind $tv_bg <Motion> {}
+		bind $tv_cont <Motion> {tv_playerCursorSlist %X %Y}
+		bind $tv_bg <Motion> {tv_playerCursorSlist %X %Y}
 		bind $mw <ButtonPress-1> {}
 		set ::cursor($tv_cont) ""
 		set ::cursor($tv_bg) ""
@@ -167,19 +183,29 @@ proc tv_playerCursorSlist {xpos ypos} {
 			8 {-anchor se -relx 1.0 -rely 1.0 -x -10 -y -10}
 		}
 		array set pos {
-			0 {$xpos < 40}
-			3 {$xpos < 40}
-			6 {$xpos < 40}
-			2 {$xpos > [expr [winfo screenwidth .] - 40]}
-			5 {$xpos > [expr [winfo screenwidth .] - 40]}
-			8 {$xpos > [expr [winfo screenwidth .] - 40]}
-			1 {$ypos > [expr [winfo screenheight .] - 40]}
-			7 {$ypos < 40}
+			0 {$xpos < 40 && $ypos < 40}
+			3 {$xpos < 40 && $ypos > [expr ([winfo screenheight .] / 2.0) - 40] && $ypos < [expr ([winfo screenheight .] / 2.0) + 40]}
+			6 {$xpos < 40 && $ypos > [expr [winfo screenheight .] - 40]}
+			2 {$xpos > [expr [winfo screenwidth .] - 40] && $ypos < 40}
+			5 {$xpos > [expr [winfo screenwidth .] - 40] && $ypos > [expr ([winfo screenheight .] / 2.0) - 40] && $ypos < [expr ([winfo screenheight .] / 2.0) + 40]}
+			8 {$xpos > [expr [winfo screenwidth .] - 40] && $ypos > [expr [winfo screenheight .] - 40]}
+			1 {$ypos < 40 && $xpos > [expr ([winfo screenwidth .] / 2.0) - 40] && $xpos < [expr ([winfo screenwidth .] / 2.0) + 40]}
+			7 {$ypos > [expr [winfo screenheight .] - 40] && $xpos > [expr ([winfo screenwidth .] / 2.0) - 40] && $xpos < [expr ([winfo screenwidth .] / 2.0) + 40]}
+		}
+		array set pos_win {
+			0 {[winfo pointerx .tv] < [expr [winfo x .tv] + 40] && [winfo pointery .tv] < [expr [winfo y .tv] + 40]}
+			3 {[winfo pointerx .tv] < [expr [winfo x .tv] + 40] && [winfo pointery .tv] < [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) + 40] && [winfo pointery .tv] > [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) - 40]}
+			6 {[winfo pointerx .tv] < [expr [winfo x .tv] + 40] && [winfo pointery .tv] > [expr ([winfo height .tv] + [winfo y .tv]) - 40]}
+			2 {[winfo pointerx .tv] > [expr ([winfo width .tv] + [winfo x .tv]) - 40] && [winfo pointery .tv] < [expr [winfo y .tv] + 40]}
+			5 {[winfo pointerx .tv] > [expr ([winfo width .tv] + [winfo x .tv]) - 40] && [winfo pointery .tv] < [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) + 40] && [winfo pointery .tv] > [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) - 40]}
+			8 {[winfo pointerx .tv] > [expr ([winfo width .tv] + [winfo x .tv]) - 40] && [winfo pointery .tv] > [expr ([winfo height .tv] + [winfo y .tv]) - 40]}
+			1 {[winfo pointerx .tv] < [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) + 40] && [winfo pointerx .tv] > [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) - 40] && [winfo pointery .tv] < [expr [winfo y .tv] + 40]}
+			7 {[winfo pointerx .tv] < [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) + 40] && [winfo pointerx .tv] > [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) - 40] && [winfo pointery .tv] > [expr ([winfo height .tv] + [winfo y .tv]) - 40]}
 		}
 		if {[string trim [place info .tv.slist]] == {}} {
 			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_mouse_w) 0] == 1} {
 				set bias [lindex $::option(osd_mouse_w) 1]
-				if $pos($bias) {
+				if $pos_win($bias) {
 					place .tv.slist -in .tv {*}$alignment($bias)
 					focus .tv.slist.lb_station
 					.tv.slist.lb_station selection set [expr [lindex $::station(last) 2] - 1]
