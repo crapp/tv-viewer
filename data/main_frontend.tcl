@@ -727,7 +727,7 @@ proc main_frontendUiTvviewer {} {
 				bind . <<teleview>> {}
 			}
 		} else {
-			after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; ttv_playerUi}
+			after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
 			if {[string trim [auto_execok mplayer]] == {}} {
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled

@@ -21,18 +21,22 @@ proc info_helpHelp {} {
 		tv_playerFullscreen .tv .tv.bg.w .tv.bg
 	}
 	if {$::option(language_value) != 0} {
-		catch {exec sh -c "xdg-open $::where_is/help/TV-Viewer_0.8.x_userguide_$::option(language_value).html" &}
+		catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$::option(language_value).html" &}
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Trying to open userguide..."
 		flush $::logf_tv_open_append
 	} else {
-		set locale_split [lindex [split $::env(LANG) _] 0]
-		if {[file exists "$::where_is/help/TV-Viewer_0.8.x_userguide_$locale_split.html"] == 0} {
-			catch {exec sh -c "xdg-open $::where_is/help/TV-Viewer_0.8.x_userguide_en.html" &}
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] There is no translated userguide for $::env(LANG)
+		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
+		array set locales {
+			en english
+			de german
+		}
+		if {[string trim [array get locales $locale_split]] == {}} {
+			catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_en.html" &}
+			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] There is no translation of the userguide for $::env(LANG)
 # <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Will open english userguide."
 			flush $::logf_tv_open_append
 		} else {
-			catch {exec sh -c "xdg-open $::where_is/help/TV-Viewer_0.8.x_userguide_$locale_split.html" &}
+			catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$locale_split.html" &}
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Trying to open userguide..."
 			flush $::logf_tv_open_append
 		}
@@ -254,7 +258,8 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license insert end "license terms" link_autoscr
 		$nb3.t_license insert end "\n"
 		$nb3.t_license insert end "\nfsdialog" big
-		$nb3.t_license insert end "\n\nfsdialog" link_fsdialog
+		$nb3.t_license insert end "\n\n"
+		$nb3.t_license insert end "fsdialog" link_fsdialog
 		$nb3.t_license insert end " is freely redistributable and copyrighted by Schelte Bron."
 		$nb3.t_license insert end "\n"
 		
@@ -291,23 +296,25 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag bind link_fsdialog <Button-1> {catch {exec sh -c "xdg-open http://wiki.tcl.tk/15897" &}}
 		$nb3.t_license configure -state disabled
 		
-		#~ $nb4.t_changelog tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $nb4.t_changelog -size] bold"
+		$nb4.t_changelog insert end "The changelog of TV-Viewer is now managed by bazaar, hosted on " 
+		$nb4.t_changelog insert end "sourceforge.net" link_sourceforge_bazaar
+		$nb4.t_changelog insert end "\n\nThe older, no longer maintained, version of the changelog can be found "
+		$nb4.t_changelog insert end "\non the "
+		$nb4.t_changelog insert end "homepage" link_changelog
+		$nb4.t_changelog insert end "."
 		
-		#~ set changelog_open [open $::where_is/help/CHANGELOG r]
-		#~ while {[gets $changelog_open line]!=-1} {
-			#~ foreach lines [split $line \n] {
-				#~ if {[string match "*.*.* (\[0-9\].\[0-9\]*)" $lines]} {
-					#~ $nb4.t_changelog insert end "
-#~ $lines
-#~ 
-#~ " new_day
-				#~ } else {
-					#~ $nb4.t_changelog insert end "$lines \n"
-				#~ }
-			#~ }
-		#~ }
-		#~ close $changelog_open
+		$nb4.t_changelog tag configure link_sourceforge_bazaar -foreground #0064FF -underline on
+		$nb4.t_changelog tag bind link_sourceforge_bazaar <Any-Enter> "$nb4.t_changelog tag configure link_sourceforge_bazaar $hylink_enter; $nb4.t_changelog configure -cursor hand1"
+		$nb4.t_changelog tag bind link_sourceforge_bazaar <Any-Leave> "$nb4.t_changelog tag configure link_sourceforge_bazaar $hylink_leave; $nb4.t_changelog configure -cursor {}"
+		$nb4.t_changelog tag bind link_sourceforge_bazaar <Button-1> {catch {exec sh -c "xdg-open http://tv-viewer.bzr.sourceforge.net/bzr/tv-viewer/changes" &}}
+		
+		$nb4.t_changelog tag configure link_changelog -foreground #0064FF -underline on
+		$nb4.t_changelog tag bind link_changelog <Any-Enter> "$nb4.t_changelog tag configure link_changelog $hylink_enter; $nb4.t_changelog configure -cursor hand1"
+		$nb4.t_changelog tag bind link_changelog <Any-Leave> "$nb4.t_changelog tag configure link_changelog $hylink_leave; $nb4.t_changelog configure -cursor {}"
+		$nb4.t_changelog tag bind link_changelog <Button-1> {catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/tv-viewerfiles/CHANGELOG" &}}
+		
 		$nb4.t_changelog configure -state disabled
+		
 		tkwait visibility $w
 		grab $w
 	}
