@@ -21,7 +21,7 @@ proc station_preview {w} {
 	flush $::logf_tv_open_append
 	set status_tv_playback [tv_playerMplayerRemote alive]
 	if {$status_tv_playback != 1} {
-		tv_stop_playback
+		tv_playbackStop 0 pic
 	} else {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
@@ -29,9 +29,9 @@ proc station_preview {w} {
 			set freq [lindex [$w item [lindex [$w selection] end] -values] 1]
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
 			wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
-			tv_playerPlayback .tv.bg .tv.bg.w
+			tv_Playback .tv.bg .tv.bg.w 0 0
 		} else {
-			tv_stop_playback
+			tv_playbackStop 0 nopic
 			main_stationInputLoop cancel 0 0 0 0 0
 			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
 			wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
@@ -51,7 +51,7 @@ proc station_change {w} {
 			wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
 			return
 		} else {
-			tv_stop_playback
+			tv_playbackStop 0 nopic
 			main_stationInputLoop cancel 0 0 0 0 0
 			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
 			wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
@@ -97,7 +97,7 @@ proc exit_station_editor {} {
 	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
 		set status_tv_playback [tv_playerMplayerRemote alive]
 		if {$status_tv_playback != 1} {
-			tv_stop_playback
+			tv_playbackStop 0 nopic
 		}
 		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations_$::option(frequency_table).conf
 # <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please create one using the Station Editor.
@@ -153,7 +153,7 @@ proc exit_station_editor {} {
 	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 		set status_tv_playback [tv_playerMplayerRemote alive]
 		if {$status_tv_playback != 1} {
-			tv_stop_playback
+			tv_playbackStop 0 pic
 		}
 		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Disabling widgets due to no valid stations file."
 		flush $::logf_tv_open_append

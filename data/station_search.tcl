@@ -203,7 +203,7 @@ proc station_searchVideoNumber {vinput_nr} {
 proc station_searchRequires {tree} {
 	set status_tv_playback [tv_playerMplayerRemote alive]
 	if {$status_tv_playback != 1} {
-		tv_stop_playback
+		tv_playbackStop 0 pic
 	}
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching station search."
 	flush $::logf_tv_open_append

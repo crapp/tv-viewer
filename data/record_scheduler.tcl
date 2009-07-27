@@ -45,7 +45,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.9"
+set option(release_version) "0.8.1a1.10"
 
 if {[file isdirectory $::where_is_home] == 0} {
 	puts "
@@ -349,7 +349,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 			after 3000 [list scheduler_rec $jobid 0 $rec_pid $duration_calc]
 		} else {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$::kanalinput($snumber)}
-			puts $::logf_sched_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Changed video input to $input."
+			puts $::logf_sched_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Trying to change video input to $::kanalinput($snumber)..."
 			flush $::logf_sched_open_append
 			set ::scheduler(change_inputLoop_id) [after 100 [list scheduler_change_inputLoop [expr $secs + 100] $snumber $jobid]]
 		}

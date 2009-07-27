@@ -99,7 +99,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.9"
+set option(release_version) "0.8.1a1.10"
 
 puts "This is TV-Viewer $option(release_version) ..."
 
@@ -260,6 +260,8 @@ main_readStationFile
 source $::where_is/data/main_picqual_stream.tcl
 #source tv player and related functions
 source $::where_is/data/tv_player.tcl
+source $::where_is/data/tv_playback.tcl
+source $::where_is/data/tv_seek.tcl
 #source tv osd
 source $::where_is/data/tv_osd.tcl
 #source newsreader ui and update checker.

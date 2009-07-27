@@ -38,12 +38,12 @@ proc main_frontendExitViewer {} {
 		if {[winfo exists .tv.file_play_bar]} {
 			set status_tv [tv_playerMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_stop_playback_file 0
+				tv_playbackStop 0 nopic
 			}
 		} else {
 			set status_tv [tv_playerMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_stop_playback
+				tv_playbackStop 0 pic
 			}
 		}
 	}
@@ -288,7 +288,7 @@ Please wait..."] \
 		
 		$mf.pgb_diagnostic start 10
 		
-		tv_stop_playback
+		tv_playbackStop 0 pic
 		
 		catch {exec "$::where_is/data/tv-viewer_diag.tcl" &}
 		proc main_frontendDiagnosticFinished {} {
@@ -515,7 +515,7 @@ proc main_frontendUiTvviewer {} {
 	-compound left \
 	-image $::icon_s(settings) \
 	-accelerator [mc "Ctrl+P"] \
-	-command {tv_stop_playback ; config_wizardMainUi}
+	-command {tv_playbackStop 0 pic ; config_wizardMainUi}
 	$wfbar.mOptions add command \
 	-label [mc "Station Editor"] \
 	-compound left \
@@ -597,7 +597,7 @@ proc main_frontendUiTvviewer {} {
 		bind . <Key-F1> [list info_helpHelp]
 		bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
 		bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
-		bind . <Control-Key-p> {tv_stop_playback ; config_wizardMainUi}
+		bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 		bind . <Control-Key-m> {colorm_mainUi}
 		bind . <Control-Key-e> {main_ui_seditor}
 		bind . <Control-Key-x> {main_frontendExitViewer}
@@ -626,7 +626,7 @@ proc main_frontendUiTvviewer {} {
 		bind . <Key-F1> [list info_helpHelp]
 		bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
 		bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
-		bind . <Control-Key-p> {tv_stop_playback ; config_wizardMainUi}
+		bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 		bind . <Control-Key-m> {colorm_mainUi}
 		bind . <Control-Key-e> {main_ui_seditor}
 		bind . <Control-Key-x> {main_frontendExitViewer}

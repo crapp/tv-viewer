@@ -36,7 +36,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) "0.8.1a1.9"
+set option(release_version) "0.8.1a1.10"
 
 array set start_options {--uninstall 0}
 foreach argumente $argv {set start_options($argumente) 1}
@@ -92,7 +92,7 @@ TV-Viewer is not installed!
 
 	puts "\n \n ############################################################################"
 	puts " ####                                                                    ####"
-	puts " ####           Installation of TV-Viewer $option(release_version)                      ####"
+	puts " ####           Installation of TV-Viewer $option(release_version)                     ####"
 	puts " ####                                                                    ####"
 	puts " ############################################################################"
 

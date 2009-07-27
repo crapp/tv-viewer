@@ -347,12 +347,13 @@ proc tv_playerGetVidData {} {
 	if {[info exists ::data(mplayer)]} {
 		gets $::data(mplayer) line
 		if {[eof $::data(mplayer)]} {
+			puts eof
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer reported end of file. Playback is stopped."
 			flush $::logf_tv_open_append
 			catch {close $::data(mplayer)}
 			unset ::data(mplayer)
 			place forget .tv.bg.w
-			place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
+			#~ place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
 			bind .tv.bg.w <Configure> {}
 			if {[winfo exists .station]} {
 				.station.top_buttons.b_station_preview state !pressed
@@ -364,8 +365,8 @@ proc tv_playerGetVidData {} {
 			if {[winfo exists .tv.file_play_bar] == 1} {
 				.tv.file_play_bar.b_play state !disabled
 				.tv.file_play_bar.b_pause state disabled
-				.tv.file_play_bar.b_play configure -command {tv_playerPlaybackFile .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
-				bind .tv <<start>> {tv_playerPlaybackFile .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+				.tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+				bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
 				set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
@@ -432,6 +433,11 @@ proc tv_playerGetVidData {} {
 				after 10 [list tv_playerComputeFilePos $::data(file_pos_calc)]
 			}
 			if {[string match -nocase "Starting playback*" $line]} {
+				catch {launch_splashPlay cancel 0 0 0}
+				catch {place forget .tv.l_anigif}
+				catch {destroy .tv.l_anigif}
+				place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1
+				bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				tv_volume_control .bottom_buttons $::volume_scale
 				set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 				set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
@@ -463,21 +469,21 @@ proc tv_playerGetVidData {} {
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
 					after 10 [list tv_playerComputeFilePos 0]
-					bind .tv <<forward_end>> {tv_playerInitiateSeek "tv_playerSeek 0 2"}
-					bind .tv <<forward_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 1"}
-					bind .tv <<forward_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 1"}
-					bind .tv <<forward_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 1"}
-					bind .tv <<rewind_10s>> {tv_playerInitiateSeek "tv_playerSeekk 10 -1"}
-					bind .tv <<rewind_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 -1"}
-					bind .tv <<rewind_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 -1"}
-					bind .tv <<rewind_start>> {tv_playerInitiateSeek "tv_playerSeek 0 -2"}
+					bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+					bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+					bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+					bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+					bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+					bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+					bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+					bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
 				} else {
 					tv_playerComputeFilePos cancel
 					set pos [lindex [split $line \=] end]
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
 					after 10 [list tv_playerComputeFilePos 0]
-					tv_playerSeek $::tv(seek_secs) $::tv(seek_dir)
+					tv_seek $::tv(seek_secs) $::tv(seek_dir)
 				}
 			}
 			set ::data(report) $line
@@ -770,546 +776,6 @@ proc tv_volume_control {wfbottom value} {
 	}
 }
 
-proc tv_playerPlayback {tv_bg tv_cont} {
-	array set vopt {
-		x11 {-vo x11}
-		xv {-vo xv}
-		xvmc {-vo xvmc:bobdeint -vc ffmpeg12mc}
-		vdpau {-vo vdpau:deint=4 -vc ffmpeg12vdpau}
-		gl {-vo gl}
-		gl(fast) {-vo gl:yuv=2:force-pbo}
-		{gl(fast ATI)} {-vo gl:yuv=2:force-pbo:ati-hack}
-		gl(yuv) {-vo gl:yuv=3}
-		gl2 {-vo gl2}
-		gl2(yuv) {-vo gl2:yuv=3}
-	}
-	
-	array set dopt {
-		None {-vf }
-		Lowpass5 {-vf pp=l5}
-		Yadif {-vf yadif}
-		Yadif(1) {-vf yadif=1}
-		LinearBlend {-vf pp=lb}
-		{Kernel deinterlacer} {-vf kerndeint=5}
-	}
-	
-	array set aopt {
-		oss {-ao oss}
-		alsa {-ao alsa}
-		pulse {-ao pulse}
-		sdl {-ao sdl}
-	}
-	array set copt {
-		0 {}
-		512 {-cache 512}
-		1024 {-cache 1024}
-		2048 {-cache 2048}
-		4096 {-cache 4096}
-		8192 {-cache 8192}
-		16384 {-cache 16384}
-	}
-	
-	array set cbopt {
-		dr(0) {-nodr}
-		dr(1) {-dr}
-		double(0) {-nodouble}
-		double(1) {-double}
-		slice(0) {-noslices}
-		slice(1) {-slices}
-		fd(0) {}
-		fd(1) {-framedrop}
-		hfd(0) {}
-		hfd(1) {-hardframedrop}
-		autoq(0) {}
-		autoq(1) {,pp -autoq 1}
-		autoq(2) {,pp -autoq 2}
-		autoq(3) {,pp -autoq 3}
-		autoq(4) {,pp -autoq 4}
-		autoq(5) {,pp -autoq 5}
-		autoq(6) {,pp -autoq 6}
-		softvol(0) {}
-		softvol(1) {-softvol}
-	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting tv playback..."
-	flush $::logf_tv_open_append
-	
-	bind . <<teleview>> {}
-	bind .tv <<teleview>> {}
-	
-	lappend mcommand {*}[auto_execok mplayer] -quiet -slave
-	
-	if {[string match *adaptor* $::option(player_vo)] == 1} {
-		lappend mcommand -vo xv:[lindex $::option(player_vo) 1]
-	} else {
-		lappend mcommand {*}$vopt($::option(player_vo))
-	}
-	lappend mcommand {*}$aopt($::option(player_audio))
-	if {[string trim $cbopt(softvol\($::option(player_aud_softvol)\))] != {}} {
-		lappend mcommand {*}$cbopt(softvol\($::option(player_aud_softvol)\))
-	}
-	
-	if {[string trim $copt($::option(player_cache))] != {}} {
-		lappend mcommand {*}$copt($::option(player_cache))
-	}
-	lappend mcommand {*}$cbopt(dr\($::option(player_dr)\))
-	lappend mcommand {*}$cbopt(double\($::option(player_double)\))
-	lappend mcommand {*}$cbopt(slice\($::option(player_slice)\))
-	lappend mcommand {*}$cbopt(fd\($::option(player_fd)\))
-	lappend mcommand {*}$cbopt(hfd\($::option(player_hfd)\))
-	
-	if {$::option(player_screens) == 1} {
-		if {$::option(player_screens_value) == 0} {
-			lappend mcommand -stop-xscreensaver
-		} else {
-			set ::data(heartbeat_id) [after 30000 tv_playerHeartbeatCmd 0]
-		}
-	}
-	set winid [expr [winfo id $tv_cont]]
-	#~ lappend mcommand -zoom -nokeepaspect -input conf=$::where_is/shortcuts/input.conf {*}{-monitorpixelaspect 1} {*}{-osdlevel 0} -nocorrect-pts {*}{-vf-add screenshot} {*}{-vid 0} {*}{-aid 0} {*}{-channels 2} {*}{-af scaletempo,equalizer=0:0:0:0:0:0:0:0:0:0}
-	lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/shortcuts/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
-	
-	lappend mcommand -channels [lindex $::option(player_audio_channels) 0]
-	
-	if {[string trim $::option(player_additional_commands)] != {}} {
-		lappend mcommand {*}$::option(player_additional_commands)
-	}
-	if {[string trim $::option(player_add_af_commands)] != {}} {
-		lappend mcommand -af $::option(player_add_af_commands)
-	}
-	if {"$::option(player_vo)" == "vdpau" || "$::option(player_vo)" == "xvmc"} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen video output driver $::option(player_vo)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] When using this video output driver, additional video filter options are not available."
-		flush $::logf_tv_open_append
-	} else {
-		if {[string trim $dopt($::option(player_deint))] == {-vf}} {
-			if {[string trim $::option(player_add_vf_commands)] != {}} {
-				lappend mcommand {*}$dopt($::option(player_deint))screenshot,$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
-			} else {
-				lappend mcommand {*}$dopt($::option(player_deint))screenshot$cbopt(autoq\($::option(player_autoq)\))
-			}
-		} else {
-			if {[string trim $cbopt(autoq\($::option(player_autoq)\))] != {}} {
-				if {[string match *pp* "$dopt($::option(player_deint))"] == 1} {
-					if {[string trim $::option(player_add_vf_commands)] != {}} {
-						lappend mcommand {*}$dopt($::option(player_deint)),$::option(player_add_vf_commands),screenshot {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
-					} else {
-						lappend mcommand {*}$dopt($::option(player_deint)),screenshot {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
-					}
-				} else {
-					if {[string trim $::option(player_add_vf_commands)] != {}} {
-						#~ append mcommand ,$::option(player_add_vf_commands)
-						lappend mcommand {*}$dopt($::option(player_deint)),screenshot,$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
-					} else {
-						lappend mcommand {*}$dopt($::option(player_deint)),screenshot$cbopt(autoq\($::option(player_autoq)\))
-					}
-				}
-			} else {
-				lappend mcommand {*}$dopt($::option(player_deint)),screenshot
-				if {[string trim $::option(player_add_vf_commands)] != {}} {
-					append mcommand ,$::option(player_add_vf_commands)
-				}
-			}
-		}
-	}
-	
-	lappend mcommand -wid $winid $::option(video_device)
-	
-	puts $::logf_mpl_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] If playback is not starting see MPlayer logfile for details.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer command line:
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $mcommand"
-	flush $::logf_tv_open_append
-	
-	place forget .tv.l_image
-	place $tv_cont -relx 0.5 -rely 0.5 -anchor center -relheight 1
-	bind $tv_cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
-	
-	if {[winfo exists .station]} {
-		.station.top_buttons.b_station_preview state pressed
-	} else {
-		.top_buttons.button_starttv state pressed
-	}
-	
-	if {[winfo exists .tray] == 1} {
-		catch {settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]}
-	}
-	
-	if {$::tv(stayontop) == 2} {
-		wm attributes .tv -topmost 1
-	}
-	
-	set ::data(mplayer) [open "|$mcommand" r+]
-	fconfigure $::data(mplayer) -blocking 0 -buffering line
-	fileevent $::data(mplayer) readable [list tv_playerGetVidData]
-}
-
-proc tv_playerPlaybackFile {tv_bg tv_cont handler file} {
-	if {[file exists $file]} {
-		array set vopt {
-			x11 {-vo x11}
-			xv {-vo xv}
-			xvmc {-vo xvmc:bobdeint -vc ffmpeg12mc}
-			vdpau {-vo vdpau:deint=4 -vc ffmpeg12vdpau}
-			gl {-vo gl}
-			gl(fast) {-vo gl:yuv=2:force-pbo}
-			{gl(fast ATI)} {-vo gl:yuv=2:force-pbo:ati-hack}
-			gl(yuv) {-vo gl:yuv=3}
-			gl2 {-vo gl2}
-			gl2(yuv) {-vo gl2:yuv=3}
-		}
-		
-		array set dopt {
-			None {-vf }
-			Lowpass5 {-vf pp=l5}
-			Yadif {-vf yadif}
-			Yadif(1) {-vf yadif=1}
-			LinearBlend {-vf pp=lb}
-			{Kernel deinterlacer} {-vf kerndeint=5}
-		}
-		
-		array set aopt {
-			oss {-ao oss}
-			alsa {-ao alsa}
-			pulse {-ao pulse}
-			sdl {-ao sdl}
-		}
-		array set copt {
-			0 {}
-			512 {-cache 512}
-			1024 {-cache 1024}
-			2048 {-cache 2048}
-			4096 {-cache 4096}
-			8192 {-cache 8192}
-			16384 {-cache 16384}
-		}
-		
-		array set cbopt {
-			dr(0) {-nodr}
-			dr(1) {-dr}
-			double(0) {-nodouble}
-			double(1) {-double}
-			slice(0) {-noslices}
-			slice(1) {-slices}
-			fd(0) {}
-			fd(1) {-framedrop}
-			hfd(0) {}
-			hfd(1) {-hardframedrop}
-			autoq(0) {}
-			autoq(1) {,pp -autoq 1}
-			autoq(2) {,pp -autoq 2}
-			autoq(3) {,pp -autoq 3}
-			autoq(4) {,pp -autoq 4}
-			autoq(5) {,pp -autoq 5}
-			autoq(6) {,pp -autoq 6}
-			softvol(0) {}
-			softvol(1) {-softvol}
-		}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting playback of $file."
-		flush $::logf_tv_open_append
-		
-		lappend mcommand {*}[auto_execok mplayer] -quiet -slave -identify
-		
-		if {[string match *adaptor* $::option(player_vo)] == 1} {
-			lappend mcommand -vo xv:[lindex $::option(player_vo) 1]
-		} else {
-			lappend mcommand {*}$vopt($::option(player_vo))
-		}
-		lappend mcommand {*}$aopt($::option(player_audio))
-		if {[string trim $cbopt(softvol\($::option(player_aud_softvol)\))] != {}} {
-			lappend mcommand {*}$cbopt(softvol\($::option(player_aud_softvol)\))
-		}
-		if {[string trim $copt($::option(player_cache))] != {}} {
-			lappend mcommand {*}$copt($::option(player_cache))
-		}
-		lappend mcommand {*}$cbopt(dr\($::option(player_dr)\))
-		lappend mcommand {*}$cbopt(double\($::option(player_double)\))
-		lappend mcommand {*}$cbopt(slice\($::option(player_slice)\))
-		lappend mcommand {*}$cbopt(fd\($::option(player_fd)\))
-		lappend mcommand {*}$cbopt(hfd\($::option(player_hfd)\))
-		
-		if {$::option(player_screens) == 1} {
-			if {$::option(player_screens_value) == 0} {
-				lappend mcommand -stop-xscreensaver
-			} else {
-				set ::data(heartbeat_id) [after 30000 tv_playerHeartbeatCmd 0]
-			}
-		}
-		set winid [expr [winfo id $tv_cont]]
-		#~ lappend mcommand -zoom -nokeepaspect -input conf=$::where_is/shortcuts/input.conf {*}{-monitorpixelaspect 1} {*}{-osdlevel 0} -nocorrect-pts {*}{-vf-add screenshot} {*}{-vid 0} {*}{-aid 0} {*}{-channels 2} {*}{-af scaletempo,equalizer=0:0:0:0:0:0:0:0:0:0}
-		lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/shortcuts/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
-		
-		lappend mcommand -channels [lindex $::option(player_audio_channels) 0]
-		
-		if {[string trim $::option(player_additional_commands)] != {}} {
-			lappend mcommand {*}$::option(player_additional_commands)
-		}
-		if {[string trim $::option(player_add_af_commands)] != {}} {
-			lappend mcommand -af $::option(player_add_af_commands)
-		}
-		if {"$::option(player_vo)" == "vdpau" || "$::option(player_vo)" == "xvmc"} {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen video output driver $::option(player_vo)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] When using this video output driver, additional video filter options are not available."
-			flush $::logf_tv_open_append
-		} else {
-			if {[string trim $dopt($::option(player_deint))] == {-vf}} {
-				if {[string trim $::option(player_add_vf_commands)] != {}} {
-					lappend mcommand {*}$dopt($::option(player_deint))screenshot,$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
-				} else {
-					lappend mcommand {*}$dopt($::option(player_deint))screenshot$cbopt(autoq\($::option(player_autoq)\))
-				}
-			} else {
-				if {[string trim $cbopt(autoq\($::option(player_autoq)\))] != {}} {
-					if {[string match *pp* "$dopt($::option(player_deint))"] == 1} {
-						if {[string trim $::option(player_add_vf_commands)] != {}} {
-							lappend mcommand {*}$dopt($::option(player_deint)),$::option(player_add_vf_commands),screenshot {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
-						} else {
-							lappend mcommand {*}$dopt($::option(player_deint)),screenshot {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
-						}
-					} else {
-						if {[string trim $::option(player_add_vf_commands)] != {}} {
-							#~ append mcommand ,$::option(player_add_vf_commands)
-							lappend mcommand {*}$dopt($::option(player_deint)),screenshot,$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
-						} else {
-							lappend mcommand {*}$dopt($::option(player_deint)),screenshot$cbopt(autoq\($::option(player_autoq)\))
-						}
-					}
-				} else {
-					lappend mcommand {*}$dopt($::option(player_deint)),screenshot
-					if {[string trim $::option(player_add_vf_commands)] != {}} {
-						append mcommand ,$::option(player_add_vf_commands)
-					}
-				}
-			}
-		}
-		
-		lappend mcommand -wid $winid "$file"
-		
-		puts $::logf_mpl_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] If playback is not starting see MPlayer logfile for details.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer command line:
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $mcommand"
-		flush $::logf_tv_open_append
-		if {[winfo exists .tv.file_play_bar] == 0} {
-			set tv_bar [ttk::frame .tv.file_play_bar] ; place [ttk::label $tv_bar.bg -style Toolbutton] -relwidth 1 -relheight 1
-			ttk::button $tv_bar.b_play \
-			-style Toolbutton \
-			-image $::icon_m(playback-start) \
-			-takefocus 0 \
-			-command {event generate .tv <<start>>}
-			ttk::button $tv_bar.b_pause \
-			-style Toolbutton \
-			-image $::icon_m(playback-pause) \
-			-takefocus 0 \
-			-command {event generate .tv <<pause>>}
-			ttk::button $tv_bar.b_stop \
-			-style Toolbutton \
-			-image $::icon_m(playback-stop) \
-			-takefocus 0 \
-			-command {event generate .tv <<stop>>}
-			ttk::separator $tv_bar.sep_1 \
-			-orient vertical
-			ttk::button $tv_bar.b_rewind_start \
-			-style Toolbutton \
-			-image $::icon_m(rewind-first) \
-			-takefocus 0 \
-			-command {event generate .tv <<rewind_start>>}
-			ttk::button $tv_bar.b_rewind_small \
-			-style Toolbutton \
-			-image $::icon_m(rewind-small) \
-			-takefocus 0 \
-			-command {event generate .tv <<rewind_10s>>}
-			ttk::menubutton $tv_bar.b_rew_choose \
-			-style Toolbutton \
-			-image $::icon_e(arrow-d) \
-			-takefocus 0 \
-			-menu $tv_bar.mbRewind
-			ttk::button $tv_bar.b_forward_small \
-			-style Toolbutton \
-			-image $::icon_m(forward-small) \
-			-takefocus 0 \
-			-command {event generate .tv <<forward_10s>>}
-			ttk::menubutton $tv_bar.b_forw_choose \
-			-style Toolbutton \
-			-image $::icon_e(arrow-d) \
-			-takefocus 0 \
-			-menu $tv_bar.mbForward
-			ttk::button $tv_bar.b_forward_end \
-			-style Toolbutton \
-			-image $::icon_m(forward-last) \
-			-takefocus 0 \
-			-command {event generate .tv <<forward_end>>}
-			ttk::separator $tv_bar.sep_2 \
-			-orient vertical
-			ttk::button $tv_bar.b_fullscreen \
-			-style Toolbutton \
-			-image $::icon_m(fullscreen) \
-			-takefocus 0 \
-			-command [list tv_playerFullscreen .tv $tv_cont $tv_bg]
-			ttk::label $tv_bar.l_time \
-			-width 20 \
-			-anchor center \
-			-textvariable choice(label_file_time)
-			
-			menu $tv_bar.mbRewind \
-			-tearoff 0 \
-			-background $::option(theme_$::option(use_theme))
-			menu $tv_bar.mbForward \
-			-tearoff 0 \
-			-background $::option(theme_$::option(use_theme))
-			
-			$tv_bar.mbRewind add checkbutton \
-			-label [mc "-10 seconds"] \
-			-accelerator [mc "Left"] \
-			-command [list tv_switch_seek $tv_bar -1 -10s tv(check_rew_10s)] \
-			-variable tv(check_rew_10s)
-			$tv_bar.mbRewind add checkbutton \
-			-label [mc "-1 minute"] \
-			-accelerator [mc "Shift+Left"] \
-			-command [list tv_switch_seek $tv_bar -1 -1m tv(check_rew_1m)] \
-			-variable tv(check_rew_1m)
-			$tv_bar.mbRewind add checkbutton \
-			-label [mc "-10 minutes"] \
-			-accelerator [mc "Ctrl+Shift+Left"] \
-			-command [list tv_switch_seek $tv_bar -1 -10m tv(check_rew_10m)] \
-			-variable tv(check_rew_10m)
-			$tv_bar.mbForward add checkbutton \
-			-label [mc "+10 seconds"] \
-			-accelerator [mc "Right"] \
-			-command [list tv_switch_seek $tv_bar 1 +10s tv(check_fow_10s)] \
-			-variable tv(check_fow_10s)
-			$tv_bar.mbForward add checkbutton \
-			-label [mc "+1 minute"] \
-			-accelerator [mc "Shift+Right"] \
-			-command [list tv_switch_seek $tv_bar 1 +1m tv(check_fow_1m)] \
-			-variable tv(check_fow_1m)
-			$tv_bar.mbForward add checkbutton \
-			-label [mc "+10 minutes"] \
-			-accelerator [mc "Ctrl+Shift+Right"] \
-			-command [list tv_switch_seek $tv_bar 1 +10m tv(check_fow_10m)] \
-			-variable tv(check_fow_10m)
-			
-			$tv_bar.l_time configure -background black -foreground white -relief sunken -borderwidth 2
-			set ::choice(label_file_time) "00:00:00"
-			
-			grid $tv_bar -in .tv -row 1 -column 0 \
-			-sticky ew
-			grid $tv_bar.b_play -in $tv_bar -row 0 -column 0 \
-			-pady 2 \
-			-padx "2 0"
-			grid $tv_bar.b_pause -in $tv_bar -row 0 -column 1 \
-			-pady 2 \
-			-padx "2 0"
-			grid $tv_bar.b_stop -in $tv_bar -row 0 -column 2 \
-			-pady 2 \
-			-padx "2 0"
-			grid $tv_bar.sep_1 -in $tv_bar -row 0 -column 3 \
-			-sticky ns \
-			-padx "2 0"
-			grid $tv_bar.b_rewind_start -in $tv_bar -row 0 -column 4 \
-			-pady 2 \
-			-padx "2 0"
-			grid $tv_bar.b_rew_choose -in $tv_bar -row 0 -column 5 \
-			-sticky ns \
-			-pady 2 \
-			-padx "1 0"
-			grid $tv_bar.b_rewind_small -in $tv_bar -row 0 -column 6 \
-			-pady 2 \
-			-padx "1 0"
-			grid $tv_bar.b_forward_small -in $tv_bar -row 0 -column 7 \
-			-pady 2 \
-			-padx "1 0"
-			grid $tv_bar.b_forw_choose -in $tv_bar -row 0 -column 8 \
-			-sticky ns \
-			-pady 2 \
-			-padx "1 0"
-			grid $tv_bar.b_forward_end -in $tv_bar -row 0 -column 9 \
-			-pady 2 \
-			-padx "1 0"
-			grid $tv_bar.sep_2 -in $tv_bar -row 0 -column 10 \
-			-sticky ns \
-			-padx "2 0"
-			grid $tv_bar.b_fullscreen -in $tv_bar -row 0 -column 11 \
-			-pady 2 \
-			-padx "2 0"
-			grid $tv_bar.l_time -in $tv_bar -row 0 -column 12 \
-			-sticky nse \
-			-padx "0 2" \
-			-pady 2
-			
-			grid columnconfigure $tv_bar 12 -weight 1
-			
-			set ::tv(check_fow_10s) 1
-			set ::tv(check_rew_10s) 1
-			.tv.file_play_bar.b_pause state disabled
-			
-			if {[wm attributes .tv -fullscreen] == 1} {
-				grid remove .tv.file_play_bar
-				bind $tv_cont <Motion> {tv_playerCursorHide .tv.bg.w 0
-										tv_playerCursorPlaybar %Y}
-				bind $tv_bg <Motion> {tv_playerCursorHide .tv.bg 0
-									  tv_playerCursorPlaybar %Y}
-			}
-			if {$::option(tooltips_player) == 1} {
-				settooltip $tv_bar.b_play [mc "Start playback."]
-				settooltip $tv_bar.b_pause [mc "Pause playback."]
-				settooltip $tv_bar.b_stop [mc "Stop playback."]
-				settooltip $tv_bar.b_rewind_start [mc "Jump to the beginning."]
-				settooltip $tv_bar.b_rewind_small [mc "Seek back."]
-				settooltip $tv_bar.b_rew_choose [mc "Choose amount of seek back."]
-				settooltip $tv_bar.b_forward_small [mc "Seek forward."]
-				settooltip $tv_bar.b_forw_choose [mc "Choose amount of seek forward."]
-				settooltip $tv_bar.b_forward_end [mc "Jump to the end."]
-				settooltip $tv_bar.b_fullscreen [mc "Toggle fullscreen."]
-				settooltip $tv_bar.l_time [mc "Current position / File length"]
-			} else {
-				settooltip $tv_bar.b_play {}
-				settooltip $tv_bar.b_pause {}
-				settooltip $tv_bar.b_stop {}
-				settooltip $tv_bar.b_rewind_start {}
-				settooltip $tv_bar.b_rewind_small {}
-				settooltip $tv_bar.b_rew_choose {}
-				settooltip $tv_bar.b_forward_small {}
-				settooltip $tv_bar.b_forw_choose {}
-				settooltip $tv_bar.b_forward_end {}
-				settooltip $tv_bar.b_fullscreen {}
-				settooltip $tv_bar.l_time {}
-			}
-			if {"$handler" == "timeshift"} {
-				bind .tv <<start>> {}
-				after 1500 [list tv_playerPlaybackFile $tv_bg $tv_cont $handler "$file"]
-				return
-			}
-		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting file playback."
-			flush $::logf_tv_open_append
-			.tv.file_play_bar.b_play configure -command [list tv_playerSeek 0 0]
-			bind .tv <<forward_end>> {tv_playerInitiateSeek "tv_playerSeek 0 2"}
-			bind .tv <<forward_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 1"}
-			bind .tv <<forward_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 1"}
-			bind .tv <<forward_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 1"}
-			bind .tv <<rewind_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 -1"}
-			bind .tv <<rewind_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 -1"}
-			bind .tv <<rewind_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 -1"}
-			bind .tv <<rewind_start>> {tv_playerInitiateSeek "tv_playerSeek 0 -2"}
-			bind .tv <<start>> {}
-			place forget .tv.l_image
-			place $tv_cont -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1
-			bind $tv_cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
-			.tv.file_play_bar.b_pause state !disabled
-			.tv.file_play_bar.b_play state disabled
-			set ::data(key_first_press) 1
-			if {$::tv(stayontop) == 2} {
-				wm attributes .tv -topmost 1
-			}
-			set ::data(mplayer) [open "|$mcommand" r+]
-			fconfigure $::data(mplayer) -blocking 0 -buffering line
-			fileevent $::data(mplayer) readable [list tv_playerGetVidData]
-		}
-	} else {
-		puts $::logf_mpl_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not locate file for file playback.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] $file"
-		flush $::logf_tv_open_append
-	}
-}
-
 proc tv_switch_seek {w direct handler seek_var} {
 	array set seek_com {
 		-10s {event generate .tv <<rewind_10s>>}
@@ -1437,125 +903,125 @@ proc tv_syncing_file_pos {stop} {
 	}]
 }
 
-proc tv_playerInitiateSeek {seek_com} {
-	bind .tv <<forward_10s>> {}
-	bind .tv <<forward_1m>> {}
-	bind .tv <<forward_10m>> {}
-	bind .tv <<rewind_10s>> {}
-	bind .tv <<rewind_1m>> {}
-	bind .tv <<rewind_10m>> {}
-	bind .tv <<forward_end>> {}
-	bind .tv <<rewind_start>> {}
-	set ::tv(seek_secs) [lindex $seek_com 1]
-	set ::tv(seek_dir) [lindex $seek_com 2]
-	set ::tv(getvid_seek) 1
-	tv_playerMplayerRemote get_time_pos
-}
+#~ proc tv_playerInitiateSeek {seek_com} {
+	#~ bind .tv <<forward_10s>> {}
+	#~ bind .tv <<forward_1m>> {}
+	#~ bind .tv <<forward_10m>> {}
+	#~ bind .tv <<rewind_10s>> {}
+	#~ bind .tv <<rewind_1m>> {}
+	#~ bind .tv <<rewind_10m>> {}
+	#~ bind .tv <<forward_end>> {}
+	#~ bind .tv <<rewind_start>> {}
+	#~ set ::tv(seek_secs) [lindex $seek_com 1]
+	#~ set ::tv(seek_dir) [lindex $seek_com 2]
+	#~ set ::tv(getvid_seek) 1
+	#~ tv_playerMplayerRemote get_time_pos
+#~ }
 
-proc tv_playerSeek {secs direct} {
-	if {$direct == 1} {
-		if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking +$secs\s"
-			flush $::logf_tv_open_append
-			set seekpos [expr ($::data(file_pos) + $secs)]
-			if {$seekpos < $::data(file_size)} {
-				tv_playerMplayerRemote "seek $seekpos 2"
-				after 650 {
-					set ::tv(getvid_seek) 0
-					tv_playerMplayerRemote get_time_pos
-				}
-			}
-			return
-		} else {
-			set seekpos [expr ($::data(file_size) - 10)]
-			tv_playerMplayerRemote "seek $seekpos 2"
-			after 650 {
-				set ::tv(getvid_seek) 0
-				tv_playerMplayerRemote get_time_pos
-			}
-			return
-		}
-	}
-	if {$direct == 2} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the end of actual recording."
-		flush $::logf_tv_open_append
-		set seekpos [expr ($::data(file_size) - 10)]
-		tv_playerMplayerRemote "seek $seekpos 2"
-		after 650 {
-			set ::tv(getvid_seek) 0
-			tv_playerMplayerRemote get_time_pos
-		}
-		return
-	}
-	if {$direct == -1} {
-		if {[expr ($::data(file_pos) - $secs)] < 0} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
-			flush $::logf_tv_open_append
-			set seekpos 0
-			tv_playerMplayerRemote "seek $seekpos 2"
-			after 650 {
-				set ::tv(getvid_seek) 0
-				tv_playerMplayerRemote get_time_pos
-			}
-			return
-		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
-			flush $::logf_tv_open_append
-			set seekpos [expr ($::data(file_pos) - $secs)]
-			tv_playerMplayerRemote "seek $seekpos 2"
-			after 650 {
-				set ::tv(getvid_seek) 0
-				tv_playerMplayerRemote get_time_pos
-			}
-			return
-		}
-	}
-	if {$direct == -2} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the beginning of actual recording."
-		flush $::logf_tv_open_append
-		set seekpos 0
-		tv_playerMplayerRemote "seek $seekpos 2"
-		after 650 {
-			set ::tv(getvid_seek) 0
-			tv_playerMplayerRemote get_time_pos
-		}
-		return
-	}
-	if {$direct == 0} {
-		if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
-			.tv.file_play_bar.b_pause state disabled
-			.tv.file_play_bar.b_play state !disabled
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Pause playback."
-			flush $::logf_tv_open_append
-			bind .tv <<forward_10s>> {}
-			bind .tv <<forward_1m>> {}
-			bind .tv <<forward_10m>> {}
-			bind .tv <<rewind_10s>> {}
-			bind .tv <<rewind_1m>> {}
-			bind .tv <<rewind_10m>> {}
-			bind .tv <<forward_end>> {}
-			bind .tv <<rewind_start>> {}
-			tv_playerMplayerRemote pause
-			return
-		} else {
-			.tv.file_play_bar.b_play state disabled
-			.tv.file_play_bar.b_pause state !disabled
-			set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Start playback."
-			flush $::logf_tv_open_append
-			bind .tv <<forward_end>> {tv_playerInitiateSeek "tv_playerSeek 0 2"}
-			bind .tv <<forward_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 1"}
-			bind .tv <<forward_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 1"}
-			bind .tv <<forward_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 1"}
-			bind .tv <<rewind_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 -1"}
-			bind .tv <<rewind_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 -1"}
-			bind .tv <<rewind_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 -1"}
-			bind .tv <<rewind_start>> {tv_playerInitiateSeek "tv_playerSeekk 0 -2"}
-			tv_playerMplayerRemote pause
-			return
-		}
-	}
-}
+#~ proc tv_playerSeek {secs direct} {
+	#~ if {$direct == 1} {
+		#~ if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
+			#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking +$secs\s"
+			#~ flush $::logf_tv_open_append
+			#~ set seekpos [expr ($::data(file_pos) + $secs)]
+			#~ if {$seekpos < $::data(file_size)} {
+				#~ tv_playerMplayerRemote "seek $seekpos 2"
+				#~ after 650 {
+					#~ set ::tv(getvid_seek) 0
+					#~ tv_playerMplayerRemote get_time_pos
+				#~ }
+			#~ }
+			#~ return
+		#~ } else {
+			#~ set seekpos [expr ($::data(file_size) - 10)]
+			#~ tv_playerMplayerRemote "seek $seekpos 2"
+			#~ after 650 {
+				#~ set ::tv(getvid_seek) 0
+				#~ tv_playerMplayerRemote get_time_pos
+			#~ }
+			#~ return
+		#~ }
+	#~ }
+	#~ if {$direct == 2} {
+		#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the end of actual recording."
+		#~ flush $::logf_tv_open_append
+		#~ set seekpos [expr ($::data(file_size) - 10)]
+		#~ tv_playerMplayerRemote "seek $seekpos 2"
+		#~ after 650 {
+			#~ set ::tv(getvid_seek) 0
+			#~ tv_playerMplayerRemote get_time_pos
+		#~ }
+		#~ return
+	#~ }
+	#~ if {$direct == -1} {
+		#~ if {[expr ($::data(file_pos) - $secs)] < 0} {
+			#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
+			#~ flush $::logf_tv_open_append
+			#~ set seekpos 0
+			#~ tv_playerMplayerRemote "seek $seekpos 2"
+			#~ after 650 {
+				#~ set ::tv(getvid_seek) 0
+				#~ tv_playerMplayerRemote get_time_pos
+			#~ }
+			#~ return
+		#~ } else {
+			#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
+			#~ flush $::logf_tv_open_append
+			#~ set seekpos [expr ($::data(file_pos) - $secs)]
+			#~ tv_playerMplayerRemote "seek $seekpos 2"
+			#~ after 650 {
+				#~ set ::tv(getvid_seek) 0
+				#~ tv_playerMplayerRemote get_time_pos
+			#~ }
+			#~ return
+		#~ }
+	#~ }
+	#~ if {$direct == -2} {
+		#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the beginning of actual recording."
+		#~ flush $::logf_tv_open_append
+		#~ set seekpos 0
+		#~ tv_playerMplayerRemote "seek $seekpos 2"
+		#~ after 650 {
+			#~ set ::tv(getvid_seek) 0
+			#~ tv_playerMplayerRemote get_time_pos
+		#~ }
+		#~ return
+	#~ }
+	#~ if {$direct == 0} {
+		#~ if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
+			#~ .tv.file_play_bar.b_pause state disabled
+			#~ .tv.file_play_bar.b_play state !disabled
+			#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Pause playback."
+			#~ flush $::logf_tv_open_append
+			#~ bind .tv <<forward_10s>> {}
+			#~ bind .tv <<forward_1m>> {}
+			#~ bind .tv <<forward_10m>> {}
+			#~ bind .tv <<rewind_10s>> {}
+			#~ bind .tv <<rewind_1m>> {}
+			#~ bind .tv <<rewind_10m>> {}
+			#~ bind .tv <<forward_end>> {}
+			#~ bind .tv <<rewind_start>> {}
+			#~ tv_playerMplayerRemote pause
+			#~ return
+		#~ } else {
+			#~ .tv.file_play_bar.b_play state disabled
+			#~ .tv.file_play_bar.b_pause state !disabled
+			#~ set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
+			#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Start playback."
+			#~ flush $::logf_tv_open_append
+			#~ bind .tv <<forward_end>> {tv_seekInitiate "tv_playerSeek 0 2"}
+			#~ bind .tv <<forward_10s>> {tv_seekInitiate "tv_playerSeek 10 1"}
+			#~ bind .tv <<forward_1m>> {tv_seekInitiate "tv_playerSeek 60 1"}
+			#~ bind .tv <<forward_10m>> {tv_seekInitiate "tv_playerSeek 600 1"}
+			#~ bind .tv <<rewind_10s>> {tv_seekInitiate "tv_playerSeek 10 -1"}
+			#~ bind .tv <<rewind_1m>> {tv_seekInitiate "tv_playerSeek 60 -1"}
+			#~ bind .tv <<rewind_10m>> {tv_seekInitiate "tv_playerSeek 600 -1"}
+			#~ bind .tv <<rewind_start>> {tv_seekInitiate "tv_playerSeekk 0 -2"}
+			#~ tv_playerMplayerRemote pause
+			#~ return
+		#~ }
+	#~ }
+#~ }
 
 proc tv_autorepeat_press {keycode serial seek_com} {
 	if {$::data(key_first_press) == 1} {
@@ -1589,109 +1055,121 @@ proc tv_playerHeartbeatCmd {com} {
 	set ::data(heartbeat_id) [after 30000 tv_playerHeartbeatCmd 0]
 }
 
-proc tv_stop_playback {} {
-	if {[info exists ::data(mplayer)] == 0} {return 1}
-	if {[string trim $::data(mplayer)] != {}} {
-		catch {puts -nonewline $::data(mplayer) "quit 0 \n"}
-		flush $::data(mplayer)
-	} else {
-		return 1
-	}
-	if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
-		foreach id [split $::option(cursor_id\(.tv.bg\))] {
-			after cancel $id
-		}
-		unset -nocomplain ::option(cursor_id\(.tv.bg\))
-	}
-	if {[info exists ::option(cursor_id\(.tv.bg.w\))] == 1} {
-		foreach id [split $::option(cursor_id\(.tv.bg.w\))] {
-			after cancel $id
-		}
-		unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
-	}
-	place forget .tv.bg.w
-	place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
-	bind .tv.bg.w <Configure> {}
-	if {[winfo exists .station]} {
-		.station.top_buttons.b_station_preview state !pressed
-	} else {
-		.top_buttons.button_starttv state !pressed
-	}
-	tv_playerHeartbeatCmd cancel
-	if {[winfo exists .tray]} {
-		settooltip .tray [mc "TV-Viewer idle"]
-	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping TV playback."
-	flush $::logf_tv_open_append
-}
-
-proc tv_stop_playback_file {com} {
-	if {$com == 0} {
-		if {[info exists ::data(mplayer)] == 0} {return 1}
-		if {[string trim $::data(mplayer)] != {}} {
-			catch {puts -nonewline $::data(mplayer) "quit 0 \n"}
-			flush $::data(mplayer)
-		} else {
-			return 1
-		}
-		if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
-			foreach id [split $::option(cursor_id\(.tv.bg\))] {
-				after cancel $id
-			}
-			unset -nocomplain ::option(cursor_id\(.tv.bg\))
-		}
-		if {[info exists ::option(cursor_id\(.tv.bg.w\))] == 1} {
-			foreach id [split $::option(cursor_id\(.tv.bg.w\))] {
-				after cancel $id
-			}
-			unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
-		}
-		place forget .tv.bg.w
-		place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
-		bind .tv.bg.w <Configure> {}
-		catch {
-		tv_playerComputeFilePos cancel 
-		tv_playerComputeFileSize cancel
-		}
-		tv_playerHeartbeatCmd cancel
-		if {[winfo exists .tv.file_play_bar]} {
-			destroy .tv.file_play_bar
-		}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping file playback."
-		flush $::logf_tv_open_append
-	} else {
-		if {[info exists ::data(mplayer)] == 0} {return 1}
-		if {[string trim $::data(mplayer)] != {}} {
-			catch {puts -nonewline $::data(mplayer) "quit 0 \n"}
-			flush $::data(mplayer)
-		} else {
-			return 1
-		}
-		if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
-			foreach id [split $::option(cursor_id\(.tv.bg\))] {
-				after cancel $id
-			}
-			unset -nocomplain ::option(cursor_id\(.tv.bg\))
-		}
-		if {[info exists ::option(cursor_id\(.tv.bg.w\))] == 1} {
-			foreach id [split $::option(cursor_id\(.tv.bg.w\))] {
-				after cancel $id
-			}
-			unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
-		}
-		place forget .tv.bg.w
-		place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
-		bind .tv.bg.w <Configure> {}
-		tv_playerComputeFilePos cancel
-		tv_playerHeartbeatCmd cancel
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping file playback."
-		flush $::logf_tv_open_append
-		.tv.file_play_bar.b_play state !disabled
-		.tv.file_play_bar.b_pause state disabled
-		.tv.file_play_bar.b_play configure -command {tv_playerPlaybackFile .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
-		bind .tv <<start>> {tv_playerPlaybackFile .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
-	}
-}
+#~ proc tv_stop_playback {} {
+	#~ if {[info exists ::data(mplayer)] == 0} {return 1}
+	#~ if {[string trim $::data(mplayer)] != {}} {
+		#~ catch {puts -nonewline $::data(mplayer) "quit 0 \n"}
+		#~ flush $::data(mplayer)
+	#~ } else {
+		#~ return 1
+	#~ }
+	#~ if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
+		#~ foreach id [split $::option(cursor_id\(.tv.bg\))] {
+			#~ after cancel $id
+		#~ }
+		#~ unset -nocomplain ::option(cursor_id\(.tv.bg\))
+	#~ }
+	#~ if {[info exists ::option(cursor_id\(.tv.bg.w\))] == 1} {
+		#~ foreach id [split $::option(cursor_id\(.tv.bg.w\))] {
+			#~ after cancel $id
+		#~ }
+		#~ unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
+	#~ }
+	#~ if {[winfo exists .tv.l_anigif]} {
+		#~ catch {launch_splashPlay cancel 0 0 0}
+		#~ catch {place forget .tv.l_anigif}
+		#~ catch {destroy .tv.l_anigif}
+	#~ }
+	#~ place forget .tv.bg.w
+	#~ place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
+	#~ bind .tv.bg.w <Configure> {}
+	#~ if {[winfo exists .station]} {
+		#~ .station.top_buttons.b_station_preview state !pressed
+	#~ } else {
+		#~ .top_buttons.button_starttv state !pressed
+	#~ }
+	#~ tv_playerHeartbeatCmd cancel
+	#~ if {[winfo exists .tray]} {
+		#~ settooltip .tray [mc "TV-Viewer idle"]
+	#~ }
+	#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping TV playback."
+	#~ flush $::logf_tv_open_append
+#~ }
+#~ 
+#~ proc tv_stop_playback_file {com handler} {
+	#~ if {$com == 0} {
+		#~ if {[info exists ::data(mplayer)] == 0} {return 1}
+		#~ if {[string trim $::data(mplayer)] != {}} {
+			#~ catch {puts -nonewline $::data(mplayer) "quit 0 \n"}
+			#~ flush $::data(mplayer)
+		#~ } else {
+			#~ return 1
+		#~ }
+		#~ if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
+			#~ foreach id [split $::option(cursor_id\(.tv.bg\))] {
+				#~ after cancel $id
+			#~ }
+			#~ unset -nocomplain ::option(cursor_id\(.tv.bg\))
+		#~ }
+		#~ if {[info exists ::option(cursor_id\(.tv.bg.w\))] == 1} {
+			#~ foreach id [split $::option(cursor_id\(.tv.bg.w\))] {
+				#~ after cancel $id
+			#~ }
+			#~ unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
+		#~ }
+		#~ catch {
+		#~ tv_playerComputeFilePos cancel 
+		#~ tv_playerComputeFileSize cancel
+		#~ }
+		#~ tv_playerHeartbeatCmd cancel
+		#~ if {[winfo exists .tv.file_play_bar]} {
+			#~ destroy .tv.file_play_bar
+		#~ }
+		#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping file playback."
+		#~ flush $::logf_tv_open_append
+	#~ } else {
+		#~ if {[info exists ::data(mplayer)] == 0} {return 1}
+		#~ if {[string trim $::data(mplayer)] != {}} {
+			#~ catch {puts -nonewline $::data(mplayer) "quit 0 \n"}
+			#~ flush $::data(mplayer)
+		#~ } else {
+			#~ return 1
+		#~ }
+		#~ if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
+			#~ foreach id [split $::option(cursor_id\(.tv.bg\))] {
+				#~ after cancel $id
+			#~ }
+			#~ unset -nocomplain ::option(cursor_id\(.tv.bg\))
+		#~ }
+		#~ if {[info exists ::option(cursor_id\(.tv.bg.w\))] == 1} {
+			#~ foreach id [split $::option(cursor_id\(.tv.bg.w\))] {
+				#~ after cancel $id
+			#~ }
+			#~ unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
+		#~ }
+		#~ tv_playerComputeFilePos cancel
+		#~ tv_playerHeartbeatCmd cancel
+		#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping file playback."
+		#~ flush $::logf_tv_open_append
+		#~ .tv.file_play_bar.b_play state !disabled
+		#~ .tv.file_play_bar.b_pause state disabled
+		#~ .tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+		#~ bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+	#~ }
+	#~ if {[winfo exists .tv.l_anigif]} {
+		#~ catch {launch_splashPlay cancel 0 0 0}
+		#~ catch {place forget .tv.l_anigif}
+		#~ catch {destroy .tv.l_anigif}
+	#~ }
+	#~ if {"$handler" == "pic"} {
+		#~ place forget .tv.bg.w
+		#~ place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
+		#~ bind .tv.bg.w <Configure> {}
+	#~ } else {
+		#~ place forget .tv.bg.w
+		#~ bind .tv.bg.w <Configure> {}
+	#~ }
+#~ }
 
 proc tv_playerUi {} {
 	if {[winfo exists .tv] == 0} {
@@ -1909,7 +1387,7 @@ proc tv_playerUi {} {
 		bind $mw <Alt-Key-Up> [list tv_playerMoveVideo 3]
 		bind $mw <Mod4-Key-s> [list tv_playerMplayerRemote "screenshot 0"]
 		bind $mw <Mod4-Key-s> [list tv_playerMplayerRemote "screenshot 0"]
-		bind $mw <Control-Key-p> {tv_stop_playback ; config_wizardMainUi}
+		bind $mw <Control-Key-p> {tv_stop_playback 0 pic ; config_wizardMainUi}
 		bind $mw <Control-Key-m> {main_ui_colorm}
 		bind $mw <Control-Key-e> {main_ui_seditor}
 		bind $mw <Key-F1> [list info_helpHelp]
@@ -1960,7 +1438,7 @@ proc tv_playerUi {} {
 		set status [tv_playerMplayerRemote alive]
 		if {$status != 1} {
 			if {[winfo exists .tv.file_play_bar] == 1} {
-				tv_stop_playback_file 0
+				tv_playbackStop 0 nopic
 				tv_playerComputeFilePos cancel
 				tv_playerComputeFileSize cancel
 				destroy .tv.file_play_bar
@@ -2012,11 +1490,11 @@ proc tv_playerUi {} {
 						if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 							catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 						}
-						tv_playerPlayback .tv.bg .tv.bg.w
+						tv_Playback .tv.bg .tv.bg.w 0 0
 					}
 				}
 			} else {
-				tv_stop_playback
+				tv_playbackStop 0 pic
 			}
 		} else {
 			if {[winfo exists .tv.file_play_bar] == 1} {
@@ -2059,7 +1537,7 @@ proc tv_playerUi {} {
 				wm iconphoto .tv $::icon_b(starttv)
 			}
 			main_pic_streamDimensions
-			tv_playerPlayback .tv.bg .tv.bg.w
+			tv_Playback .tv.bg .tv.bg.w 0 0
 		}
 	}
 }

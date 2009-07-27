@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.9"
+set option(release_version) "0.8.1a1.10"
 
 # Start options for the program
 array set start_options {--version 0 --help 0}

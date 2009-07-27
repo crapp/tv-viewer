@@ -26,11 +26,15 @@ proc record_schedulerPrestart {handler} {
 	}
 	tv_playerComputeFilePos cancel 
 	tv_playerComputeFileSize cancel
-	catch {tv_stop_playback_file 0}
+	catch {tv_playbackStop 0 nopic}
 	if {[winfo exists .tv.file_play_bar]} {
 		destroy .tv.file_play_bar
 	}
-	. configure -cursor watch; .tv configure -cursor watch
+	set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
+	label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+	place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
+	set img_list_length [llength $img_list]
+	after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor watch
 	}
@@ -81,21 +85,21 @@ proc record_schedulerRec {handler} {
 		bind . <<input_up>> {}
 		bind . <<input_down>> {}
 	}
-	bind .tv <<pause>> {tv_playerSeek 0 0}
+	bind .tv <<pause>> {tv_seek 0 0}
 	if {"$handler" != "timeshift"} {
-		bind .tv <<start>> {tv_playerPlaybackFile .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
+		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
 	} else {
-		bind .tv <<start>> {tv_playerPlaybackFile .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
+		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
 	}
-	bind .tv <<stop>> {tv_stop_playback_file 1}
-	bind .tv <<forward_end>> {tv_playerInitiateSeek "tv_playerSeek 0 2"}
-	bind .tv <<forward_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 1"}
-	bind .tv <<forward_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 1"}
-	bind .tv <<forward_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 1"}
-	bind .tv <<rewind_10s>> {tv_playerInitiateSeek "tv_playerSeek 10 -1"}
-	bind .tv <<rewind_1m>> {tv_playerInitiateSeek "tv_playerSeek 60 -1"}
-	bind .tv <<rewind_10m>> {tv_playerInitiateSeek "tv_playerSeek 600 -1"}
-	bind .tv <<rewind_start>> {tv_playerInitiateSeek "tv_playerSeek 0 -2"}
+	bind .tv <<stop>> {tv_playbackStop 1 pic}
+	bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+	bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+	bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+	bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+	bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+	bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+	bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+	bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
 	bind . <<teleview>> {}
 	bind . <Control-Key-p> {}
 	bind . <Control-Key-m> {}
@@ -142,9 +146,9 @@ Started at %" [lindex $::station(last) 0] $stime]
 		wm iconphoto .tv $::icon_b(timeshift)
 	}
 	if {"$handler" != "timeshift"} {
-		catch {tv_playerPlaybackFile .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
+		catch {tv_Playback .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
 	} else {
-		catch {tv_playerPlaybackFile .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
+		catch {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
 	}
 	. configure -cursor arrow; .tv configure -cursor arrow
 	if {"$handler" != "timeshift"} {
@@ -236,10 +240,10 @@ proc record_schedulerPreStop {handler} {
 	bind . <<input_up>> [list main_stationInput 1 1]
 	bind . <<input_down>> [list main_stationInput 1 -1]
 	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind .tv <Control-Key-p> {tv_stop_playback ; config_wizardMainUi}
+	bind .tv <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 	bind .tv <Control-Key-m> {colorm_mainUi}
 	bind .tv <Control-Key-e> {main_ui_seditor}
-	bind . <Control-Key-p> {tv_stop_playback ; config_wizardMainUi}
+	bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {main_ui_seditor}
 	if {[wm attributes .tv -fullscreen] == 1} {
@@ -251,6 +255,11 @@ proc record_schedulerPreStop {handler} {
 			.record_wizard.status_frame.l_rec_current_info configure -text "Idle"
 			.record_wizard.status_frame.b_rec_current state disabled
 		}
+	}
+	if {[winfo exists .tv.l_anigif]} {
+		catch {launch_splashPlay cancel 0 0 0}
+		catch {place forget .tv.l_anigif}
+		catch {destroy .tv.l_anigif}
 	}
 	tv_playerComputeFileSize cancel_rec
 }

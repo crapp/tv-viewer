@@ -41,7 +41,7 @@ proc main_stationChannelDown {w} {
 			} else {
 				set status_tv [tv_playerMplayerRemote alive]
 				if {$status_tv != 1} {
-					tv_stop_playback
+					tv_playbackStop 0 nopic
 					set restart 1
 				} else {
 					set restart 0
@@ -83,7 +83,7 @@ proc main_stationChannelUp {w} {
 			} else {
 				set status_tv [tv_playerMplayerRemote alive]
 				if {$status_tv != 1} {
-					tv_stop_playback
+					tv_playbackStop 0 nopic
 					set restart 1
 				} else {
 					set restart 0
@@ -122,7 +122,7 @@ proc main_stationChannelJumper {w} {
 		} else {
 			set status_tv [tv_playerMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_stop_playback
+				tv_playbackStop 0 nopic
 				set restart 1
 			} else {
 				set restart 0
@@ -155,7 +155,7 @@ proc main_stationChannelJumper {w} {
 		} else {
 			set status_tv [tv_playerMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_stop_playback
+				tv_playbackStop 0 nopic
 				set restart 1
 			} else {
 				set restart 0
@@ -187,7 +187,7 @@ proc main_stationListboxStations {slist} {
 		} else {
 			set status_tv [tv_playerMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_stop_playback
+				tv_playbackStop 0 nopic
 				set restart 1
 			} else {
 				set restart 0
@@ -267,7 +267,7 @@ proc main_stationStationNr {w number} {
 	} else {
 		set status_tv [tv_playerMplayerRemote alive]
 		if {$status_tv != 1} {
-			tv_stop_playback
+			tv_playbackStop 0 nopic
 			set restart 1
 		} else {
 			set restart 0
@@ -297,7 +297,7 @@ proc main_stationInput {com direct} {
 		if {$status_query_input == 0 && $status_list_input == 0} {
 			set status_tv [tv_playerMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_stop_playback
+				tv_playbackStop 0 nopic
 				set restart 1
 			} else {
 				set restart 0
@@ -424,7 +424,7 @@ proc main_stationInputQuery {secs input restart} {
 				after 0 [list tv_osd osd_group_f 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}
 			if {$restart == 1} {
-				tv_playerPlayback .tv.bg .tv.bg.w
+				tv_Playback .tv.bg .tv.bg.w 0 0
 			} else {
 				bind . <<input_up>> "main_stationInput 1 1"
 				bind . <<input_down>> "main_stationInput 1 -1"
