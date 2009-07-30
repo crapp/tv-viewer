@@ -51,8 +51,8 @@ proc timeshift {tbutton} {
 	record_schedulerPrestart timeshift
 	$tbutton state pressed
 	$tbutton state disabled
-	bind .tv <<timeshift>> {}
-	bind . <<timeshift>> {}
+	#~ bind .tv <<timeshift>> {}
+	#~ bind . <<timeshift>> {}
 	timeshift_start_preRec $tbutton
 }
 
@@ -71,12 +71,14 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 	if {$counter == 10} {
 		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start timeshift. Tried for 30 seconds."
 		flush $::logf_tv_open_append
+		catch {exec kill $rec_pid}
+		catch {exec ""}
 		if {[winfo exists .tv.l_anigif]} {
 			launch_splashPlay cancel 0 0 0
 			place forget .tv.l_anigif
 			destroy .tv.l_anigif
 		}
-		record_schedulerPreStop timeshift
+		record_scheduler_prestartCancel timeshift
 		return
 	}
 	if {[file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {

@@ -20,7 +20,7 @@ proc tv_callbackVidData {} {
 	if {[info exists ::data(mplayer)]} {
 		gets $::data(mplayer) line
 		if {[eof $::data(mplayer)]} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: End of file\033\[0m"
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0;1;31mEnd of file\033\[0m"
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer reported end of file. Playback is stopped."
 			flush $::logf_tv_open_append
 			catch {close $::data(mplayer)}

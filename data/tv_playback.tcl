@@ -373,10 +373,8 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	-accelerator [mc "Ctrl+Shift+Right"] \
 	-command [list tv_seekSwitch $tv_bar 1 +10m tv(check_fow_10m)] \
 	-variable tv(check_fow_10m)
-
-	$tv_bar.l_time configure -background black -foreground white -relief sunken -borderwidth 2
-	set ::choice(label_file_time) "00:00:00"
-
+	
+	
 	grid $tv_bar.b_play -in $tv_bar -row 0 -column 0 \
 	-pady 2 \
 	-padx "2 0"
@@ -419,20 +417,42 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	-sticky nse \
 	-padx "0 2" \
 	-pady 2
-
+	
 	grid columnconfigure $tv_bar 12 -weight 1
-
+	
 	if {"$handler" != "timeshift"} {
 		catch {launch_splashPlay cancel 0 0 0}
 		catch {place forget .tv.l_anigif}
 		catch {destroy .tv.l_anigif}
 		grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
 	}
-
-	set ::tv(check_fow_10s) 1
-	set ::tv(check_rew_10s) 1
+	
+	$tv_bar.l_time configure -background black -foreground white -relief sunken -borderwidth 2
+	set ::choice(label_file_time) "00:00:00"
+	if {$::tv(check_fow_1m) == 0 && $::tv(check_fow_10m) == 0} {
+		set ::tv(check_fow_10s) 1
+		$tv_bar.b_forward_small configure -command {event generate .tv <<forward_10s>>}
+	} else {
+		if {$::tv(check_fow_1m) == 1} {
+			$tv_bar.b_forward_small configure -command {event generate .tv <<forward_1m>>}
+		}
+		if {$::tv(check_fow_10m) == 1} {
+			$tv_bar.b_forward_small configure -command {event generate .tv <<forward_10m>>}
+		}
+	}
+	if {$::tv(check_rew_1m) == 0 && $::tv(check_rew_10m) == 0} {
+		set ::tv(check_rew_10s) 1
+		$tv_bar.b_rewind_small configure -command {event generate .tv <<rewind_10s>>}
+	} else {
+		if {$::tv(check_rew_1m) == 1} {
+			$tv_bar.b_rewind_small configure -command {event generate .tv <<rewind_1m>>}
+		}
+		if {$::tv(check_rew_10m) == 1} {
+			$tv_bar.b_rewind_small configure -command {event generate .tv <<rewind_10m>>}
+		}
+	}
 	.tv.file_play_bar.b_pause state disabled
-
+	
 	if {[wm attributes .tv -fullscreen] == 1} {
 		grid remove .tv.file_play_bar
 		bind $tv_cont <Motion> {

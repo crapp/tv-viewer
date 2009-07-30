@@ -1,8 +1,10 @@
 TV-Viewer uses different icons that were not developed by the author. Here is a small array of the icons including informations of the author and the license.
 
 ---------------------------------------
-tv-viewer_icon.png/gif/gif
-tv-viewer_icon_systray.png/gif/gif
+tv-viewer_icon.png/gif
+tv-viewer_icon_systray.png/gif
+animated_loading.gif
+BigBlackIceRoller.gif
 
 Created by revealed using the Gimp. License GPL
 Member of the www.linux-club.de community
@@ -65,11 +67,11 @@ color-management.png/gif
 Part of "The Gimp 2.x" shipped with openSUSE 11.0. License GPL
 http://www.gimp.org/
 ---------------------------------------
-logo_splash_tux_tv-viewer08x.png/gif
+logo-tv-viewer08x-noload.png/gif
 pick-color3.xbm
 arrow-d.gif
 
-Created by Christian Rapp in coopertaion with revealed using the Gimp. License GPL
+Created by Christian Rapp in cooperation with revealed using the Gimp. License GPL
 saedelaere_at_arcor_dot_de
 ---------------------------------------
 

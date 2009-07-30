@@ -441,7 +441,7 @@ proc tv_playerLoop {} {
 		if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 			catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 		}
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerLoop ::complete:: \033\[0m"
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerLoop \033\[0;1;31m::complete:: \033\[0m"
 		tv_Playback .tv.bg .tv.bg.w 0 0
 	}
 }
