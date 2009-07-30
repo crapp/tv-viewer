@@ -16,10 +16,11 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc station_preview {w} {
+proc station_editPreview {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editPreview \033\[0m \{$w\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting tv playback for preview stations."
 	flush $::logf_tv_open_append
-	set status_tv_playback [tv_playerMplayerRemote alive]
+	set status_tv_playback [tv_callbackMplayerRemote alive]
 	if {$status_tv_playback != 1} {
 		tv_playbackStop 0 pic
 	} else {
@@ -39,8 +40,9 @@ proc station_preview {w} {
 	}
 }
 
-proc station_change {w} {
-	set status_tv_playback [tv_playerMplayerRemote alive]
+proc station_editZap {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editZap \033\[0m \{$w\}"
+	set status_tv_playback [tv_callbackMplayerRemote alive]
 	if {$status_tv_playback != 1} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Changing frequency to [lindex [$w item [lindex [$w selection] end] -values] 1]."
 		flush $::logf_tv_open_append
@@ -60,7 +62,8 @@ proc station_change {w} {
 }
 
 
-proc save_station {w} {
+proc station_editSave {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editSave \033\[0m \{$w\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Writing stations to $::where_is_home/config/stations_$::option(frequency_table).conf"
 	flush $::logf_tv_open_append
 	catch {file delete "$::where_is_home/config/stations_$::option(frequency_table).conf"}
@@ -86,16 +89,17 @@ proc save_station {w} {
 			close $open_sfile_append
 		}
 	}
-	exit_station_editor
+	station_editExit
 }
 
-proc exit_station_editor {} {
+proc station_editExit {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editExit \033\[0m"
 	array unset ::kanalid
 	array unset ::kanalcall
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Rereading all stations and corresponding frequencies for main application."
 	flush $::logf_tv_open_append
 	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
-		set status_tv_playback [tv_playerMplayerRemote alive]
+		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 nopic
 		}
@@ -151,7 +155,7 @@ proc exit_station_editor {} {
 	}
 	
 	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-		set status_tv_playback [tv_playerMplayerRemote alive]
+		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 pic
 		}
@@ -187,7 +191,7 @@ proc exit_station_editor {} {
 	} else {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Inserting all stations into station list."
 		flush $::logf_tv_open_append
-		set status_tv_playback [tv_playerMplayerRemote alive]
+		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
 		}
@@ -236,7 +240,7 @@ proc exit_station_editor {} {
 		event add <<record>> <Key-r>
 		bind . <<record>> [list record_wizardUi]
 		event add <<teleview>> <Key-s>
-		bind . <<teleview>> {tv_playerUi}
+		bind . <<teleview>> {tv_playerRendering}
 		event add <<station_up>> <Key-Prior>
 		event add <<station_down>> <Key-Next>
 		event add <<station_jump>> <Key-j>
@@ -265,7 +269,8 @@ proc exit_station_editor {} {
 	destroy .station
 }
 
-proc main_ui_seditor {} {
+proc station_editUi {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0m"
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] User attempted to start station editor while main is docked.
@@ -276,7 +281,7 @@ proc main_ui_seditor {} {
 	}
 	
 	if {[wm attributes .tv -fullscreen] == 1} {
-		tv_playerFullscreen .tv .tv.bg.w .tv.bg
+		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
 	
 	# Setting up main Interface
@@ -344,7 +349,7 @@ proc main_ui_seditor {} {
 		ttk::button $wftop.b_station_preview \
 		-text [mc "Preview"] \
 		-style Toolbutton \
-		-command [list station_preview $wfstation.tv_station]
+		-command [list station_editPreview $wfstation.tv_station]
 		
 		ttk::treeview $wfstation.tv_station \
 		-yscrollcommand [list $wfstation.sb_station set] \
@@ -357,13 +362,13 @@ proc main_ui_seditor {} {
 		
 		ttk::button $wfbottom.b_save \
 		-text [mc "Apply"] \
-		-command [list save_station $wfstation.tv_station] \
+		-command [list station_editSave $wfstation.tv_station] \
 		-compound left \
 		-image $::icon_s(dialog-ok-apply)
 		
 		ttk::button $wfbottom.b_exit \
 		-text [mc "Cancel"] \
-		-command exit_station_editor \
+		-command station_editExit \
 		-compound left \
 		-image $::icon_s(dialog-cancel)
 		
@@ -489,12 +494,12 @@ proc main_ui_seditor {} {
 		bind $wfstation.tv_station <B1-Motion> break
 		bind $wfstation.tv_station <Motion> break
 		bind $wfstation.tv_station <Double-ButtonPress-1> [list station_itemEdit $wfstation.tv_station]
-		bind $wfstation.tv_station <<TreeviewSelect>> [list station_change $wfstation.tv_station]
-		bind $w <Control-Key-x> {exit_station_editor}
+		bind $wfstation.tv_station <<TreeviewSelect>> [list station_editZap $wfstation.tv_station]
+		bind $w <Control-Key-x> {station_editExit}
 		bind $w <Key-F1> [list info_helpHelp]
 		
 		wm title $w [mc "Station Editor"]
-		wm protocol $w WM_DELETE_WINDOW exit_station_editor
+		wm protocol $w WM_DELETE_WINDOW station_editExit
 		wm iconphoto $w $::icon_b(seditor)
 		wm transient $w .
 		if {$::option(tooltips) == 1} {
@@ -513,7 +518,7 @@ Deactivated stations will be marked red."]
 				settooltip $wfbottom.b_exit [mc "Exit editor without any changes."]
 			}
 		}
-		set status_tv_playback [tv_playerMplayerRemote alive]
+		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
 		}

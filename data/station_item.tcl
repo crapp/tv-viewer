@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc station_itemMove {w direction} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemMove \033\[0m \{$w\} \{$direction\}"
 	if {[string trim [$w selection]] == {}} return
 	if {$direction == 1} {
 		if {[llength [$w selection]] > 1} {
@@ -59,6 +60,7 @@ proc station_itemMove {w direction} {
 }
 
 proc station_itemDelete {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDelete \033\[0m \{$w\}"
 	if {[string trim [$w selection]] == {}} return
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Deleting item [$w selection]."
 	flush $::logf_tv_open_append
@@ -84,6 +86,7 @@ proc station_itemDelete {w} {
 }
 
 proc station_itemEdit {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemEdit \033\[0m \{$w\}"
 	if {[string trim [$w selection]] == {}} return
 	if {[llength [$w selection]] > 1} {
 		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Selection is bigger than 1. Can't open edit dialog."
@@ -197,6 +200,7 @@ proc station_itemEdit {w} {
 	}
 	
 	proc station_itemEditExit {w} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemEditExit \033\[0m \{$w\}"
 		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
 		grab release $w
 		destroy $w
@@ -204,6 +208,7 @@ proc station_itemEdit {w} {
 	}
 	
 	proc station_itemApplyEdit {w warn tree} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyEdit \033\[0m \{$w\} \{$warn\} \{$tree\}"
 		if {[info exists ::choice(entry_station)] == 0 || [info exists ::choice(entry_station)] == 0} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please specify name and frequency for each station."
@@ -251,7 +256,7 @@ proc station_itemEdit {w} {
 }
 
 proc station_itemAdd {w} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAdd \033\[0m \{$w\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adding item."
 	flush $::logf_tv_open_append
 	
@@ -358,6 +363,7 @@ proc station_itemAdd {w} {
 	}
 	
 	proc station_itemAddExit {w} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAddExit \033\[0m \{$w\}"
 		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
 		grab release $w
 		destroy $w
@@ -365,6 +371,7 @@ proc station_itemAdd {w} {
 	}
 	
 	proc station_itemApplyAdd {w warn tree} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyAdd \033\[0m \{$w\} \{$warn\} \{$tree\}"
 		if {[info exists ::choice(entry_station_apply)] == 0 || [info exists ::choice(entry_freq_apply)] == 0} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please specify name and frequency for each station."
@@ -418,6 +425,7 @@ proc station_itemAdd {w} {
 }
 
 proc station_itemDeactivate {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDeactivate \033\[0m \{$w\}"
 	if {[string trim [$w selection]] == {}} return
 	$w tag configure disabled -foreground red
 	if {[llength [$w selection]] > 1} {
@@ -448,6 +456,7 @@ proc station_itemDeactivate {w} {
 }
 
 proc station_itemVideoNumber {vinputnr widget var} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemVideoNumber \033\[0m \{$vinputnr\} \{$widget\} \{$var\}"
 	set ::item(mbVinput_nr) $vinputnr
 	if {[info exists ::choice($var)]} {
 		if {"[string trim $::choice($var)]" != {} && "$::choice($var)" != "xxx"} {

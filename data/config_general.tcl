@@ -17,7 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_0 {} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_0 \033\[0m"
 	# Setting up the interface
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
@@ -131,6 +131,7 @@ proc option_screen_0 {} {
 		
 		# Subprocs
 		proc config_generalNewsreaderChange {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalNewsreaderChange \033\[0m \{$w\}"
 			if {$::choice(checkbutton_newsreader) == 0} {
 				$w.sb_newsreader configure -state disabled
 				$w.l_lf_newsreader state disabled
@@ -140,6 +141,7 @@ proc option_screen_0 {} {
 			}
 		}
 		proc config_generalChooseEpg {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalChooseEpg \033\[0m \{$w\}"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "
 			set ::choice(entry_epg) [ttk::getOpenFile -parent .config_wizard -title [mc "Choose an EPG application"] -initialfile $::choice(entry_epg) -initialdir [file dirname $::choice(entry_epg)]]
 			wm protocol .config_wizard WM_DELETE_WINDOW config_wizardExit
@@ -150,6 +152,7 @@ proc option_screen_0 {} {
 			flush $::logf_tv_open_append
 		}
 		proc default_opt0 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt0 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for general section."
 			flush $::logf_tv_open_append
 			set ::choice(mbLanguage) $::option(language)
@@ -180,6 +183,7 @@ The Newsreader will check for news about TV-Viewer."]
 			}
 		}
 		proc stnd_opt0 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt0 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting general options to default."
 			flush $::logf_tv_open_append
 			set ::choice(mbLanguage) $::stnd_opt(language)

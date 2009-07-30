@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc command_socket {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}
 	if {[file exists "$::where_is_home/tmp/comSocket.tmp"] == 0} {
 		set comsocket [open "$::where_is_home/tmp/comSocket.tmp" w]
 		close $comsocket

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_4 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_4 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -88,6 +89,7 @@ proc option_screen_4 {} {
 		#Subprocs
 		
 		proc default_opt4 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for audio section."
 			flush $::logf_tv_open_append
 			set audio {oss alsa pulse sdl}
@@ -136,6 +138,7 @@ to the chosen value."]
 			}
 		}
 		proc stnd_opt4 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting audio options to default."
 			flush $::logf_tv_open_append
 			set ::choice(mbAudio) $::stnd_opt(player_audio)

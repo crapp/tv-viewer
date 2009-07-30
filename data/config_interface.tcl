@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_6 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_6 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -411,12 +412,14 @@ proc option_screen_6 {} {
 		# Subprocs
 		
 		proc config_interfaceTheme {theme} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceTheme \033\[0m \{$theme\}"
 			ttk::style theme use $theme
 			.options_bar.mOptions configure -background $::option(theme_$theme)
 			.options_bar.mHelp configure -background $::option(theme_$theme)
 		}
 		
 		proc config_interfaceChangeTooltips {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceChangeTooltips \033\[0m \{$w\}"
 			if {$::choice(cb_tooltip) == 1} {
 				$w.cb_lf_tooltip_main state !disabled
 				$w.cb_lf_tooltip_wizard state !disabled
@@ -434,13 +437,16 @@ proc option_screen_6 {} {
 			}
 		}
 		proc config_interfaceAlign {value cvar} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceAlign \033\[0m \{$value\} \{$cvar\}"
 			set ::choice($cvar) [lreplace $::choice($cvar) 1 1 [lindex $value 1]]
 			set ::config_int($cvar) [lindex $value 0]
 		}
 		proc config_interfaceMousew {delta} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceMousew \033\[0m \{$delta\}"
 			$::window(interface_nb3_cont) yview scroll [expr {-$delta/120}] units
 		}
 		proc default_opt6 {w1 w2 w3} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for interface section."
 			flush $::logf_tv_open_append
 			set ::choice(mbTheme) $::option(use_theme)
@@ -594,6 +600,7 @@ mouse cursor to invoke it."]
 			}
 		}
 		proc stnd_opt6 {w1 w2 w3} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting interface options to default."
 			flush $::logf_tv_open_append
 			set ::choice(mbTheme) $::stnd_opt(use_theme)

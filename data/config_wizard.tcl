@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc config_wizardMainUi {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardMainUi \033\[0m"
 	if {[winfo exists .config_wizard]} return
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
@@ -28,7 +29,7 @@ proc config_wizardMainUi {} {
 	}
 	
 	if {[wm attributes .tv -fullscreen] == 1} {
-		tv_playerFullscreen .tv .tv.bg.w .tv.bg
+		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting preferences..."
 	flush $::logf_tv_open_append
@@ -152,6 +153,7 @@ proc config_wizardMainUi {} {
 }
 
 proc config_wizardListbox {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardListbox \033\[0m"
 	set wfopt .config_wizard.frame_optionsbar
 	set wfbox .config_wizard.frame_configbox
 	set wfcopt .config_wizard.frame_configoptions
@@ -161,6 +163,7 @@ proc config_wizardListbox {} {
 }
 
 proc config_wizardExit {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing preferences dialog and reread configuration."
 	flush $::logf_tv_open_append
 	
@@ -208,6 +211,7 @@ proc config_wizardExit {} {
 }
 
 proc config_wizardSaveopts {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardSaveopts \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Saving configuration values to $::where_is_home/config/tv-viewer.conf"
 	flush $::logf_tv_open_append
 	if {[file exists "$::where_is_home/config/tv-viewer.conf"]} {

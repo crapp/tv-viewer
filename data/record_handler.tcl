@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc record_applyTimeDate {tree lb w handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyTimeDate \033\[0m \{$tree\} \{$lb\} \{$w\} \{$handler\}"
 	set thour [scan $::record(time_hour) %d]
 	set tmin [scan $::record(time_min) %d]
 	if {$thour > 23 || $thour < 0} {
@@ -56,6 +57,7 @@ proc record_applyTimeDate {tree lb w handler} {
 }
 
 proc record_applyDuration {tree lb w handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyDuration \033\[0m \{$tree\} \{$lb\} \{$w\} \{$handler\}"
 	set dhour [scan $::record(duration_hour) %d]
 	set dmin [scan $::record(duration_min) %d]
 	set dsec [scan $::record(duration_sec) %d]
@@ -84,6 +86,7 @@ proc record_applyDuration {tree lb w handler} {
 }
 
 proc record_applyResolution {tree lb duration_calc w handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyResolution \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
 	if {[string tolower $::option(video_standard)] == "ntsc" } {
 		if {$::record(resolution_width) > 720 || $::record(resolution_width) < 0 || $::record(resolution_height) > 480 || $::record(resolution_height) < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Resolution format incorrect!"]
@@ -105,6 +108,7 @@ proc record_applyResolution {tree lb duration_calc w handler} {
 }
 
 proc record_applyFile {tree lb duration_calc w handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyFile \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
 	if {[string trim [string length $::record(time_min)]] < 2} {
 		set ::record(time_min) "0$::record(time_min)"
 	}
@@ -129,6 +133,7 @@ proc record_applyFile {tree lb duration_calc w handler} {
 }
 
 proc record_applyEndgame {tree lb duration_calc w handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyEndgame \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
 	if {[file exist "$::where_is_home/config/scheduler.conf"]} {
 		set open_f [open "$::where_is_home/config/scheduler.conf" r]
 		set jobid [read $open_f]

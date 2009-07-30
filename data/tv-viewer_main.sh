@@ -259,9 +259,13 @@ main_readStationFile
 #source stream and picqual related stuff.
 source $::where_is/data/main_picqual_stream.tcl
 #source tv player and related functions
+source $::where_is/data/tv_callback.tcl
+source $::where_is/data/tv_file_calc.tcl
 source $::where_is/data/tv_player.tcl
 source $::where_is/data/tv_playback.tcl
 source $::where_is/data/tv_seek.tcl
+source $::where_is/data/tv_slist.tcl
+source $::where_is/data/tv_wm.tcl
 #source tv osd
 source $::where_is/data/tv_osd.tcl
 #source newsreader ui and update checker.

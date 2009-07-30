@@ -17,8 +17,9 @@
 #       MA 02110-1301, USA.
 
 proc info_helpHelp {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHelp \033\[0m"
 	if {[wm attributes .tv -fullscreen] == 1} {
-		tv_playerFullscreen .tv .tv.bg.w .tv.bg
+		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
 	if {$::option(language_value) != 0} {
 		catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$::option(language_value).html" &}
@@ -44,6 +45,7 @@ proc info_helpHelp {} {
 }
 
 proc info_helpAbout {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpAbout \033\[0m"
 	if {[winfo exists .top_about] == 0} {
 		
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching info screen..."
@@ -186,11 +188,13 @@ Christian Rapp"] \
 		#Subprocs 
 		
 		proc info_helpExitAbout {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpExitAbout \033\[0m \{$w\}"
 			grab release $w
 			destroy $w
 		}
 		
 		proc info_helpHomepage {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHomepage \033\[0m"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Executing your favorite internet browser."
 			flush $::logf_tv_open_append
 			catch {exec xdg-open http://home.arcor.de/saedelaere/index_eng.html &}

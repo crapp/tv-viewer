@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc create_icons {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: create_icons \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Creating icons for TV-Viewer."
 	flush $::logf_tv_open_append
 	if {[package vcompare [info patchlevel] 8.6] == -1} {

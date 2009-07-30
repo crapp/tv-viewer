@@ -16,7 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc tv_osd {indent atime osd_text} {
+proc tv_osd {ident atime osd_text} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_osd \033\[0m \{$ident\} \{$atime\} \{$osd_text\}"
 	if {[info exists ::data(after_id_osd)]} {
 		foreach id [split $::data(after_id_osd)] {
 			after cancel $id
@@ -35,12 +36,11 @@ proc tv_osd {indent atime osd_text} {
 		7 {-anchor s -relx 0.5 -rely 1.0 -y -10}
 		8 {-anchor se -relx 1.0 -rely 1.0 -x -10 -y -10}
 	}
-	
-	set font "[lindex $::option($indent) 1]"
-	set style "[string tolower [lindex $::option($indent) 2]]"
-	set size [lindex $::option($indent) 3]
-	set bias [lindex $::option($indent) 4]
-	set color [lindex $::option($indent) 5]
+	set font "[lindex $::option($ident) 1]"
+	set style "[string tolower [lindex $::option($ident) 2]]"
+	set size [lindex $::option($ident) 3]
+	set bias [lindex $::option($ident) 4]
+	set color [lindex $::option($ident) 5]
 	
 	set osd [frame .tv.osd -bg #004AFF -padx 5 -pady 5]
 	pack [label $osd.label -bg white -fg $color -text "$osd_text" -justify left]
@@ -53,4 +53,6 @@ proc tv_osd {indent atime osd_text} {
 	
 	place $osd -in .tv {*}$alignment($bias)
 	set ::data(after_id_osd) [after $atime "destroy .tv.osd"]
+	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] OSD invoked, ident: $ident, time: $atime, text: $osd_text"
+	flush $::logf_tv_open_append
 }

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc log_viewerCheck {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerCheck \033\[0m"
 	if {$::option(log_files) == 1} {
 		if {[file exists "$::where_is_home/log/tvviewer.log"]} {
 			if {[file size "$::where_is_home/log/tvviewer.log"] > [expr $::option(log_size_tvviewer) * 1000]} {
@@ -89,6 +90,7 @@ proc log_viewerCheck {} {
 }
 
 proc log_viewerMplayer {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplayer \033\[0m"
 	if {[winfo exists .log_viewer_mplayer] == 0} {
 		
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching log viewer for MPlayer."
@@ -169,6 +171,7 @@ proc log_viewerMplayer {} {
 		bind $mf.t_log_mplayer <Control-c> {event generate %W <<Copy>>}
 		
 		proc log_viewerMplReadFile {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplReadFile \033\[0m \{$w\}"
 			if {[file exists "$::where_is_home/log/videoplayer.log"]} {
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Read existing logfile, insert into log viewer and start monitoring
 # \[[clock format [clock scan now] -format {%H:%M:%S}]\] logfile for MPlayer."
@@ -218,6 +221,7 @@ proc log_viewerMplayer {} {
 
 proc log_viewerMplTail {filename position} {
 	if {"$position" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplTail \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::data(log_mpl_id)}
 		unset -nocomplain ::data(log_mpl_id)
 		return
@@ -244,6 +248,7 @@ proc log_viewerMplTail {filename position} {
 }
 
 proc log_viewerMplayerLb {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplayerLb \033\[0m \{$w\}"
 	set get_lb_index [$w curselection]
 	set get_lb_content [$w get $get_lb_index]
 	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
@@ -251,6 +256,7 @@ proc log_viewerMplayerLb {w} {
 }
 
 proc log_viewerScheduler {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerScheduler \033\[0m"
 	if {[winfo exists .log_viewer_scheduler] == 0} {
 		
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching log viewer for Scheduler."
@@ -331,6 +337,7 @@ proc log_viewerScheduler {} {
 		bind $mf.t_log_scheduler <Control-c> {event generate %W <<Copy>>}
 		
 		proc log_viewerSchedReadFile {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedReadFile \033\[0m \{$w\}"
 			if {[file exists "$::where_is_home/log/scheduler.log"]} {
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Read existing logfile, insert into log viewer and start monitoring
 # \[[clock format [clock scan now] -format {%H:%M:%S}]\] logfile for Scheduler."
@@ -381,6 +388,7 @@ proc log_viewerScheduler {} {
 
 proc log_viewerSchedTail {filename position} {
 	if {"$position" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedTail \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::data(log_sched_id)}
 		unset -nocomplain ::data(log_sched_id)
 		return
@@ -409,6 +417,7 @@ proc log_viewerSchedTail {filename position} {
 }
 
 proc log_viewerSchedLb {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedLb \033\[0m \{$w\}"
 	set get_lb_index [$w curselection]
 	set get_lb_content [$w get $get_lb_index]
 	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
@@ -416,6 +425,7 @@ proc log_viewerSchedLb {w} {
 }
 
 proc log_viewerTvViewer {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvViewer \033\[0m"
 	if {[winfo exists .log_viewer_tvviewer] == 0} {
 		
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching log viewer for TV-Viewer."
@@ -496,6 +506,7 @@ proc log_viewerTvViewer {} {
 		bind $mf.t_log_tvviewer <Control-c> {event generate %W <<Copy>>}
 		
 		proc log_viewerTvReadFile {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvReadFile \033\[0m \{$w\}"
 			if {[file exists "$::where_is_home/log/tvviewer.log"]} {
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Read existing logfile, insert into log viewer and start monitoring
 # \[[clock format [clock scan now] -format {%H:%M:%S}]\] logfile for TV-Viewer."
@@ -546,6 +557,7 @@ proc log_viewerTvViewer {} {
 
 proc log_viewerTvTail {filename position} {
 	if {"$position" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvTail \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::data(log_tv_id)}
 		unset -nocomplain ::data(log_tv_id)
 		return
@@ -574,6 +586,7 @@ proc log_viewerTvTail {filename position} {
 }
 
 proc log_viewerTvLb {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvLb \033\[0m \{$w\}"
 	set get_lb_index [$w curselection]
 	set get_lb_content [$w get $get_lb_index]
 	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]

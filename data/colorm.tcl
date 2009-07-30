@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc colorm_readValues {wfscale} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_readValues \033\[0m \{$wfscale\}"
 	tkwait visibility .cm
 	catch {exec v4l2-ctl --device=$::option(video_device) -l} read_v4l2ctl
 	set status_v4l2ctl [catch {agrep -w "$read_v4l2ctl" hue} hue_default_read]
@@ -188,6 +189,7 @@ proc colorm_readValues {wfscale} {
 }
 
 proc colorm_saveValues {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0m colorm_saveValues \{$w\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Saving color management values to $::where_is_home/config/tv-viewer.conf"
 	flush $::logf_tv_open_append
 	set config_file "$::where_is_home/config/tv-viewer.conf"
@@ -259,6 +261,7 @@ proc colorm_saveValues {w} {
 }
 
 proc colorm_exit {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: colom_exit \033\[0m \{$w\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing Color Management without saving values."
 	flush $::logf_tv_open_append
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::option(hue_old)}
@@ -269,9 +272,9 @@ proc colorm_exit {w} {
 }
 
 proc colorm_mainUi {} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_mainUi \033\[0m"
 	if {[wm attributes .tv -fullscreen] == 1} {
-		tv_playerFullscreen .tv .tv.bg.w .tv.bg
+		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
 	
 	if {[winfo exists .cm] == 0} {
@@ -402,6 +405,7 @@ proc colorm_mainUi {} {
 		}
 		
 		proc colorm_setDefault {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_setDefault \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting color management values to default."
 			flush $::logf_tv_open_append
 			if {[array exists ::hue]} {

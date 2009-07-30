@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_7 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_7 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -46,6 +47,7 @@ proc option_screen_7 {} {
 		ttk::labelframe $::window(rec_nb1).labelframe_rec_dur \
 		-text [mc "Default record duration"]
 		proc config_recordDurHourValidate {value widget} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurHourValidate \033\[0m \{$value\} \{$widget\}"
 			if {[string is integer $value] != 1 || [string length $value] > 2} {
 				return 0
 			} else {
@@ -53,6 +55,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordDurMinValidate {value widget} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurMinValidate \033\[0m \{$value\} \{$widget\}"
 			if {[string is integer $value] != 1 || [string length $value] > 2} {
 				return 0
 			} else {
@@ -60,6 +63,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordDurSecValidate {value widget} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurSecValidate \033\[0m \{$value\} \{$widget\}"
 			if {[string is integer $value] != 1 || [string length $value] > 2} {
 				return 0
 			} else {
@@ -203,6 +207,7 @@ proc option_screen_7 {} {
 		# Subprocs
 		
 		proc config_recordGetRecDir {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordGetRecDir \033\[0m"
 			set old_dir "$::choice(entry_rec_path)"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "
 			if {"[string trim $::choice(entry_rec_path)]" == "[subst $::option(rec_default_path)]" || [file isdirectory [string trim "$::choice(entry_rec_path)"]] != 1} {
@@ -218,11 +223,13 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordDurHour {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurHour \033\[0m"
 			if {$::choice(sb_duration_hour) < 0} {
 				set ::choice(sb_duration_hour) 0
 			}
 		}
 		proc config_recordDurMin {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurMin \033\[0m"
 			if {$::choice(sb_duration_min) >= 60} {
 				set ::choice(sb_duration_min) 0
 				if {$::choice(sb_duration_hour) < 99} {
@@ -237,6 +244,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordDurSec {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurSec \033\[0m"
 			if {$::choice(sb_duration_sec) >= 60} {
 				set ::choice(sb_duration_sec) 0
 				if {$::choice(sb_duration_min) < 60} {
@@ -253,6 +261,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordScheduler {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordScheduler \033\[0m"
 			if {$::choice(cb_sched_auto) == 1} {
 				if {[file isdirectory "$::env(HOME)/.config"]} {
 					if {[file isdirectory "$::env(HOME)/.config/autostart"]} {
@@ -270,6 +279,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordTimesDir {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordTimesDir \033\[0m"
 			set old_dir "$::choice(ent_times_folder)"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "
 			if {"[string trim $::choice(ent_times_folder)]" == "[subst $::option(timeshift_path)]" || [file isdirectory [string trim "$::choice(ent_times_folder)"]] != 1} {
@@ -286,6 +296,7 @@ proc option_screen_7 {} {
 		}
 		
 		proc default_opt7 {w w2} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt7 \033\[0m \{$w\} \{$w2\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for record section."
 			flush $::logf_tv_open_append
 			set ::choice(entry_rec_path) "[subst $::option(rec_default_path)]"
@@ -323,6 +334,7 @@ timeshift will automatically be stopped."]
 			}
 		}
 		proc stnd_opt7 {w w2} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt7 \033\[0m \{$w\} \{$w2\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting record options to default."
 			flush $::logf_tv_open_append
 			set ::choice(entry_rec_path) "[subst $::stnd_opt(rec_default_path)]"

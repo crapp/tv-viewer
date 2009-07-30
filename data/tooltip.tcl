@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc settooltip {tool_tip_widget tool_tip_text} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: settooltip \033\[0m \{$tool_tip_widget\} \{$tool_tip_text\}"
 	if { [string trim $tool_tip_text] != {} } {
 		bind $tool_tip_widget <Any-Enter>    [list after 500 [list showtooltip %W $tool_tip_text]]
 		bind $tool_tip_widget <Any-Leave>    [list after 500 [list destroy %W.tooltip]]
@@ -31,6 +32,7 @@ proc settooltip {tool_tip_widget tool_tip_text} {
 }
 
 proc tooltips {w1 w2 section} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tooltips \033\[0m \{$w1\} \{$w2\} \{$section\}"
 	if {"$section" == "main"} {
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_main) == 1} {
@@ -73,6 +75,7 @@ proc tooltips {w1 w2 section} {
 }
 
 proc showtooltip {tool_tip_widget tool_tip_text} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: showtooltip \033\[0m \{$tool_tip_widget\} \{$tool_tip_text\}"
 	global tcl_platform
 	if { [string match $tool_tip_widget* [winfo containing  [winfo pointerx .] [winfo pointery .]] ] == 0  } {
 		return

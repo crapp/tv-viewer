@@ -178,28 +178,28 @@ if {$start_options(key_9)} {
 	exit 0
 }
 if {$start_options(slist_osd)} {
-	puts $comsocket "tv-viewer_main tv_playerLircSlist"
+	puts $comsocket "tv-viewer_main tv_slistLirc"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal slist_osd"
 	flush $logf_tv_open_append
 	exit 0
 }
 if {$start_options(slist_osd_up)} {
-	puts $comsocket "tv-viewer_main tv_playerLircSlistMoveUp"
+	puts $comsocket "tv-viewer_main tv_slistLircMoveUp"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal slist_osd_up"
 	flush $logf_tv_open_append
 	exit 0
 }
 if {$start_options(slist_osd_down)} {
-	puts $comsocket "tv-viewer_main tv_playerLircSlistMoveDown"
+	puts $comsocket "tv-viewer_main tv_slistLircMoveDown"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal slist_osd_down"
 	flush $logf_tv_open_append
 	exit 0
 }
 if {$start_options(fullscreen)} {
-	puts $comsocket "tv-viewer_main tv_playerFullscreen .tv .tv.bg.w .tv.bg"
+	puts $comsocket "tv-viewer_main tv_wmFullscreen .tv .tv.bg.w .tv.bg"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal fullscreen"
 	flush $logf_tv_open_append
@@ -213,21 +213,21 @@ if {$start_options(quit)} {
 	exit 0
 }
 if {$start_options(zoom_incr)} {
-	puts $comsocket "tv-viewer_main tv_playerPanscan .tv.bg.w 1"
+	puts $comsocket "tv-viewer_main tv_wmPanscan .tv.bg.w 1"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal zoom_incr"
 	flush $logf_tv_open_append
 	exit 0
 }
 if {$start_options(zoom_decr)} {
-	puts $comsocket "tv-viewer_main tv_playerPanscan .tv.bg.w -1"
+	puts $comsocket "tv-viewer_main tv_wmPanscan .tv.bg.w -1"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal zoom_decr"
 	flush $logf_tv_open_append
 	exit 0
 }
 if {$start_options(zoom_auto)} {
-	puts $comsocket "tv-viewer_main tv_playerPanscanAuto"
+	puts $comsocket "tv-viewer_main tv_wmPanscanAuto"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal zoom_auto"
 	flush $logf_tv_open_append
@@ -262,7 +262,7 @@ if {$start_options(volume_decr)} {
 	exit 0
 }
 if {$start_options(mute)} {
-	puts $comsocket "tv-viewer_main tv_volume_control .bottom_buttons mute"
+	puts $comsocket "tv-viewer_main tv_playerVolumeControl .bottom_buttons mute"
 	flush $comsocket
 	puts $logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Lirc emitter received Signal mute"
 	flush $logf_tv_open_append

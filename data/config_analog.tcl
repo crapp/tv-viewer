@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_1 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_1 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -310,25 +311,31 @@ proc option_screen_1 {} {
 			# Subprocs
 			
 			proc config_analog_VideobitrateValue {w value} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogVideobitrateValue \033\[0m \{$w\} \{$value\}"
 				set ::choice(entry_vbitrate_value) [expr int(ceil($value))]
 			}
 			proc config_analogVideopeakbitrateValue {w value} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogVideopeakbitrateValue \033\[0m \{$w\} \{$value\}"
 				set ::choice(entry_pbitrate_value) [expr int(ceil($value))]
 			}
 			proc config_analog_setScaleVideobitrate {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_setScaleVideobitrate \033\[0m \{$w\}"
 				if {[string trim $::choice(entry_vbitrate_value)] == {}} return
 				set ::choice(scale_videobitrate) $::choice(entry_vbitrate_value)
 			}
 			proc config_analog_setScaleVideopeakbitrate {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_setScaleVideopeakbitrate \033\0m \{$w\}"
 				if {[string trim $::choice(entry_pbitrate_value)] == {}} return
 				set ::choice(scale_videopeakbitrate) $::choice(entry_pbitrate_value)
 			}
 			proc config_analog_optScrInput {value} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_optScrInput \033\0m \{$value\}"
 				set ::choice(mbVideo_input_value) $value
 				catch {exec v4l2-ctl --device=$::choice(mbVideo) --set-input=$::choice(mbVideo_input_value)}
 			}
 			
 			proc config_analogStreambitrate {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogStreambitrate \033\[0m \{$w\}"
 				if {$::choice(cb_streambitrate) == 0} {
 					$w.l_lf_videobitrate state disabled
 					$w.s_lf_videobitrate state disabled
@@ -346,6 +353,7 @@ proc option_screen_1 {} {
 				}
 			}
 			proc config_analogTemporal {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogTemporal \033\[0m \{$w\}"
 				if {$::choice(cb_temporal) == 0} {
 					$w.l_lf_temporal state disabled
 					$w.sb_lf_temporal configure -state disabled
@@ -355,6 +363,7 @@ proc option_screen_1 {} {
 				}
 			}
 			proc config_analogValidateVb {value1 value2} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogValidateVb \033\[0m \{$value1\} \{$value2\}"
 				if {[string is integer $value1] == 0 || $value1 < 0 || $value1 > [expr ($::analog(vbit) / 8) / 1024]} {
 					return 0
 				} else {
@@ -362,6 +371,7 @@ proc option_screen_1 {} {
 				}
 			}
 			proc config_analogValidateVbp {value1 value2} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogValidateVbp \033\[0m \{$value1\} \{$value2\}"
 				if {[string is integer $value1] == 0 || $value1 < 0 || $value1 > [expr ($::analog(vbitp) / 8) / 1024]} {
 					return 0
 				} else {
@@ -369,6 +379,7 @@ proc option_screen_1 {} {
 				}
 			}
 			proc config_analog_audioV4l2 {} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_audioV4l2 \033\[0m"
 				if {$::choice(cb_audio_v4l2) == 1} {
 					$::window(analog_nb2).l_audio_v4l2 state !disabled
 					$::window(analog_nb2).s_audio_v4l2 state !disabled
@@ -380,11 +391,13 @@ proc option_screen_1 {} {
 				}
 			}
 			proc config_analog_audioScale {value} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_audioScale \033\[0m \{$value\}"
 				set displayed_value [expr $value / $::choice(scale_recordvolume_mult)]
 				set ::choice(scale_recordvolume) $displayed_value
 				$::window(analog_nb2).l_audio_v4l2_val configure -text "[expr round($displayed_value)]%"
 			}
 			proc default_opt1 {w1 w2} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt1 \033\[0m \{$w1\} \{$w2\}"
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for analog section..."
 				flush $::logf_tv_open_append
 				catch {
@@ -655,6 +668,7 @@ to change this value."]
 				}
 			}
 			proc default_com1 {w1 w2} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_com1 \033\[0m \{$w1\} \{$w2\}"
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Changing video device node, need to reread some options."
 				flush $::logf_tv_open_append
 				catch {
@@ -790,6 +804,7 @@ to change this value."]
 			}
 			
 			proc stnd_opt1 {w1 w2} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt1 \033\[0m \{$w1\} \{$w2\}"
 				catch {
 					$w1.mbVideo_input delete 0 end
 				}

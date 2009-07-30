@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_3 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_3 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -255,6 +256,7 @@ proc option_screen_3 {} {
 			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt3 $::window(video_nb1)]
 			
 			proc config_videoScreensaver {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_videoScreensaver \033\[0m \{$w\}"
 				if {$::choice(cb_lf_screensaver) == 0} {
 					$w.rb_lf_mplayer_screens state disabled
 					$w.rb_lf_heartbeat_screens state disabled
@@ -265,6 +267,7 @@ proc option_screen_3 {} {
 			}
 			
 			proc config_videoFramedrop {com} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_videoFramedrop \033\[0m \{$com\}"
 				if {$com == 0 && $::choice(cb_framedrop) == 1} {
 					set ::choice(cb_hframedrop) 0
 					return
@@ -276,6 +279,7 @@ proc option_screen_3 {} {
 			}
 			
 			proc default_opt3 {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt3 \033\[0m \{$w\}"
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for video section."
 				flush $::logf_tv_open_append
 				set vo [list x11 xv xvmc vdpau gl gl(fast) {gl(fast ATI)} gl(yuv) gl2 gl2(yuv)]
@@ -420,6 +424,7 @@ May help in better video playback."]
 			}
 			
 			proc stnd_opt3 {w} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt3 \033\[0m \{$w\}"
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting video options to default."
 				flush $::logf_tv_open_append
 				set ::choice(mbVo) $::stnd_opt(player_vo)

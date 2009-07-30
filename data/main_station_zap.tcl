@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc main_stationChannelDown {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationChannelDown \033\[0m \{$w\}"
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {[string match $::kanalid($i) [lindex $::station(last) 0]]} {
 			set calculation [expr {($i == 1) ? $::station(max) : ($i - 1)}]
@@ -39,7 +40,7 @@ proc main_stationChannelDown {w} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 			} else {
-				set status_tv [tv_playerMplayerRemote alive]
+				set status_tv [tv_callbackMplayerRemote alive]
 				if {$status_tv != 1} {
 					tv_playbackStop 0 nopic
 					set restart 1
@@ -59,6 +60,7 @@ proc main_stationChannelDown {w} {
 }
 
 proc main_stationChannelUp {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationChannelUp \033\[0m \{$w\}"
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {[string match $::kanalid($i) [lindex $::station(last) 0]]} {
 			set calculation [expr {($i == $::station(max)) ? 1 : ($i + 1)}]
@@ -81,7 +83,7 @@ proc main_stationChannelUp {w} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 			} else {
-				set status_tv [tv_playerMplayerRemote alive]
+				set status_tv [tv_callbackMplayerRemote alive]
 				if {$status_tv != 1} {
 					tv_playbackStop 0 nopic
 					set restart 1
@@ -101,6 +103,7 @@ proc main_stationChannelUp {w} {
 }
 
 proc main_stationChannelJumper {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationChannelJumper \033\[0m \{$w\}"
 	if {[info exists ::done_old_channel] == 0} {
 		$w configure -text "[lindex $::station(old) 0]"
 		if {[winfo exists .frame_slistbox] == 1} {
@@ -120,7 +123,7 @@ proc main_stationChannelJumper {w} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(old) 1]} resultat_v4l2ctl
 			after 1000 [list station_after_msg [lindex $::station(old) 2] $resultat_v4l2ctl]
 		} else {
-			set status_tv [tv_playerMplayerRemote alive]
+			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 nopic
 				set restart 1
@@ -153,7 +156,7 @@ proc main_stationChannelJumper {w} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 			after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 		} else {
-			set status_tv [tv_playerMplayerRemote alive]
+			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 nopic
 				set restart 1
@@ -171,6 +174,7 @@ proc main_stationChannelJumper {w} {
 }
 
 proc main_stationListboxStations {slist} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationListboxStations \033\[0m \{$slist\}"
 	if {"[$slist cget -state]" != "disabled"} {
 		set get_lb_index [$slist curselection]
 		set get_lb_content [$slist get $get_lb_index]
@@ -185,7 +189,7 @@ proc main_stationListboxStations {slist} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 			after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 		} else {
-			set status_tv [tv_playerMplayerRemote alive]
+			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 nopic
 				set restart 1
@@ -213,6 +217,7 @@ proc main_stationListboxStations {slist} {
 }
 
 proc main_stationStationNrKeys {key} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationStationNrKeys \033\[0m \{$key\}"
 	catch {after cancel $::main(change_keyid)}
 	if {[info exists ::main(change_key)]} {
 		if {[string length $::main(change_key)] == 4} {
@@ -237,6 +242,7 @@ proc main_stationStationNrKeys {key} {
 }
 
 proc main_stationStationNr {w number} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationStationNr \033\[0m \{$w\} \{$number\}"
 	set number [scan $number %d]
 	if {[info exists ::main(change_key)]} {
 		unset -nocomplain ::main(change_key)
@@ -265,7 +271,7 @@ proc main_stationStationNr {w number} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 		after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 	} else {
-		set status_tv [tv_playerMplayerRemote alive]
+		set status_tv [tv_callbackMplayerRemote alive]
 		if {$status_tv != 1} {
 			tv_playbackStop 0 nopic
 			set restart 1
@@ -284,6 +290,7 @@ proc main_stationStationNr {w number} {
 }
 
 proc main_stationInput {com direct} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationInput \033\[0m \{$com\} \{$direct\}"
 	if {$com == 1} {
 		main_stationInputQuery cancel 0 0
 		bind . <<input_up>> {}
@@ -295,7 +302,7 @@ proc main_stationInput {com direct} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --list-input} read_vinputs
 		set status_list_input [catch {agrep -w "$read_vinputs" Input} resultat_list_input]
 		if {$status_query_input == 0 && $status_list_input == 0} {
-			set status_tv [tv_playerMplayerRemote alive]
+			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 nopic
 				set restart 1
@@ -342,6 +349,7 @@ proc main_stationInput {com direct} {
 }
 
 proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationInputLoop \033\[0m \{$secs\} \{$input\} \{$freq\} \{$snumber\} \{$restart\} \{$aftmsg\}"
 	if {"$secs" == "cancel"} {
 		if {[info exists ::main(change_inputLoop_id)]} {
 			foreach id [split $::main(change_inputLoop_id)] {
@@ -378,7 +386,7 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 				}
 			}
 			if {$restart == 1} {
-				tv_playerUi
+				tv_playerRendering
 			}
 			return
 		} else {
@@ -394,6 +402,7 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 }
 
 proc main_stationInputQuery {secs input restart} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationInputQuery \033\[0m \{$secs\} \{$input\} \{$restart\}"
 	if {"$secs" == "cancel"} {
 		if {[info exists ::data(after_id_input)]} {
 			foreach id [split $::data(after_id_input)] {

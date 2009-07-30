@@ -17,10 +17,12 @@
 #       MA 02110-1301, USA.
 
 proc main_pic_streamForceVideoStandard {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamForceVideoStandard \033\[0m"}
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-standard=[string tolower $::option(video_standard)]}
 }
 
 proc main_pic_streamDimensions {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamDimension \033\[0m"}
 	catch {exec v4l2-ctl --device=$::option(video_device) -V} read_v4l2ctl
 	set status_grepwidthheight [catch {agrep -m "$read_v4l2ctl" width} read_resol]
 	if {$status_grepwidthheight == 0} {
@@ -41,6 +43,7 @@ proc main_pic_streamDimensions {} {
 }
 
 proc main_pic_streamPicqualTemporal {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamPicqualTemporal \033\[0m"}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=temporal_filter} read_temporal
 	set temporal_filter_status [catch {agrep -m "$read_temporal" temporal} resultat_temporal_filter]
 	if {$temporal_filter_status == 0} {
@@ -59,6 +62,7 @@ proc main_pic_streamPicqualTemporal {} {
 }
 
 proc main_pic_streamVbitrate {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamVbitrate \033\[0m"}
 	if {$::option(streambitrate) == 1} {
 		if {[info exists ::option(videopeakbitrate)]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_peak_bitrate} read_peak_bitrate
@@ -92,6 +96,7 @@ proc main_pic_streamVbitrate {} {
 }
 
 proc main_pic_streamColormControls {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamColormControls \033\[0m"}
 	if {[info exists ::option(brightness)]} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=brightness} read_brightness
 		set status_grepbrightness [catch {agrep -m "$read_bridghtness" brightness} brightness_check]
@@ -139,6 +144,7 @@ proc main_pic_streamColormControls {} {
 }
 
 proc main_pic_streamAudioV4l2 {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamAudioV4l2 \033\[0m"}
 	if {[info exists ::option(audio_v4l2_value)]} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=volume} read_volume
 		set status_audio [catch {agrep -m "$read_volume" volume} resultat_audio]

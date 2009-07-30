@@ -17,9 +17,10 @@
 #       MA 02110-1301, USA.
 
 proc agrep {switch input modifier} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: agrep \033\[0m \{$switch\} \{$modifier\}"}
 	foreach line [split "$input" \n] {
 		if {"$switch" == "-m"} {
-			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase *$modifier "$line"]} {
+			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase $modifier* "$line"]} {
 				lappend return_value "$line"
 			}
 		}

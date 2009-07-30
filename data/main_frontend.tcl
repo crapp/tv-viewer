@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc main_frontendExitViewer {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendExitViewer \033\[0m"
 	set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 	if { $status_timeslinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
@@ -36,12 +37,12 @@ proc main_frontendExitViewer {} {
 	destroy .top_about
 	if {[winfo exists .tv]} {
 		if {[winfo exists .tv.file_play_bar]} {
-			set status_tv [tv_playerMplayerRemote alive]
+			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 nopic
 			}
 		} else {
-			set status_tv [tv_playerMplayerRemote alive]
+			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 pic
 			}
@@ -64,12 +65,14 @@ proc main_frontendExitViewer {} {
 }
 
 proc main_frontendEpg {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendEpg \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching EPG program..."
 	flush $::logf_tv_open_append
 	catch {exec sh -c "[subst $::option(epg_command)] >/dev/null 2>&1" &}
 }
 
 proc main_frontendShowslist {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendShowslist \033\[0m \{$w\}"
 	if {[winfo exists .frame_slistbox] == 0} {
 		
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Building station list..."
@@ -208,7 +211,7 @@ proc msgcat::mcunknown {locale src args} {
 }
 
 proc main_frontendLaunchDiagnostic {} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendLaunchDiagnostic \033\[0m"
 	if {[winfo exists .config_wizard.top_diagnostic] == 0} {
 		
 		set wtop [toplevel .top_diagnostic]
@@ -260,6 +263,7 @@ Please wait..."] \
 		-pady 10
 		
 		proc main_frontendDiagnosticExit {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticExit \033\[0m"
 			grab release .top_diagnostic
 			if {$::option(systray_mini) == 1} {
 				bind . <Unmap> {
@@ -292,6 +296,7 @@ Please wait..."] \
 		
 		catch {exec "$::where_is/data/tv-viewer_diag.tcl" &}
 		proc main_frontendDiagnosticFinished {} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticFinished \033\[0m"
 			if {[winfo exists .top_diagnostic]} {
 				
 				grid rowconfigure .top_diagnostic.f_main {2} -weight 1 -minsize 150
@@ -344,6 +349,7 @@ $::env(HOME)/tv-viewer_diag.out" hyper_file
 }
 
 proc main_frontendUiTvviewer {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendUiTvviewer \033\[0m"
 	# Setting up main Interface
 	
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up main interface."
@@ -403,7 +409,7 @@ proc main_frontendUiTvviewer {} {
 	ttk::scale $wfbottom.scale_volume \
 	-orient horizontal \
 	-variable volume_scale \
-	-command [list tv_volume_control $wfbottom] \
+	-command [list tv_playerVolumeControl $wfbottom] \
 	-from 0 \
 	-to 100
 	set ::volume_scale 100
@@ -412,13 +418,13 @@ proc main_frontendUiTvviewer {} {
 	-image $::icon_m(volume) \
 	-style Toolbutton \
 	-takefocus 0 \
-	-command [list tv_volume_control $wfbottom mute]
+	-command [list tv_playerVolumeControl $wfbottom mute]
 	
 	ttk::button $wftop.button_timeshift \
 	-image $::icon_m(timeshift) \
 	-style Toolbutton \
 	-takefocus 0 \
-	-command [list timeshift $wftop.button_timeshift]
+	-command {event generate . <<timeshift>>}
 	
 	ttk::button $wftop.button_record \
 	-image $::icon_m(record) \
@@ -436,7 +442,7 @@ proc main_frontendUiTvviewer {} {
 	-image $::icon_m(starttv) \
 	-style Toolbutton \
 	-takefocus 0 \
-	-command tv_playerUi
+	-command tv_playerRendering
 	
 	menu $wfbar.mOptions \
 	-tearoff 0 \
@@ -520,7 +526,7 @@ proc main_frontendUiTvviewer {} {
 	-label [mc "Station Editor"] \
 	-compound left \
 	-image $::icon_s(seditor) \
-	-command {main_ui_seditor} \
+	-command {station_editUi} \
 	-accelerator [mc "Ctrl+E"]
 	$wfbar.mOptions add command \
 	-label [mc "Record Wizard"] \
@@ -593,13 +599,13 @@ proc main_frontendUiTvviewer {} {
 			if {[string match *scale_volume $widget] || [string match *button_mute $widget]} continue
 			$widget state disabled
 		}
-		bind . <Key-m> [list tv_volume_control $wfbottom mute]
+		bind . <Key-m> [list tv_playerVolumeControl $wfbottom mute]
 		bind . <Key-F1> [list info_helpHelp]
 		bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
 		bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
 		bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 		bind . <Control-Key-m> {colorm_mainUi}
-		bind . <Control-Key-e> {main_ui_seditor}
+		bind . <Control-Key-e> {station_editUi}
 		bind . <Control-Key-x> {main_frontendExitViewer}
 		event add <<input_up>> <Control-Key-i>
 		event add <<input_down>> <Control-Alt-Key-i>
@@ -607,8 +613,8 @@ proc main_frontendUiTvviewer {} {
 		bind . <<input_down>> [list main_stationInput 1 -1]
 		event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 		event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-		bind . <<volume_decr>> {tv_volume_control .bottom_buttons [expr $::volume_scale - 3]}
-		bind . <<volume_incr>> {tv_volume_control .bottom_buttons [expr $::volume_scale + 3]}
+		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale - 3]}
+		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale + 3]}
 		event add <<forward_end>> <Key-End>
 		event add <<forward_10s>> <Key-Right>
 		event add <<forward_1m>> <Shift-Key-Right>
@@ -622,13 +628,13 @@ proc main_frontendUiTvviewer {} {
 		event add <<stop>> <Shift-Key-S>
 	} else {
 		.label_stations configure -text [lindex $::station(last) 0]
-		bind . <Key-m> [list tv_volume_control $wfbottom mute]
+		bind . <Key-m> [list tv_playerVolumeControl $wfbottom mute]
 		bind . <Key-F1> [list info_helpHelp]
 		bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
 		bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
 		bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 		bind . <Control-Key-m> {colorm_mainUi}
-		bind . <Control-Key-e> {main_ui_seditor}
+		bind . <Control-Key-e> {station_editUi}
 		bind . <Control-Key-x> {main_frontendExitViewer}
 		event add <<input_up>> <Control-Key-i>
 		event add <<input_down>> <Control-Alt-Key-i>
@@ -639,7 +645,7 @@ proc main_frontendUiTvviewer {} {
 		event add <<timeshift>> <Key-t>
 		bind . <<timeshift>> [list timeshift $wftop.button_timeshift]
 		event add <<teleview>> <Key-s>
-		bind . <<teleview>> {tv_playerUi}
+		bind . <<teleview>> {tv_playerRendering}
 		event add <<station_up>> <Key-Prior>
 		event add <<station_down>> <Key-Next>
 		event add <<station_jump>> <Key-j>
@@ -652,8 +658,8 @@ proc main_frontendUiTvviewer {} {
 		bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
 		event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 		event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-		bind . <<volume_decr>> {tv_volume_control .bottom_buttons [expr $::volume_scale - 3]}
-		bind . <<volume_incr>> {tv_volume_control .bottom_buttons [expr $::volume_scale + 3]}
+		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale - 3]}
+		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale + 3]}
 		event add <<forward_end>> <Key-End>
 		event add <<forward_10s>> <Key-Right>
 		event add <<forward_1m>> <Shift-Key-Right>

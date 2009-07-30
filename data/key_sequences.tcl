@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc key_sequences {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0m"
 	
 	if {[winfo exists .key] == 0} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching key sequences screen..."

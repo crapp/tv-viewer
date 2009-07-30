@@ -17,7 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc start_options {} {
-	array set ::start_options {--help 0 --version 0}
+	array set ::start_options {--help 0 --version 0 --debug 0}
 	foreach command_argument $::argv {
 		if {[string first = $command_argument] == -1 } {
 			set i [string first - $command_argument]
@@ -31,7 +31,7 @@ proc start_options {} {
 			set ::values($key) $value
 		}
 	}
-	if {[array size ::start_options] != 2} {
+	if {[array size ::start_options] != 3} {
 		puts "
 TV-Viewer $::option(release_version)
 	
@@ -39,6 +39,7 @@ Unkown option(s): $::argv
 
 Possible options are:
 
+  --debug     Prints debug messages to stdout.
   --version   Shows the version of TV-Viewer, Tcl/Tk as well as
 			  some infos about your machine.
   --help      Displays this help.
@@ -51,6 +52,7 @@ TV-Viewer $::option(release_version)
 
 Possible options are:
 
+  --debug     Prints debug messages to stdout.
   --version   Shows the version of TV-Viewer, Tcl/Tk as well as
 			  some infos about your machine.
   --help      Displays this help.
@@ -69,5 +71,12 @@ OS:
 [exec sh -c "cat /etc/*release"]
 "
 		exit 0
+	}
+	if {$::start_options(--debug)} {
+		set ::main(debug_msg) stdout
+		puts "Activating debug messages"
+	} else {
+		set ::main(debug_msg) [open /dev/null a]
+		fconfigure $::::main(debug_msg) -blocking no -buffering line
 	}
 }

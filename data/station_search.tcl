@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc station_searchUi {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchUi \033\[0m \{$tree\}"
 	if {[winfo exists .station.top_searchUi]} return
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Building station search gui."
 	flush $::logf_tv_open_append
@@ -59,13 +60,13 @@ proc station_searchUi {tree} {
 	-text [mc "Start"] \
 	-compound left \
 	-image $::icon_s(dialog-ok-apply) \
-	-command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW exit_station_editor; wm resizable .station 1 1; station_searchRequires $tree"
+	-command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1; station_searchRequires $tree"
 	
 	ttk::button $bf.b_cancel \
 	-text [mc "Cancel"] \
 	-compound left \
 	-image $::icon_s(dialog-cancel) \
-	-command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW exit_station_editor; wm resizable .station 1 1"
+	-command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1"
 	
 	grid columnconfigure $wtop 0 -weight 1
 	grid columnconfigure $mf 0 -weight 1
@@ -113,13 +114,14 @@ proc station_searchUi {tree} {
 	
 	wm resizable $wtop 0 0
 	wm title $wtop [mc "Station search options"]
-	wm protocol $wtop WM_DELETE_WINDOW "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW exit_station_editor; wm resizable .station 1 1"
+	wm protocol $wtop WM_DELETE_WINDOW "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1"
 	wm protocol .station WM_DELETE_WINDOW " "
 	wm resizable .station 0 0
 	wm iconphoto $wtop $::icon_b(seditor)
 	wm transient $wtop .station
 	
 	proc station_searchFull {mf} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchFull \033\[0m \{$mf\}"
 		if {$::search(full) == 1} {
 			$mf.mb_lf_search_full_dist state !disabled
 			$mf.mb_lf_search_full_time state !disabled
@@ -197,11 +199,13 @@ As a result not all stations will be found."]
 }
 
 proc station_searchVideoNumber {vinput_nr} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchRequires \033\[0m \{$vinput_nr\}"
 	set ::search(mbVinput_nr) $vinput_nr
 }
 
 proc station_searchRequires {tree} {
-	set status_tv_playback [tv_playerMplayerRemote alive]
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchRequires \033\[0m \{$tree\}"
+	set status_tv_playback [tv_callbackMplayerRemote alive]
 	if {$status_tv_playback != 1} {
 		tv_playbackStop 0 pic
 	}
@@ -232,7 +236,7 @@ Please wait..."] \
 	-text [mc "Cancel"] \
 	-compound left \
 	-image $::icon_s(dialog-cancel) \
-	-command "station_search 0 cancel 0 0 0 0; grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW exit_station_editor; wm resizable .station 1 1"
+	-command "station_search 0 cancel 0 0 0 0; grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1"
 	
 	grid columnconfigure $wtop 0 -minsize 280
 	grid columnconfigure $mf 0 -weight 1
@@ -266,6 +270,7 @@ Please wait..."] \
 	wm transient $wtop .station
 	
 	proc station_searchLoopInput {counter tree input} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchLoopInput \033\[0m \{$counter\} \{$tree\} \{$input\}"
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$status_get_input == 0} {
@@ -336,6 +341,7 @@ Please wait..."] \
 }
 
 proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_search \033\[0m \{$max_channels\} \{$counter\} \{$freq\} \{$search_range_max\} \{$pgp_incr\} \{$tree\}"
 	if {"$counter" == "cancel"} {
 		if {[info exists ::station(search_id)]} {
 			catch {after cancel $::station(search_id)}
@@ -377,7 +383,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			after 3000 {grab release .station.top_search
 			destroy .station.top_search
 			grab .station
-			wm protocol .station WM_DELETE_WINDOW exit_station_editor
+			wm protocol .station WM_DELETE_WINDOW station_editExit
 			wm resizable .station 1 1}
 		}
 	} else {
@@ -411,7 +417,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			after 3000 {grab release .station.top_search
 			destroy .station.top_search
 			grab .station
-			wm protocol .station WM_DELETE_WINDOW exit_station_editor
+			wm protocol .station WM_DELETE_WINDOW station_editExit
 			wm resizable .station 1 1}
 		}
 	}

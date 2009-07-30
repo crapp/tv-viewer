@@ -144,7 +144,7 @@ provide specific help for users.
 If you don't want to send some parts of this file just delete them.
 
 File a bug report on 
-https://sourceforge.net/tracker2/?group_id=238442&atid=1106486
+http://sourceforge.net/tracker2/?group_id=238442&atid=1106486
 and attach this file, or contact the author.
 "
 
@@ -511,7 +511,7 @@ Ouput has been stored in:
 $::dwhere_is_home/tv-viewer_diag.out
 
 File a bug report on 
-https://sourceforge.net/tracker2/?group_id=238442&atid=1106486
+http://sourceforge.net/tracker2/?group_id=238442&atid=1106486
 and attach the created file.
 "
 

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc main_newsreaderCheckUpdate {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m"}
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Checking for news..."
 	flush $::logf_tv_open_append
 	if {[string match de* $::env(LANG)] != 1} {
@@ -173,6 +174,7 @@ proc main_newsreaderCheckUpdate {} {
 	}
 	
 	proc main_newsreaderHomepage {} {
+		catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Executing your favorite web browser."
 		flush $::logf_tv_open_append
 		if {[string match de* $::env(LANG)] != 1} {
@@ -182,6 +184,7 @@ proc main_newsreaderCheckUpdate {} {
 		}
 	}
 	proc main_newsreaderExit {w} {
+		catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderExit \033\[0m \{$w\}"}
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing Newsreader."
 		flush $::logf_tv_open_append
 		destroy $w
@@ -189,6 +192,7 @@ proc main_newsreaderCheckUpdate {} {
 }
 
 proc main_newsreaderAutomaticUpdate {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderAutomaticUpdate \033\[0m"}
 	if !{[file exists "$::where_is_home/config/last_update.date"]} {
 		set date_file [open "$::where_is_home/config/last_update.date" w]
 		close $date_file
@@ -235,6 +239,7 @@ proc main_newsreaderAutomaticUpdate {} {
 }
 
 proc main_newsreaderClockarith { seconds delta units } {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderClockarith \033\[0m \{$seconds\} \{$delta\} \{$units\}"}
 	set stamp [clock format $seconds -format "%Y%m%d"]
 	if { $delta < 0 } {
 		append stamp " " - [expr { - $delta }] " " $units
@@ -245,6 +250,7 @@ proc main_newsreaderClockarith { seconds delta units } {
 }
 
 proc main_newsreaderDifftimes { s1 s2 } {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderDifftimes \033\[0m \{$s1\} \{$s2\}"}
 
 	set y1 [clock format $s1 -format %Y]
 	set y2 [clock format $s2 -format %Y]

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc main_readStationFile {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readStationFile \033\[0m"
 	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
 		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations_$::option(frequency_table).conf
 # <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please create one using the Station Editor.

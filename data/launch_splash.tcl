@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc launch_splash_screen {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splash_screen \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching splash screen..."
 	flush $::logf_tv_open_append
 	set img_list [launch_splashAnigif "$::where_is/icons/extras/animated_loading.gif"]
@@ -46,6 +47,7 @@ proc launch_splash_screen {} {
 }
 
 proc launch_splashAnigif {gif} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splashAnigif \033\[0m \{$gif\}"
 	set index 0
 	set results {}
 	while 1 {
@@ -61,6 +63,7 @@ proc launch_splashAnigif {gif} {
 
 proc launch_splashPlay {img_list img_list_length index container} {
 	if {"$img_list" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splashPlay \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::splash(after_id)}
 		unset -nocomplain ::splash(after_id)
 		return

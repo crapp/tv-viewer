@@ -207,7 +207,6 @@ Error message: $resultat_dfile
 	"
 			exit 1
 		} else {
-			#~ after 10
 			puts "$target/tv-viewer/data/[lindex [file split $dfile] end]"
 			if {[string match *tv-viewer_diag* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_scheduler* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/tv-viewer/data/[lindex [file split $dfile] end]"]} {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rwxr-xr-x} resultat_permissions_dfile]

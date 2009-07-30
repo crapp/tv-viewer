@@ -18,6 +18,7 @@
 
 
 proc tv_seekInitiate {seek_com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_seekInitiate \033\[0m \{$seek_com\}"
 	bind .tv <<forward_10s>> {}
 	bind .tv <<forward_1m>> {}
 	bind .tv <<forward_10m>> {}
@@ -29,10 +30,11 @@ proc tv_seekInitiate {seek_com} {
 	set ::tv(seek_secs) [lindex $seek_com 1]
 	set ::tv(seek_dir) [lindex $seek_com 2]
 	set ::tv(getvid_seek) 1
-	tv_playerMplayerRemote get_time_pos
+	tv_callbackMplayerRemote get_time_pos
 }
 
 proc tv_seek {secs direct} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_seek \033\[0m \{$secs\} \{$direct\}"
 	array set endpos {
 		0 10
 		512 10
@@ -48,19 +50,19 @@ proc tv_seek {secs direct} {
 			flush $::logf_tv_open_append
 			set seekpos [expr ($::data(file_pos) + $secs)]
 			if {$seekpos < $::data(file_size)} {
-				tv_playerMplayerRemote "seek $seekpos 2"
+				tv_callbackMplayerRemote "seek $seekpos 2"
 				after 650 {
 					set ::tv(getvid_seek) 0
-					tv_playerMplayerRemote get_time_pos
+					tv_callbackMplayerRemote get_time_pos
 				}
 			}
 			return
 		} else {
 			set seekpos [expr ($::data(file_size) - $endpos($::option(player_cache)))]
-			tv_playerMplayerRemote "seek $seekpos 2"
+			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
 				set ::tv(getvid_seek) 0
-				tv_playerMplayerRemote get_time_pos
+				tv_callbackMplayerRemote get_time_pos
 			}
 			return
 		}
@@ -69,10 +71,10 @@ proc tv_seek {secs direct} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the end of actual recording."
 		flush $::logf_tv_open_append
 		set seekpos [expr ($::data(file_size) - $endpos($::option(player_cache)))]
-		tv_playerMplayerRemote "seek $seekpos 2"
+		tv_callbackMplayerRemote "seek $seekpos 2"
 		after 650 {
 			set ::tv(getvid_seek) 0
-			tv_playerMplayerRemote get_time_pos
+			tv_callbackMplayerRemote get_time_pos
 		}
 		return
 	}
@@ -81,20 +83,20 @@ proc tv_seek {secs direct} {
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
 			flush $::logf_tv_open_append
 			set seekpos 0
-			tv_playerMplayerRemote "seek $seekpos 2"
+			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
 				set ::tv(getvid_seek) 0
-				tv_playerMplayerRemote get_time_pos
+				tv_callbackMplayerRemote get_time_pos
 			}
 			return
 		} else {
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
 			flush $::logf_tv_open_append
 			set seekpos [expr ($::data(file_pos) - $secs)]
-			tv_playerMplayerRemote "seek $seekpos 2"
+			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
 				set ::tv(getvid_seek) 0
-				tv_playerMplayerRemote get_time_pos
+				tv_callbackMplayerRemote get_time_pos
 			}
 			return
 		}
@@ -103,10 +105,10 @@ proc tv_seek {secs direct} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the beginning of actual recording."
 		flush $::logf_tv_open_append
 		set seekpos 0
-		tv_playerMplayerRemote "seek $seekpos 2"
+		tv_callbackMplayerRemote "seek $seekpos 2"
 		after 650 {
 			set ::tv(getvid_seek) 0
-			tv_playerMplayerRemote get_time_pos
+			tv_callbackMplayerRemote get_time_pos
 		}
 		return
 	}
@@ -124,7 +126,7 @@ proc tv_seek {secs direct} {
 			bind .tv <<rewind_10m>> {}
 			bind .tv <<forward_end>> {}
 			bind .tv <<rewind_start>> {}
-			tv_playerMplayerRemote pause
+			tv_callbackMplayerRemote pause
 			return
 		} else {
 			.tv.file_play_bar.b_play state disabled
@@ -140,8 +142,35 @@ proc tv_seek {secs direct} {
 			bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
 			bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
 			bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-			tv_playerMplayerRemote pause
+			tv_callbackMplayerRemote pause
 			return
 		}
+	}
+}
+
+proc tv_seekSwitch {w direct handler seek_var} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_seekSwitch \033\[0m \{$w\} \{$direct\} \{$handler\} \{$seek_var\}"
+	array set seek_com {
+		-10s {event generate .tv <<rewind_10s>>}
+		-1m {event generate .tv <<rewind_1m>>}
+		-10m {event generate .tv <<rewind_10m>>}
+		+10s {event generate .tv <<forward_10s>>}
+		+1m {event generate .tv <<forward_1m>>}
+		+10m {event generate .tv <<forward_10m>>}
+	}
+	set seek_var_rew {::tv(check_rew_10s) ::tv(check_rew_1m) ::tv(check_rew_10m)}
+	set seek_var_for {::tv(check_fow_10s) ::tv(check_fow_1m) ::tv(check_fow_10m)}
+	if {$direct == -1} {
+		$w.b_rewind_small configure -command "$seek_com($handler)"
+		foreach var $seek_var_rew {
+			set $var 0
+		}
+		set ::$seek_var 1
+	} else {
+		$w.b_forward_small configure -command "$seek_com($handler)"
+		foreach var $seek_var_for {
+			set $var 0
+		}
+		set ::$seek_var 1
 	}
 }

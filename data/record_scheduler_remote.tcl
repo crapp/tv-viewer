@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc record_schedulerPrestart {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerPrestart \033\[0m \{$handler\}"
 	if {"$handler" == "record"} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler initiated prestart sequence for recording."
 		flush $::logf_tv_open_append
@@ -24,11 +25,14 @@ proc record_schedulerPrestart {handler} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Initiated prestart sequence for timeshift."
 		flush $::logf_tv_open_append
 	}
-	tv_playerComputeFilePos cancel 
-	tv_playerComputeFileSize cancel
+	tv_fileComputePos cancel 
+	tv_fileComputeSize cancel
 	catch {tv_playbackStop 0 nopic}
 	if {[winfo exists .tv.file_play_bar]} {
 		destroy .tv.file_play_bar
+	}
+	if {[winfo exists .tv.l_image]} {
+		place forget .tv.l_image
 	}
 	set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
 	label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
@@ -41,6 +45,7 @@ proc record_schedulerPrestart {handler} {
 }
 
 proc record_scheduler_prestartCancel {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_scheduler_prestartCancel \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Prestart sequence for recording has been canceled."
 		flush $::logf_tv_open_append
@@ -55,6 +60,7 @@ proc record_scheduler_prestartCancel {handler} {
 }
 
 proc record_schedulerRec {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerRec \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler initiated record sequence for main application."
 		flush $::logf_tv_open_append
@@ -179,6 +185,7 @@ Started at %" [lindex $::station(last) 0] $stime]
 }
 
 proc record_schedulerStation {station number} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerStation \033\[0m \{$station\} \{$number\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler initiated station sequence for main application."
 	flush $::logf_tv_open_append
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
@@ -186,6 +193,7 @@ proc record_schedulerStation {station number} {
 }
 
 proc record_schedulerPreStop {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerPreStop \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Prestop sequence for recording initiated."
 		flush $::logf_tv_open_append
@@ -223,7 +231,7 @@ proc record_schedulerPreStop {handler} {
 	if {[winfo exists .frame_slistbox] == 1} {
 		.frame_slistbox.listbox_slist configure -state normal
 	}
-	bind .tv <<teleview>> {tv_playerUi}
+	bind .tv <<teleview>> {tv_playerRendering}
 	bind .tv <<station_down>> [list main_stationChannelDown .label_stations]
 	bind .tv <<station_up>> [list main_stationChannelUp .label_stations]
 	bind .tv <<station_jump>> [list main_stationChannelJumper .label_stations]
@@ -231,7 +239,7 @@ proc record_schedulerPreStop {handler} {
 	bind .tv <<input_up>> [list main_stationInput 1 1]
 	bind .tv <<input_down>> [list main_stationInput 1 -1]
 	bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind . <<teleview>> {tv_playerUi}
+	bind . <<teleview>> {tv_playerRendering}
 	bind . <<station_up>> [list main_stationChannelUp .label_stations]
 	bind . <<station_down>> [list main_stationChannelDown .label_stations]
 	bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
@@ -242,13 +250,13 @@ proc record_schedulerPreStop {handler} {
 	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 	bind .tv <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 	bind .tv <Control-Key-m> {colorm_mainUi}
-	bind .tv <Control-Key-e> {main_ui_seditor}
+	bind .tv <Control-Key-e> {station_editUi}
 	bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
-	bind . <Control-Key-e> {main_ui_seditor}
+	bind . <Control-Key-e> {station_editUi}
 	if {[wm attributes .tv -fullscreen] == 1} {
-		bind .tv.bg.w <Motion> {tv_playerCursorHide .tv.bg.w 0}
-		bind .tv.bg <Motion> {tv_playerCursorHide .tv.bg 0}
+		bind .tv.bg.w <Motion> {tv_wmCursorHide .tv.bg.w 0}
+		bind .tv.bg <Motion> {tv_wmCursorHide .tv.bg 0}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
@@ -261,5 +269,5 @@ proc record_schedulerPreStop {handler} {
 		catch {place forget .tv.l_anigif}
 		catch {destroy .tv.l_anigif}
 	}
-	tv_playerComputeFileSize cancel_rec
+	tv_fileComputeSize cancel_rec
 }

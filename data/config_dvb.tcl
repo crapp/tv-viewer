@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_2 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_2 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -47,12 +48,14 @@ proc option_screen_2 {} {
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt2 $::window(dvb_nb1)]
 		
 		proc default_opt2 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt2 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for dvb section."
 			flush $::logf_tv_open_append
 			# Nothing to do yet
 		}
 		
 		proc stnd_opt2 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt2 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting dvb options to default."
 			flush $::logf_tv_open_append
 		}

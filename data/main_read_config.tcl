@@ -17,7 +17,8 @@
 #       MA 02110-1301, USA.
 
 proc main_readConfig {} {
-		array set ::option {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readConfig \033\[0m"}
+	array set ::option {
 		language Autodetect
 		language_value 0
 		starttv_startup 0

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc record_add_edit {tree com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_edit \033\[0m \{$tree\} \{$com\}"
 	if {$com == 1} {
 		if {[string trim [$tree selection]] == {}} {
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No recording selected to edit."
@@ -51,6 +52,7 @@ proc record_add_edit {tree com} {
 	-text [mc "Time:"]
 	
 	proc record_add_editTimeHourValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHourValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is integer $value] != 1 || [string length $value] > 2} {
 			return 0
 		} else {
@@ -58,6 +60,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editTimeMinValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMinValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is integer $value] != 1 || [string length $value] > 2} {
 			return 0
 		} else {
@@ -104,6 +107,7 @@ proc record_add_edit {tree com} {
 	-text [mc "Duration:"]
 	
 	proc record_add_editDurHourValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHourValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is integer $value] != 1 || [string length $value] > 2} {
 			return 0
 		} else {
@@ -111,6 +115,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editDurMinValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurMinValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is integer $value] != 1 || [string length $value] > 2} {
 			return 0
 		} else {
@@ -118,6 +123,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editDurSecValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurSecValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is integer $value] != 1 || [string length $value] > 2} {
 			return 0
 		} else {
@@ -162,6 +168,7 @@ proc record_add_edit {tree com} {
 	-text [mc "Resolution:"]
 	
 	proc record_add_editResolWidthValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidthValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is digit $value] != 1 || [string length $value] > 3} {
 			return 0
 		} else {
@@ -169,6 +176,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editResolHeightValidate {value widget} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolHeightValidate \033\[0m \{$value\} \{$widget\}"
 		if {[string is digit $value] != 1 || [string length $value] > 3} {
 			return 0
 		} else {
@@ -368,6 +376,7 @@ proc record_add_edit {tree com} {
 	wm transient $w .record_wizard
 	
 	proc record_add_editTimeHour {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHour \033\[0m"
 		if {$::record(time_hour) < 0} {
 			set ::record(time_hour) 23
 		}
@@ -376,6 +385,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editTimeMin {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMin \033\[0m"
 		if {$::record(time_min) >= 60} {
 			set ::record(time_min) 0
 			if {$::record(time_hour) < 24} {
@@ -393,6 +403,7 @@ proc record_add_edit {tree com} {
 	}
 	
 	proc record_add_editDurHour {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHour \033\[0m"
 		if {$::record(duration_hour) > 98} {
 			set ::record(duration_hour) 0
 		}
@@ -401,6 +412,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editDurMin {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurMin \033\[0m"
 		if {$::record(duration_min) == 60} {
 			set ::record(duration_min) 0
 			set ::record(duration_hour) [expr $::record(duration_hour) + 1]
@@ -413,6 +425,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editDurSec {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurSec\033\[0m"
 		if {$::record(duration_sec) >= 60} {
 			set ::record(duration_sec) 0
 			set ::record(duration_min) [expr $::record(duration_min) + 1]
@@ -426,6 +439,7 @@ proc record_add_edit {tree com} {
 	}
 	
 	proc record_add_editResolWidth {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidth \033\[0m"
 		if {$::record(resolution_width) > 720} {
 			set ::record(resolution_width) 100
 		}
@@ -434,6 +448,7 @@ proc record_add_edit {tree com} {
 		}
 	}
 	proc record_add_editResolHeight {} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolHeight \033\[0m"
 		if {$::record(resolution_height) > $::record(resolution_height_max)} {
 			set ::record(resolution_height) 100
 		}
@@ -525,6 +540,7 @@ and store the file in the default record path."]
 }
 
 proc record_add_editExit {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editExit \033\[0m \{$w\}"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Exiting 'add/edit recording'."
 	flush $::logf_tv_open_append
 	unset -nocomplain ::record(time) ::record(date) ::record(duration) ::record(resolution) ::record(file)
@@ -533,6 +549,7 @@ proc record_add_editExit {w} {
 }
 
 proc record_add_editOfile {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_edit \033\[0m \{$w\}"
 	set types {
 	{{Video Files}      {.mpeg}       }
 	}
@@ -564,6 +581,7 @@ proc record_add_editOfile {w} {
 
 
 proc record_add_editDelete {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\}"
 	if {[string trim [$tree selection]] == {}} return
 	puts $::data(comsocket) "tv-viewer_scheduler scheduler_exit"
 	flush $::data(comsocket)
@@ -608,7 +626,7 @@ proc record_add_editDelete {tree} {
 }
 
 proc record_add_editDate {} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDate \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Building record add/edit (choose date) dialogue."
 	flush $::logf_tv_open_append
 	set w [toplevel .record_wizard.add_edit.date] ; place [ttk::label .record_wizard.add_edit.date.bg -style Toolbutton] -relwidth 1 -relheight 1
@@ -738,6 +756,7 @@ proc record_add_editDate {} {
 }
 
 proc record_add_editDateCallback {w args} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDateCallback \033\[0m \{$w\} \{$args\}"
 	set year [lindex $args 0]
 	if {[string length [lindex $args 1]] < 2} {
 		set month "0[lindex $args 1]"
@@ -753,6 +772,7 @@ proc record_add_editDateCallback {w args} {
 }
 
 proc record_add_editDateYearMonth {cal label com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDateYearMonth \033\[0m \{$cal\} \{$label\} \{$com\}"
 	if {$com == -2} {
 		$cal prevyear
 		set year [$cal configure -year]
@@ -801,6 +821,7 @@ proc record_add_editDateYearMonth {cal label com} {
 }
 
 proc record_add_editDateApply {w label} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDateApply \033\[0m \{$w\} \{$label\}"
 	.record_wizard.add_edit.record_frame.ent_date state !disabled
 	set ::record(date) [$label cget -text]
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen date [$label cget -text]."

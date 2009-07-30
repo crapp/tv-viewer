@@ -17,7 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc font_chooserUi {returnw cvar} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUi \033\[0m \{$returnw\} \{$cvar\}"
 	if {[winfo exists .config_wizard.fontchooser]} {
 		return
 	}
@@ -252,6 +252,7 @@ proc font_chooserUi {returnw cvar} {
 }
 
 proc font_chooserUiCfont {lb1 lb2 lb3 pre_entry} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiCfont \033\[0m \{$lb1\} \{$lb2\} \{$lb3\} \{$pre_entry\}"
 	set font "[string trim [$lb1 get [$lb1 curselection]]]"
 	set style "[string trim [string tolower [$lb2 get [$lb2 curselection]]]]"
 	set size "[string trim [$lb3 get [$lb3 curselection]]]"
@@ -266,6 +267,7 @@ proc font_chooserUiCfont {lb1 lb2 lb3 pre_entry} {
 }
 
 proc font_chooserUiCol {pre_entry} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiCol \033\[0m \{$pre_entry\}"
 	wm protocol .config_wizard.fontchooser WM_DELETE_WINDOW " "
 	set color [tk_chooseColor -parent .config_wizard.fontchooser -initialcolor [$::icon_e(pick-color3) cget -foreground] -title [mc "Choose color"]]
 	wm protocol .config_wizard.fontchooser WM_DELETE_WINDOW "grab release .config_wizard.fontchooser; destroy .config_wizard.fontchooser; grab .config_wizard"
@@ -277,11 +279,13 @@ proc font_chooserUiCol {pre_entry} {
 }
 
 proc font_chooserUiAlign {value cvar} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiAlign \033\[0m \{$value\} \{$cvar\}"
 	set ::font_chooser(mb_align) [lindex $value 0]
 	set ::font_chooser(mb_align_value) [lindex $value 1]
 }
 
 proc font_chooserUiApply {lb1 lb2 lb3 returnw cvar} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiApply \033\0m \{$lb1\} \{$lb2\} \{$lb3\} \{$returnw\} \{$cvar\}"
 	set font "[string trim [$lb1 get [$lb1 curselection]]]"
 	set style "[string trim [$lb2 get [$lb2 curselection]]]"
 	set size "[string trim [$lb3 get [$lb3 curselection]]]"

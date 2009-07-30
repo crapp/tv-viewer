@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc record_wizardExit {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardExit \033\[0m"
 	if {$::option(systray_mini) == 1} {
 		bind . <Unmap> {
 			if {[winfo ismapped .] == 0} {
@@ -32,6 +33,7 @@ proc record_wizardExit {} {
 }
 
 proc record_wizardScheduler {sbutton slable com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardScheduler \033\[0m \{$sbutton\} \{$slable\} \{$com\}"
 	if {$com == 0} {
 		$sbutton configure -command {}
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping Scheduler..."
@@ -98,12 +100,13 @@ proc record_wizardScheduler {sbutton slable com} {
 }
 
 proc record_wizardUi {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0m"
 	if {[winfo exists .record_wizard] == 0} {
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting Record Wizard."
 		flush $::logf_tv_open_append
 		
 		if {[wm attributes .tv -fullscreen] == 1} {
-			tv_playerFullscreen .tv .tv.bg.w .tv.bg
+			tv_wmFullscreen .tv .tv.bg.w .tv.bg
 		}
 		
 		set w [toplevel .record_wizard]

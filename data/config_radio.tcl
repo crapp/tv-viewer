@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_5 {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_5 \033\[0m"
 	
 	# Setting up the interface
 	
@@ -49,11 +50,13 @@ proc option_screen_5 {} {
 		# Subprocs
 		
 		proc default_opt5 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt5 \033\[0m \{$w\}"
 			# Nothing to do yet
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for radio section."
 			flush $::logf_tv_open_append
 		}
 		proc stnd_opt5 {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt5 \033\[0m \{$w\}"
 			# Nothing to do yet
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting radio options to default."
 			flush $::logf_tv_open_append

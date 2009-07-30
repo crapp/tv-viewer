@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc config_wizardReadSettings {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardReadSettings \033\[0m"
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Reading configuration values for preferences dialog."
 	flush $::logf_tv_open_append
 	array set ::option {

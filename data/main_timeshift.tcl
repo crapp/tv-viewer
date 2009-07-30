@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc timeshift {tbutton} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift \033\[0m \{$tbutton\}"
 	set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 	if { $status_recordlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
@@ -47,13 +48,16 @@ proc timeshift {tbutton} {
 	}
 	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting timeshift..."
 	flush $::logf_tv_open_append
-	$tbutton configure -command {}
 	record_schedulerPrestart timeshift
 	$tbutton state pressed
+	$tbutton state disabled
+	bind .tv <<timeshift>> {}
+	bind . <<timeshift>> {}
 	timeshift_start_preRec $tbutton
 }
 
 proc timeshift_start_preRec {tbutton} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_start_preRec \033\[0m \{$tbutton\}"
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
@@ -63,16 +67,21 @@ proc timeshift_start_preRec {tbutton} {
 }
 
 proc timeshift_start_Rec {counter rec_pid tbutton} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_start_Rec \033\[0m \{$counter\} \{$rec_pid\} \{$tbutton\}"
 	if {$counter == 10} {
 		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start timeshift. Tried for 30 seconds."
 		flush $::logf_tv_open_append
-		$tbutton configure -command [list timeshift $tbutton]
+		if {[winfo exists .tv.l_anigif]} {
+			launch_splashPlay cancel 0 0 0
+			place forget .tv.l_anigif
+			destroy .tv.l_anigif
+		}
+		record_schedulerPreStop timeshift
 		return
 	}
 	if {[file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
 		catch {exec ln -f -s "$rec_pid" "$::where_is_home/tmp/timeshift_lockfile.tmp"}
 		after 1000 [list timeshift_calcDF 0]
-		$tbutton configure -command [list timeshift $tbutton]
 		set ::tv(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
 		record_schedulerRec timeshift
 	} else {
@@ -85,6 +94,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 
 proc timeshift_calcDF {cancel} {
 	if {"$cancel" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_calcDF \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::timeshif(df_id)}
 		unset -nocomplain ::timeshif(df_id)
 		return

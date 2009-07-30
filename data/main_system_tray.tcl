@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc main_systemTrayActivate {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayActivate \033\[0m"
 	catch {
 		if {[winfo exists .tray] == 0} {
 			tktray::icon .tray -image $::icon_e(tv-viewer_icon_systray)
@@ -53,6 +54,7 @@ proc main_systemTrayActivate {} {
 }
 
 proc main_systemTrayToggle {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayToggle \033\[0m"
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 1} {
 			if {$::option(systray_tv) == 1} {
@@ -97,6 +99,7 @@ proc main_systemTrayToggle {} {
 }
 
 proc main_systemTrayMini {com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayMini \033\[0m \{$com\}"
 	if {"$com" == "unmap"} {
 		if {[winfo exists .tray] == 1} {
 			bind . <Unmap> {}

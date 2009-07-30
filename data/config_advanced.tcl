@@ -17,7 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc option_screen_8 {} {
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_8 \033\[0m"
 	# Setting up the interface
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
@@ -61,6 +61,7 @@ proc option_screen_8 {} {
 		-text [mc "MPlayer logfile size in kBytes"]
 		
 		proc config_advanced_validateLogSb {value1 value2} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_advanced_validateLogSb \033\[0m \{$value1\} \{$value2\}"
 			if {[string is integer $value1] == 0 || $value1 < 100 || $value1 > 1000} {
 				return 0
 			} else {
@@ -153,6 +154,7 @@ proc option_screen_8 {} {
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt2 $::window(advanced_nb1) $::window(advanced_nb2)]
 		
 		proc config_advancedLogging {w} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_advancedLogging \033\[0m \{$w\}"
 			if {$::choice(cb_lf_logging) == 1} {
 				$w.sb_logging_mplayer configure -state normal
 				$w.sb_logging_sched configure -state normal
@@ -165,6 +167,7 @@ proc option_screen_8 {} {
 		}
 		
 		proc default_opt8 {w w2} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt8 \033\[0m \{$w\} \{$w2\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for advanced section."
 			flush $::logf_tv_open_append
 			if {[info exists ::option(player_additional_commands)]} {
@@ -244,6 +247,7 @@ Minimum: 100kb Maximum: 1000kb"]
 		}
 		
 		proc stnd_opt8 {w w2} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt8 \033\[0m \{$w\} \{$w2\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting advanced options to default."
 			flush $::logf_tv_open_append
 			set ::choice(entry_mplayer_add_coms) $::stnd_opt(player_additional_commands)
