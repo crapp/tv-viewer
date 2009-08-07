@@ -137,6 +137,7 @@ proc tv_wmPanscan {w direct} {
 	if {$status_tvplayback == 1} {return}
 	if {$direct == 1} {
 		if {$::data(panscan) == 100} return
+		if {[string trim [place info $w]] == {}} return
 		place $w -relheight [expr {[dict get [place info $w] -relheight] + 0.05}]
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Increasing zoom by 5%."
 		flush $::logf_tv_open_append
@@ -151,6 +152,7 @@ proc tv_wmPanscan {w direct} {
 	}
 	if {$direct == -1} {
 		if {$::data(panscan) == -50} return
+		if {[string trim [place info $w]] == {}} return
 		place $w -relheight [expr {[dict get [place info $w] -relheight] - 0.05}]
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Decreasing zoom by 5%."
 		flush $::logf_tv_open_append
@@ -164,6 +166,7 @@ proc tv_wmPanscan {w direct} {
 		}
 	}
 	if {$direct == 0} {
+		if {[string trim [place info $w]] == {}} return
 		place $w -relheight 1 -relx 0.5 -rely 0.5
 		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting zoom to 100% and center video."
 		flush $::logf_tv_open_append

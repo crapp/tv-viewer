@@ -24,10 +24,15 @@ proc tv_callbackVidData {} {
 			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer reported end of file. Playback is stopped."
 			flush $::logf_tv_open_append
 			catch {close $::data(mplayer)}
-			unset ::data(mplayer)
+			unset -nocomplain ::data(mplayer)
 			place forget .tv.bg.w
 			#~ place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
 			bind .tv.bg.w <Configure> {}
+			if {[winfo exists .tv.l_anigif]} {
+				launch_splashPlay cancel 0 0 0
+				place forget .tv.l_anigif
+				destroy .tv.l_anigif
+			}
 			if {[winfo exists .station]} {
 				.station.top_buttons.b_station_preview state !pressed
 			} else {

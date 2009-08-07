@@ -287,7 +287,7 @@ proc tv_playerUi {} {
 		bind $mw <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
 		bind $mw <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
 		bind $mw <Control-Key-p> {tv_stop_playback 0 pic ; config_wizardMainUi}
-		bind $mw <Control-Key-m> {main_ui_colorm}
+		bind $mw <Control-Key-m> {colorm_mainUi}
 		bind $mw <Control-Key-e> {station_editUi}
 		bind $mw <Key-F1> [list info_helpHelp]
 		bind $mw <Control-Key-x> {main_frontendExitViewer}

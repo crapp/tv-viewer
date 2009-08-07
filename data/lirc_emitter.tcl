@@ -30,7 +30,7 @@ if {[file type [info script]] == "link" } {
 }
 set where_is_home "$::env(HOME)/.tv-viewer"
 
-set option(release_version) "0.8.1a1.12"
+set option(release_version) "0.8.1a1.13"
 
 source $where_is/main_read_config.tcl
 

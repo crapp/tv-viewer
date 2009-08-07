@@ -74,6 +74,10 @@ proc key_sequences {} {
 		-padx 3
 		
 		set font [ttk::style lookup [$mftree.tv_key cget -style] -font]
+		if {[string trim $font] == {}} {
+			set font TkDefaultFont
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0;1;31m::font:: \033\[0m"
+		}
 		foreach col {action key} name {"Action" "Key Sequence"} {
 			$mftree.tv_key heading $col -text $name
 		}

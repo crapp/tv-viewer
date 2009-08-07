@@ -438,6 +438,10 @@ proc station_editUi {} {
 		# Additional Code
 		
 		set font [ttk::style lookup [$wfstation.tv_station cget -style] -font]
+		if {[string trim $font] == {}} {
+			set font TkDefaultFont
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0;1;31m::font:: \033\[0m"
+		}
 		foreach col {station frequency input} name {"Station" "Frequency" "Video input"} {
 			$wfstation.tv_station heading $col -text $name
 		}

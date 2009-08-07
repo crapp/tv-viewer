@@ -341,7 +341,7 @@ Please wait..."] \
 }
 
 proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_search \033\[0m \{$max_channels\} \{$counter\} \{$freq\} \{$search_range_max\} \{$pgp_incr\} \{$tree\}"
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_search \033\[0m \{$max_channels\} \{$counter\} \{$freq\} \{$search_range_max\} \{$pgb_incr\} \{$tree\}"
 	if {"$counter" == "cancel"} {
 		if {[info exists ::station(search_id)]} {
 			catch {after cancel $::station(search_id)}

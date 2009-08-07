@@ -79,10 +79,10 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	}
 	
 	array set playdelay {
-		0 0
-		512 0
-		1024 0
-		2048 0
+		0 2000
+		512 2000
+		1024 2000
+		2048 2000
 		4096 3000
 		8192 8000
 		16384 18000

@@ -45,7 +45,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.12"
+set option(release_version) "0.8.1a1.13"
 
 if {[file isdirectory $::where_is_home] == 0} {
 	puts "
@@ -324,7 +324,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 		return
 	}
 	if {$secs == 3000} {
-		puts $::logf_sched_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Waited 3 seconds to change video input to $input.
+		puts $::logf_sched_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Waited 3 seconds to change video input to $::kanalinput($snumber).
 # <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] This didn't work, BAD."
 		flush $::logf_sched_open_append
 		return

@@ -240,6 +240,10 @@ proc record_wizardUi {} {
 		autoscroll $treef.sb_rec_vert
 		
 		set font [ttk::style lookup [$treef.tv_rec cget -style] -font]
+		if {[string trim $font] == {}} {
+			set font TkDefaultFont
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0;1;31m::font:: \033\[0m"
+		}
 		$treef.tv_rec heading jobid -text [mc "Job ID"]
 		$treef.tv_rec column jobid -anchor center -width [expr [font measure $font [mc "Job ID"]] + 15]
 		$treef.tv_rec heading station -text [mc "Station"]
