@@ -197,6 +197,13 @@ proc station_itemEdit {w} {
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
+	} else {
+		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't find any video inputs, please check the preferences (analog section)."
+		flush $::logf_tv_open_append
+		foreach window [winfo children .station.top_edit] {
+			destroy $window
+		}
+		return
 	}
 	
 	proc station_itemEditExit {w} {
@@ -360,6 +367,13 @@ proc station_itemAdd {w} {
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
+	} else {
+		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't find any video inputs, please check the preferences (analog section)."
+		flush $::logf_tv_open_append
+		foreach window [winfo children .station.top_add] {
+			destroy $window
+		}
+		return
 	}
 	
 	proc station_itemAddExit {w} {

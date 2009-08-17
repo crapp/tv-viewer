@@ -139,6 +139,13 @@ proc station_searchUi {tree} {
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
+	} else {
+		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't find any video inputs, please check the preferences (analog section)."
+		flush $::logf_tv_open_append
+		foreach window [winfo children .station.top_searchUi] {
+			destroy $window
+		}
+		return
 	}
 	set dists {0.250 0.500 1.0}
 	foreach fdists [split $dists] {
