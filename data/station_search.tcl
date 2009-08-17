@@ -145,6 +145,7 @@ proc station_searchUi {tree} {
 		foreach window [winfo children .station.top_searchUi] {
 			destroy $window
 		}
+		destroy .station.top_searchUi
 		return
 	}
 	set dists {0.250 0.500 1.0}

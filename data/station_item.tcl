@@ -203,6 +203,7 @@ proc station_itemEdit {w} {
 		foreach window [winfo children .station.top_edit] {
 			destroy $window
 		}
+		destroy .station.top_edit
 		return
 	}
 	
@@ -373,6 +374,7 @@ proc station_itemAdd {w} {
 		foreach window [winfo children .station.top_add] {
 			destroy $window
 		}
+		destroy .station.top_add
 		return
 	}
 	
