@@ -91,7 +91,7 @@ proc main_frontendShowslist {w} {
 		-orient vertical \
 		-command [list $wflbox.listbox_slist yview]
 		
-		grid $wflbox -in . -row 3 -column 0 \
+		grid $wflbox -in . -row 4 -column 0 \
 		-columnspan 3 \
 		-sticky news
 		grid $wflbox.listbox_slist -in $wflbox -row 0 -column 0 \
@@ -159,7 +159,7 @@ proc main_frontendShowslist {w} {
 		flush $::logf_tv_open_append
 		set wflbox .frame_slistbox
 		if {[string trim [grid info $wflbox]] == {}} {
-			grid $wflbox -in . -row 3 -column 0
+			grid $wflbox -in . -row 4 -column 0
 			$w.button_showslist state pressed
 			$wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
 			$wflbox.listbox_slist see [expr [lindex $::station(last) 2] - 1]
@@ -359,6 +359,8 @@ proc main_frontendUiTvviewer {} {
 	
 	set wfbar [ttk::frame .options_bar] ; place [ttk::label $wfbar.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
+	ttk::separator .sep_bar -orient horizontal
+	
 	set wftop [ttk::frame .top_buttons] ; place [ttk::label $wftop.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
 	set wfbottom [ttk::frame .bottom_buttons] ; place [ttk::label $wfbottom.bg -style Toolbutton] -relwidth 1 -relheight 1
@@ -454,13 +456,16 @@ proc main_frontendUiTvviewer {} {
 	grid $wfbar -in . -row 0 -column 0 \
 	-columnspan 3 \
 	-sticky new
-	grid $wftop -in . -row 1 -column 0 \
+	grid .sep_bar -in . -row 1 -column 0 \
+	-columnspan 3 \
+	-sticky ew
+	grid $wftop -in . -row 2 -column 0 \
 	-columnspan 3 \
 	-sticky nwe
-	grid $wfbottom -in . -row 4 -column 0 \
+	grid $wfbottom -in . -row 5 -column 0 \
 	-columnspan 3 \
 	-sticky swe
-	grid .label_stations -in . -row 2 -column 0 \
+	grid .label_stations -in . -row 3 -column 0 \
 	-columnspan 3 \
 	-sticky news \
 	-padx 4
@@ -504,7 +509,7 @@ proc main_frontendUiTvviewer {} {
 	-padx 2 \
 	-sticky ns
 	
-	grid rowconfigure . 3 -weight 1
+	grid rowconfigure . 4 -weight 1
 	grid columnconfigure . 0 -weight 1
 	
 	# Additional Code
@@ -715,7 +720,7 @@ proc main_frontendUiTvviewer {} {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_schedulerRec record}
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
 				} else {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; event generate . <<teleview>>}
 				}
@@ -733,8 +738,13 @@ proc main_frontendUiTvviewer {} {
 				bind . <<teleview>> {}
 			}
 		} else {
-			after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
-			if {[string trim [auto_execok mplayer]] == {}} {
+			if {[string trim [auto_execok mplayer]] != {}} {
+				if {$::main(running_recording) == 1} {
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+				} else {
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
+				}
+			} else {
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
 				$wftop.button_timeshift state disabled
@@ -752,7 +762,11 @@ proc main_frontendUiTvviewer {} {
 	} else {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
-				after 1500 {wm deiconify . ; tv_playerUi ; event generate . <<teleview>>}
+				if {$::main(running_recording) == 1} {
+					after 1500 {wm deiconify . ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+				} else {
+					after 1500 {wm deiconify . ; tv_playerUi ; event generate . <<teleview>>}
+				}
 			} else {
 				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start tv playback, MPlayer is not installed on this system."
 				flush $::logf_tv_open_append

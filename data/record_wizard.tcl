@@ -113,7 +113,7 @@ proc record_wizardUi {} {
 		
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 		
-		set topf [ttk::frame $w.top_frame]
+		set topf [ttk::frame $w.top_frame] ; place [ttk::frame $topf.bgcolor -style Toolbutton]  -relwidth 1 -relheight 1
 		set treef [ttk::frame $w.tree_frame]
 		set statf [ttk::frame $w.status_frame]
 		set bf [ttk::frame $w.button_frame -relief groove -borderwidth 2]

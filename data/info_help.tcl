@@ -300,7 +300,8 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag bind link_fsdialog <Button-1> {catch {exec sh -c "xdg-open http://wiki.tcl.tk/15897" &}}
 		$nb3.t_license configure -state disabled
 		
-		$nb4.t_changelog insert end "The changelog of TV-Viewer is now managed by bazaar, hosted on " 
+		$nb4.t_changelog insert end "The changelog of TV-Viewer is now managed by bazaar,"
+		$nb4.t_changelog insert end "\nhosted on "
 		$nb4.t_changelog insert end "sourceforge.net" link_sourceforge_bazaar
 		$nb4.t_changelog insert end "\n\nThe older, no longer maintained, version of the changelog can be found "
 		$nb4.t_changelog insert end "\non the "

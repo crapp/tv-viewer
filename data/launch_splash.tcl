@@ -64,7 +64,9 @@ proc launch_splashAnigif {gif} {
 proc launch_splashPlay {img_list img_list_length index container} {
 	if {"$img_list" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splashPlay \033\[0;1;31m::cancel:: \033\[0m"
-		catch {after cancel $::splash(after_id)}
+		foreach id $::splash(after_id) {
+			catch {after cancel $id}
+		}
 		unset -nocomplain ::splash(after_id)
 		return
 	}

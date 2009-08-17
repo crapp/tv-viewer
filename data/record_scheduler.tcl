@@ -45,7 +45,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.13"
+set option(release_version) "0.8.1a1.14"
 
 if {[file isdirectory $::where_is_home] == 0} {
 	puts "

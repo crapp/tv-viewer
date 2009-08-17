@@ -34,11 +34,13 @@ proc record_schedulerPrestart {handler} {
 	if {[winfo exists .tv.l_image]} {
 		place forget .tv.l_image
 	}
-	set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
-	label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-	place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
-	set img_list_length [llength $img_list]
-	after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+	if {$::main(running_recording) != 1} {
+		set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
+		label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+		place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
+		set img_list_length [llength $img_list]
+		after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor watch
 	}

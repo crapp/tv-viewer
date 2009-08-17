@@ -54,8 +54,8 @@ package require msgcat
 namespace import msgcat::mc
 #~ Experimental support for QT and GTK theme.
 #~ package require ttk::theme::tileqt
+#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]
 #~ package require ttk::theme::tilegtk
-#~ load /home/saedelaere/Downloads/tile-themes/tile-gtk/cmake/build-unix64-make-release/libtilegtk0.2.so
 
 
 wm withdraw .
@@ -101,7 +101,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.13"
+set option(release_version) "0.8.1a1.14"
 
 puts "This is TV-Viewer $option(release_version) ..."
 
