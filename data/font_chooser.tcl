@@ -35,9 +35,7 @@ proc font_chooserUi {returnw cvar} {
 	
 	set mfpre [ttk::frame $w.f_ch_pre]
 	
-	set mfbottom [ttk::frame $w.f_ch_bottom \
-	-borderwidth 2 \
-	-relief groove]
+	set mfbottom [ttk::frame $w.f_ch_bottom -style TLabelframe]
 	
 	ttk::label $mffont.l_fam \
 	-text [mc "Family:"]

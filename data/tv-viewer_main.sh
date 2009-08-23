@@ -101,7 +101,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1a1.16"
+set option(release_version) "0.8.1a1.18"
 
 puts "This is TV-Viewer $option(release_version) ..."
 
@@ -226,6 +226,9 @@ main_readConfig
 source "$where_is/themes/plastik/plastik.tcl"
 source "$where_is/themes/keramik/keramik.tcl"
 ttk::style theme use $::option(use_theme)
+if {"$::option(use_theme)" == "clam"} {
+	ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
+}
 #Setting up language support.
 if {$::option(language_value) != 0} {
 	msgcat::mclocale $::option(language_value)

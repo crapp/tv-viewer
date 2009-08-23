@@ -102,9 +102,7 @@ proc station_itemEdit {w} {
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	
 	set wfe [ttk::frame $wtop.frame_entry]
-	set wfb [ttk::frame $wtop.frame_buttons \
-	-borderwidth 2 \
-	-relief groove]
+	set wfb [ttk::frame $wtop.frame_buttons -style TLabelframe]
 	
 	ttk::label $wfe.l_station \
 	-text [mc "Station:"]
@@ -273,9 +271,7 @@ proc station_itemAdd {w} {
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	
 	set wfe [ttk::frame $wtop.frame_entry]
-	set wfb [ttk::frame $wtop.frame_buttons \
-	-borderwidth 2 \
-	-relief groove]
+	set wfb [ttk::frame $wtop.frame_buttons -style TLabelframe]
 	
 	ttk::label $wfe.l_station \
 	-text [mc "Station:"]

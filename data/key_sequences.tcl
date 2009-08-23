@@ -31,9 +31,7 @@ proc key_sequences {} {
 		
 		set mftree [ttk::frame $w.f_key_treeview]
 		
-		set mfbottom [ttk::frame $w.f_key_bottom \
-			-borderwidth 2 \
-			-relief groove]
+		set mfbottom [ttk::frame $w.f_key_bottom -style TLabelframe]
 		
 		ttk::label $mftop.l_key_msg \
 		-text [mc "Available Key Sequences"]

@@ -35,7 +35,7 @@ proc record_add_edit {tree com} {
 	set w [toplevel .record_wizard.add_edit] ; place [ttk::label .record_wizard.add_edit.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set lbf [ttk::frame $w.listbox_frame]
 	set recf [ttk::frame $w.record_frame]
-	set bf [ttk::frame $w.button_frame -borderwidth 2 -relief groove]
+	set bf [ttk::frame $w.button_frame -style TLabelframe]
 	
 	listbox $lbf.lb_stations \
 	-yscrollcommand [list $lbf.scrollbar_stations set] \
@@ -632,7 +632,7 @@ proc record_add_editDate {} {
 	set w [toplevel .record_wizard.add_edit.date] ; place [ttk::label .record_wizard.add_edit.date.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set fnavi [ttk::frame $w.navi_frame]
 	set fcho [ttk::frame $w.choose_frame]
-	set bf [ttk::frame $w.button_frame -borderwidth 2 -relief groove]
+	set bf [ttk::frame $w.button_frame -style TLabelframe]
 	
 	ttk::button $fnavi.b_year_back \
 	-compound image \

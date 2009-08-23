@@ -57,9 +57,7 @@ proc info_helpAbout {} {
 		
 		set mf [ttk::frame $w.mf]
 		
-		set btnf [ttk::frame $mf.btnf \
-		-borderwidth 2 \
-		-relief groove]
+		set btnf [ttk::frame $mf.btnf -style TLabelframe]
 		
 		set t [image create photo]
 		set small_icon [image create photo]

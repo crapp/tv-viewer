@@ -101,7 +101,7 @@ proc config_wizardReadSettings {} {
 		rec_duration_min 0
 		rec_duration_sec 0
 		rec_sched_auto 0
-		timeshift_df 10000
+		timeshift_df 1000
 		timeshift_path "$::where_is_home/tmp"
 	}
 	
@@ -186,7 +186,7 @@ proc config_wizardReadSettings {} {
 		rec_duration_min 0
 		rec_duration_sec 0
 		rec_sched_auto 0
-		timeshift_df 10000
+		timeshift_df 1000
 		timeshift_path "$::where_is_home/tmp"
 	}
 

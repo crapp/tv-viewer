@@ -116,7 +116,7 @@ proc record_wizardUi {} {
 		set topf [ttk::frame $w.top_frame] ; place [ttk::frame $topf.bgcolor -style Toolbutton]  -relwidth 1 -relheight 1
 		set treef [ttk::frame $w.tree_frame]
 		set statf [ttk::frame $w.status_frame]
-		set bf [ttk::frame $w.button_frame -relief groove -borderwidth 2]
+		set bf [ttk::frame $w.button_frame -style TLabelframe]
 		
 		ttk::button $topf.b_add_rec \
 		-text [mc "New recording"] \

@@ -414,6 +414,9 @@ proc option_screen_6 {} {
 		proc config_interfaceTheme {theme} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceTheme \033\[0m \{$theme\}"
 			ttk::style theme use $theme
+			if {"$theme" == "clam"} {
+				ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
+			}
 			.options_bar.mOptions configure -background $::option(theme_$theme)
 			.options_bar.mHelp configure -background $::option(theme_$theme)
 		}

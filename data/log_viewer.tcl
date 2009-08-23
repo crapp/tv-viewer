@@ -102,9 +102,7 @@ proc log_viewerMplayer {} {
 		
 		set mf [ttk::frame $w.f_log_mplayer]
 		
-		set wfbottom [ttk::frame $w.f_log_mplayer_buttons \
-		-relief groove \
-		-borderwidth 2]
+		set wfbottom [ttk::frame $w.f_log_mplayer_buttons -style TLabelframe]
 		
 		listbox $mf.lb_log_mplayer \
 		-yscrollcommand [list $mf.scrollb_lb_log_mplayer set] \
@@ -268,9 +266,7 @@ proc log_viewerScheduler {} {
 		
 		set mf [ttk::frame $w.f_log_scheduler]
 		
-		set wfbottom [ttk::frame $w.f_log_scheduler_buttons \
-		-relief groove \
-		-borderwidth 2]
+		set wfbottom [ttk::frame $w.f_log_scheduler_buttons -style TLabelframe]
 		
 		listbox $mf.lb_log_scheduler \
 		-yscrollcommand [list $mf.scrollb_lb_log_scheduler set] \
@@ -437,9 +433,7 @@ proc log_viewerTvViewer {} {
 		
 		set mf [ttk::frame $w.f_log_tvviewer]
 		
-		set wfbottom [ttk::frame $w.f_log_tvviewer_buttons \
-		-relief groove \
-		-borderwidth 2]
+		set wfbottom [ttk::frame $w.f_log_tvviewer_buttons -style TLabelframe]
 		
 		listbox $mf.lb_log_tvviewer \
 		-yscrollcommand [list $mf.scrollb_lb_log_tvviewer set] \

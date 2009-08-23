@@ -26,9 +26,7 @@ proc station_searchUi {tree} {
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	
 	set mf [ttk::frame $wtop.f_main]
-	set bf [ttk::frame $wtop.f_button \
-	-relief groove \
-	-borderwidth 2]
+	set bf [ttk::frame $wtop.f_button -style TLabelframe]
 	
 	ttk::labelframe $mf.lf_search \
 	-text [mc "Station search options"]

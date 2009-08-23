@@ -43,9 +43,7 @@ proc main_newsreaderCheckUpdate {} {
 			place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 			
 			set mf [ttk::frame $w.mf]
-			set fb [ttk::frame $w.mf.btn \
-			-relief groove \
-			-borderwidth 2]
+			set fb [ttk::frame $w.mf.btn -style TLabelframe]
 			ttk::label $mf.l_top_newsr \
 			-justify left
 			text $mf.t_top_newsr \

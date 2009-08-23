@@ -220,9 +220,7 @@ proc main_frontendLaunchDiagnostic {} {
 		
 		set mf [ttk::frame $wtop.f_main]
 		
-		set fbottom [ttk::frame $wtop.f_bottom \
-		-borderwidth 2 \
-		-relief groove]
+		set fbottom [ttk::frame $wtop.f_bottom -style TLabelframe]
 		
 		ttk::label $mf.l_diagnostic_msg \
 		-text [mc "Diagnostic Routine is checking your system.
@@ -792,8 +790,14 @@ proc main_frontendUiTvviewer {} {
 				event delete <<teleview>>
 				bind . <<record>> {}
 				bind . <<teleview>> {}
+				after 1500 {wm deiconify . ; tv_playerUi}
+			} else {
+				if {$::main(running_recording) == 1} {
+					after 1500 {wm deiconify . ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+				} else {
+					after 1500 {wm deiconify . ; tv_playerUi}
+				}
 			}
-			after 1500 {wm deiconify . ; tv_playerUi}
 		}
 	}
 	if {$::option(systray_start) == 1} {

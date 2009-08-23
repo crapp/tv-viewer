@@ -106,7 +106,7 @@ proc main_readConfig {} {
 		rec_duration_min 0
 		rec_duration_sec 0
 		rec_sched_auto 0
-		timeshift_df 10000
+		timeshift_df 1000
 		timeshift_path "$::where_is_home/tmp"
 	}
 	if {[info exists ::logf_tv_open_append]} {

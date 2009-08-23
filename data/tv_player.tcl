@@ -317,6 +317,8 @@ proc tv_playerUi {} {
 			}
 			bind $tv_slist.lb_station <<ListboxSelect>> [list main_stationListboxStations $tv_slist.lb_station]
 			bindtags .tv.slist_lirc.lb_station {.tv.slist_lirc.lb_station .tv all}
+			bind $tv_cont <Motion> {tv_slistCursor %X %Y}
+			bind $tv_bg <Motion> {tv_slistCursor %X %Y}
 		}
 		
 		wm protocol $mw WM_DELETE_WINDOW main_frontendExitViewer

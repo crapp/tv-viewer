@@ -286,9 +286,7 @@ proc colorm_mainUi {} {
 		
 		set wfscale [ttk::frame $cm_w.f_vscale]
 		
-		set wfbtn [ttk::frame $cm_w.b_vbtn \
-		-borderwidth 2 \
-		-relief groove]
+		set wfbtn [ttk::frame $cm_w.b_vbtn -style TLabelframe]
 		
 		ttk::scale $wfscale.s_brightness \
 		-command [list colormScalemove $wfscale.s_brightness $wfscale.l_brightness_value]

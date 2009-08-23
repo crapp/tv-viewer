@@ -48,12 +48,8 @@ proc config_wizardMainUi {} {
 	#ttk::frame $wfopt; place [ttk::label $wfopt.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set wfbox [ttk::frame $w.frame_configbox]
 	
-	set wfcopt [ttk::frame $w.frame_configoptions \
-	-borderwidth 0 \
-	-relief groove]
-	set wfbtn [ttk::frame $w.frame_buttons \
-	-borderwidth 2 \
-	-relief groove]
+	set wfcopt [ttk::frame $w.frame_configoptions]
+	set wfbtn [ttk::frame $w.frame_buttons -style TLabelframe]
 	
 	listbox $wfbox.listbox_clist \
 	-font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* \

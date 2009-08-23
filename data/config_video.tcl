@@ -363,12 +363,12 @@ proc option_screen_3 {} {
 				
 				if {[info exists ::option(player_fd)]} {
 					set ::choice(cb_framedrop) $::option(player_fd)
-				} else {
-					if {[info exists ::option(player_hfd)]} {
-						set ::choice(cb_hframedrop) $::option(player_hfd)
-					} else {
-						set ::choice(cb_framedrop) $::stnd_opt(player_fd)
-					}
+				}
+				if {[info exists ::option(player_hfd)]} {
+					set ::choice(cb_hframedrop) $::option(player_hfd)
+				}
+				if {[info exists ::option(player_fd)] == 0 && [info exists ::option(player_hfd)] == 0} {
+					set ::choice(cb_framedrop) $::stnd_opt(player_fd)
 				}
 				
 				if {[info exists ::option(player_screens)]} {
