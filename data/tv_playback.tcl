@@ -120,8 +120,12 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		if {$::option(player_screens_value) == 0} {
 			lappend mcommand -stop-xscreensaver
 		} else {
+			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Using heartbeat hack to stop screensaver."
+			flush $::logf_tv_open_append
 			set ::data(heartbeat_id) [after 30000 tv_wmHeartbeatCmd 0]
 		}
+	} else {
+		lappend mcommand -nostop-xscreensaver
 	}
 	set winid [expr [winfo id $tv_cont]]
 	lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/shortcuts/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}

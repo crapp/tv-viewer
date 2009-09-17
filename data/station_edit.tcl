@@ -296,7 +296,7 @@ proc station_editUi {} {
 		
 		set wfstation [ttk::frame $w.wfstation]
 		
-		set wfbottom [ttk::frame $w.bottom_buttons -style TLabelframe] ; place [ttk::label $wfbottom.bg -style Toolbutton] -relwidth 1 -relheight 1
+		set wfbottom [ttk::frame $w.bottom_buttons -style TLabelframe]
 		
 		set wftop [ttk::frame $w.top_buttons] ; place [ttk::label $wftop.bg -style Toolbutton] -relwidth 1 -relheight 1
 		
