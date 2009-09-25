@@ -77,6 +77,6 @@ OS:
 		puts "Activating debug messages"
 	} else {
 		set ::main(debug_msg) [open /dev/null a]
-		fconfigure $::::main(debug_msg) -blocking no -buffering line
+		fconfigure $::main(debug_msg) -blocking no -buffering line
 	}
 }

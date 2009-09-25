@@ -260,23 +260,6 @@ Please wait..."] \
 		-padx 10 \
 		-pady 10
 		
-		proc main_frontendDiagnosticExit {} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticExit \033\[0m"
-			grab release .top_diagnostic
-			if {$::option(systray_mini) == 1} {
-				bind . <Unmap> {
-					if {[winfo ismapped .] == 0} {
-						if {[winfo exists .tray] == 0} {
-							main_systemTrayActivate
-							set ::choice(cb_systray_main) 1
-						}
-						main_systemTrayMini unmap
-					}
-				}
-			}
-			destroy .top_diagnostic
-		}
-		
 		wm resizable $wtop 0 0
 		wm title $wtop [mc "Diagnostic Routine"]
 		wm protocol $wtop WM_DELETE_WINDOW " "
@@ -293,57 +276,75 @@ Please wait..."] \
 		tv_playbackStop 0 pic
 		
 		catch {exec "$::where_is/data/tv-viewer_diag.tcl" &}
-		proc main_frontendDiagnosticFinished {} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticFinished \033\[0m"
-			if {[winfo exists .top_diagnostic]} {
-				
-				grid rowconfigure .top_diagnostic.f_main {2} -weight 1 -minsize 150
-				
-				grid .top_diagnostic.f_main.t_diagtext -in .top_diagnostic.f_main -row 2 -column 0 \
-				-sticky nesw \
-				-padx 5 \
-				-pady "0 5"
-				
-				grid .top_diagnostic.f_bottom -in .top_diagnostic -row 1 -column 0 \
-				-sticky ew \
-				-padx 3 \
-				-pady 3
-				grid anchor .top_diagnostic.f_bottom e
-				
-				grid .top_diagnostic.f_bottom.b_close -in .top_diagnostic.f_bottom -row 0 -column 0 \
-				-padx 3 \
-				-pady 7
-				
-				set hylink_enter "-foreground #0023FF -underline off"
-				set hylink_leave "-foreground #0064FF -underline on"
-				.top_diagnostic.f_main.t_diagtext tag configure hyper -underline on -foreground #0064FF
-				.top_diagnostic.f_main.t_diagtext tag configure hyper_file -underline on -foreground #0064FF
-				.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
-				.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
-				.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
-				.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
-				.top_diagnostic.f_main.t_diagtext tag bind hyper <Button-1> {catch {exec sh -c "xdg-open https://sourceforge.net/tracker2/?group_id=238442" &}}
-				.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Button-1> {catch {exec sh -c "xdg-open $::env(HOME)/tv-viewer_diag.out" &}}
-				
-				.top_diagnostic.f_main.pgb_diagnostic stop
-				.top_diagnostic.f_main.pgb_diagnostic configure -mode determinate
-				.top_diagnostic.f_main.pgb_diagnostic configure -value 100
-				.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine finished"]
-				
-				.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
-				.top_diagnostic.f_main.t_diagtext insert end "\n
+	}
+}
+
+proc main_frontendDiagnosticFinished {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticFinished \033\[0m"
+	if {[winfo exists .top_diagnostic]} {
+		
+		grid rowconfigure .top_diagnostic.f_main {2} -weight 1 -minsize 150
+		
+		grid .top_diagnostic.f_main.t_diagtext -in .top_diagnostic.f_main -row 2 -column 0 \
+		-sticky nesw \
+		-padx 5 \
+		-pady "0 5"
+		
+		grid .top_diagnostic.f_bottom -in .top_diagnostic -row 1 -column 0 \
+		-sticky ew \
+		-padx 3 \
+		-pady 3
+		grid anchor .top_diagnostic.f_bottom e
+		
+		grid .top_diagnostic.f_bottom.b_close -in .top_diagnostic.f_bottom -row 0 -column 0 \
+		-padx 3 \
+		-pady 7
+		
+		set hylink_enter "-foreground #0023FF -underline off"
+		set hylink_leave "-foreground #0064FF -underline on"
+		.top_diagnostic.f_main.t_diagtext tag configure hyper -underline on -foreground #0064FF
+		.top_diagnostic.f_main.t_diagtext tag configure hyper_file -underline on -foreground #0064FF
+		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
+		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
+		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
+		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
+		.top_diagnostic.f_main.t_diagtext tag bind hyper <Button-1> {catch {exec sh -c "xdg-open https://sourceforge.net/tracker2/?group_id=238442" &}}
+		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Button-1> {catch {exec sh -c "xdg-open $::env(HOME)/tv-viewer_diag.out" &}}
+		
+		.top_diagnostic.f_main.pgb_diagnostic stop
+		.top_diagnostic.f_main.pgb_diagnostic configure -mode determinate
+		.top_diagnostic.f_main.pgb_diagnostic configure -value 100
+		.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine finished"]
+		
+		.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
+		.top_diagnostic.f_main.t_diagtext insert end "\n
 $::env(HOME)/tv-viewer_diag.out" hyper_file
-				.top_diagnostic.f_main.t_diagtext insert end "\n\n"
-				.top_diagnostic.f_main.t_diagtext insert end [mc "Create a bug report on "]
-				.top_diagnostic.f_main.t_diagtext insert end "sourceforge.net" hyper
-				.top_diagnostic.f_main.t_diagtext insert end "\n"
-				.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
-				.top_diagnostic.f_main.t_diagtext configure -state disabled
-				
-				wm protocol .top_diagnostic WM_DELETE_WINDOW "main_frontendDiagnosticExit"
+		.top_diagnostic.f_main.t_diagtext insert end "\n\n"
+		.top_diagnostic.f_main.t_diagtext insert end [mc "Create a bug report on "]
+		.top_diagnostic.f_main.t_diagtext insert end "sourceforge.net" hyper
+		.top_diagnostic.f_main.t_diagtext insert end "\n"
+		.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
+		.top_diagnostic.f_main.t_diagtext configure -state disabled
+		
+		wm protocol .top_diagnostic WM_DELETE_WINDOW "main_frontendDiagnosticExit"
+	}
+}
+
+proc main_frontendDiagnosticExit {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticExit \033\[0m"
+	grab release .top_diagnostic
+	if {$::option(systray_mini) == 1} {
+		bind . <Unmap> {
+			if {[winfo ismapped .] == 0} {
+				if {[winfo exists .tray] == 0} {
+					main_systemTrayActivate
+					set ::choice(cb_systray_main) 1
+				}
+				main_systemTrayMini unmap
 			}
 		}
 	}
+	destroy .top_diagnostic
 }
 
 proc main_frontendUiTvviewer {} {

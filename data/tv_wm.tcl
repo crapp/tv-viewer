@@ -25,10 +25,12 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 				bind $tv_cont <Motion> {
 					tv_wmCursorHide .tv.bg.w 0
 					tv_wmCursorPlaybar %Y
+					tv_slistCursor %X %Y
 				}
 				bind $tv_bg <Motion> {
 					tv_wmCursorHide .tv.bg 0
 					tv_wmCursorPlaybar %Y
+					tv_slistCursor %X %Y
 				}
 				.tv.file_play_bar.b_fullscreen configure -image $::icon_m(nofullscreen)
 			} else {
@@ -191,7 +193,8 @@ proc tv_wmPanscanAuto {} {
 		if {$::data(panscanAuto) == 0} {
 			place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5
 			if {[winfo exists .tv.file_play_bar] == 0} {
-				wm geometry .tv [winfo width .tv]x[expr int(ceil([winfo width .tv].0 / 1.777777778))]
+				#~ wm geometry .tv [winfo width .tv]x[expr int(ceil([winfo width .tv].0 / 1.777777778))]
+				wm geometry .tv [winfo width .tv]x[expr int([winfo width .tv].0 / (16.0 / 9.0))]
 			} else {
 				set height [expr int(ceil([winfo width .tv].0 / 1.777777778))]
 				set heightwp [expr $height + [winfo height .tv.file_play_bar]]

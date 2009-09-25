@@ -21,6 +21,7 @@
 
 set where_is "[file dirname [file normalize [info script]]]"
 set target /usr/local/share
+set printchan stdout
 
 if {[catch {package require Tcl 8.5}]} {
 catch {puts "Program error. You'll need Tcl version 8.5 or higher.
@@ -36,11 +37,22 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) "0.8.1a1.19"
-
-array set start_options {--uninstall 0}
-foreach argumente $argv {set start_options($argumente) 1}
-if {[array size start_options] != 1} {
+set option(release_version) "0.8.1b1.20"
+array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0}
+foreach command_argument $argv {
+	if {[string first = $command_argument] == -1 } {
+		set i [string first - $command_argument]
+		set key $command_argument
+		set start_options($key) 1
+	} else {
+		set i [string first = $command_argument]
+		set key [string range $command_argument 0 [expr {$i-1}]]
+		set value [string range $command_argument [expr {$i+1}] end]
+		set start_options($key) 1
+		set start_values($key) $value
+	}
+}
+if {[array size start_options] != 4} {
 	puts "
 TV-Viewer $option(release_version)
 	
@@ -48,20 +60,34 @@ Unkown option(s): $argv
 
 Possible options are:
 
-  --uninstall    Uninstalls TV-Viewer.
+  --uninstall     Uninstalls TV-Viewer.
+  --nodebug       Do not print messages of progress to stdout.
+  --target=PATH   Provide a path for installation (standard /usr/local/share).
+  --manpath=PATH  Provide a path for man pages (standard /usr/local/share/man/man1).
  "
 exit 0
 }
 
+if {$start_options(--nodebug)} {
+	set printchan [open /dev/null a]
+	fconfigure $::printchan -blocking no -buffering line
+}
+
+if {$start_options(--target)} {
+	puts $::printchan "
+Target set to $start_values(--target)"
+	set target $start_values(--target)
+}
+
 if {$start_options(--uninstall)} {
-	puts "
+	puts $::printchan "
 
 TV-Viewer will be uninstalled..."
 after 1000
 	if {[file isdirectory "$target/tv-viewer/"]} {
 		set status_uninstall [catch {file delete -force -- pathname "$target/tv-viewer/"} resultat_uninstall]
 		if { $status_uninstall != 0} {
-			puts "
+			puts $::printchan "
 Can't uninstall TV-Viewer.
 Error message: $resultat_uninstall
 
@@ -72,7 +98,7 @@ You are $::tcl_platform(user).
 		} else {
 			catch {file delete -force "/usr/bin/tv-viewer" "/usr/bin/tv-viewer_lirc" "/usr/bin/tv-viewer_diag" "/usr/bin/tv-viewer_scheduler" "$target/applications/tv-viewer.desktop" "$target/pixmaps/tv-viewer.png" "/usr/local/man/man1/tv-viewer.1.gz"}
 			
-			puts "
+			puts $::printchan "
 TV-Viewer has been uninstalled successfully.
 
 Config directory is still present in your home
@@ -83,28 +109,28 @@ Please delete manually.
 			exit 0
 		}
 	} else {
-		puts "
+		puts $::printchan "
 TV-Viewer is not installed!
 "
 		exit 1
 	}
 }
 
-	puts "\n \n ############################################################################"
-	puts " ####                                                                    ####"
-	puts " ####           Installation of TV-Viewer $option(release_version)                     ####"
-	puts " ####                                                                    ####"
-	puts " ############################################################################"
+	puts $::printchan "\n \n ############################################################################"
+	puts $::printchan " ####                                                                    ####"
+	puts $::printchan " ####           Installation of TV-Viewer $option(release_version)                     ####"
+	puts $::printchan " ####                                                                    ####"
+	puts $::printchan " ############################################################################"
 
 after 200
 
 if {[file isdirectory "$target/tv-viewer"]} {
-	puts "
+	puts $::printchan "
 Found a previous installation of TV-Viewer.
 Erasing old files..."
 	set status_file [catch {file delete -force -- pathname "$target/tv-viewer/"} resultat_file]
 	if { $status_file != 0 } {
-		puts "
+		puts $::printchan "
 Can't erase folders.
 Error message: $resultat_file
 
@@ -114,13 +140,13 @@ You are $::tcl_platform(user).
 		exit 1
 	} else {
 		file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"
-		puts "
+		puts $::printchan "
 Creating folders..."
 	}
 } else {
 	set status_file [catch {file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
 	if { $status_file != 0 } {
-		puts "
+		puts $::printchan "
 Can't create necessary folders.
 Error message: $resultat_file
 
@@ -128,7 +154,7 @@ You probably have to be root.
 "
 		exit 1
 	} else {
-				puts "
+				puts $::printchan "
 Creating folders..."
 	}
 }
@@ -166,7 +192,7 @@ if {$status_schedlinkread == 0} {
 	catch {exec ps -eo "%p"} read_ps
 	set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 	if { $status_greppid_sched == 0 } {
-		puts "
+		puts $::printchan "
 Scheduler is running, will stop it."
 after 1000
 		catch {exec kill $resultat_schedlinkread}
@@ -200,21 +226,21 @@ proc install_copyData {where_is target} {
 	foreach dfile [split [file normalize [join $filelist \n]] \n] {
 		set status_dfile [catch {file copy -force "$dfile" "$target/tv-viewer/data/"} resultat_dfile]
 		if { $status_dfile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $dfile
 
 Error message: $resultat_dfile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/data/[lindex [file split $dfile] end]"
+			puts $::printchan "$target/tv-viewer/data/[lindex [file split $dfile] end]"
 			if {[string match *tv-viewer_diag* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_scheduler* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/tv-viewer/data/[lindex [file split $dfile] end]"]} {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rwxr-xr-x} resultat_permissions_dfile]
 			} else {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rw-r--r--} resultat_permissions_dfile]
 			}
 			if {$status_permissions_dfile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/data/[lindex [file split $dfile] end]
 
 Error message: $resultat_permissions_dfile"
@@ -228,17 +254,17 @@ Error message: $resultat_permissions_dfile"
 	}
 	set status_desktop [catch {file copy -force "$where_is/data/tv-viewer.desktop" "$target/applications/"} result_desktop]
 	if { $status_desktop != 0 } {
-		puts "
+		puts $::printchan "
 Could not copy file: $where_is/data/tv-viewer.desktop
 
 Error message: $result_desktop
 	"
 		exit 1
 	} else {
-		puts "$target/applications/tv-viewer.desktop"
+		puts $::printchan "$target/applications/tv-viewer.desktop"
 		set status_permissions_desktop [catch {file attributes "$target/applications/tv-viewer.desktop" -permissions rw-r--r--} resultat_permissions_desktop]
 		if {$status_permissions_desktop != 0} {
-			puts "
+			puts $::printchan "
 Could not change permissions for: $target/applications/tv-viewer.desktop
 
 Error message: $resultat_permissions_desktop"
@@ -252,17 +278,17 @@ proc install_copyExtensions {where_is target} {
 	foreach tfile32 [split [file normalize [join $filelist \n]] \n] {
 		set status_tfile32 [catch {file copy -force "$tfile32" "$target/tv-viewer/extensions/tktray/32/"} resultat_tfile32]
 		if { $status_tfile32 != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $tfile32
 
 Error message: $resultat_tfile32
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]"
+			puts $::printchan "$target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]"
 			set status_permissions_tfile32 [catch {file attributes "$target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
 			if {$status_permissions_tfile32 != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]
 
 Error message: $resultat_permissions_tfile32"
@@ -275,18 +301,17 @@ Error message: $resultat_permissions_tfile32"
 	foreach tfile64 [split [file normalize [join $filelist \n]] \n] {
 		set status_tfile64 [catch {file copy -force "$tfile64" "$target/tv-viewer/extensions/tktray/64/"} resultat_tfile64]
 		if { $status_tfile64 != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $tfile64
 
 Error message: $resultat_tfile64
 	"
 			exit 1
 		} else {
-			#~ after 10
-			puts "$target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]"
+			puts $::printchan "$target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]"
 			set status_permissions_tfile64 [catch {file attributes "$target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
 			if {$status_permissions_tfile64 != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]
 
 Error message: $resultat_permissions_tfile64"
@@ -299,17 +324,17 @@ Error message: $resultat_permissions_tfile64"
 	foreach aufile [split [file normalize [join $filelist \n]] \n] {
 		set status_aufile [catch {file copy -force "$aufile" "$target/tv-viewer/extensions/autoscroll/"} resultat_aufile]
 		if { $status_aufile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $aufile
 
 Error message: $resultat_aufile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/extensions/autoscroll/[lindex [file split $aufile] end]"
+			puts $::printchan "$target/tv-viewer/extensions/autoscroll/[lindex [file split $aufile] end]"
 			set status_permissions_aufile [catch {file attributes "$target/tv-viewer/extensions/autoscroll/[lindex [file split $aufile] end]" -permissions rwxr-xr-x} resultat_permissions_aufile]
 			if {$status_permissions_aufile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/extensions/autoscroll/[lindex [file split $aufile] end]
 
 Error message: $resultat_permissions_aufile"
@@ -322,17 +347,17 @@ Error message: $resultat_permissions_aufile"
 	foreach calfile [split [file normalize [join $filelist \n]] \n] {
 		set status_calfile [catch {file copy -force "$calfile" "$target/tv-viewer/extensions/callib/"} resultat_calfile]
 		if { $status_calfile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $calfile
 
 Error message: $resultat_calfile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/extensions/callib/[lindex [file split $calfile] end]"
+			puts $::printchan "$target/tv-viewer/extensions/callib/[lindex [file split $calfile] end]"
 			set status_permissions_calfile [catch {file attributes "$target/tv-viewer/extensions/callib/[lindex [file split $calfile] end]" -permissions rwxr-xr-x} resultat_permissions_calfile]
 			if {$status_permissions_calfile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/extensions/callib/[lindex [file split $calfile] end]
 
 Error message: $resultat_permissions_calfile"
@@ -345,17 +370,17 @@ Error message: $resultat_permissions_calfile"
 	foreach fsfile [split [file normalize [join $filelist \n]] \n] {
 		set status_fsfile [catch {file copy -force "$fsfile" "$target/tv-viewer/extensions/fsdialog/"} resultat_fsfile]
 		if { $status_fsfile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $fsfile
 
 Error message: $resultat_fsfile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/extensions/fsdialog/[lindex [file split $fsfile] end]"
+			puts $::printchan "$target/tv-viewer/extensions/fsdialog/[lindex [file split $fsfile] end]"
 			set status_permissions_fsfile [catch {file attributes "$target/tv-viewer/extensions/fsdialog/[lindex [file split $fsfile] end]" -permissions rwxr-xr-x} resultat_permissions_fsfile]
 			if {$status_permissions_fsfile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/extensions/fsdialog/[lindex [file split $fsfile] end]
 
 Error message: $resultat_permissions_fsfile"
@@ -370,17 +395,17 @@ proc install_copyIcons {where_is target} {
 	foreach ifile [split [file normalize [join $filelist \n]] \n] {
 		set status_ifile [catch {file copy -force "$ifile" "$target/tv-viewer/icons/16x16/"} resultat_ifile]
 		if { $status_ifile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $ifile
 
 Error message: $resultat_ifile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/icons/16x16/[lindex [file split $ifile] end]"
+			puts $::printchan "$target/tv-viewer/icons/16x16/[lindex [file split $ifile] end]"
 			set status_permissions_ifile [catch {file attributes "$target/tv-viewer/icons/16x16/[lindex [file split $ifile] end]" -permissions rw-r--r--} resultat_permissions_ifile]
 			if {$status_permissions_ifile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/icons/16x16/[lindex [file split $ifile] end]
 
 Error message: $resultat_permissions_ifile"
@@ -393,17 +418,17 @@ Error message: $resultat_permissions_ifile"
 	foreach ifile [split [file normalize [join $filelist \n]] \n] {
 		set status_ifile [catch {file copy -force "$ifile" "$target/tv-viewer/icons/22x22/"} resultat_ifile]
 		if { $status_ifile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $ifile
 
 Error message: $resultat_ifile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/icons/22x22/[lindex [file split $ifile] end]"
+			puts $::printchan "$target/tv-viewer/icons/22x22/[lindex [file split $ifile] end]"
 			set status_permissions_ifile [catch {file attributes "$target/tv-viewer/icons/22x22/[lindex [file split $ifile] end]" -permissions rw-r--r--} resultat_permissions_ifile]
 			if {$status_permissions_ifile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/icons/22x22/[lindex [file split $ifile] end]
 
 Error message: $resultat_permissions_ifile"
@@ -416,17 +441,17 @@ Error message: $resultat_permissions_ifile"
 	foreach ifile [split [file normalize [join $filelist \n]] \n] {
 		set status_ifile [catch {file copy -force "$ifile" "$target/tv-viewer/icons/32x32/"} resultat_ifile]
 		if { $status_ifile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $ifile
 
 Error message: $resultat_ifile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/icons/32x32/[lindex [file split $ifile] end]"
+			puts $::printchan "$target/tv-viewer/icons/32x32/[lindex [file split $ifile] end]"
 			set status_permissions_ifile [catch {file attributes "$target/tv-viewer/icons/32x32/[lindex [file split $ifile] end]" -permissions rw-r--r--} resultat_permissions_ifile]
 			if {$status_permissions_ifile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/icons/32x32/[lindex [file split $ifile] end]
 
 Error message: $resultat_permissions_ifile"
@@ -439,17 +464,17 @@ Error message: $resultat_permissions_ifile"
 	foreach ifile [split [file normalize [join $filelist \n]] \n] {
 		set status_ifile [catch {file copy -force "$ifile" "$target/tv-viewer/icons/extras/"} resultat_ifile]
 		if { $status_ifile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $ifile
 
 Error message: $resultat_ifile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/icons/extras/[lindex [file split $ifile] end]"
+			puts $::printchan "$target/tv-viewer/icons/extras/[lindex [file split $ifile] end]"
 			set status_permissions_ifile [catch {file attributes "$target/tv-viewer/icons/extras/[lindex [file split $ifile] end]" -permissions rw-r--r--} resultat_permissions_ifile]
 			if {$status_permissions_ifile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/icons/extras/[lindex [file split $ifile] end]
 
 Error message: $resultat_permissions_ifile"
@@ -463,17 +488,17 @@ Error message: $resultat_permissions_ifile"
 	}
 	set status_tvicon [catch {file copy -force "$where_is/icons/extras/tv-viewer_icon.png" "$target/pixmaps/"} result_tvicon]
 	if { $status_tvicon != 0 } {
-		puts "
+		puts $::printchan "
 Could not copy file: $where_is/icons/extras/tv-viewer_icon.png
 
 Error message: $result_tvicon
 	"
 		exit 1
 	} else {
-		puts "$target/pixmaps/tv-viewer_icon.png"
+		puts $::printchan "$target/pixmaps/tv-viewer_icon.png"
 		set status_permissions_tvicon [catch {file attributes "$target/pixmaps/tv-viewer_icon.png" -permissions rw-r--r--} resultat_permissions_tvicon]
 		if {$status_permissions_tvicon != 0} {
-			puts "
+			puts $::printchan "
 Could not change permissions for: $target/pixmaps/tv-viewer_icon.png
 
 Error message: $resultat_permissions_tvicon"
@@ -488,17 +513,17 @@ proc install_copyLicense {where_is target} {
 	foreach lfile $filelist {
 		set status_file_lic [catch {file copy -force "$lfile" "$target/tv-viewer/license/"} resultat_file_lic]
 		if { $status_file_lic != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $lfile
 
 Error message: $resultat_file_lic
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/license/[lindex [file split $lfile] end]"
+			puts $::printchan "$target/tv-viewer/license/[lindex [file split $lfile] end]"
 			set status_permissions_lfile [catch {file attributes "$target/tv-viewer/license/[lindex [file split $lfile] end]" -permissions rw-r--r--} resultat_permissions_lfile]
 			if {$status_permissions_lfile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/license/[lindex [file split $lfile] end]
 
 Error message: $resultat_permissions_lfile"
@@ -509,22 +534,27 @@ Error message: $resultat_permissions_lfile"
 }
 
 proc install_copyMan {where_is target} {
-	if {[file isdirectory "/usr/local/man"] == 0} {
-		file mkdir "/usr/local/man"
+	if {$::start_options(--manpath)} {
+		set manpath $::start_values(--manpath)
+	} else {
+		set manpath /usr/local/man
 	}
-	if {[file isdirectory "/usr/local/man/man1"] == 0} {
-		file mkdir "/usr/local/man/man1"
+	if {[file isdirectory "$manpath"] == 0} {
+		file mkdir "$manpath"
 	}
-	set status_file_man [catch {file copy -force "$where_is/man/tv-viewer.1.gz" "/usr/local/man/man1/"} resultat_file_man]
+	if {[file isdirectory "$manpath/man1"] == 0} {
+		file mkdir "$manpath/man1"
+	}
+	set status_file_man [catch {file copy -force "$where_is/man/tv-viewer.1.gz" "$manpath/man1/"} resultat_file_man]
 	if { $status_file_man != 0 } {
-		puts "
+		puts $::printchan "
 Could not copy file: $where_is/man/tv-viewer.1.gz
 
-Error message: $rresultat_file_man
+Error message: $resultat_file_man
 "
 		exit 1
 	}
-	puts "/usr/local/man/man1/tv-viewer.1.gz"
+	puts $::printchan "$manpath/man1/tv-viewer.1.gz"
 }
 
 proc install_copyMsgs {where_is target} {
@@ -532,17 +562,17 @@ proc install_copyMsgs {where_is target} {
 	foreach mfile [split [file normalize [join $filelist \n]] \n] {
 		set status_mfile [catch {file copy -force "$mfile" "$target/tv-viewer/msgs/"} resultat_mfile]
 		if { $status_mfile != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $mfile
 
 Error message: $resultat_mfile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/msgs/[lindex [file split $mfile] end]"
+			puts $::printchan "$target/tv-viewer/msgs/[lindex [file split $mfile] end]"
 			set status_permissions_mfile [catch {file attributes "$target/tv-viewer/msgs/[lindex [file split $mfile] end]" -permissions rw-r--r--} resultat_permissions_mfile]
 			if {$status_permissions_mfile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/msgs/[lindex [file split $mfile] end]
 
 Error message: $resultat_permissions_mfile"
@@ -555,17 +585,17 @@ Error message: $resultat_permissions_mfile"
 	foreach defile [split [file normalize [join $filelist \n]] \n] {
 		set status_defile [catch {file copy -force "$defile" "$target/tv-viewer/msgs/de/"} resultat_defile]
 		if { $status_defile != 0 } {
-			puts "
+			puts $::printchan "
 	Could not copy file: $defile
 
 	Error message: $resultat_defile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/msgs/de/[lindex [file split $defile] end]"
+			puts $::printchan "$target/tv-viewer/msgs/de/[lindex [file split $defile] end]"
 			set status_permissions_defile [catch {file attributes "$target/tv-viewer/msgs/de/[lindex [file split $defile] end]" -permissions rw-r--r--} resultat_permissions_defile]
 			if {$status_permissions_defile != 0} {
-				puts "
+				puts $::printchan "
 	Could not change permissions for: $target/tv-viewer/msgs/de/[lindex [file split $defile] end]
 
 	Error message: $resultat_permissions_defile"
@@ -578,17 +608,17 @@ Error message: $resultat_permissions_mfile"
 	foreach enfile [split [file normalize [join $filelist \n]] \n] {
 		set status_enfile [catch {file copy -force "$enfile" "$target/tv-viewer/msgs/en/"} resultat_enfile]
 		if { $status_enfile != 0 } {
-			puts "
+			puts $::printchan "
 	Could not copy file: $enfile
 
 	Error message: $resultat_enfile
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/msgs/en/[lindex [file split $enfile] end]"
+			puts $::printchan "$target/tv-viewer/msgs/en/[lindex [file split $enfile] end]"
 			set status_permissions_enfile [catch {file attributes "$target/tv-viewer/msgs/en/[lindex [file split $enfile] end]" -permissions rw-r--r--} resultat_permissions_enfile]
 			if {$status_permissions_enfile != 0} {
-				puts "
+				puts $::printchan "
 	Could not change permissions for: $target/tv-viewer/msgs/en/[lindex [file split $enfile] end]
 
 	Error message: $resultat_permissions_enfile"
@@ -603,17 +633,17 @@ proc install_copyShortcuts {where_is target} {
 	foreach sfile $filelist {
 		set status_file_cut [catch {file copy -force "$sfile" "$target/tv-viewer/shortcuts/"} resultat_file_cut]
 		if { $status_file_cut != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $sfile
 
 Error message: $resultat_file_cut
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/shortcuts/[lindex [file split $sfile] end]"
+			puts $::printchan "$target/tv-viewer/shortcuts/[lindex [file split $sfile] end]"
 			set status_permissions_sfile [catch {file attributes "$target/tv-viewer/shortcuts/[lindex [file split $sfile] end]" -permissions rw-r--r--} resultat_permissions_sfile]
 			if {$status_permissions_sfile != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/shortcuts/[lindex [file split $lfile] end]
 
 Error message: $resultat_permissions_sfile"
@@ -628,17 +658,17 @@ proc install_copyThemes {where_is target} {
 	foreach plastik [split [file normalize [join $filelist \n]] \n] {
 		set status_file_plastik [catch {file copy -force "$plastik" "$target/tv-viewer/themes/plastik/"} resultat_file_plastik]
 		if { $status_file_plastik != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $plastik
 
 Error message: $resultat_file_plastik
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/themes/plastik/[lindex [file split $plastik] end]"
+			puts $::printchan "$target/tv-viewer/themes/plastik/[lindex [file split $plastik] end]"
 			set status_permissions_plastik [catch {file attributes "$target/tv-viewer/themes/plastik/[lindex [file split $plastik] end]" -permissions rwxr-xr-x} resultat_permissions_plastik]
 			if {$status_permissions_plastik != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/themes/plastik/[lindex [file split $plastik] end]
 
 Error message: $resultat_permissions_plastik"
@@ -651,17 +681,17 @@ Error message: $resultat_permissions_plastik"
 	foreach plastik [split [file normalize [join $filelist \n]] \n] {
 		set status_file_plastik [catch {file copy -force "$plastik" "$target/tv-viewer/themes/plastik/plastik/"} resultat_file_plastik]
 		if { $status_file_plastik != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $plastik
 
 Error message: $resultat_file_plastik
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/themes/plastik/[lindex [file split $plastik] end]"
+			puts $::printchan "$target/tv-viewer/themes/plastik/[lindex [file split $plastik] end]"
 			set status_permissions_plastik [catch {file attributes "$target/tv-viewer/themes/plastik/plastik/[lindex [file split $plastik] end]" -permissions rw-r--r--} resultat_permissions_plastik]
 			if {$status_permissions_plastik != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/themes/plastik/plastik/[lindex [file split $plastik] end]
 
 Error message: $resultat_permissions_plastik"
@@ -674,17 +704,17 @@ Error message: $resultat_permissions_plastik"
 	foreach keramik [split [file normalize [join $filelist \n]] \n] {
 		set status_file_keramik [catch {file copy -force "$keramik" "$target/tv-viewer/themes/keramik/"} resultat_file_keramik]
 		if { $status_file_keramik != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $keramik
 
 Error message: $resultat_file_keramik
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/themes/keramik/[lindex [file split $keramik] end]"
+			puts $::printchan "$target/tv-viewer/themes/keramik/[lindex [file split $keramik] end]"
 			set status_permissions_keramik [catch {file attributes "$target/tv-viewer/themes/keramik/[lindex [file split $keramik] end]" -permissions rwxr-xr-x} resultat_permissions_keramik]
 			if {$status_permissions_keramik != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/themes/keramik/[lindex [file split $keramik] end]
 
 Error message: $resultat_permissions_keramik"
@@ -697,18 +727,17 @@ Error message: $resultat_permissions_keramik"
 	foreach keramik [split [file normalize [join $filelist \n]] \n] {
 		set status_file_keramik [catch {file copy -force "$keramik" "$target/tv-viewer/themes/keramik/keramik/"} resultat_file_keramik]
 		if { $status_file_keramik != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $keramik
 
 Error message: $resultat_file_keramik
 	"
 			exit 1
 		} else {
-			#~ after 10
-			puts "$target/tv-viewer/themes/keramik/keramik/[lindex [file split $keramik] end]"
+			puts $::printchan "$target/tv-viewer/themes/keramik/keramik/[lindex [file split $keramik] end]"
 			set status_permissions_keramik [catch {file attributes "$target/tv-viewer/themes/keramik/keramik/[lindex [file split $keramik] end]" -permissions rwxr-xr-x} resultat_permissions_keramik]
 			if {$status_permissions_keramik != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/themes/keramik/keramik/[lindex [file split $keramik] end]
 
 Error message: $resultat_permissions_keramik"
@@ -721,17 +750,17 @@ Error message: $resultat_permissions_keramik"
 	foreach keramik [split [file normalize [join $filelist \n]] \n] {
 		set status_file_keramik [catch {file copy -force "$keramik" "$target/tv-viewer/themes/keramik/keramik_alt/"} resultat_file_keramik]
 		if { $status_file_keramik != 0 } {
-			puts "
+			puts $::printchan "
 Could not copy file: $keramik
 
 Error message: $resultat_file_keramik
 	"
 			exit 1
 		} else {
-			puts "$target/tv-viewer/themes/keramik/keramik_alt/[lindex [file split $keramik] end]"
+			puts $::printchan "$target/tv-viewer/themes/keramik/keramik_alt/[lindex [file split $keramik] end]"
 			set status_permissions_keramik [catch {file attributes "$target/tv-viewer/themes/keramik/keramik_alt/[lindex [file split $keramik] end]" -permissions rwxr-xr-x} resultat_permissions_keramik]
 			if {$status_permissions_keramik != 0} {
-				puts "
+				puts $::printchan "
 Could not change permissions for: $target/tv-viewer/themes/keramik/keramik_alt/[lindex [file split $keramik] end]
 
 Error message: $resultat_permissions_keramik"
@@ -743,107 +772,124 @@ Error message: $resultat_permissions_keramik"
 
 proc install_createSymbolic {where_is target} {
 	catch {file delete -force "/usr/bin/tv-viewer" "/usr/bin/tv-viewer_diag" "/usr/bin/tv-viewer_lirc" "/usr/bin/tv-viewer_scheduler"}
-
-	set status_symbolic [catch {file link -symbolic "/usr/bin/tv-viewer" "$target/tv-viewer/data/tv-viewer_main.sh"} resultat_symbolic]
+	if {"$target" != "/usr/local/share"} {
+		set binpath "[file dirname $target]/bin"
+		if {[file isdirectory "$binpath"] == 0} {
+			file mkdir "$binpath"
+		}
+		set bintarget /usr/share
+	} else {
+		set binpath /usr/bin
+		set bintarget $target
+	}
+	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer" "$bintarget/tv-viewer/data/tv-viewer_main.sh"} resultat_symbolic]
+	catch {exec ln -s "$bintarget/tv-viewer/data/tv-viewer_main.sh" "$binpath/tv-viewer"}
+	set status_symbolic [catch {file link "$binpath/tv-viewer"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
-		puts "
+		puts $::printchan "
 Could not create symbolic link 'tv-viewer'.
 
 Error message: $resultat_symbolic
 	"
 	exit 1
 	} else {
-		puts "tv-viewer"
+		puts $::printchan "tv-viewer"
 	after 100
 	}
-	set status_symbolic [catch {file link -symbolic "/usr/bin/tv-viewer_diag" "$target/tv-viewer/data/tv-viewer_diag.tcl"} resultat_symbolic]
+	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_diag" "$bintarget/tv-viewer/data/tv-viewer_diag.tcl"} resultat_symbolic]
+	catch {exec ln -s "$bintarget/tv-viewer/data/tv-viewer_diag.tcl" "$binpath/tv-viewer_diag"}
+	set status_symbolic [catch {file link "$binpath/tv-viewer_diag"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
-		puts "
+		puts $::printchan "
 Could not create symbolic link 'tv-viewer_diag'.
 
 Error message: $resultat_symbolic
 	"
 	exit 1
 	} else {
-		puts "tv-viewer_diag"
+		puts $::printchan "tv-viewer_diag"
 	after 100
 	}
-	set status_symbolic [catch {file link -symbolic "/usr/bin/tv-viewer_lirc" "$target/tv-viewer/data/lirc_emitter.tcl"} resultat_symbolic]
+	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_lirc" "$bintarget/tv-viewer/data/lirc_emitter.tcl"} resultat_symbolic]
+	catch {exec ln -s "$bintarget/tv-viewer/data/lirc_emitter.tcl" "$binpath/tv-viewer_lirc"}
+	set status_symbolic [catch {file link "$binpath/tv-viewer_lirc"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
-		puts "
+		puts $::printchan "
 Could not create symbolic link 'tv-viewer_lirc'.
 
 Error message: $resultat_symbolic
 	"
 	exit 1
 	} else {
-		puts "tv-viewer_lirc"
+		puts $::printchan "tv-viewer_lirc"
 	after 100
 	}
-	set status_symbolic [catch {file link -symbolic "/usr/bin/tv-viewer_scheduler" "$target/tv-viewer/data/record_scheduler.tcl"} resultat_symbolic]
+	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_scheduler" "$bintarget/tv-viewer/data/record_scheduler.tcl"} resultat_symbolic]
+	catch {exec ln -s "$bintarget/tv-viewer/data/record_scheduler.tcl" "$binpath/tv-viewer_scheduler"}
+	set status_symbolic [catch {file link "$binpath/tv-viewer_scheduler"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
-		puts "
+		puts $::printchan "
 Could not create symbolic link 'tv-viewer_scheduler'.
 
 Error message: $resultat_symbolic
 	"
 	exit 1
 	} else {
-		puts "tv-viewer_scheduler"
+		puts $::printchan "tv-viewer_scheduler"
 	after 100
 	}
 }
 
-puts "
+puts $::printchan "
 Processing data..."
 after 1250
 install_copyData "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processing extensions..."
 after 1250
 install_copyExtensions "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processing icons..."
 after 1250
 install_copyIcons "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processing licenses..."
 after 1250
 install_copyLicense "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processing manual page..."
 after 1250
 install_copyMan "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processing translations..."
 after 1250
 install_copyMsgs "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processing shortcuts..."
 after 1250
 install_copyShortcuts "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Processings themes..."
 after 1250
 install_copyThemes "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Creating symbolic links..."
 after 500
 install_createSymbolic "$where_is" "$target"
 
-puts "
+puts $::printchan "
 Changed permissions for all files."
 after 250
 
-puts "
+puts $::printchan "
 
 TV-Viewer successfully installed.
 

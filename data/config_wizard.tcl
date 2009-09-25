@@ -118,6 +118,9 @@ proc config_wizardMainUi {} {
 	bind $w <Control-Key-x> {config_wizardExit}
 	bind $w <Key-F1> [list info_helpHelp]
 	
+	$wfbox.listbox_clist selection set 0
+	$wfbox.listbox_clist activate 0
+	
 	wm resizable $w 0 0
 	wm protocol $w WM_DELETE_WINDOW config_wizardExit
 	wm title $w [mc "Preferences"]

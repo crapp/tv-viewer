@@ -18,6 +18,9 @@
 
 proc tv_slistCursor {xpos ypos} {
 	if {[winfo exists .tv.slist]} {
+		if {[winfo exists .tv.file_play_bar] == 1 && $::option(rec_allow_sta_change) == 0} {
+			return
+		}
 		array set alignment {
 			0 {-anchor nw -x 10 -y 10}
 			1 {-anchor n -relx 0.5 -y 10}

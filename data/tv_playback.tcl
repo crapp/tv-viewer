@@ -96,13 +96,14 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	} else {
 		lappend mcommand {*}[auto_execok mplayer] -quiet -slave -identify
 	}
-	
+	lappend mcommand {*}-noconfig all
 	if {[string match *adaptor* $::option(player_vo)] == 1} {
 		lappend mcommand -vo xv:[lindex $::option(player_vo) 1]
 	} else {
 		lappend mcommand {*}$vopt($::option(player_vo))
 	}
-	lappend mcommand {*}$aopt($::option(player_audio))
+	#~ lappend mcommand {*}$aopt($::option(player_audio))
+	lappend mcommand -ao $::option(player_audio)
 	if {[string trim $cbopt(softvol\($::option(player_aud_softvol)\))] != {}} {
 		lappend mcommand {*}$cbopt(softvol\($::option(player_aud_softvol)\))
 	}
@@ -462,10 +463,12 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 		bind $tv_cont <Motion> {
 			tv_wmCursorHide .tv.bg.w 0
 			tv_wmCursorPlaybar %Y
+			tv_slistCursor %X %Y
 		}
 		bind $tv_bg <Motion> {
 			tv_wmCursorHide .tv.bg 0
 			tv_wmCursorPlaybar %Y
+			tv_slistCursor %X %Y
 		}
 	}
 	if {$::option(tooltips_player) == 1} {

@@ -92,11 +92,19 @@ proc option_screen_4 {} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
 			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for audio section."
 			flush $::logf_tv_open_append
-			set audio {oss alsa pulse sdl}
-			foreach aelem [split $audio] {
-				$w.mbAudio add radiobutton \
-				-label $aelem \
-				-variable choice(mbAudio)
+			catch {exec [auto_execok mplayer] -ao help} audio_out
+			if {[string trim $audio_out] != {}} {
+				foreach line [split $audio_out \n] {
+					if {[string is lower [lindex $line 0]]} {
+						if {[string match *child* [string trim [lindex $line 0]]] || [string trim $line] == {}} continue
+						$w.mbAudio add radiobutton \
+						-label [string trim [lindex $line 0]] \
+						-variable choice(mbAudio)
+					}
+				}
+			} else {
+				$::window(audio_nb1).mb_lf_audio state disabled
+				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer did not report audio ouput drivers. Deactivating menubutton."
 			}
 			
 			if {[info exists ::option(player_audio)]} {
