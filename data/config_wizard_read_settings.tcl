@@ -53,6 +53,13 @@ proc config_wizardReadSettings {} {
 		#player_hfd 0
 		#player_screens 1
 		#player_screens_value 0
+		#player_aspect 1
+		#player_keepaspect 0
+		#player_aspect_monpix 1
+		#player_monaspect_val 16:9
+		#player_pixaspect_val 1.0
+		#player_shot 1
+		#player_mconfig 0
 		#player_additional_commands {}
 		#player_add_vf_commands {}
 		#player_add_af_commands {}
@@ -138,6 +145,13 @@ proc config_wizardReadSettings {} {
 		player_hfd 0
 		player_screens 1
 		player_screens_value 0
+		player_aspect 1
+		player_keepaspect 0
+		player_aspect_monpix 1
+		player_monaspect_val 16:9
+		player_pixaspect_val 1.0
+		player_shot 1
+		player_mconfig 0
 		player_additional_commands {}
 		player_add_vf_commands {}
 		player_add_af_commands {}
@@ -236,6 +250,13 @@ proc config_wizardReadSettings {} {
 		sb_autoq player_autoq
 		mbDeint player_deint
 		mbVo player_vo
+		cb_lf_aspect player_aspect
+		cb_keepaspect player_keepaspect
+		rb_aspect player_aspect_monpix
+		mbMoniaspect player_monaspect_val
+		sb_monipixaspect player_pixaspect_val
+		cb_advanced_shot player_shot
+		cb_advanced_mconfig player_mconfig
 		entry_mplayer_add_coms player_additional_commands
 		entry_vf_mplayer player_add_vf_commands
 		entry_af_mplayer player_add_af_commands

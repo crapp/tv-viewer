@@ -19,7 +19,7 @@
 proc tv_Playback {tv_bg tv_cont handler file} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_Playback \033\[0m \{$tv_bg\} \{$tv_cont\} \{$handler\} \{$file\}"
 	array set vopt {
-		x11 {-vo x11}
+		x11 {-vo x11 -zoom}
 		xv {-vo xv}
 		xvmc {-vo xvmc:bobdeint -vc ffmpeg12mc}
 		vdpau {-vo vdpau:deint=4 -vc ffmpeg12vdpau}
@@ -40,12 +40,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		{Kernel deinterlacer} {-vf kerndeint=5}
 	}
 	
-	array set aopt {
-		oss {-ao oss}
-		alsa {-ao alsa}
-		pulse {-ao pulse}
-		sdl {-ao sdl}
-	}
 	array set copt {
 		0 {}
 		512 {-cache 512}
@@ -76,6 +70,14 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		autoq(6) {,pp -autoq 6}
 		softvol(0) {}
 		softvol(1) {-softvol}
+		kaspect(0) {-nokeepaspect}
+		kaspect(1) {}
+		monpixaspect(0) {-monitoraspect}
+		monpixaspect(1) {-monitorpixelaspect}
+		mplayconf(0) {}
+		mplayconf(1) {-noconfig all}
+		scrshot(0) {}
+		scrshot(1) {screenshot,}
 	}
 	
 	array set playdelay {
@@ -102,7 +104,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	} else {
 		lappend mcommand {*}$vopt($::option(player_vo))
 	}
-	#~ lappend mcommand {*}$aopt($::option(player_audio))
 	lappend mcommand -ao $::option(player_audio)
 	if {[string trim $cbopt(softvol\($::option(player_aud_softvol)\))] != {}} {
 		lappend mcommand {*}$cbopt(softvol\($::option(player_aud_softvol)\))
@@ -129,7 +130,19 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		lappend mcommand -nostop-xscreensaver
 	}
 	set winid [expr [winfo id $tv_cont]]
-	lappend mcommand -zoom -nokeepaspect -input conf="$::where_is/shortcuts/input.conf" {*}{-monitorpixelaspect 1} {*}{-osdlevel 0}
+	
+	lappend mcommand -input conf="$::where_is/shortcuts/input.conf" {*}{-osdlevel 0}
+	
+	if {$::option(player_aspect) == 1} {
+		lappend mcommand {*}$cbopt(kaspect\($::option(player_keepaspect)\))
+		if {$::option(player_aspect_monpix) == 0} {
+			lappend mcommand $cbopt(monpixaspect\($::option(player_aspect_monpix)\)) $::option(player_monaspect_val)
+		} else {
+			lappend mcommand $cbopt(monpixaspect\($::option(player_aspect_monpix)\)) $::option(player_pixaspect_val)
+		}
+	}
+	
+	lappend mcommand {*}$cbopt(mplayconf\($::option(player_mconfig)\))
 	
 	lappend mcommand -channels [lindex $::option(player_audio_channels) 0]
 	
@@ -146,28 +159,27 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	} else {
 		if {[string trim $dopt($::option(player_deint))] == {-vf}} {
 			if {[string trim $::option(player_add_vf_commands)] != {}} {
-				lappend mcommand {*}$dopt($::option(player_deint))screenshot,$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
+				lappend mcommand {*}$dopt($::option(player_deint))$cbopt(scrshot\($::option(player_shot)\))$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
 			} else {
-				lappend mcommand {*}$dopt($::option(player_deint))screenshot$cbopt(autoq\($::option(player_autoq)\))
+				lappend mcommand {*}$dopt($::option(player_deint))[string map {{,} {}} $cbopt(scrshot\($::option(player_shot)\))]$cbopt(autoq\($::option(player_autoq)\))
 			}
 		} else {
 			if {[string trim $cbopt(autoq\($::option(player_autoq)\))] != {}} {
 				if {[string match *pp* "$dopt($::option(player_deint))"] == 1} {
 					if {[string trim $::option(player_add_vf_commands)] != {}} {
-						lappend mcommand {*}$dopt($::option(player_deint)),$::option(player_add_vf_commands),screenshot {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
+						lappend mcommand {*}$dopt($::option(player_deint)),$::option(player_add_vf_commands),[string map {{,} {}} $cbopt(scrshot\($::option(player_shot)\))] {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
 					} else {
-						lappend mcommand {*}$dopt($::option(player_deint)),screenshot {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
+						lappend mcommand {*}$dopt($::option(player_deint)),[string map {{,} {}} $cbopt(scrshot\($::option(player_shot)\))] {*}[lrange $cbopt(autoq\($::option(player_autoq)\)) end-1 end]
 					}
 				} else {
 					if {[string trim $::option(player_add_vf_commands)] != {}} {
-						#~ append mcommand ,$::option(player_add_vf_commands)
-						lappend mcommand {*}$dopt($::option(player_deint)),screenshot,$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
+						lappend mcommand {*}$dopt($::option(player_deint)),$cbopt(scrshot\($::option(player_shot)\))$::option(player_add_vf_commands)$cbopt(autoq\($::option(player_autoq)\))
 					} else {
-						lappend mcommand {*}$dopt($::option(player_deint)),screenshot$cbopt(autoq\($::option(player_autoq)\))
+						lappend mcommand {*}$dopt($::option(player_deint)),[string map {{,} {}} $cbopt(scrshot\($::option(player_shot)\))]$cbopt(autoq\($::option(player_autoq)\))
 					}
 				}
 			} else {
-				lappend mcommand {*}$dopt($::option(player_deint)),screenshot
+				lappend mcommand {*}$dopt($::option(player_deint)),[string map {{,} {}} $cbopt(scrshot\($::option(player_shot)\))]
 				if {[string trim $::option(player_add_vf_commands)] != {}} {
 					append mcommand ,$::option(player_add_vf_commands)
 				}

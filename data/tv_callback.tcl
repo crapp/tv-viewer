@@ -70,12 +70,17 @@ proc tv_callbackVidData {} {
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer reported video resolution $resolution."
 				flush $::logf_tv_open_append
-				foreach {resolx resoly} [split $resolution x] {
-					set ::option(resolx) $resolx
-					set ::option(resoly) $resoly
+				if {$::option(player_aspect) == 1 && $::option(player_keepaspect) == 0} {
+					flush $::logf_tv_open_append
+					foreach {resolx resoly} [split $resolution x] {
+						set ::option(resolx) $resolx
+						set ::option(resoly) $resoly
+					}
+					.tv.bg configure -width $::option(resolx) -height $::option(resoly)
+					bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+				} else {
+					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Video aspect not managed by TV-Viewer."
 				}
-				.tv.bg configure -width $::option(resolx) -height $::option(resoly)
-				bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 			}
 			if {[string match -nocase "ID_LENGTH=*" $line]} {
 				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] This is a recording, starting to calculate file size and position."
