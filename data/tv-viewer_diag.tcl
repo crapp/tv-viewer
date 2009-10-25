@@ -102,7 +102,7 @@ This version is compatible with TV-Viewer $option(release_version)
 proc agrep {switch return_input input modifier} {
 	foreach line [split "$input" \n] {
 		if {"$switch" == "-m"} {
-			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase *$modifier "$line"]} {
+			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase $modifier* "$line"]} {
 				lappend return_value "$line"
 			}
 		}

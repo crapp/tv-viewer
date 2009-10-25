@@ -28,6 +28,10 @@ mcset $lang \
 	{Cache Größe (kb)}
 
 mcset $lang \
+	{Threads for decoding} \
+	{Threads zur Dekodierung}
+
+mcset $lang \
 	{Direct Rendering} \
 	{Direktes Rendern}
 
@@ -41,11 +45,11 @@ mcset $lang \
 
 mcset $lang \
 	{Framedrop} \
-	{Überspringen von Bildern}
+	{Bilder überspringen}
 
 mcset $lang \
 	{Hard Framedrop} \
-	{Erweitertes Überspringen von Bildern}
+	{Verstärktes Bilder überspringen}
 
 mcset $lang \
 	{Disable Screensaver} \

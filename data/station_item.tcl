@@ -23,16 +23,14 @@ proc station_itemMove {w direction} {
 		if {[llength [$w selection]] > 1} {
 			if {[string trim [$w next [lindex [$w selection] end]]] == {}} return
 			foreach element [lsort -decreasing [$w selection]] {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving $element down."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Moving $element down."
 				$w move $element [$w parent $element] [expr [$w index $element] + 1]
 			}
 			$w see [lindex [$w selection] end]
 			return
 		} else {
 			if {[string trim [$w next [$w selection]]] == {}} return
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving [$w selection] down."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Moving [$w selection] down."
 			$w move [$w selection] [$w parent [$w selection]] [expr [$w index [$w selection]] + 1]
 			$w see [$w selection]
 			return
@@ -42,16 +40,14 @@ proc station_itemMove {w direction} {
 		if {[llength [$w selection]] > 1} {
 			if {[string trim [$w prev [lindex [$w selection] 0]]] == {}} return
 			foreach element [$w selection] {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving $element up."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Moving $element up."
 				$w move $element [$w parent $element] [expr [$w index $element] - 1]
 			}
 			$w see [lindex [$w selection] 0]
 			return
 		} else {
 			if {[string trim [$w prev [$w selection]]] == {}} return
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving [$w selection] up."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Moving [$w selection] up."
 			$w move [$w selection] [$w parent [$w selection]] [expr [$w index [$w selection]] - 1]
 			$w see [$w selection]
 		return
@@ -62,8 +58,7 @@ proc station_itemMove {w direction} {
 proc station_itemDelete {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDelete \033\[0m \{$w\}"
 	if {[string trim [$w selection]] == {}} return
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Deleting item [$w selection]."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Deleting item [$w selection]."
 	if {[llength [$w selection]] > 1} {
 		if {[$w next [lindex [$w selection] end]] == {}} {
 			set selitem [$w prev [lindex [$w selection] 0]]
@@ -89,13 +84,11 @@ proc station_itemEdit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemEdit \033\[0m \{$w\}"
 	if {[string trim [$w selection]] == {}} return
 	if {[llength [$w selection]] > 1} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Selection is bigger than 1. Can't open edit dialog."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Selection is bigger than 1. Can't open edit dialog."
 		return
 	}
 	
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Editing item [$w selection]."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Editing item [$w selection]."
 	
 	set wtop [toplevel .station.top_edit]
 	
@@ -196,8 +189,7 @@ proc station_itemEdit {w} {
 			incr i
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't find any video inputs, please check the preferences (analog section)."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't find any video inputs, please check the preferences (analog section)."
 		foreach window [winfo children .station.top_edit] {
 			destroy $window
 		}
@@ -217,20 +209,17 @@ proc station_itemEdit {w} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyEdit \033\[0m \{$w\} \{$warn\} \{$tree\}"
 		if {[info exists ::choice(entry_station)] == 0 || [info exists ::choice(entry_station)] == 0} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please specify name and frequency for each station."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Please specify name and frequency for each station."
 			return
 		} else {
 			if {[string trim $::choice(entry_station)] == {} || [string trim $::choice(entry_freq)] == {}} {
 				$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please specify name and frequency for each station."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Please specify name and frequency for each station."
 				return
 			}
 		}
 		$tree item [$tree selection] -values "{$::choice(entry_station)} [string trim $::choice(entry_freq)] $::item(mbVinput_nr)"
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Edited station $::choice(entry_station) [string trim $::choice(entry_freq)] $::item(mbVinput_nr)."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Edited station $::choice(entry_station) [string trim $::choice(entry_freq)] $::item(mbVinput_nr)."
 		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
 		grab release $w
 		destroy $w
@@ -263,8 +252,7 @@ proc station_itemEdit {w} {
 
 proc station_itemAdd {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAdd \033\[0m \{$w\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adding item."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Adding item"
 	
 	set wtop [toplevel .station.top_add]
 	
@@ -365,8 +353,7 @@ proc station_itemAdd {w} {
 			incr i
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't find any video inputs, please check the preferences (analog section)."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't find any video inputs, please check the preferences (analog section)."
 		foreach window [winfo children .station.top_add] {
 			destroy $window
 		}
@@ -386,14 +373,12 @@ proc station_itemAdd {w} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyAdd \033\[0m \{$w\} \{$warn\} \{$tree\}"
 		if {[info exists ::choice(entry_station_apply)] == 0 || [info exists ::choice(entry_freq_apply)] == 0} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please specify name and frequency for each station."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Please specify name and frequency for each station."
 			return
 		} else {
 			if {[string trim $::choice(entry_station_apply)] == {} || [string trim $::choice(entry_freq_apply)] == {}} {
 				$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please specify name and frequency for each station."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Please specify name and frequency for each station."
 				return
 			}
 		}
@@ -403,10 +388,9 @@ proc station_itemAdd {w} {
 		} else {
 			$tree insert {} [$tree index [$tree next [lindex [$tree selection] end]]] -values "{$::choice(entry_station_apply)} [string trim $::choice(entry_freq_apply)] $::item(mbVinput_nr)"
 		}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adding item $::choice(entry_station_apply) [string trim $::choice(entry_freq_apply)] $::item(mbVinput_nr) to station list."
+		log_writeOutTv 0 "Adding item $::choice(entry_station_apply) [string trim $::choice(entry_freq_apply)] $::item(mbVinput_nr) to station list."
 		array unset ::choice entry_station_apply 
 		array unset ::choice entry_freq_apply
-		flush $::logf_tv_open_append
 		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
 		grab release $w
 		destroy $w
@@ -445,24 +429,20 @@ proc station_itemDeactivate {w} {
 			set selected_item [$w item $element -values]
 			if {"[$w item $element -tags]" == "disabled"} {
 				$w item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags ""
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Enabling item $element."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Enabling item $element."
 			} else {
 				$w item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags disabled
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Disabling item $element."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Disabling item $element."
 			}
 		}
 	} else {
 		set selected_item [$w item [$w selection] -values]
 		if {"[$w item [$w selection] -tags]" == "disabled"} {
 			$w item [$w selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags ""
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Enabling item [$w selection]."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Enabling item [$w selection]."
 		} else {
 			$w item [$w selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags disabled
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Disabling item [$w selection]."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Disabling item [$w selection]."
 		}
 	}
 }

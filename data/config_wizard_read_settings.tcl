@@ -18,8 +18,7 @@
 
 proc config_wizardReadSettings {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardReadSettings \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Reading configuration values for preferences dialog."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Reading configuration values for preferences dialog."
 	array set ::option {
 		language Autodetect
 		language_value 0
@@ -43,6 +42,7 @@ proc config_wizardReadSettings {} {
 		#player_deint Yadif
 		#player_autoq 0
 		#player_cache 2048
+		#player_threads 1
 		#player_audio alsa
 		#player_audio_channels {2 (Stereo)}
 		#player_aud_softvol 1
@@ -135,6 +135,7 @@ proc config_wizardReadSettings {} {
 		player_deint Yadif
 		player_autoq 0
 		player_cache 2048
+		player_threads 1
 		player_audio alsa
 		player_audio_channels {2 (Stereo)}
 		player_aud_softvol 1
@@ -247,6 +248,7 @@ proc config_wizardReadSettings {} {
 		mbAudio_channels player_audio_channels
 		cb_softvol player_aud_softvol
 		mbCache player_cache
+		sb_threads player_threads
 		sb_autoq player_autoq
 		mbDeint player_deint
 		mbVo player_vo
@@ -292,18 +294,15 @@ proc config_wizardReadSettings {} {
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Config file line incorrect: $line"
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Config file line incorrect: $line"
 			}
 		}
 		close $open_config_file
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not locate a configuration file!
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Will use standard values."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Could not locate a configuration file!"
+		log_writeOutTv 1 "Will use standard values."
 		foreach {key elem} [array get ::options] {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] $key $elem"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "$key $elem"
 		}
 	}
 }

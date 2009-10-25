@@ -56,8 +56,7 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 					tv_wmPanscanAuto
 				}
 			}
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Going to full-screen mode."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Going to full-screen mode."
 			return
 		} else {
 			bind $tv_cont <Motion> {
@@ -76,8 +75,7 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 			set ::cursor($tv_bg) ""
 			tv_wmCursorHide $tv_cont 0
 			tv_wmCursorHide $tv_bg 0
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Going to full-screen mode."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Going to full-screen mode."
 			wm attributes $mw -fullscreen 1
 			after 500 {
 				if {$::data(panscanAuto) == 1} {
@@ -89,8 +87,7 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 		if {[winfo exists .tv.slist] && [string trim [place info .tv.slist]] != {}} {
 			.tv.slist.lb_station selection clear 0 end
 			place forget .tv.slist
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing station list from video window."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Removing station list from video window."
 		}
 		return
 	} else {
@@ -102,12 +99,10 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 		if {[winfo exists .tv.slist] && [string trim [place info .tv.slist]] != {}} {
 			.tv.slist.lb_station selection clear 0 end
 			place forget .tv.slist
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing station list from video window."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Removing station list from video window."
 		}
 		if {[winfo exists .tv.slist_lirc] && [string trim [place info .tv.slist_lirc]] != {}} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing OSD station list for remote controls."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Closing OSD station list for remote controls."
 			.tv.slist_lirc.lb_station selection clear 0 end
 			focus .tv
 			place forget .tv.slist_lirc
@@ -121,8 +116,7 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 		tv_wmCursorHide $tv_cont 1
 		$tv_cont configure -cursor arrow
 		$tv_bg configure -cursor arrow
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Going to windowed mode."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
 		after 500 {
 			if {$::data(panscanAuto) == 1} {
@@ -141,8 +135,7 @@ proc tv_wmPanscan {w direct} {
 		if {$::data(panscan) == 100} return
 		if {[string trim [place info $w]] == {}} return
 		place $w -relheight [expr {[dict get [place info $w] -relheight] + 0.05}]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Increasing zoom by 5%."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Increasing zoom by 5%."
 		set ::data(panscan) [expr $::data(panscan) + 5]
 		set ::data(panscanAuto) 0
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -156,8 +149,7 @@ proc tv_wmPanscan {w direct} {
 		if {$::data(panscan) == -50} return
 		if {[string trim [place info $w]] == {}} return
 		place $w -relheight [expr {[dict get [place info $w] -relheight] - 0.05}]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Decreasing zoom by 5%."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Decreasing zoom by 5%."
 		set ::data(panscan) [expr $::data(panscan) - 5]
 		set ::data(panscanAuto) 0
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -170,8 +162,7 @@ proc tv_wmPanscan {w direct} {
 	if {$direct == 0} {
 		if {[string trim [place info $w]] == {}} return
 		place $w -relheight 1 -relx 0.5 -rely 0.5
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting zoom to 100% and center video."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting zoom to 100% and center video."
 		set ::data(panscan) 0
 		set ::data(movevidX) 0
 		set ::data(movevidY) 0
@@ -191,10 +182,11 @@ proc tv_wmPanscanAuto {} {
 	if {$status_tvplayback == 1} {return}
 	if {[wm attributes .tv -fullscreen] == 0} {
 		if {$::data(panscanAuto) == 0} {
-			place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5
+			place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5 -anchor center
 			if {[winfo exists .tv.file_play_bar] == 0} {
 				#~ wm geometry .tv [winfo width .tv]x[expr int(ceil([winfo width .tv].0 / 1.777777778))]
 				wm geometry .tv [winfo width .tv]x[expr int([winfo width .tv].0 / (16.0 / 9.0))]
+				#~ wm geometry .tv [expr [winfo width .tv] - 10]x[expr int([winfo width .tv].0 / (16.0 / 9.0))]
 			} else {
 				set height [expr int(ceil([winfo width .tv].0 / 1.777777778))]
 				set heightwp [expr $height + [winfo height .tv.file_play_bar]]
@@ -203,16 +195,15 @@ proc tv_wmPanscanAuto {} {
 			set relheight [lindex [split [expr ([winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0)] .] end]
 			set panscan_multi [expr int(ceil(0.$relheight / 0.05))]
 			set ::data(panscan) [expr ($panscan_multi * 5)]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
 			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
 			}
-			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-				after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
-			}
+			#~ if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+				#~ after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
+			#~ }
 			set ::data(panscanAuto) 1
-			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0]
+			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0] -anchor center
 		} else {
 			tv_wmPanscan .tv.bg.w 0
 		}
@@ -229,11 +220,10 @@ proc tv_wmPanscanAuto {} {
 				set relheight [expr [dict get [place info .tv.bg.w] -relheight] + ($width_diff.0 / [winfo width .tv.bg.w].0)]
 				set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
 				set ::data(panscan) [expr ($panscan_multi * 5)]
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Auto zoom 16:9, changing realtive height of container frame."
-				flush $::logf_tv_open_append
-				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-					after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
-				}
+				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
+				#~ if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+					#~ after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
+				#~ }
 				if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 					after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
 				}
@@ -246,8 +236,7 @@ proc tv_wmPanscanAuto {} {
 				set relheight [expr [dict get [place info .tv.bg.w] -relheight] + ($width_diff.0 / [winfo width .tv.bg.w].0)]
 				set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
 				set ::data(panscan) [expr ($panscan_multi * 5)]
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Auto zoom 16:9, changing realtive height of container frame."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
 				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
 				}
@@ -268,8 +257,7 @@ proc tv_wmMoveVideo {dir} {
 	if {$dir == 0} {
 		if {$::data(movevidX) == 100} return
 		place .tv.bg.w -relx [expr {[dict get [place info .tv.bg.w] -relx] + 0.005}]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving video to the right by 0.5%."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Moving video to the right by 0.5%."
 		set ::data(movevidX) [expr $::data(movevidX) + 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
@@ -282,8 +270,7 @@ proc tv_wmMoveVideo {dir} {
 	if {$dir == 1} {
 		if {$::data(movevidY) == 100} return
 		place .tv.bg.w -rely [expr {[dict get [place info .tv.bg.w] -rely] + 0.005}]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving video down by 0.5%."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Moving video down by 0.5%."
 		set ::data(movevidY) [expr $::data(movevidY) + 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list tv_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
@@ -296,8 +283,7 @@ proc tv_wmMoveVideo {dir} {
 	if {$dir == 2} {
 		if {$::data(movevidX) == -100} return
 		place .tv.bg.w -relx [expr {[dict get [place info .tv.bg.w] -relx] - 0.005}]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving video to the left by 0.5%."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Moving video to the left by 0.5%."
 		set ::data(movevidX) [expr $::data(movevidX) - 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
@@ -310,8 +296,7 @@ proc tv_wmMoveVideo {dir} {
 	if {$dir == 3} {
 		if {$::data(movevidY) == -100} return
 		place .tv.bg.w -rely [expr {[dict get [place info .tv.bg.w] -rely] - 0.005}]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Moving video up by 0.5%."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Moving video up by 0.5%."
 		set ::data(movevidY) [expr $::data(movevidY) - 1]
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list tv_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
@@ -345,15 +330,13 @@ proc tv_wmGivenSize {w size} {
 		wm geometry .tv {}
 		$w configure -width $::option(resolx) -height $::option(resoly)
 		place .tv.bg.w -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting TV window to standard size."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting TV window to standard size."
 		return
 	} else {
 		wm geometry .tv {}
 		$w configure -width [expr round($::option(resolx) * $size)] -height [expr round($::option(resoly) * $size)]
 		place .tv.bg.w -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting size of TV window to [expr $size * 100]."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting size of TV window to [expr $size * 100]."
 		return
 	}
 }
@@ -380,16 +363,14 @@ proc tv_wmCursorPlaybar {ypos} {
 	if {[string trim [grid info .tv.file_play_bar]] == {}} {
 		if {$ypos > [expr [winfo screenheight .] - 20]} {
 			grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adding video player bar to grid window manager."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Adding video player bar to grid window manager."
 		}
 		return
 	}
 	if {[string trim [grid info .tv.file_play_bar]] != {}} {
 		if {$ypos < [expr [winfo screenheight .] - 60]} {
 			grid remove .tv.file_play_bar
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing video player bar from grid window manager."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Removing video player bar from grid window manager."
 			.tv.bg configure -cursor arrow
 			.tv.bg.w configure -cursor arrow
 			tv_wmCursorHide .tv.bg 1

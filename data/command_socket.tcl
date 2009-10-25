@@ -28,8 +28,7 @@ proc command_socket {} {
 				catch {exec ps -eo "%p"} readpid_sched
 				set status_greppid_sched [catch {agrep -w "$readpid_sched" $resultat_schedlinkread} resultat_greppid_sched]
 				if { $status_greppid_sched == 0 } {
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler is running, will stop it."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "#Scheduler is running, will stop it."
 					catch {exec kill $resultat_schedlinkread}
 					catch {file delete "$::where_is_home/tmp/scheduler_lockfile.tmp"}
 					after 500 {catch {exec "$::where_is/data/record_scheduler.tcl" &}}

@@ -18,8 +18,7 @@
 
 proc station_editPreview {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editPreview \033\[0m \{$w\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting tv playback for preview stations."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Starting tv playback for preview stations."
 	set status_tv_playback [tv_callbackMplayerRemote alive]
 	if {$status_tv_playback != 1} {
 		tv_playbackStop 0 pic
@@ -44,8 +43,7 @@ proc station_editZap {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editZap \033\[0m \{$w\}"
 	set status_tv_playback [tv_callbackMplayerRemote alive]
 	if {$status_tv_playback != 1} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Changing frequency to [lindex [$w item [lindex [$w selection] end] -values] 1]."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Changing frequency to [lindex [$w item [lindex [$w selection] end] -values] 1]."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
@@ -64,8 +62,7 @@ proc station_editZap {w} {
 
 proc station_editSave {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editSave \033\[0m \{$w\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Writing stations to $::where_is_home/config/stations_$::option(frequency_table).conf"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Writing stations to $::where_is_home/config/stations_$::option(frequency_table).conf"
 	catch {file delete "$::where_is_home/config/stations_$::option(frequency_table).conf"}
 	catch {file delete "$::where_is_home/config/lastchannel.conf"}
 	foreach sitem [split [$w children {}]] {
@@ -96,17 +93,15 @@ proc station_editExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editExit \033\[0m"
 	array unset ::kanalid
 	array unset ::kanalcall
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Rereading all stations and corresponding frequencies for main application."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
 	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
 		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 nopic
 		}
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations_$::option(frequency_table).conf
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please create one using the Station Editor.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Make sure you checked the configuration first!"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
+		log_writeOutTv 1 "Please create one using the Station Editor."
+		log_writeOutTv 1 "Make sure you checked the configuration first!"
 	} else {
 		set file "$::where_is_home/config/stations_$::option(frequency_table).conf"
 		set open_channel_file [open $file r]
@@ -124,13 +119,11 @@ proc station_editExit {} {
 		}
 		close $open_channel_file
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations_$::option(frequency_table).conf
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please create one using the Station Editor.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Make sure you checked the configuration first!"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
+			log_writeOutTv 1 "Please create one using the Station Editor."
+			log_writeOutTv 1 "Make sure you checked the configuration first!"
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
 			if {[file exists "$::where_is_home/config/lastchannel.conf"]} {
 				set last_channel_conf "$::where_is_home/config/lastchannel.conf"
 				set open_lastchannel [open $last_channel_conf r]
@@ -159,8 +152,7 @@ proc station_editExit {} {
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 pic
 		}
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Disabling widgets due to no valid stations file."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Disabling widgets due to no valid stations file."
 		.label_stations configure -text ...
 		foreach widget [split [winfo children .top_buttons]] {
 			$widget state disabled
@@ -170,8 +162,7 @@ proc station_editExit {} {
 			$widget state disabled
 		}
 		if {[winfo exists .tv.slist]} {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations list, disabling station selector for video window."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "No valid stations list, disabling station selector for video window."
 			destroy .tv.slist
 		}
 		event delete <<record>>
@@ -189,8 +180,7 @@ proc station_editExit {} {
 		bind . <<station_key>> {}
 		bind . <<station_key_lirc>> {}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Inserting all stations into station list."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Inserting all stations into station list."
 		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
@@ -252,8 +242,7 @@ proc station_editExit {} {
 		bind . <<station_key>> [list main_stationStationNrKeys %A]
 		bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Exiting station editor."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Exiting station editor."
 	grab release .station
 	if {$::option(systray_mini) == 1} {
 		bind . <Unmap> {
@@ -273,9 +262,8 @@ proc station_editUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0m"
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] User attempted to start station editor while main is docked.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Will undock main."
- 			flush $::logf_tv_open_append
+			log_writeOutTv 0 "User attempted to start station editor while main is docked."
+			log_writeOutTv 0 "Will undock main."
 			 main_systemTrayToggle
 		}
 	}
@@ -286,8 +274,7 @@ proc station_editUi {} {
 	
 	# Setting up main Interface
 	
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting Station Editor."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Starting Station Editor."
 	
 	if {[winfo exists .station] == 0 } {
 		set w [toplevel .station]
@@ -482,15 +469,13 @@ proc station_editUi {} {
 		if {[string trim [auto_execok "ivtv-tune"]] == {} || [string trim [auto_execok "v4l2-ctl"]] == {}} {
 			$wftop.b_station_search state disabled
 			$wftop.b_station_preview state disabled
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not detect ivtv-tune or/and v4l2-ctl.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Check the user guide about system requirements."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Could not detect ivtv-tune or/and v4l2-ctl."
+			log_writeOutTv 1 "Check the user guide about system requirements."
 		}
 		if {[string trim [auto_execok mplayer]] == {}} {
 			$wftop.b_station_preview state disabled
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not detect MPlayer.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Check the user guide about system requirements."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Could not detect MPlayer."
+			log_writeOutTv 1 "Check the user guide about system requirements."
 		}
 		
 		bind $wfstation.tv_station <B1-Motion> break

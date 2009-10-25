@@ -164,7 +164,7 @@ after 1000
 proc agrep {switch input modifier} {
 	foreach line [split "$input" \n] {
 		if {"$switch" == "-m"} {
-			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase *$modifier "$line"]} {
+			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase $modifier* "$line"]} {
 				lappend return_value "$line"
 			}
 		}

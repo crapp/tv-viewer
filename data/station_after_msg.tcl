@@ -43,21 +43,17 @@ proc station_after_msg {var0 var1} {
 		regexp {^(\d+).*$} [string trim [lindex $read_signal_strength end]] -> regexp_signal_strength
 		if {[string is digit $regexp_signal_strength]} {
 			if {$regexp_signal_strength < 25 } {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Tried to tune station $::kanalid($var0)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No signal detected on $::kanalcall($var0) Mhz (Input $::kanalinput($var0))."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Tried to tune station $::kanalid($var0)"
+				log_writeOutTv 1 "No signal detected on $::kanalcall($var0) Mhz (Input $::kanalinput($var0))."
 			} else {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Tuning station $::kanalid($var0) on [lrange $var1 end-1 end] (Input $::kanalinput($var0))."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Tuning station $::kanalid($var0) on [lrange $var1 end-1 end] (Input $::kanalinput($var0))."
 			}
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $read_signal_strength"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
+			log_writeOutTv 1 "Error message: $read_signal_strength"
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $read_signal_strength"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
+		log_writeOutTv 1 "Error message: $read_signal_strength"
 	}
 }

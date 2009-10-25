@@ -19,10 +19,9 @@
 proc main_readStationFile {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readStationFile \033\[0m"
 	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations_$::option(frequency_table).conf
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please create one using the Station Editor.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Make sure you checked the configuration first!"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
+		log_writeOutTv 1 "Please create one using the Station Editor."
+		log_writeOutTv 1 "Make sure you checked the configuration first!"
 		set ::main(running_recording) 0
 	} else {
 		set file "$::where_is_home/config/stations_$::option(frequency_table).conf"
@@ -41,22 +40,19 @@ proc main_readStationFile {} {
 		}
 		close $open_channel_file
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations_$::option(frequency_table).conf
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please create one using the Station Editor.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Make sure you checked the configuration first!"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
+			log_writeOutTv 1 "Please create one using the Station Editor."
+			log_writeOutTv 1 "Make sure you checked the configuration first!"
 			set ::main(running_recording) 0
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
 			set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 			if { $status_recordlinkread == 0 } {
 				catch {exec ps -eo "%p"} read_ps
 				set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 				if { $status_greppid_record == 0 } {
 					set ::main(running_recording) 1
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found an active recording, won't change station."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Found an active recording, won't change station."
 				} else {
 					set ::main(running_recording) 0
 				}
@@ -70,8 +66,7 @@ proc main_readStationFile {} {
 				lassign $open_lastchannel_read kanal channel sendernummer
 				set ::station(last) "\{$kanal\} $channel $sendernummer"
 				set ::station(old) "\{$kanal\} $channel $sendernummer"
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Last station $::station(last)"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Last station $::station(last)"
 				if {$::main(running_recording) == 0} {
 					catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 					set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
@@ -90,8 +85,7 @@ proc main_readStationFile {} {
 				close $fileId
 				set ::station(last) "\{$::kanalid(1)\} $::kanalcall(1) 1"
 				set ::station(old) "\{$::kanalid(1)\} $::kanalcall(1) 1"
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Last station $::station(last)"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Last station $::station(last)"
 				if {$::main(running_recording) == 0} {
 					catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 					set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]

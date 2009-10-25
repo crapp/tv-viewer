@@ -18,14 +18,12 @@
 
 proc create_icons {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: create_icons \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Creating icons for TV-Viewer."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Creating icons for TV-Viewer."
 	if {[package vcompare [info patchlevel] 8.6] == -1} {
 		set status_img [catch {package require Img} resultat_img]
 		if { $status_img != 0 } {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Your version of Tcl/Tk doesn't support png.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Install tkimg (libtk-img) to get high quality icons."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Your version of Tcl/Tk doesn't support png."
+			log_writeOutTv 1 "Install tkimg (libtk-img) to get high quality icons."
 			foreach ic [split [glob $::where_is/icons/16x16/*.gif]] {
 				set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
@@ -39,8 +37,7 @@ proc create_icons {} {
 				set ::icon_e([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found package tkimg, activating png support for icons."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Found package tkimg, activating png support for icons."
 			foreach ic [split [glob $::where_is/icons/16x16/*.png]] {
 				set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
@@ -55,8 +52,7 @@ proc create_icons {} {
 			}
 		}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found Tcl/Tk >=8.6 , activating png support for icons."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Found Tcl/Tk >=8.6 , activating png support for icons."
 		foreach ic [split [glob $::where_is/icons/16x16/*.png]] {
 			set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 		}

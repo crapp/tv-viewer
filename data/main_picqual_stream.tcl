@@ -29,14 +29,12 @@ proc main_pic_streamDimensions {} {
 		if {[string tolower $::option(video_standard)] == "ntsc" } {
 			if {"[string trim [lindex $read_resol end]]" != "720/480"} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-fmt-video=width=720,height=480}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Video resolution set to 720/480."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Video resolution set to 720/480"
 			}
 		} else {
 			if {"[string trim [lindex $read_resol end]]" != "720/576"} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-fmt-video=width=720,height=576}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Video resolution set to 720/576."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Video resolution set to 720/576"
 			}
 		}
 	}
@@ -51,11 +49,9 @@ proc main_pic_streamPicqualTemporal {} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=temporal_filter=$::option(temporal_filter_value)}
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=temporal_filter} read_temporal
 			if {[lindex $read_temporal 1] == $::option(temporal_filter_value) } {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Temporal filter set to $::option(temporal_filter_value)"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Temporal filter set to $::option(temporal_filter_value)"
 			} else {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't change temporal filter"
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Can't change temporal filter"
 			}
 		}
 	}
@@ -70,11 +66,9 @@ proc main_pic_streamVbitrate {} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=video_peak_bitrate=[expr ($::option(videopeakbitrate) * 1024) * 8]}
 				catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_peak_bitrate} read_peak_bitrate
 				if {[expr ([lindex $read_peak_bitrate 1] / 8) / 1024] == $::option(videopeakbitrate)} {
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting 'video peak bitrate' to $::option(videopeakbitrate)"
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Setting 'video peak bitrate' to $::option(videopeakbitrate)"
 				} else {
-					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't set 'video peak bitrate'"
-					flush $::logf_tv_open_append
+					log_writeOutTv 1 "Can't set 'video peak bitrate'"
 				}
 			}
 		}
@@ -84,11 +78,9 @@ proc main_pic_streamVbitrate {} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=video_bitrate=[expr ($::option(videobitrate) * 1024) * 8]}
 				catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_bitrate} read_bitrate
 				if {[expr ([lindex $read_bitrate 1] / 8) / 1024] == $::option(videobitrate)} {
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting 'video bitrate' to $::option(videobitrate)"
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Setting 'video bitrate' to $::option(videobitrate)"
 				} else {
-					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't set 'video bitrate'"
-					flush $::logf_tv_open_append
+					log_writeOutTv 1 "Can't set 'video bitrate'"
 				}
 			}
 		}
@@ -103,8 +95,7 @@ proc main_pic_streamColormControls {} {
 		if {$status_grepbrightness == 0} {
 			if {[string trim [lindex $brightness_check end]] != $::option(brightness) } {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::option(brightness)}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adjusting brightness."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Adjusting brightness"
 			}
 		}
 	}
@@ -114,8 +105,7 @@ proc main_pic_streamColormControls {} {
 		if {$status_grepcontrast == 0} {
 			if {[string trim [lindex $contrast_check end]] != $::option(contrast) } {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=contrast=$::option(contrast)}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adjusting contrast."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Adjusting contrast"
 			}
 		}
 	}
@@ -125,8 +115,7 @@ proc main_pic_streamColormControls {} {
 		if {$status_grephue == 0} {
 			if {[string trim [lindex $hue_check end]] != $::option(hue) } {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::option(hue)}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adjusting hue."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Adjusting hue"
 			}
 		}
 	}
@@ -136,8 +125,7 @@ proc main_pic_streamColormControls {} {
 		if {$status_grepsaturation == 0} {
 			if {[string trim [lindex $saturation_check end]] != $::option(saturation) } {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::option(saturation)}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adjusting saturation."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Adjusting saturation"
 			}
 		}
 	}
@@ -150,20 +138,17 @@ proc main_pic_streamAudioV4l2 {} {
 		set status_audio [catch {agrep -m "$read_volume" volume} resultat_audio]
 		if {$status_audio == 0} {
 			if {[string trim [lindex $resultat_audio end]] != [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]} {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting hardware audio level to [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Setting hardware audio level to [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]."
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=volume=[expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]}
 				catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=volume} result_audio
 				if {[string trim [lindex $result_audio end]] != [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]} {
-					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting hardware audio level to [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))] wasn't successful.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $result_audio"
-					flush $::logf_tv_open_append
+					log_writeOutTv 1 "Setting hardware audio level to [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))] wasn't successful."
+					log_writeOutTv 1 "Error message: $result_audio"
 				}
 			}
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't access hardware audio control. Error message:
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] $resultat_audio"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can't access hardware audio control. Error message:"
+			log_writeOutTv 1 "$resultat_audio"
 		}
 	}
 }

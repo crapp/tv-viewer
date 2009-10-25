@@ -65,8 +65,7 @@ proc tv_slistCursor {xpos ypos} {
 							.tv.slist.lb_station selection clear 0 end
 							focus .tv
 							place forget .tv.slist
-							puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing station list from video window."
-							flush $::logf_tv_open_append
+							log_writeOutTv 0 "Removing station list from video window."
 							.tv.bg configure -cursor arrow
 							.tv.bg.w configure -cursor arrow
 							tv_wmCursorHide .tv.bg 1
@@ -77,8 +76,7 @@ proc tv_slistCursor {xpos ypos} {
 							catch {after cancel $::data(after_leave_slist_id)}
 						}
 					}
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adding station list to video window with place window manager."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Adding station list to video window with place window manager."
 				}
 				return
 			}
@@ -95,8 +93,7 @@ proc tv_slistCursor {xpos ypos} {
 							.tv.slist.lb_station selection clear 0 end
 							focus .tv
 							place forget .tv.slist
-							puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing station list from video window."
-							flush $::logf_tv_open_append
+							log_writeOutTv 0 "Removing station list from video window."
 							.tv.bg configure -cursor arrow
 							.tv.bg.w configure -cursor arrow
 							tv_wmCursorHide .tv.bg 1
@@ -107,8 +104,7 @@ proc tv_slistCursor {xpos ypos} {
 							catch {after cancel $::data(after_leave_slist_id)}
 						}
 					}
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Adding station list to video window with place window manager."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Adding station list to video window with place window manager."
 				}
 				return
 			}
@@ -120,8 +116,7 @@ proc tv_slistLirc {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_slistLirc \033\[0m"
 	if {[wm attributes .tv -fullscreen] == 1} {
 		if {[string trim [place info .tv.slist_lirc]] == {}} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] OSD station list for remote controls started."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "OSD station list for remote controls started."
 			array set alignment {
 				0 {-anchor nw -x 10 -y 10}
 				1 {-anchor n -relx 0.5 -y 10}
@@ -148,8 +143,7 @@ proc tv_slistLirc {} {
 			.tv.slist_lirc.lb_station see [expr [lindex $::station(last) 2] - 1]
 			.tv.slist_lirc.lb_station activate [expr [lindex $::station(last) 2] - 1]
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing OSD station list for remote controls."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Closing OSD station list for remote controls."
 			set get_lb_index [expr [.tv.slist_lirc.lb_station curselection] + 1]
 			main_stationStationNr .label_stations $get_lb_index
 			.tv.slist_lirc.lb_station selection clear 0 end

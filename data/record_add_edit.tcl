@@ -20,18 +20,15 @@ proc record_add_edit {tree com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_edit \033\[0m \{$tree\} \{$com\}"
 	if {$com == 1} {
 		if {[string trim [$tree selection]] == {}} {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No recording selected to edit."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "No recording selected to edit."
 			return
 		}
 		if {[llength [$tree selection]] > 1} {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can not edit more than one recording at a time."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can not edit more than one recording at a time."
 			return
 		}
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Building record add/edit dialogue."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Building record add/edit dialogue."
 	set w [toplevel .record_wizard.add_edit] ; place [ttk::label .record_wizard.add_edit.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set lbf [ttk::frame $w.listbox_frame]
 	set recf [ttk::frame $w.record_frame]
@@ -541,8 +538,7 @@ and store the file in the default record path."]
 
 proc record_add_editExit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editExit \033\[0m \{$w\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Exiting 'add/edit recording'."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Exiting 'add/edit recording'."
 	unset -nocomplain ::record(time) ::record(date) ::record(duration) ::record(resolution) ::record(file)
 	grab release $w
 	destroy $w
@@ -571,9 +567,8 @@ proc record_add_editOfile {w} {
 			set ofile "[file rootname $ofile].mpeg"
 		}
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen output file:
-# $ofile"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Chosen output file:"
+	log_writeOutTv 0 "$ofile"
 	$w.record_frame.ent_file state !disabled
 	set ::record(file) "$ofile"
 	$w.record_frame.ent_file state disabled
@@ -585,8 +580,7 @@ proc record_add_editDelete {tree} {
 	if {[string trim [$tree selection]] == {}} return
 	puts $::data(comsocket) "tv-viewer_scheduler scheduler_exit"
 	flush $::data(comsocket)
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Deleting recording [$tree selection]."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Deleting recording [$tree selection]."
 	if {[llength [$tree selection]] > 1} {
 		foreach element [$tree selection] {
 			$tree delete $element
@@ -600,8 +594,7 @@ proc record_add_editDelete {tree} {
 		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
 	}
 	close $f_open
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Writing new scheduled_recordings.conf and execute scheduler."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 	catch {exec "$::where_is/data/record_scheduler.tcl" &}
 	after 2000 {
 		catch {
@@ -627,8 +620,7 @@ proc record_add_editDelete {tree} {
 
 proc record_add_editDate {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDate \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Building record add/edit (choose date) dialogue."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Building record add/edit (choose date) dialogue."
 	set w [toplevel .record_wizard.add_edit.date] ; place [ttk::label .record_wizard.add_edit.date.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set fnavi [ttk::frame $w.navi_frame]
 	set fcho [ttk::frame $w.choose_frame]
@@ -824,8 +816,7 @@ proc record_add_editDateApply {w label} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDateApply \033\[0m \{$w\} \{$label\}"
 	.record_wizard.add_edit.record_frame.ent_date state !disabled
 	set ::record(date) [$label cget -text]
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen date [$label cget -text]."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Chosen date [$label cget -text]."
 	.record_wizard.add_edit.record_frame.ent_date state disabled
 	grab release $w; grab .record_wizard.add_edit; destroy $w; wm protocol .record_wizard.add_edit WM_DELETE_WINDOW {record_add_editExit .record_wizard.add_edit}
 }

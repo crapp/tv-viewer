@@ -32,8 +32,7 @@ proc main_stationChannelDown {w} {
 				}
 				.frame_slistbox.listbox_slist selection set [expr $calculation - 1]
 			}
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Station prior $::kanalid($calculation)."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Station prior $::kanalid($calculation)."
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 			set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 			if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
@@ -75,8 +74,7 @@ proc main_stationChannelUp {w} {
 				}
 				.frame_slistbox.listbox_slist selection set [expr $calculation - 1]
 			}
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Station next $::kanalid($calculation)."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Station next $::kanalid($calculation)."
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 			set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 			if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
@@ -115,8 +113,7 @@ proc main_stationChannelJumper {w} {
 			.frame_slistbox.listbox_slist selection set [expr [lindex $::station(old) 2] - 1]
 		}
 		set ::done_old_channel 1
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Jumping to station $::kanalid([lindex $::station(old) 2])."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Jumping to station $::kanalid([lindex $::station(old) 2])."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$::kanalinput([lindex $::station(old) 2]) == [lindex $resultat_get_input 3]} {
@@ -148,8 +145,7 @@ proc main_stationChannelJumper {w} {
 			.frame_slistbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
 		}
 		unset -nocomplain ::done_old_channel
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Jumping to station $::kanalid([lindex $::station(last) 2])."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Jumping to station $::kanalid([lindex $::station(last) 2])."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
@@ -181,8 +177,7 @@ proc main_stationListboxStations {slist} {
 		set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 		set ::station(last) "\{[lrange $get_lb_content 1 end]\} $::kanalcall([lindex $get_lb_content 0]) [lindex $get_lb_content 0]"
 		.label_stations configure -text [lrange $get_lb_content 1 end]
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Station listbox has been used to tune $::kanalid([lindex $::station(last) 2])."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Station listbox has been used to tune $::kanalid([lindex $::station(last) 2])."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
@@ -248,8 +243,7 @@ proc main_stationStationNr {w number} {
 		unset -nocomplain ::main(change_key)
 	}
 	if {$number < 1 || $number > $::station(max)} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Selected station $number out of range."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Selected station $number out of range."
 		return
 	}
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
@@ -263,8 +257,7 @@ proc main_stationStationNr {w number} {
 		}
 		.frame_slistbox.listbox_slist selection set [expr $number - 1]
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Keycode, tuning station $::kanalid($number)."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Keycode, tuning station $::kanalid($number)."
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 	if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
@@ -327,9 +320,8 @@ proc main_stationInput {com direct} {
 				return
 			}
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can not retrieve video inputs.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $resultat_list_input"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can not retrieve video inputs."
+			log_writeOutTv 1 "Error message: $resultat_list_input"
 		}
 	} else {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -337,13 +329,11 @@ proc main_stationInput {com direct} {
 		if {$status_grep_input == 0} {
 			if {[lindex $resultat_grep_input 3] != $::option(video_input)} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$::option(video_input)} resultat
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Change video input to $::option(video_input)"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Change video input to $::option(video_input)"
 			}
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can not change video input.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $resultat_grep_input"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can not change video input."
+			log_writeOutTv 1 "Error message: $resultat_grep_input"
 		}
 	}
 }
@@ -360,17 +350,15 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 		return
 	}
 	if {$secs == 3000} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Waited 3 seconds to change video input to $input.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] This didn't work, BAD."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Waited 3 seconds to change video input to $input."
+		log_writeOutTv 1 "This didn't work, BAD."
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
 	if {$status_grep_input == 0} {
 		if {$input == [lindex $resultat_grep_input 3]} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Changed video input to $input."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Changed video input to $input."
 			if {[winfo exists .tv]} {
 				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [list tv_osd osd_group_w 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
@@ -396,9 +384,8 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 			set ::main(change_inputLoop_id) [after 100 [list main_stationInputLoop [expr $secs + 100] $input $freq $snumber $restart $aftmsg]]
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can not change video input to $input.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] $resultat_grep_input."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can not change video input to $input."
+		log_writeOutTv 1 "$resultat_grep_input."
 		return
 	}
 }
@@ -415,9 +402,8 @@ proc main_stationInputQuery {secs input restart} {
 		return
 	}
 	if {$secs == 3000} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Waited 3 seconds to change video input to $input.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] This didn't work, BAD."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Waited 3 seconds to change video input to $input."
+		log_writeOutTv 1 "This didn't work, BAD."
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} check_back_input
@@ -426,8 +412,7 @@ proc main_stationInputQuery {secs input restart} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$input}
 			set ::data(after_id_input) [after 100 "main_stationInputQuery [expr $secs + 100] $input $restart"]
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Changed video input to $input"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Changed video input to $input"
 			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}

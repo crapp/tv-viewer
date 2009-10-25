@@ -37,8 +37,7 @@ proc option_screen_6 {} {
 			$::window(interface_nb3_cont) yview moveto 0
 		}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up interface section in preferences"
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting up interface section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(interface_nb1) [ttk::frame $w.f_interface]
 		$w add $::window(interface_nb1) -text [mc "Interface Settings"] -padding 2
@@ -383,8 +382,7 @@ proc option_screen_6 {} {
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)]
 		
 		foreach athemes [split [lsort [ttk::style theme names]]] {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found theme: $athemes"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Found theme: $athemes"
 			$::window(interface_nb1).mbTheme add radiobutton \
 			-variable choice(mbTheme) \
 			-command [list config_interfaceTheme $athemes] \
@@ -450,8 +448,7 @@ proc option_screen_6 {} {
 		}
 		proc default_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for interface section."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Starting to collect data for interface section."
 			set ::choice(mbTheme) $::option(use_theme)
 			set ::choice(cb_tooltip) $::option(tooltips)
 			set ::choice(cb_tooltip_main) $::option(tooltips_main)
@@ -604,8 +601,7 @@ mouse cursor to invoke it."]
 		}
 		proc stnd_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting interface options to default."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Setting interface options to default."
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
 			set ::choice(cb_tooltip) $::stnd_opt(tooltips)
 			set ::choice(cb_tooltip_main) $::stnd_opt(tooltips_main)

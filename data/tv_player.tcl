@@ -72,8 +72,7 @@ proc tv_playerVolumeControl {wfbottom value} {
 proc tv_playerUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerUi \033\[0m"
 	if {[winfo exists .tv] == 0} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up TV Player."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting up TV Player."
 		set mw [toplevel .tv -class "TV-Viewer"]
 		.tv configure -background black
 		set tv_bg [frame $mw.bg -background black -width $::option(resolx) -height $::option(resoly)]
@@ -294,8 +293,7 @@ proc tv_playerUi {} {
 		bind $mw <ButtonPress-3> [list tk_popup $mw.rightclickViewer %X %Y]
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No valid stations list, will not activate station selector for video window."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "No valid stations list, will not activate station selector for video window."
 			destroy $tv_slist
 			destroy $tv_slist_lirc
 		} else {

@@ -18,8 +18,7 @@
 
 proc launch_splash_screen {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splash_screen \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching splash screen..."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Launching splash screen..."
 	set img_list [launch_splashAnigif "$::where_is/icons/extras/animated_loading.gif"]
 	set w [toplevel .splash -borderwidth 0 -relief raised -highlightthickness 0]
 	set f_img [frame $w.f_img -background #414141]

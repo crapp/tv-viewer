@@ -22,8 +22,7 @@ proc font_chooserUi {returnw cvar} {
 		return
 	}
 	
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting TV-Viewer font chooser..."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Starting TV-Viewer font chooser..."
 	
 	set w [toplevel .config_wizard.fontchooser]
 	
@@ -220,8 +219,7 @@ proc font_chooserUi {returnw cvar} {
 	bind $mffont.lb_size <<ListboxSelect>> [list font_chooserUiCfont $mffont.lb_fam $mffont.lb_style $mffont.lb_size $mfpre.f_prev.c_abc]
 	
 	if {[info exists fontindex] == 0 || [info exists styleindex] == 0 || [info exists sizeindex] == 0} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can not identify font. Font chooser will be closed. Report this incident to the Author."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can not identify font. Font chooser will be closed. Report this incident to the Author."
 		destroy $w
 		return
 	} else {
@@ -293,8 +291,7 @@ proc font_chooserUiApply {lb1 lb2 lb3 returnw cvar} {
 		$returnw configure -text "$font - $style | $size"
 	}
 	set ::choice($cvar) [list [lindex $::choice($cvar) 0] $font $style $size $::font_chooser(mb_align_value) [$::icon_e(pick-color3) cget -foreground]]
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen font $::choice($cvar)"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Chosen font $::choice($cvar)"
 	grab release .config_wizard.fontchooser
 	destroy .config_wizard.fontchooser
 	grab .config_wizard

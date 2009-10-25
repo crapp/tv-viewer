@@ -28,11 +28,9 @@ proc main_systemTrayActivate {} {
 				bind .tray <Button-1> { main_systemTrayToggle}
 				if {[winfo exists .tray] == 1} {
 					settooltip .tray [mc "TV-Viewer idle"]
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Succesfully added Icon to system tray."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Succesfully added Icon to system tray."
 				} else {
-					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not create an icon in system tray."
-					flush $::logf_tv_open_append
+					log_writeOutTv 1 "Could not create an icon in system tray."
 				}
 			}
 		} else {
@@ -63,11 +61,9 @@ proc main_systemTrayToggle {} {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \"$::system_tray($w)\" to system tray."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \".\" to system tray."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Docking \".\" to system tray."
 				wm withdraw .
 			} else {
 				array unset ::system_tray
@@ -75,26 +71,21 @@ proc main_systemTrayToggle {} {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1 || [string match .tv [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \"$::system_tray($w)\" to system tray."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \".\" to system tray."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Docking \".\" to system tray."
 				wm withdraw .
 			}
 		} else {
 			wm deiconify .
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Undocking \".\" from system tray."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Undocking \".\" from system tray."
 			foreach {key elem} [array get ::system_tray] {
 				wm deiconify $elem
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Undocking \"$elem\" from system tray."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Undocking \"$elem\" from system tray."
 			}
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 	}
 }
 
@@ -110,11 +101,9 @@ proc main_systemTrayMini {com} {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \"$::system_tray($w)\" to system tray."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \".\" to system tray."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Docking \".\" to system tray."
 				wm withdraw .
 			} else {
 				array unset ::system_tray
@@ -122,16 +111,13 @@ proc main_systemTrayMini {com} {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1 || [string match .tv [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
-					puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \"$::system_tray($w)\" to system tray."
-					flush $::logf_tv_open_append
+					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Docking \".\" to system tray."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Docking \".\" to system tray."
 				wm withdraw .
 			}
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 		}
 	} else {
 		bind . <Unmap> {

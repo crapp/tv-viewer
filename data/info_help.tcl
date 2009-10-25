@@ -23,8 +23,7 @@ proc info_helpHelp {} {
 	}
 	if {$::option(language_value) != 0} {
 		catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$::option(language_value).html" &}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Trying to open userguide..."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Trying to open userguide..."
 	} else {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
 		array set locales {
@@ -33,13 +32,11 @@ proc info_helpHelp {} {
 		}
 		if {[string trim [array get locales $locale_split]] == {}} {
 			catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_en.html" &}
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] There is no translation of the userguide for $::env(LANG)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Will open english userguide."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "There is no translation of the userguide for $::env(LANG)"
+			log_writeOutTv 1 "Will open english userguide."
 		} else {
 			catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$locale_split.html" &}
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Trying to open userguide..."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Trying to open userguide..."
 		}
 	}
 }
@@ -48,8 +45,7 @@ proc info_helpAbout {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpAbout \033\[0m"
 	if {[winfo exists .top_about] == 0} {
 		
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching info screen..."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Launching info screen..."
 		
 		set w [toplevel .top_about]
 		
@@ -193,8 +189,7 @@ Christian Rapp"] \
 		
 		proc info_helpHomepage {} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHomepage \033\[0m"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Executing your favorite internet browser."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Executing your favorite internet browser."
 			catch {exec xdg-open http://home.arcor.de/saedelaere/index_eng.html &}
 		}
 		

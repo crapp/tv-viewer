@@ -20,8 +20,7 @@ proc key_sequences {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0m"
 	
 	if {[winfo exists .key] == 0} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching key sequences screen..."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Launching key sequences screen..."
 		
 		set w [toplevel .key -class "TV-Viewer"] 
 		
@@ -90,9 +89,8 @@ proc key_sequences {} {
 			set locale_split [lindex [split $::env(LANG) _] 0]
 			set keseq "$::where_is/shortcuts/keysequ_$locale_split.conf"
 			if {[file exists "$keseq"] == 0} {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] No translated Key Sequences for $::env(LANG)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Switching back to english."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "No translated Key Sequences for $::env(LANG)"
+				log_writeOutTv 1 "Switching back to english."
 				set keseq "$::where_is/shortcuts/keysequ_en.conf"
 			}
 		}

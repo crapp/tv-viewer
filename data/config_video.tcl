@@ -36,21 +36,33 @@ proc option_screen_3 {} {
 			.config_wizard.frame_configoptions.nb add $::window(video_nb1)
 			.config_wizard.frame_configoptions.nb select $::window(video_nb1)
 			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt3 $::window(video_nb1)]
+			bind $::window(video_nb1_cont) <Map> {
+				$::window(video_nb1_cont) itemconfigure cont_video_nb1 -width [winfo width $::window(video_nb1_cont)] -height [winfo reqheight $::window(video_nb1_cont).f_video2]
+				$::window(video_nb1_cont) configure -scrollregion [$::window(video_nb1_cont) bbox all]
+				$::window(video_nb1_cont) yview moveto 0
+			}
 		}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up video section in preferences."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting up video section in preferences."
 		set w .config_wizard.frame_configoptions.nb
+		
 		set ::window(video_nb1) [ttk::frame $w.f_video]
 		$w add $::window(video_nb1) -text [mc "Video Settings"] -padding 2
+		set ::window(video_nb1_cont) [canvas $::window(video_nb1).c_cont \
+		-yscrollcommand [list $::window(video_nb1).scrollb_cont set] \
+		-highlightthickness 0]
+		ttk::scrollbar $::window(video_nb1).scrollb_cont \
+		-command [list $::window(video_nb1).c_cont yview]
+		$::window(video_nb1_cont) create window 0 0 -window [ttk::frame $::window(video_nb1_cont).f_video2] -anchor w -tags cont_video_nb1
+		set frame_nb1  "$::window(video_nb1_cont).f_video2"
 		
-		ttk::labelframe $::window(video_nb1).lf_mplayer \
+		ttk::labelframe $frame_nb1.lf_mplayer \
 		-text [mc "Video"]
 		
-		ttk::label $::window(video_nb1).l_lf_vo \
+		ttk::label $frame_nb1.l_lf_vo \
 		-text [mc "Video output driver"]
 		
-		ttk::menubutton $::window(video_nb1).mb_lf_vo \
+		ttk::menubutton $frame_nb1.mb_lf_vo \
 		-menu $::window(video_nb1).mbVo \
 		-textvariable choice(mbVo)
 		
@@ -58,10 +70,10 @@ proc option_screen_3 {} {
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))
 		
-		ttk::label $::window(video_nb1).l_lf_deint \
+		ttk::label $frame_nb1.l_lf_deint \
 		-text [mc "Deinterlacing filter"]
 		
-		ttk::menubutton $::window(video_nb1).mb_lf_deint \
+		ttk::menubutton $frame_nb1.mb_lf_deint \
 		-menu $::window(video_nb1).mbDeint \
 		-textvariable choice(mbDeint)
 		
@@ -69,20 +81,19 @@ proc option_screen_3 {} {
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))
 		
-		ttk::label $::window(video_nb1).l_lf_autoq \
+		ttk::label $frame_nb1.l_lf_autoq \
 		-text [mc "Postprocessing level"]
 		
-		spinbox $::window(video_nb1).sb_lf_autoq \
+		spinbox $frame_nb1.sb_lf_autoq \
 		-from 0 \
 		-to 6 \
-		-validate key \
-		-vcmd {string is integer %P} \
+		-state readonly \
 		-textvariable choice(sb_autoq)
 		
-		ttk::label $::window(video_nb1).l_lf_cache \
+		ttk::label $frame_nb1.l_lf_cache \
 		-text [mc "Cache size (kb)"]
 		
-		ttk::menubutton $::window(video_nb1).mb_lf_cache \
+		ttk::menubutton $frame_nb1.mb_lf_cache \
 		-menu $::window(video_nb1).mbCache \
 		-textvariable choice(mbCache)
 		
@@ -90,131 +101,155 @@ proc option_screen_3 {} {
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))
 		
-		ttk::separator $::window(video_nb1).sp_lf_mplayer \
+		ttk::label $frame_nb1.l_lf_threads \
+		-text [mc "Threads for decoding"]
+		
+		spinbox $frame_nb1.sb_lf_threads \
+		-state readonly \
+		-from 1 \
+		-to 8 \
+		-textvariable choice(sb_threads)
+		
+		ttk::separator $frame_nb1.sp_lf_mplayer \
 		-orient horizontal
 		
-		ttk::checkbutton $::window(video_nb1).cb_lf_dr \
+		ttk::checkbutton $frame_nb1.cb_lf_dr \
 		-text [mc "Direct Rendering"] \
 		-variable choice(cb_dr)
 		
-		ttk::checkbutton $::window(video_nb1).cb_lf_double \
+		ttk::checkbutton $frame_nb1.cb_lf_double \
 		-text [mc "Double Buffering"] \
 		-variable choice(cb_double)
 		
-		ttk::checkbutton $::window(video_nb1).cb_lf_slice \
+		ttk::checkbutton $frame_nb1.cb_lf_slice \
 		-text [mc "Slice Mode"] \
 		-variable choice(cb_slice)
 		
-		ttk::checkbutton $::window(video_nb1).cb_lf_framedrop \
+		ttk::checkbutton $frame_nb1.cb_lf_framedrop \
 		-text [mc "Framedrop"] \
 		-variable choice(cb_framedrop) \
 		-command [list config_videoFramedrop 0]
 		
-		ttk::checkbutton $::window(video_nb1).cb_lf_hframedrop \
+		ttk::checkbutton $frame_nb1.cb_lf_hframedrop \
 		-text [mc "Hard Framedrop"] \
 		-variable choice(cb_hframedrop) \
 		-command [list config_videoFramedrop 1]
 		
-		ttk::checkbutton $::window(video_nb1).cb_lf_screensaver \
+		ttk::checkbutton $frame_nb1.cb_lf_screensaver \
 		-text [mc "Disable Screensaver"] \
 		-variable choice(cb_lf_screensaver) \
-		-command [list config_videoScreensaver $::window(video_nb1)]
+		-command [list config_videoScreensaver $frame_nb1]
 		
-		ttk::labelframe $::window(video_nb1).lf_screensaver \
-		-labelwidget $::window(video_nb1).cb_lf_screensaver
+		ttk::labelframe $frame_nb1.lf_screensaver \
+		-labelwidget $frame_nb1.cb_lf_screensaver
 		
-		ttk::radiobutton $::window(video_nb1).rb_lf_mplayer_screens \
+		ttk::radiobutton $frame_nb1.rb_lf_mplayer_screens \
 		-text [mc "Use MPlayer"] \
 		-variable choice(rb_screensaver) \
 		-value 0
 		
-		ttk::radiobutton $::window(video_nb1).rb_lf_heartbeat_screens \
+		ttk::radiobutton $frame_nb1.rb_lf_heartbeat_screens \
 		-text [mc "Use Heartbeat function"] \
 		-variable choice(rb_screensaver) \
 		-value 1
 		
 		grid columnconfigure $::window(video_nb1) 0 -weight 1
-		grid columnconfigure $::window(video_nb1).lf_mplayer {1} -weight 1
+		grid columnconfigure $frame_nb1 0 -weight 1
+		grid columnconfigure $frame_nb1.lf_mplayer {1} -weight 1
 		
-		grid $::window(video_nb1).lf_mplayer -in $::window(video_nb1) -row 0 -column 0 \
+		grid rowconfigure $::window(video_nb1) 0 -weight 1
+		
+		grid $::window(video_nb1_cont) -in $::window(video_nb1) -row 0 -column 0 \
+		-sticky nesw
+		grid $::window(video_nb1).scrollb_cont -in $::window(video_nb1) -row 0 -column 1 \
+		-sticky ns
+		
+		grid $frame_nb1.lf_mplayer -in $frame_nb1 -row 0 -column 0 \
 		-sticky ew \
 		-padx 5 \
 		-pady "5 0"
-		grid $::window(video_nb1).l_lf_vo -in $::window(video_nb1).lf_mplayer -row 0 -column 0 \
+		grid $frame_nb1.l_lf_vo -in $frame_nb1.lf_mplayer -row 0 -column 0 \
 		-sticky w \
 		-padx 7 \
 		-pady "3 0"
-		grid $::window(video_nb1).mb_lf_vo -in $::window(video_nb1).lf_mplayer -row 0 -column 1 \
+		grid $frame_nb1.mb_lf_vo -in $frame_nb1.lf_mplayer -row 0 -column 1 \
 		-sticky ew \
-		-padx "7 14" \
+		-padx "7" \
 		-pady "3 0"
-		grid $::window(video_nb1).l_lf_deint -in $::window(video_nb1).lf_mplayer -row 1 -column 0 \
+		grid $frame_nb1.l_lf_deint -in $frame_nb1.lf_mplayer -row 1 -column 0 \
 		-sticky w \
 		-padx 7 \
 		-pady "3 0"
-		grid $::window(video_nb1).mb_lf_deint -in $::window(video_nb1).lf_mplayer -row 1 -column 1 \
+		grid $frame_nb1.mb_lf_deint -in $frame_nb1.lf_mplayer -row 1 -column 1 \
 		-sticky ew \
-		-padx "7 14" \
+		-padx "7" \
 		-pady "3 0"
-		grid $::window(video_nb1).l_lf_autoq -in $::window(video_nb1).lf_mplayer -row 2 -column 0 \
+		grid $frame_nb1.l_lf_autoq -in $frame_nb1.lf_mplayer -row 2 -column 0 \
 		-sticky w \
 		-padx 7 \
 		-pady "3 0"
-		grid $::window(video_nb1).sb_lf_autoq -in $::window(video_nb1).lf_mplayer -row 2 -column 1 \
+		grid $frame_nb1.sb_lf_autoq -in $frame_nb1.lf_mplayer -row 2 -column 1 \
 		-sticky ew \
-		-padx "7 14" \
+		-padx "7" \
 		-pady "3 0"
-		grid $::window(video_nb1).l_lf_cache -in $::window(video_nb1).lf_mplayer -row 3 -column 0 \
+		grid $frame_nb1.l_lf_cache -in $frame_nb1.lf_mplayer -row 3 -column 0 \
 		-sticky w \
 		-padx 7 \
 		-pady "3 0"
-		grid $::window(video_nb1).mb_lf_cache -in $::window(video_nb1).lf_mplayer -row 3 -column 1 \
+		grid $frame_nb1.mb_lf_cache -in $frame_nb1.lf_mplayer -row 3 -column 1 \
 		-sticky ew \
-		-padx "7 14" \
+		-padx "7" \
 		-pady "3 0"
-		grid $::window(video_nb1).sp_lf_mplayer -in $::window(video_nb1).lf_mplayer -row 4 -column 0 \
+		grid $frame_nb1.l_lf_threads -in $frame_nb1.lf_mplayer -row 4 -column 0 \
+		-sticky w \
+		-padx 7 \
+		-pady "3 0"
+		grid $frame_nb1.sb_lf_threads -in $frame_nb1.lf_mplayer -row 4 -column 1 \
+		-sticky ew \
+		-padx "7" \
+		-pady "3 0"
+		grid $frame_nb1.sp_lf_mplayer -in $frame_nb1.lf_mplayer -row 5 -column 0 \
 		-sticky ew \
 		-padx 7 \
 		-pady "5 0" \
 		-columnspan 2
-		grid $::window(video_nb1).cb_lf_dr -in $::window(video_nb1).lf_mplayer -row 5 -column 0 \
+		grid $frame_nb1.cb_lf_dr -in $frame_nb1.lf_mplayer -row 6 -column 0 \
 		-sticky w \
 		-padx 7 \
 		-pady "5 0"
-		grid $::window(video_nb1).cb_lf_double -in $::window(video_nb1).lf_mplayer -row 5 -column 1 \
+		grid $frame_nb1.cb_lf_double -in $frame_nb1.lf_mplayer -row 6 -column 1 \
 		-sticky w \
 		-padx "7 0" \
 		-pady "5 0"
-		grid $::window(video_nb1).cb_lf_slice -in $::window(video_nb1).lf_mplayer -row 6 -column 0 \
+		grid $frame_nb1.cb_lf_slice -in $frame_nb1.lf_mplayer -row 7 -column 0 \
 		-sticky w \
 		-padx "7 0" \
 		-pady "3 0"
-		grid $::window(video_nb1).cb_lf_framedrop -in $::window(video_nb1).lf_mplayer -row 7 -column 0 \
+		grid $frame_nb1.cb_lf_framedrop -in $frame_nb1.lf_mplayer -row 8 -column 0 \
 		-sticky w \
 		-padx "7 0" \
 		-pady "5 0"
-		grid $::window(video_nb1).cb_lf_hframedrop -in $::window(video_nb1).lf_mplayer -row 7 -column 1 \
+		grid $frame_nb1.cb_lf_hframedrop -in $frame_nb1.lf_mplayer -row 8 -column 1 \
 		-sticky w \
-		-padx "7 0" \
+		-padx "7" \
 		-pady "5 0"
-		grid $::window(video_nb1).lf_screensaver -in $::window(video_nb1) -row 1 -column 0 \
+		grid $frame_nb1.lf_screensaver -in $frame_nb1 -row 1 -column 0 \
 		-sticky ew \
 		-padx 5 \
-		-pady "5 0"
-		grid $::window(video_nb1).rb_lf_mplayer_screens -in $::window(video_nb1).lf_screensaver -row 0 -column 0 \
+		-pady "5"
+		grid $frame_nb1.rb_lf_mplayer_screens -in $frame_nb1.lf_screensaver -row 0 -column 0 \
 		-sticky w \
 		-padx "7 0" \
 		-pady "5 0"
-		grid $::window(video_nb1).rb_lf_heartbeat_screens -in $::window(video_nb1).lf_screensaver -row 0 -column 1 \
+		grid $frame_nb1.rb_lf_heartbeat_screens -in $frame_nb1.lf_screensaver -row 0 -column 1 \
 		-sticky w \
 		-padx "7 0" \
 		-pady "5 0"
 		
 		#Additional Code
 		if {[string trim [auto_execok mplayer]] == {}} {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not detect MPlayer.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Please check the system requirements!"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Could not detect MPlayer."
+			log_writeOutTv 1 "Please check the system requirements!"
 			$w tab $::window(video_nb1) -state disabled
 			set ::window(video_nb2) [ttk::frame $w.f_video_error]
 			$w add $::window(video_nb2) -text [mc "Error"]
@@ -249,11 +284,23 @@ proc option_screen_3 {} {
 			.config_wizard.frame_buttons.b_default configure -command {}
 			.config_wizard.frame_buttons.button_save state disabled
 		} else {
+			catch {exec mplayer} mplayer_ver
+			set agrep_mpl_ver [catch {agrep -m "$mplayer_ver" "MPlayer"} resultat_mpl_ver]
+			if {$agrep_mpl_ver == 0} {
+				log_writeOutTv 0 "Found MPlayer: $resultat_mpl_ver"
+			} else {
+				log_writeOutTv 1 "Found MPlayer, but could not detect Version"
+				log_writeOutTv 1 "$resultat_mpl_ver"
+			}
 			
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found MPlayer, GOOD."
-			flush $::logf_tv_open_append
+			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt3 $frame_nb1]
 			
-			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt3 $::window(video_nb1)]
+			foreach scrollw [winfo children $::window(video_nb1_cont).f_video2] {
+			bind $scrollw <Button-4> {config_videoMousew 120}
+			bind $scrollw <Button-5> {config_videoMousew -120}
+			}
+			bind $::window(video_nb1_cont).f_video2  <Button-4> {config_videoMousew 120}
+			bind $::window(video_nb1_cont).f_video2  <Button-5> {config_videoMousew -120}
 			
 			proc config_videoScreensaver {w} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_videoScreensaver \033\[0m \{$w\}"
@@ -278,10 +325,14 @@ proc option_screen_3 {} {
 				}
 			}
 			
+			proc config_videoMousew {delta} {
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_videoMousew \033\[0m \{$delta\}"
+				$::window(video_nb1_cont) yview scroll [expr {-$delta/120}] units
+			}
+			
 			proc default_opt3 {w} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt3 \033\[0m \{$w\}"
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for video section."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Starting to collect data for video section."
 				set vo [list x11 xv xvmc vdpau gl gl(fast) {gl(fast ATI)} gl(yuv) gl2 gl2(yuv)]
 				set deint [list None Lowpass5 Yadif Yadif(1) LinearBlend {Kernel deinterlacer}]
 				set cache {0 512 1024 2048 4096 8192 16384}
@@ -302,8 +353,7 @@ proc option_screen_3 {} {
 						-label "xv adaptor=[string trim [lindex $resultat_grep_xv 1] #:] - [lindex $resultat_grep_xv 2]" \
 						-variable choice(mbVo)
 						incr i
-						puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] xvinfo reports found adaptor: [lindex $resultat_grep_xv 2]"
-						flush $::logf_tv_open_append
+						log_writeOutTv 0 "xvinfo reports found adaptor: [lindex $resultat_grep_xv 2]"
 					}
 				}
 				
@@ -341,6 +391,12 @@ proc option_screen_3 {} {
 					set ::choice(mbCache) $::option(player_cache)
 				} else {
 					set ::choice(mbCache) $::stnd_opt(player_cache)
+				}
+				
+				if {[info exists ::option(player_threads)]} {
+					set ::choice(sb_threads) $::option(player_threads)
+				} else {
+					set ::choice(sb_threads) $::stnd_opt(player_threads)
 				}
 				
 				if {[info exists ::option(player_dr)]} {
@@ -382,62 +438,62 @@ proc option_screen_3 {} {
 				} else {
 					set ::choice(rb_screensaver) $::stnd_opt(player_screens_value)
 				}
-				config_videoScreensaver $::window(video_nb1)
+				config_videoScreensaver $::window(video_nb1_cont).f_video2
 				
 				if {$::option(tooltips) == 1} {
 					if {$::option(tooltips_wizard) == 1} {
-						settooltip $::window(video_nb1).mb_lf_vo [mc "Select the video ouput driver.
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_vo [mc "Select the video ouput driver.
 xv should provide the best performance."]
-						settooltip $::window(video_nb1).mb_lf_deint [mc "Select the deinterlace filter."]
-						settooltip $::window(video_nb1).sb_lf_autoq [mc "Changes the level of postprocesseing.
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_deint [mc "Select the deinterlace filter."]
+						settooltip $::window(video_nb1_cont).f_video2.sb_lf_autoq [mc "Changes the level of postprocesseing.
 A value of 0 deactivates postprocessing."]
-						settooltip $::window(video_nb1).mb_lf_cache [mc "Specify how much memory (in kBytes) should be used for TV playback.
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_cache [mc "Specify how much memory (in kBytes) should be used for TV playback.
 The lower this value is the faster you may switch between stations.
 But a low value could cause other problems.
 A value of 0 will deactivate cache use."]
-						settooltip $::window(video_nb1).cb_lf_dr [mc "If checked, enables direct rendering. This is not supported
+						settooltip $:$::window(video_nb1_cont).f_video2.cb_lf_dr [mc "If checked, enables direct rendering. This is not supported
 for all video ouput drivers."]
-						settooltip $::window(video_nb1).cb_lf_double [mc "Double buffering fixes flicker by storing two frames in memory
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_double [mc "Double buffering fixes flicker by storing two frames in memory
 and displaying one, while decoding another."]
-						settooltip $::window(video_nb1).cb_lf_slice [mc "Enable / Disable drawing video by 16-pixel height slices/bands.
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_slice [mc "Enable / Disable drawing video by 16-pixel height slices/bands.
 May help in better video playback."]
-						settooltip $::window(video_nb1).cb_lf_framedrop [mc "Skip displaying some frames to maintain A/V sync."]
-						settooltip $::window(video_nb1).cb_lf_hframedrop [mc "More intense frame dropping. May lead to image distortion."]
-						settooltip $::window(video_nb1).cb_lf_screensaver [mc "Enable / Disable screensaver while playback."]
-						settooltip $::window(video_nb1).rb_lf_mplayer_screens [mc "Use MPlayer to deactivate the screensaver."]
-						settooltip $::window(video_nb1).rb_lf_heartbeat_screens [mc "If MPlayer can't deactivate your screensaver, use this heartbeat hack."]
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_framedrop [mc "Skip displaying some frames to maintain A/V sync."]
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_hframedrop [mc "More intense frame dropping. May lead to image distortion."]
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_screensaver [mc "Enable / Disable screensaver while playback."]
+						settooltip $::window(video_nb1_cont).f_video2.rb_lf_mplayer_screens [mc "Use MPlayer to deactivate the screensaver."]
+						settooltip $::window(video_nb1_cont).f_video2.rb_lf_heartbeat_screens [mc "If MPlayer can't deactivate your screensaver, use this heartbeat hack."]
 					} else {
-						settooltip $::window(video_nb1).mb_lf_vo {}
-						settooltip $::window(video_nb1).mb_lf_deint {}
-						settooltip $::window(video_nb1).sb_lf_autoq {}
-						settooltip $::window(video_nb1).mb_lf_cache {}
-						settooltip $::window(video_nb1).cb_lf_dr {}
-						settooltip $::window(video_nb1).cb_lf_double {}
-						settooltip $::window(video_nb1).cb_lf_slice {}
-						settooltip $::window(video_nb1).cb_lf_framedrop {}
-						settooltip $::window(video_nb1).cb_lf_hframedrop {}
-						settooltip $::window(video_nb1).cb_lf_screensaver {}
-						settooltip $::window(video_nb1).rb_lf_mplayer_screens {}
-						settooltip $::window(video_nb1).rb_lf_heartbeat_screens {}
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_vo {}
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_deint {}
+						settooltip $::window(video_nb1_cont).f_video2.sb_lf_autoq {}
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_cache {}
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_dr {}
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_double {}
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_slice {}
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_framedrop {}
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_hframedrop {}
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_screensaver {}
+						settooltip $::window(video_nb1_cont).f_video2.rb_lf_mplayer_screens {}
+						settooltip $::window(video_nb1_cont).f_video2.rb_lf_heartbeat_screens {}
 					}
 				}
 			}
 			
 			proc stnd_opt3 {w} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt3 \033\[0m \{$w\}"
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting video options to default."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Setting video options to default."
 				set ::choice(mbVo) $::stnd_opt(player_vo)
 				set ::choice(mbDeint) $::stnd_opt(player_deint)
 				set ::choice(sb_autoq) $::stnd_opt(player_autoq)
 				set ::choice(mbCache) $::stnd_opt(player_cache)
+				set ::choice(sb_threads) $::stnd_opt(player_threads)
 				set ::choice(cb_dr) $::stnd_opt(player_dr)
 				set ::choice(cb_double) $::stnd_opt(player_double)
 				set ::choice(cb_slice) $::stnd_opt(player_slice)
 				set ::choice(cb_framedrop) $::stnd_opt(player_fd)
 				set ::choice(cb_lf_screensaver) $::stnd_opt(player_screens)
 				set ::choice(rb_screensaver) $::stnd_opt(player_screens_value)
-				config_videoScreensaver $::window(video_nb1)
+				config_videoScreensaver $::window(video_nb1_cont).f_video2
 			}
 			default_opt3 $::window(video_nb1)
 		}

@@ -53,6 +53,5 @@ proc tv_osd {ident atime osd_text} {
 	
 	place $osd -in .tv {*}$alignment($bias)
 	set ::data(after_id_osd) [after $atime "destroy .tv.osd"]
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] OSD invoked, ident: $ident, time: $atime, text: $osd_text"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
 }

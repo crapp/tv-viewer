@@ -28,6 +28,10 @@ mcset $lang \
 	{Cache size (kb)}
 
 mcset $lang \
+	{Threads for decoding} \
+	{Threads for decoding}
+
+mcset $lang \
 	{Direct Rendering} \
 	{Direct Rendering}
 

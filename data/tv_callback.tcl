@@ -21,8 +21,7 @@ proc tv_callbackVidData {} {
 		gets $::data(mplayer) line
 		if {[eof $::data(mplayer)]} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0;1;31mEnd of file\033\[0m"
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer reported end of file. Playback is stopped."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "MPlayer reported end of file. Playback is stopped."
 			catch {close $::data(mplayer)}
 			unset -nocomplain ::data(mplayer)
 			place forget .tv.bg.w
@@ -63,15 +62,12 @@ proc tv_callbackVidData {} {
 			}
 		} else {
 			if {[string match "A:*V:*A-V:*" $line] != 1} {
-				puts $::logf_mpl_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $line"
-				flush $::logf_mpl_open_append
+				log_writeOutMpl 0 "# $line"
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_callbackVidData \033\[0m \{$line\}"
 			}
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer reported video resolution $resolution."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "MPlayer reported video resolution $resolution."
 				if {$::option(player_aspect) == 1 && $::option(player_keepaspect) == 0} {
-					flush $::logf_tv_open_append
 					foreach {resolx resoly} [split $resolution x] {
 						set ::option(resolx) $resolx
 						set ::option(resoly) $resoly
@@ -79,12 +75,11 @@ proc tv_callbackVidData {} {
 					.tv.bg configure -width $::option(resolx) -height $::option(resoly)
 					bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
-					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Video aspect not managed by TV-Viewer."
+					log_writeOutTv 1 "Video aspect not managed by TV-Viewer."
 				}
 			}
 			if {[string match -nocase "ID_LENGTH=*" $line]} {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] This is a recording, starting to calculate file size and position."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "This is a recording, starting to calculate file size and position."
 				set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 				set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 				if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
@@ -173,9 +168,8 @@ proc tv_callbackVidData {} {
 			set ::data(report) $line
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Tried to read channel ::data(mplayer).
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Pipe seems to be broken."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Tried to read channel ::data(mplayer)."
+		log_writeOutTv 1 "Pipe seems to be broken."
 	}
 }
 
@@ -183,8 +177,7 @@ proc tv_callbackMplayerRemote {command} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_callbackMplayerRemote \033\[0m \{$command\}"
 	if {[info exists ::data(mplayer)] == 0} {return 1}
 	if {[string trim $::data(mplayer)] != {}} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Sending command $command to MPlayer remote channel."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Sending command $command to MPlayer remote channel."
 		catch {puts -nonewline $::data(mplayer) "$command \n"}
 		flush $::data(mplayer)
 		return 0

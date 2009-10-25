@@ -46,8 +46,7 @@ proc tv_seek {secs direct} {
 	}
 	if {$direct == 1} {
 		if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking +$secs\s"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Seeking +$secs\s"
 			set seekpos [expr ($::data(file_pos) + $secs)]
 			if {$seekpos < $::data(file_size)} {
 				tv_callbackMplayerRemote "seek $seekpos 2"
@@ -68,8 +67,7 @@ proc tv_seek {secs direct} {
 		}
 	}
 	if {$direct == 2} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the end of actual recording."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Seeking to the end of actual recording."
 		set seekpos [expr ($::data(file_size) - $endpos($::option(player_cache)))]
 		tv_callbackMplayerRemote "seek $seekpos 2"
 		after 650 {
@@ -80,8 +78,7 @@ proc tv_seek {secs direct} {
 	}
 	if {$direct == -1} {
 		if {[expr ($::data(file_pos) - $secs)] < 0} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Seeking -$secs\s"
 			set seekpos 0
 			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
@@ -90,8 +87,7 @@ proc tv_seek {secs direct} {
 			}
 			return
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking -$secs\s"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Seeking -$secs\s"
 			set seekpos [expr ($::data(file_pos) - $secs)]
 			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
@@ -102,8 +98,7 @@ proc tv_seek {secs direct} {
 		}
 	}
 	if {$direct == -2} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Seeking to the beginning of actual recording."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Seeking to the beginning of actual recording."
 		set seekpos 0
 		tv_callbackMplayerRemote "seek $seekpos 2"
 		after 650 {
@@ -116,8 +111,7 @@ proc tv_seek {secs direct} {
 		if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
 			.tv.file_play_bar.b_pause state disabled
 			.tv.file_play_bar.b_play state !disabled
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Pause playback."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Pause playback."
 			bind .tv <<forward_10s>> {}
 			bind .tv <<forward_1m>> {}
 			bind .tv <<forward_10m>> {}
@@ -132,8 +126,7 @@ proc tv_seek {secs direct} {
 			.tv.file_play_bar.b_play state disabled
 			.tv.file_play_bar.b_pause state !disabled
 			set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Start playback."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Start playback."
 			bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
 			bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
 			bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}

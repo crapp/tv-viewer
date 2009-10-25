@@ -30,8 +30,7 @@ proc option_screen_4 {} {
 		.config_wizard.frame_configoptions.nb select $::window(audio_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt4 $::window(audio_nb1)]
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up audio section in preferences"
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting up audio section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(audio_nb1) [ttk::frame $w.f_audio]
 		$w add $::window(audio_nb1) -text [mc "Audio Settings"] -padding 2
@@ -90,8 +89,7 @@ proc option_screen_4 {} {
 		
 		proc default_opt4 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for audio section."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Starting to collect data for audio section."
 			catch {exec [auto_execok mplayer] -ao help} audio_out
 			if {[string trim $audio_out] != {}} {
 				foreach line [split $audio_out \n] {
@@ -104,7 +102,7 @@ proc option_screen_4 {} {
 				}
 			} else {
 				$::window(audio_nb1).mb_lf_audio state disabled
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer did not report audio ouput drivers. Deactivating menubutton."
+				log_writeOutTv 1 "MPlayer did not report audio ouput drivers. Deactivating menubutton."
 			}
 			
 			if {[info exists ::option(player_audio)]} {
@@ -147,8 +145,7 @@ to the chosen value."]
 		}
 		proc stnd_opt4 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting audio options to default."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Setting audio options to default."
 			set ::choice(mbAudio) $::stnd_opt(player_audio)
 			set ::choice(cb_softvol) $::stnd_opt(player_aud_softvol)
 			set ::choice(mbAudio_channels) $::stnd_opt(player_audio_channels)

@@ -36,16 +36,14 @@ proc record_wizardScheduler {sbutton slable com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardScheduler \033\[0m \{$sbutton\} \{$slable\} \{$com\}"
 	if {$com == 0} {
 		$sbutton configure -command {}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping Scheduler..."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Stopping Scheduler..."
 		catch {exec ""}
 		set status_schedlinkread [catch {file readlink "$::where_is_home/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 		if { $status_schedlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler is running, will stop it."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Scheduler is running, will stop it."
 				puts $::data(comsocket) "tv-viewer_scheduler scheduler_exit"
 				flush $::data(comsocket)
 			}
@@ -73,8 +71,7 @@ proc record_wizardScheduler {sbutton slable com} {
 	}
 	if {$com == 1} {
 		$sbutton configure -command {}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting Scheduler..."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Starting Scheduler..."
 		catch {exec "$::where_is/data/record_scheduler.tcl" &}
 		after 2000 {
 			catch {
@@ -102,8 +99,7 @@ proc record_wizardScheduler {sbutton slable com} {
 proc record_wizardUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0m"
 	if {[winfo exists .record_wizard] == 0} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting Record Wizard."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Starting Record Wizard."
 		
 		if {[wm attributes .tv -fullscreen] == 1} {
 			tv_wmFullscreen .tv .tv.bg.w .tv.bg
@@ -280,23 +276,19 @@ proc record_wizardUi {} {
 						lassign $line station sdate stime edate etime duration recfile
 						$statf.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
 						$statf.b_rec_current state !disabled
-						puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found an active recording (PID $resultat_recordlinkread)."
-						flush $::logf_tv_open_append
+						log_writeOutTv 0 "Found an active recording (PID $resultat_recordlinkread)."
 					}
 					close $f_open
 				} else {
-					puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Although there is an active recording, no current_rec.conf in config path."
-					flush $::logf_tv_open_append
+					log_writeOutTv 1 "Although there is an active recording, no current_rec.conf in config path."
 				}
 			} else {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] No active recording."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "No active recording."
 				$statf.l_rec_current_info configure -text "Idle"
 				$statf.b_rec_current state disabled
 			}
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] No active recording."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "No active recording."
 			$statf.l_rec_current_info configure -text "Idle"
 			$statf.b_rec_current state disabled
 		}
@@ -306,19 +298,16 @@ proc record_wizardUi {} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler is running (PID $resultat_schedlinkread)."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Scheduler is running (PID $resultat_schedlinkread)."
 				$statf.l_rec_sched_info configure -text [mc "Running"]
 				$statf.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler $statf.b_rec_sched $statf.l_rec_sched_info 0]
 			} else {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler is not running."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Scheduler is not running."
 				$statf.l_rec_sched_info configure -text [mc "Stopped"]
 				$statf.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler $statf.b_rec_sched $statf.l_rec_sched_info 1]
 			}
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler is not running."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Scheduler is not running."
 			$statf.l_rec_sched_info configure -text [mc "Stopped"]
 			$statf.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler $statf.b_rec_sched $statf.l_rec_sched_info 1]
 		}

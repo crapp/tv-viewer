@@ -25,20 +25,17 @@ proc colorm_readValues {wfscale} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=hue} check_hue_available
 		if { "[string tolower [lindex $check_hue_available 0]]" == "hue:" } {
 			array set ::hue [split [string trim $hue_default_read] { =}]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Default value for hue: $::hue(default)"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Default value for hue: $::hue(default)"
 			$wfscale.s_hue configure -from $::hue(min) -to $::hue(max)
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]Can't read default value for hue.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]Error message: $hue_default_read"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can't read default value for hue."
+			log_writeOutTv 1 "Error message: $hue_default_read"
 			$wfscale.s_hue state disabled
 			$wfscale.l_hue state disabled
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for hue.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $hue_default_read"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't read default value for hue."
+		log_writeOutTv 1 "Error message: $hue_default_read"
 		$wfscale.s_hue state disabled
 		$wfscale.l_hue state disabled
 	}
@@ -49,20 +46,17 @@ proc colorm_readValues {wfscale} {
 		if { "[string tolower [lindex $check_saturation_available 0]]" == "saturation:" } {
 			split [string trim $saturation_default_read] { =}
 			array set ::saturation [split [string trim $saturation_default_read] { =}]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Default value for saturation: $::saturation(default)"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Default value for saturation: $::saturation(default)"
 			$wfscale.s_saturation configure -from $::saturation(min) -to $::saturation(max)
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for saturation.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $saturation_default_read"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can't read default value for saturation."
+			log_writeOutTv 1 "Error message: $saturation_default_read"
 			$wfscale.s_saturation state disabled
 			$wfscale.l_saturation state disabled
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for saturation.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $saturation_default_read"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't read default value for saturation."
+		log_writeOutTv 1 "Error message: $saturation_default_read"
 		$wfscale.s_saturation state disabled
 		$wfscale.l_saturation state disabled
 	}
@@ -73,20 +67,17 @@ proc colorm_readValues {wfscale} {
 		if { "[string tolower [lindex $check_contrast_available 0]]" == "contrast:" } {
 			split [string trim $contrast_default_read] { =}
 			array set ::contrast [split [string trim $contrast_default_read] { =}]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Default value for contrast: $::contrast(default)"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Default value for contrast: $::contrast(default)"
 			$wfscale.s_contrast configure -from $::contrast(min) -to $::contrast(max)
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for contrast.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $contrast_default_read"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can't read default value for contrast."
+			log_writeOutTv 1 "Error message: $contrast_default_read"
 			$wfscale.s_contrast state disabled
 			$wfscale.l_contrast state disabled
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for contrast.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $contrast_default_read"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't read default value for contrast."
+		log_writeOutTv 1 "Error message: $contrast_default_read"
 		$wfscale.s_contrast state disabled
 		$wfscale.l_contrast state disabled
 	}
@@ -97,20 +88,17 @@ proc colorm_readValues {wfscale} {
 		if { "[string tolower [lindex $check_brightness_available 0]]" == "brightness:" } {
 			split [string trim $brightness_default_read] { =}
 			array set ::brightness [split [string trim $brightness_default_read] { =}]
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Default value for brightness: $::brightness(default)"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Default value for brightness: $::brightness(default)"
 			$wfscale.s_brightness configure -from $::brightness(min) -to $::brightness(max)
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for brightness.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $brightness_default_read"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Can't read default value for brightness."
+			log_writeOutTv 1 "Error message: $brightness_default_read"
 			$wfscale.s_brightness state disabled
 			$wfscale.l_brightness state disabled
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't read default value for brightness.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Error message: $brightness_default_read"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't read default value for brightness."
+		log_writeOutTv 1 "Error message: $brightness_default_read"
 		$wfscale.s_brightness state disabled
 		$wfscale.l_brightness state disabled
 	}
@@ -190,8 +178,7 @@ proc colorm_readValues {wfscale} {
 
 proc colorm_saveValues {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0m colorm_saveValues \{$w\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Saving color management values to $::where_is_home/config/tv-viewer.conf"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Saving color management values to $::where_is_home/config/tv-viewer.conf"
 	set config_file "$::where_is_home/config/tv-viewer.conf"
 	if {[file exists "$config_file"]} {
 		set open_config_file [open "$config_file" r]
@@ -255,15 +242,13 @@ proc colorm_saveValues {w} {
 		}
 		close $config_file_append
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing Color Management."
-	flush $::logf_tv_open_append
+	log_writeOutTv 1 "Closing Color Management."
 	destroy .cm
 }
 
 proc colorm_exit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: colom_exit \033\[0m \{$w\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing Color Management without saving values."
-	flush $::logf_tv_open_append
+	log_writeOutTv 1 "Closing Color Management without saving values."
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::option(hue_old)}
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::option(saturation_old)}
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::option(brightness_old)}
@@ -278,8 +263,7 @@ proc colorm_mainUi {} {
 	}
 	
 	if {[winfo exists .cm] == 0} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up Color Management."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Setting up Color Management."
 		# Setting up main Interface
 		set cm_w [toplevel .cm -class "TV-Viewer"]
 		place [ttk::frame $cm_w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -404,8 +388,7 @@ proc colorm_mainUi {} {
 		
 		proc colorm_setDefault {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_setDefault \033\[0m \{$w\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting color management values to default."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Setting color management values to default."
 			if {[array exists ::hue]} {
 				$w.s_hue configure -value $::hue(default)
 				update

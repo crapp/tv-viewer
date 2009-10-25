@@ -1,4 +1,9 @@
-TV-Viewer
+ _______     __ __     ___                        
+|_   _\ \   / / \ \   / (_) _____      _____ _ __ 
+  | |  \ \ / /___\ \ / /| |/ _ \ \ /\ / / _ \ '__|
+  | |   \ V /_____\ V / | |  __/\ V  V /  __/ |   
+  |_|    \_/       \_/  |_|\___| \_/\_/ \___|_|   
+  
 ----------------------------------
 
 
@@ -69,7 +74,7 @@ http://wiki.tcl.tk/13497
 autoscroll:
 
 Autoscroll is part of tklib. The library was originally written by Kevin B Kenny.
-For copyright infos see .../tv-viewer/autoscroll/license.terms
+For copyright infos see .../tv-viewer/extensions/autoscroll/license.terms
 --
 fsdialog:
 

@@ -23,9 +23,8 @@ proc timeshift {tbutton} {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 		if { $status_greppid_record == 0 } {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] There is a running recording (PID $resultat_recordlinkread)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start timeshift."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "There is a running recording (PID $resultat_recordlinkread)"
+			log_writeOutTv 1 "Can't start timeshift."
 			return
 		}
 	}
@@ -35,8 +34,7 @@ proc timeshift {tbutton} {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 		if { $status_greppid_times == 0 } {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
 			$tbutton state !pressed
 			catch {exec kill $resultat_timeslinkread}
 			after 2000 {catch {exec""}}
@@ -46,8 +44,7 @@ proc timeshift {tbutton} {
 			return
 		}
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting timeshift..."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Starting timeshift..."
 	record_schedulerPrestart timeshift
 	$tbutton state pressed
 	$tbutton state disabled
@@ -69,8 +66,7 @@ proc timeshift_start_preRec {tbutton} {
 proc timeshift_start_Rec {counter rec_pid tbutton} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_start_Rec \033\[0m \{$counter\} \{$rec_pid\} \{$tbutton\}"
 	if {$counter == 10} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start timeshift. Tried for 30 seconds."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't start timeshift. Tried for 30 seconds."
 		catch {exec kill $rec_pid}
 		catch {exec ""}
 		if {[winfo exists .tv.l_anigif]} {
@@ -106,8 +102,7 @@ proc timeshift_calcDF {cancel} {
 		if {[string is digit [lindex $line 3]]} {
 			set remaining_space [expr int([lindex $line 3].0 / 1024)]
 			if {$remaining_space <= $::option(timeshift_df)} {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
 				timeshift .top_buttons.button_timeshift
 				return
 			}

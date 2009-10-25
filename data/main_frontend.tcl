@@ -23,8 +23,7 @@ proc main_frontendExitViewer {} {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 		if { $status_greppid_times == 0 } {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
 			catch {exec kill $resultat_timeslinkread}
 			catch {file delete "$::where_is_home/tmp/timeshift_lockfile.tmp"}
 			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
@@ -66,8 +65,7 @@ proc main_frontendExitViewer {} {
 
 proc main_frontendEpg {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendEpg \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching EPG program..."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Launching EPG program..."
 	catch {exec sh -c "[subst $::option(epg_command)] >/dev/null 2>&1" &}
 }
 
@@ -75,8 +73,7 @@ proc main_frontendShowslist {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendShowslist \033\[0m \{$w\}"
 	if {[winfo exists .frame_slistbox] == 0} {
 		
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Building station list..."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Building station list..."
 		
 		$w.button_showslist state pressed
 		
@@ -109,8 +106,7 @@ proc main_frontendShowslist {w} {
 		wm resizable . 1 1
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] There are no stations to insert into station list."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "There are no stations to insert into station list."
 			$wflbox.listbox_slist configure -state disabled
 		} else {
 			for {set i 1} {$i <= $::station(max)} {incr i} {
@@ -147,16 +143,14 @@ proc main_frontendShowslist {w} {
 				set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 				if { $status_greppid_record == 0 || $status_greppid_times == 0 } {
 					if {$::option(rec_allow_sta_change) == 0} {
-						puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Disabling station list due to an active recording."
-						flush $::logf_tv_open_append
+						log_writeOutTv 0 "Disabling station list due to an active recording."
 						$wflbox.listbox_slist configure -state disabled
 					}
 				}
 			}
 		}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Station list already exists, using grid to manage window again."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Station list already exists, using grid to manage window again."
 		set wflbox .frame_slistbox
 		if {[string trim [grid info $wflbox]] == {}} {
 			grid $wflbox -in . -row 4 -column 0
@@ -178,8 +172,7 @@ proc main_frontendShowslist {w} {
 				}
 			}
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Removing station list from grid manager."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Removing station list from grid manager."
 			set ::main(slist_height) [winfo height $wflbox]
 			if {$::main(slist_height) < 36} {
 				set ::main(slist_height) 37
@@ -204,9 +197,8 @@ proc main_frontendShowslist {w} {
 }
 
 proc msgcat::mcunknown {locale src args} {
-	puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Unknown string for locale $locale
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] $src $args"
-	flush $::logf_tv_open_append
+	log_writeOutTv 1 "Unknown string for locale $locale"
+	log_writeOutTv 1 "$src $args"
 	return $src
 }
 
@@ -351,8 +343,7 @@ proc main_frontendUiTvviewer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendUiTvviewer \033\[0m"
 	# Setting up main Interface
 	
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up main interface."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Setting up main interface."
 	
 	place [ttk::frame .bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	
@@ -724,8 +715,7 @@ proc main_frontendUiTvviewer {} {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; event generate . <<teleview>>}
 				}
 			} else {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start tv playback, MPlayer is not installed on this system."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Can't start tv playback, MPlayer is not installed on this system."
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
@@ -748,10 +738,7 @@ proc main_frontendUiTvviewer {} {
 				$wftop.button_record state disabled
 				$wftop.button_timeshift state disabled
 				$wfbar.mOptions entryconfigure 4 -state disabled
-				puts $::logf_tv_open_append "#
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Deactivating Button \"Start TV\" because MPlayer is not installed.
-#"
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Deactivating Button \"Start TV\" because MPlayer is not installed."
 				event delete <<record>>
 				event delete <<teleview>>
 				bind . <<record>> {}
@@ -767,8 +754,7 @@ proc main_frontendUiTvviewer {} {
 					after 1500 {wm deiconify . ; tv_playerUi ; event generate . <<teleview>>}
 				}
 			} else {
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't start tv playback, MPlayer is not installed on this system."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Can't start tv playback, MPlayer is not installed on this system."
 				after 1500 {wm deiconify . ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
@@ -785,8 +771,7 @@ proc main_frontendUiTvviewer {} {
 				$wftop.button_record state disabled
 				$wftop.button_timeshift state disabled
 				$wfbar.mOptions entryconfigure 4 -state disabled
-				puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Deactivating Button \"Start TV\" because MPlayer is not installed."
-				flush $::logf_tv_open_append
+				log_writeOutTv 1 "Deactivating Button \"Start TV\" because MPlayer is not installed."
 				event delete <<record>>
 				event delete <<teleview>>
 				bind . <<record>> {}

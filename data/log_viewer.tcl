@@ -93,8 +93,7 @@ proc log_viewerMplayer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplayer \033\[0m"
 	if {[winfo exists .log_viewer_mplayer] == 0} {
 		
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching log viewer for MPlayer."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Launching log viewer for MPlayer."
 		
 		set w [toplevel .log_viewer_mplayer -class "TV-Viewer Log Viewer"]
 		
@@ -171,9 +170,7 @@ proc log_viewerMplayer {} {
 		proc log_viewerMplReadFile {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplReadFile \033\[0m \{$w\}"
 			if {[file exists "$::where_is_home/log/videoplayer.log"]} {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Read existing logfile, insert into log viewer and start monitoring
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] logfile for MPlayer."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for MPlayer."
 				set mlogfile_open [open "$::where_is_home/log/videoplayer.log" r]
 				$w tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold"
 				set i 0
@@ -212,7 +209,7 @@ proc log_viewerMplayer {} {
 		tkwait visibility .log_viewer_mplayer
 		wm minsize .log_viewer_mplayer [winfo reqwidth .log_viewer_mplayer] [winfo reqheight .log_viewer_mplayer]
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing log viewer for MPlayer."
+		log_writeOutTv 0 "Closing log viewer for MPlayer."
 		destroy .log_viewer_mplayer; log_viewerMplTail 0 cancel
 	}
 }
@@ -253,12 +250,22 @@ proc log_viewerMplayerLb {w} {
 	.log_viewer_mplayer.f_log_mplayer.t_log_mplayer see $marking
 }
 
+proc log_writeOutMpl {handler text} {
+	set logformat "#"
+	if {$handler == 0} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+	} else {
+		append logformat " <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+	}
+	puts $::logf_mpl_open_append "$logformat $text"
+	flush $::logf_mpl_open_append
+}
+
 proc log_viewerScheduler {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerScheduler \033\[0m"
 	if {[winfo exists .log_viewer_scheduler] == 0} {
 		
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching log viewer for Scheduler."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Launching log viewer for Scheduler."
 		
 		set w [toplevel .log_viewer_scheduler -class "TV-Viewer Log Viewer"]
 		
@@ -335,9 +342,7 @@ proc log_viewerScheduler {} {
 		proc log_viewerSchedReadFile {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedReadFile \033\[0m \{$w\}"
 			if {[file exists "$::where_is_home/log/scheduler.log"]} {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Read existing logfile, insert into log viewer and start monitoring
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] logfile for Scheduler."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for Scheduler."
 				set mlogfile_open [open "$::where_is_home/log/scheduler.log" r]
 				$w tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold"
 				set i 0
@@ -376,8 +381,7 @@ proc log_viewerScheduler {} {
 		tkwait visibility .log_viewer_scheduler
 		wm minsize .log_viewer_scheduler [winfo reqwidth .log_viewer_scheduler] [winfo reqheight .log_viewer_scheduler]
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing log viewer for Scheduler."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Closing log viewer for Scheduler."
 		destroy .log_viewer_scheduler; log_viewerSchedTail 0 cancel
 	}
 }
@@ -424,8 +428,7 @@ proc log_viewerTvViewer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvViewer \033\[0m"
 	if {[winfo exists .log_viewer_tvviewer] == 0} {
 		
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Launching log viewer for TV-Viewer."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Launching log viewer for TV-Viewer."
 		
 		set w [toplevel .log_viewer_tvviewer -class "TV-Viewer Log Viewer"]
 		
@@ -502,9 +505,7 @@ proc log_viewerTvViewer {} {
 		proc log_viewerTvReadFile {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvReadFile \033\[0m \{$w\}"
 			if {[file exists "$::where_is_home/log/tvviewer.log"]} {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Read existing logfile, insert into log viewer and start monitoring
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] logfile for TV-Viewer."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for TV-Viewer."
 				set mlogfile_open [open "$::where_is_home/log/tvviewer.log" r]
 				$w tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold"
 				set i 0
@@ -543,8 +544,7 @@ proc log_viewerTvViewer {} {
 		tkwait visibility .log_viewer_tvviewer
 		wm minsize .log_viewer_tvviewer [winfo reqwidth .log_viewer_tvviewer] [winfo reqheight .log_viewer_tvviewer]
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing log viewer for TV-Viewer."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Closing log viewer for TV-Viewer."
 		destroy .log_viewer_tvviewer; log_viewerTvTail 0 cancel
 	}
 }
@@ -585,4 +585,15 @@ proc log_viewerTvLb {w} {
 	set get_lb_content [$w get $get_lb_index]
 	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
 	.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer see $marking
+}
+
+proc log_writeOutTv {handler text} {
+	set logformat "#"
+	if {$handler == 0} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+	} else {
+		append logformat " <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+	}
+	puts $::logf_tv_open_append "$logformat $text"
+	flush $::logf_tv_open_append
 }

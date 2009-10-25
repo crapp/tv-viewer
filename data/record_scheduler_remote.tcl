@@ -19,11 +19,9 @@
 proc record_schedulerPrestart {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerPrestart \033\[0m \{$handler\}"
 	if {"$handler" == "record"} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler initiated prestart sequence for recording."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Scheduler initiated prestart sequence for recording."
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Initiated prestart sequence for timeshift."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Initiated prestart sequence for timeshift."
 	}
 	tv_fileComputePos cancel 
 	tv_fileComputeSize cancel
@@ -45,8 +43,7 @@ proc record_schedulerPrestart {handler} {
 		.record_wizard configure -cursor watch
 	}
 	if {$::option(rec_allow_sta_change) == 0} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Station change not allowed during recording."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Station change not allowed during recording."
 		.bottom_buttons.button_channelup state disabled
 		.bottom_buttons.button_channeldown state disabled
 		.bottom_buttons.button_channeljumpback state disabled
@@ -99,14 +96,12 @@ proc record_schedulerPrestart {handler} {
 proc record_scheduler_prestartCancel {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_scheduler_prestartCancel \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Prestart sequence for recording has been canceled."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Prestart sequence for recording has been canceled."
 		if {[winfo exists .record_wizard]} {
 			.record_wizard configure -cursor arrow
 		}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Prestart sequence for timeshift has been canceled."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Prestart sequence for timeshift has been canceled."
 	}
 	. configure -cursor arrow; .tv configure -cursor arrow
 	.top_buttons.button_timeshift state !disabled
@@ -150,68 +145,16 @@ proc record_scheduler_prestartCancel {handler} {
 proc record_schedulerRec {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerRec \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler initiated record sequence for main application."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Scheduler initiated record sequence for main application."
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Initiated timeshift sequence for main application."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Initiated timeshift sequence for main application."
 	}
-	#~ if {$::option(rec_allow_sta_change) == 0} {
-		#~ puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Station change not allowed during recording."
-		#~ flush $::logf_tv_open_append
-		#~ .bottom_buttons.button_channelup state disabled
-		#~ .bottom_buttons.button_channeldown state disabled
-		#~ .bottom_buttons.button_channeljumpback state disabled
-		#~ if {[winfo exists .frame_slistbox] == 1} {
-			#~ .frame_slistbox.listbox_slist configure -state disabled
-		#~ }
-		#~ bind .tv <<station_up>> {}
-		#~ bind .tv <<station_down>> {}
-		#~ bind .tv <<station_jump>> {}
-		#~ bind .tv <<station_key>> {}
-		#~ bind .tv <<input_up>> {}
-		#~ bind .tv <<input_down>> {}
-		#~ bind . <<station_up>> {}
-		#~ bind . <<station_down>> {}
-		#~ bind . <<station_jump>> {}
-		#~ bind . <<station_key>> {}
-		#~ bind . <<station_key_lirc>> {}
-		#~ bind . <<input_up>> {}
-		#~ bind . <<input_down>> {}
-	#~ }
 	bind .tv <<pause>> {tv_seek 0 0}
 	if {"$handler" != "timeshift"} {
 		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
 	} else {
 		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
 	}
-	#~ bind .tv <<stop>> {tv_playbackStop 1 pic}
-	#~ bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-	#~ bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-	#~ bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-	#~ bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-	#~ bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-	#~ bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-	#~ bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-	#~ bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-	#~ bind . <<teleview>> {}
-	#~ bind . <Control-Key-p> {}
-	#~ bind . <Control-Key-m> {}
-	#~ bind . <Control-Key-e> {}
-	#~ bind .tv <<teleview>> {}
-	#~ bind .tv <Control-Key-p> {}
-	#~ bind .tv <Control-Key-m> {}
-	#~ bind .tv <Control-Key-e> {}
-	#~ if {"$handler" != "timeshift"} {
-		#~ .top_buttons.button_timeshift state disabled
-		#~ bind . <<timeshift>> {}
-		#~ bind .tv <<timeshift>> {}
-	#~ }
-	#~ .top_buttons.button_starttv state disabled
-	#~ .options_bar.mOptions entryconfigure 1 -state disabled
-	#~ .options_bar.mOptions entryconfigure 2 -state disabled
-	#~ .options_bar.mOptions entryconfigure 3 -state disabled
-	#~ .options_bar.mHelp entryconfigure 8 -state disabled
 	if {"$handler" != "timeshift"} {
 		if {[file exists "$::where_is_home/config/current_rec.conf"]} {
 			set open_f [open "$::where_is_home/config/current_rec.conf" r]
@@ -220,8 +163,7 @@ proc record_schedulerRec {handler} {
 				lassign $line station sdate stime edate etime duration ::tv(current_rec_file)
 			}
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Fatal, could not detect current_rec.conf."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Fatal, could not detect current_rec.conf"
 		}
 	}
 	if {[winfo exists .tray]} {
@@ -274,8 +216,7 @@ Started at %" [lindex $::station(last) 0] $stime]
 
 proc record_schedulerStation {station number} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerStation \033\[0m \{$station\} \{$number\}"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Scheduler initiated station sequence for main application."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Scheduler initiated station sequence for main application."
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 	set ::station(last) "\{$station\} $::kanalcall($number) $number"
 }
@@ -283,8 +224,7 @@ proc record_schedulerStation {station number} {
 proc record_schedulerPreStop {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerPreStop \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Prestop sequence for recording initiated."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Prestop sequence for recording initiated."
 		catch {after cancel $::record(after_prestop_id)}
 		unset -nocomplain ::record(after_prestop_id)
 		set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
@@ -292,8 +232,7 @@ proc record_schedulerPreStop {handler} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 			if { $status_greppid_record == 0 } {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] There is an active recording (PID $resultat_recordlinkread)."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "There is an active recording (PID $resultat_recordlinkread)."
 				catch {exec kill $resultat_greppid_record}
 				catch {file delete -force "$::where_is_home/tmp/record_lockfile.tmp"}
 				after 3000 {
@@ -303,8 +242,7 @@ proc record_schedulerPreStop {handler} {
 			}
 		}
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Prestop sequence for timeshift initiated."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Prestop sequence for timeshift initiated."
 	}
 	.top_buttons.button_timeshift state !disabled
 	.top_buttons.button_epg state !disabled

@@ -18,8 +18,7 @@
 
 proc main_newsreaderCheckUpdate {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m"}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Checking for news..."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Checking for news..."
 	if {[string match de* $::env(LANG)] != 1} {
 		set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/current_eng_neu.html"} get_news]
 	} else {
@@ -100,12 +99,10 @@ proc main_newsreaderCheckUpdate {} {
 					set open_last_read_content [read $open_last_read]
 					close $open_last_read
 					if {"$open_last_read_content" == "$update_news"} {
-						puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] No newer messages."
-						flush $::logf_tv_open_append
+						log_writeOutTv 0 "No newer messages."
 						destroy $w
 					} else {
-						puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Found newer messages."
-						flush $::logf_tv_open_append
+						log_writeOutTv 0 "Found newer messages."
 						file delete "$::where_is_home/config/last_read.conf"
 						set open_last_write [open "$::where_is_home/config/last_read.conf" w]
 						puts -nonewline $open_last_write "$update_news"
@@ -160,21 +157,17 @@ proc main_newsreaderCheckUpdate {} {
 				tkwait visibility $w
 			}
 		} else {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Newsreader already opened."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Newsreader already opened."
 			return
 		}
 	} else {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can't check for news.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Do you have an active internet connection?"
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Can't check for news. Do you have an active internet connection?"
 		return
 	}
 	
 	proc main_newsreaderHomepage {} {
 		catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Executing your favorite web browser."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Executing your favorite web browser."
 		if {[string match de* $::env(LANG)] != 1} {
 			catch {exec xdg-open "http://home.arcor.de/saedelaere/index_eng.html" &}
 		} else {
@@ -183,8 +176,7 @@ proc main_newsreaderCheckUpdate {} {
 	}
 	proc main_newsreaderExit {w} {
 		catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderExit \033\[0m \{$w\}"}
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing Newsreader."
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Closing Newsreader."
 		destroy $w
 	}
 }
@@ -194,9 +186,7 @@ proc main_newsreaderAutomaticUpdate {} {
 	if !{[file exists "$::where_is_home/config/last_update.date"]} {
 		set date_file [open "$::where_is_home/config/last_update.date" w]
 		close $date_file
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Newsreader started.
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Can not determine last check. Will check now."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Newsreader started. Can not determine last check. Will check now."
 		set ::query_auto_newsreader 1
 		main_newsreaderCheckUpdate
 		return
@@ -204,33 +194,28 @@ proc main_newsreaderAutomaticUpdate {} {
 	set actual_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
 	set last_update [clock scan [clock format [file mtime "$::where_is_home/config/last_update.date"] -format "%Y%m%d"]]
 	foreach {years months days} [main_newsreaderDifftimes $actual_date $last_update] {}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Newsreader started.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Last check: [clock format $last_update -format "%d.%m.%Y"]
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Offset: $years Years $months Months $days Days"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Newsreader started"
+	log_writeOutTv 0 "Last check: [clock format $last_update -format {%d.%m.%Y}]"
+	log_writeOutTv 0 "Offset: $years Years $months Months $days Days"
 	if { $years > 0 } {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $years Years since last check"
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "$years Years since last check"
 		set ::query_auto_newsreader 1
 		main_newsreaderCheckUpdate
 		return
 	} else {
 		if { $months > 0 } {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $months Months since last check"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "$months Months since last check"
 			set ::query_auto_newsreader 1
 			main_newsreaderCheckUpdate
 			return
 		} else {
 			if { $days >= $::option(newsreader_interval) } {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $days Days since last check"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "$days Days since last check"
 				set ::query_auto_newsreader 1
 				main_newsreaderCheckUpdate
 				return
 			} else {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Next automatic check in [expr $::option(newsreader_interval) - $days] day(s)"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Next automatic check in [expr $::option(newsreader_interval) - $days] day(s)"
 			}
 		}
 	}

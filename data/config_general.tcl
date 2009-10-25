@@ -29,8 +29,7 @@ proc option_screen_0 {} {
 		.config_wizard.frame_configoptions.nb select $::window(general_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt0 $::window(general_nb1)]
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up general section in preferences"
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Setting up general section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(general_nb1) [ttk::frame $w.f_general]
 		$w add $::window(general_nb1) -text [mc "General Settings"] -padding 2
@@ -148,13 +147,11 @@ proc option_screen_0 {} {
 			if {[string trim $::choice(entry_epg)] == {}} {
 				set ::choice(entry_epg) [subst $::stnd_opt(epg_command)]
 			}
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen epg program $::choice(entry_epg)"
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Chosen epg program $::choice(entry_epg)"
 		}
 		proc default_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt0 \033\[0m \{$w\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for general section."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Starting to collect data for general section."
 			set ::choice(mbLanguage) $::option(language)
 			set ::choice(mbLanguage_value) $::option(language_value)
 			set ::choice(checkbutton_starttv) $::option(starttv_startup)
@@ -184,8 +181,7 @@ The Newsreader will check for news about TV-Viewer."]
 		}
 		proc stnd_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt0 \033\[0m \{$w\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting general options to default."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Setting general options to default."
 			set ::choice(mbLanguage) $::stnd_opt(language)
 			set ::choice(mbLanguage_value) $::stnd_opt(language_value)
 			msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::where_is/msgs}

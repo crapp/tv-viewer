@@ -122,8 +122,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		if {$::option(player_screens_value) == 0} {
 			lappend mcommand -stop-xscreensaver
 		} else {
-			puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Using heartbeat hack to stop screensaver."
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Using heartbeat hack to stop screensaver."
 			set ::data(heartbeat_id) [after 30000 tv_wmHeartbeatCmd 0]
 		}
 	} else {
@@ -153,9 +152,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		lappend mcommand -af $::option(player_add_af_commands)
 	}
 	if {"$::option(player_vo)" == "vdpau" || "$::option(player_vo)" == "xvmc"} {
-		puts $::logf_tv_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Chosen video output driver $::option(player_vo)
-# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] When using this video output driver, additional video filter options are not available."
-		flush $::logf_tv_open_append
+		log_writeOutTv 1 "Chosen video output driver $::option(player_vo)"
+		log_writeOutTv 1 "When using this video output driver, additional video filter options are not available."
 	} else {
 		if {[string trim $dopt($::option(player_deint))] == {-vf}} {
 			if {[string trim $::option(player_add_vf_commands)] != {}} {
@@ -189,12 +187,10 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	
 	if {$file == 0} {
 		lappend mcommand -wid $winid $::option(video_device)
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting tv playback..."
-		flush $::logf_tv_open_append
-		puts $::logf_mpl_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] If playback is not starting see MPlayer logfile for details.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer command line:
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $mcommand"
-		flush $::logf_tv_open_append
+		log_writeOutTv 0 "Starting tv playback..."
+		log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
+		log_writeOutMpl 0 "MPlayer command line:"
+		log_writeOutMpl 0 "$mcommand"
 		if {[winfo exists .station]} {
 			.station.top_buttons.b_station_preview state pressed
 			.top_buttons.button_starttv state pressed
@@ -230,12 +226,10 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					return
 				}
 			} else {
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting playback of $file."
-				flush $::logf_tv_open_append
-				puts $::logf_mpl_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] If playback is not starting see MPlayer logfile for details.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] MPlayer command line:
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] $mcommand"
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Starting playback of $file."
+				log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
+				log_writeOutMpl 0 "MPlayer command line:"
+				log_writeOutMpl 0 "$mcommand"
 				catch {place forget .tv.l_image}
 				catch {launch_splashPlay cancel 0 0 0}
 				catch {place forget .tv.l_anigif}
@@ -255,8 +249,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 						set delay 0
 					}
 				}
-				puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Calculated delay to start file playback $delay\ms."
-				flush $::logf_tv_open_append
+				log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
 				after $delay {
 					grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
 					.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]
@@ -280,9 +273,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				}
 			}
 		} else {
-			puts $::logf_mpl_open_append "# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] Could not locate file for file playback.
-	# <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\] $file"
-			flush $::logf_tv_open_append
+			log_writeOutTv 1 "Could not locate file for file playback."
+			log_writeOutTv 1 "$file"
 			return
 		}
 	}
@@ -562,6 +554,5 @@ proc tv_playbackStop {com handler} {
 		.tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
 		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Stopping playback."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Stopping playback"
 }

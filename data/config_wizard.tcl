@@ -21,9 +21,8 @@ proc config_wizardMainUi {} {
 	if {[winfo exists .config_wizard]} return
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] User attempted to start preferences while main is docked.
-# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Will undock main."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "User attempted to start preferences while main is docked."
+			log_writeOutTv 0 "Will undock main."
 			 main_systemTrayToggle
 		}
 	}
@@ -31,8 +30,7 @@ proc config_wizardMainUi {} {
 	if {[wm attributes .tv -fullscreen] == 1} {
 		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting preferences..."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Starting preferences..."
 	
 	# Setting up the interface
 	
@@ -163,8 +161,7 @@ proc config_wizardListbox {} {
 
 proc config_wizardExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Closing preferences dialog and reread configuration."
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Closing preferences dialog and reread configuration."
 	
 	main_readConfig
 	
@@ -211,8 +208,7 @@ proc config_wizardExit {} {
 
 proc config_wizardSaveopts {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardSaveopts \033\[0m"
-	puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Saving configuration values to $::where_is_home/config/tv-viewer.conf"
-	flush $::logf_tv_open_append
+	log_writeOutTv 0 "Saving configuration values to $::where_is_home/config/tv-viewer.conf"
 	if {[file exists "$::where_is_home/config/tv-viewer.conf"]} {
 		file delete "$::where_is_home/config/tv-viewer.conf"
 	}

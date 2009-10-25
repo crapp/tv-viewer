@@ -31,9 +31,7 @@ proc option_screen_8 {} {
 		.config_wizard.frame_configoptions.nb select $::window(advanced_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)]
 	} else {
-		puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting up advanced section in preferences"
-		flush $::logf_tv_open_append
-		
+		log_writeOutTv 0 "Setting up advanced section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(advanced_nb1) [ttk::frame $w.f_advanced]
 		$w add $::window(advanced_nb1) -text [mc "Advanced"] -padding 2
@@ -294,8 +292,7 @@ proc option_screen_8 {} {
 		
 		proc default_opt8 {w w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt8 \033\[0m \{$w\} \{$w2\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to collect data for advanced section."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Starting to collect data for advanced section."
 			if {[info exists ::option(player_aspect)]} {
 				set ::choice(cb_lf_aspect) $::option(player_aspect)
 			} else {
@@ -412,8 +409,7 @@ Minimum: 100kb Maximum: 1000kb"]
 		
 		proc stnd_opt8 {w w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt8 \033\[0m \{$w\} \{$w2\}"
-			puts $::logf_tv_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Setting advanced options to default."
-			flush $::logf_tv_open_append
+			log_writeOutTv 0 "Setting advanced options to default."
 			set ::choice(cb_lf_aspect) $::stnd_opt(player_aspect)
 			set ::choice(cb_keepaspect) $::stnd_opt(player_keepaspect)
 			set ::choice(rb_aspect) $::stnd_opt(player_aspect_monpix)
