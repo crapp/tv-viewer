@@ -78,6 +78,14 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		mplayconf(1) {-noconfig all}
 		scrshot(0) {}
 		scrshot(1) {screenshot,}
+		threads(1) {}
+		threads(2) {-lavdopts threads=2}
+		threads(3) {-lavdopts threads=3}
+		threads(4) {-lavdopts threads=4}
+		threads(5) {-lavdopts threads=5}
+		threads(6) {-lavdopts threads=6}
+		threads(7) {-lavdopts threads=7}
+		threads(8) {-lavdopts threads=8}
 	}
 	
 	array set playdelay {
@@ -98,16 +106,26 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	} else {
 		lappend mcommand {*}[auto_execok mplayer] -quiet -slave -identify
 	}
-	lappend mcommand {*}-noconfig all
+	
+	lappend mcommand {*}$cbopt(mplayconf\($::option(player_mconfig)\))
+	
 	if {[string match *adaptor* $::option(player_vo)] == 1} {
 		lappend mcommand -vo xv:[lindex $::option(player_vo) 1]
 	} else {
 		lappend mcommand {*}$vopt($::option(player_vo))
 	}
-	lappend mcommand -ao $::option(player_audio)
+	
+	if {[string trim [lindex $::option(player_audio) 1]] != {} && [string is double [lindex $::option(player_audio) 1]]} {
+		lappend mcommand -ao alsa:device=hw=[lindex $::option(player_audio) 1]
+	} else {
+		lappend mcommand -ao $::option(player_audio)
+	}
+	
 	if {[string trim $cbopt(softvol\($::option(player_aud_softvol)\))] != {}} {
 		lappend mcommand {*}$cbopt(softvol\($::option(player_aud_softvol)\))
 	}
+	
+	lappend mcommand {*}$cbopt(threads\($::option(player_threads)\))
 	
 	if {[string trim $copt($::option(player_cache))] != {}} {
 		lappend mcommand {*}$copt($::option(player_cache))
@@ -140,8 +158,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 			lappend mcommand $cbopt(monpixaspect\($::option(player_aspect_monpix)\)) $::option(player_pixaspect_val)
 		}
 	}
-	
-	lappend mcommand {*}$cbopt(mplayconf\($::option(player_mconfig)\))
 	
 	lappend mcommand -channels [lindex $::option(player_audio_channels) 0]
 	
@@ -340,8 +356,10 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	-image $::icon_m(fullscreen) \
 	-takefocus 0 \
 	-command [list tv_wmFullscreen .tv $tv_cont $tv_bg]
-	ttk::label $tv_bar.l_time \
+	label $tv_bar.l_time \
 	-width 20 \
+	-background black \
+	-foreground white \
 	-anchor center \
 	-textvariable choice(label_file_time)
 

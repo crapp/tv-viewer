@@ -98,6 +98,43 @@ proc option_screen_4 {} {
 						$w.mbAudio add radiobutton \
 						-label [string trim [lindex $line 0]] \
 						-variable choice(mbAudio)
+						if {[string match alsa [string trim [lindex $line 0]]]} {
+							if {[file exists /proc/asound/pcm]} {
+								set open_alsa [open /proc/asound/pcm r]
+								set alsa_dev [read $open_alsa]
+								close $open_alsa
+								set alsadev_status [catch {agrep -m "$alsa_dev" playback} resultat_alsadev] 
+								if {$alsadev_status == 0} {
+									set i 1
+									foreach line [split $resultat_alsadev \n] {
+										set device($i) "$line"
+										set first [expr [string first : $device($i)] + 1]
+										set second [expr [string first : $device($i) $first] - 1]
+										set device_name($i) "[string trim [string range $device($i) $first $second]]"
+										set devices_max $i
+										incr i
+									}
+									for {set i 1} {$i <= $devices_max} {incr i} {
+										set ident [string trimright [lindex $device($i) 0] ":"]
+										foreach char [split $ident "-"] {
+											set char [scan $char %d]
+											if {[info exists alsa_hw]} {
+												append alsa_hw ".$char"
+											} else {
+												append alsa_hw $char
+											}
+										}
+										set device_ident($i) "$alsa_hw $device_name($i)"
+										$w.mbAudio add radiobutton \
+										-label "alsa $device_ident($i)" \
+										-variable choice(mbAudio)
+										unset -nocomplain alsa_hw
+									}
+								} else {
+									puts "no alsa devices found"
+								}
+							}
+						}
 					}
 				}
 			} else {
