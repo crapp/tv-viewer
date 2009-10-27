@@ -137,7 +137,7 @@ proc station_searchUi {tree} {
 			incr i
 		}
 	} else {
-		log_writeOutTv 1 "Can't find any video inputs, please check the preferences (analog section)."
+		log_writeOutTv 2 "Can't find any video inputs, please check the preferences (analog section)."
 		foreach window [winfo children .station.top_searchUi] {
 			destroy $window
 		}
@@ -307,8 +307,8 @@ Please wait..."] \
 							set search_range_max [expr int([lindex [string trim $line] 6])]
 							set pgb_incr [expr (100.0 / ($search_range_max - $search_range_min))]
 							if {[string is digit $search_range_min] == 0 || [string is digit $search_range_max] == 0} {
-								log_writeOutTv 1 "Fatal, could not read frequency range."
-								log_writeOutTv 1 "$line"
+								log_writeOutTv 2 "Fatal, could not read frequency range."
+								log_writeOutTv 2 "$line"
 								return
 							}
 							set search_range_min "$search_range_min.250"
@@ -364,7 +364,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 					$tree see [lindex [$tree children {}] end]
 					log_writeOutTv 0 "Signal detected on $trimmed_resultat_dict MHz."
 				} else {
-					log_writeOutTv 1 "Fatal, could not find Frequency for $::searchchannel($counter)."
+					log_writeOutTv 2 "Fatal, could not find Frequency for $::searchchannel($counter)."
 				}
 			}
 			incr counter

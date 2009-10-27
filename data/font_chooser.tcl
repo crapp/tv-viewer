@@ -219,7 +219,7 @@ proc font_chooserUi {returnw cvar} {
 	bind $mffont.lb_size <<ListboxSelect>> [list font_chooserUiCfont $mffont.lb_fam $mffont.lb_style $mffont.lb_size $mfpre.f_prev.c_abc]
 	
 	if {[info exists fontindex] == 0 || [info exists styleindex] == 0 || [info exists sizeindex] == 0} {
-		log_writeOutTv 1 "Can not identify font. Font chooser will be closed. Report this incident to the Author."
+		log_writeOutTv 2 "Can not identify font. Font chooser will be closed. Report this incident to the Author."
 		destroy $w
 		return
 	} else {

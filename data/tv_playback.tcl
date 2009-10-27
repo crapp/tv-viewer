@@ -205,8 +205,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		lappend mcommand -wid $winid $::option(video_device)
 		log_writeOutTv 0 "Starting tv playback..."
 		log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
-		log_writeOutMpl 0 "MPlayer command line:"
-		log_writeOutMpl 0 "$mcommand"
+		log_writeOutMpl 1 "MPlayer command line:"
+		log_writeOutMpl 1 "$mcommand"
 		if {[winfo exists .station]} {
 			.station.top_buttons.b_station_preview state pressed
 			.top_buttons.button_starttv state pressed
@@ -244,8 +244,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 			} else {
 				log_writeOutTv 0 "Starting playback of $file."
 				log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
-				log_writeOutMpl 0 "MPlayer command line:"
-				log_writeOutMpl 0 "$mcommand"
+				log_writeOutMpl 1 "MPlayer command line:"
+				log_writeOutMpl 1 "$mcommand"
 				catch {place forget .tv.l_image}
 				catch {launch_splashPlay cancel 0 0 0}
 				catch {place forget .tv.l_anigif}
@@ -289,8 +289,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				}
 			}
 		} else {
-			log_writeOutTv 1 "Could not locate file for file playback."
-			log_writeOutTv 1 "$file"
+			log_writeOutTv 2 "Could not locate file for file playback."
+			log_writeOutTv 2 "$file"
 			return
 		}
 	}

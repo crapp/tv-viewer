@@ -84,7 +84,7 @@ proc station_itemEdit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemEdit \033\[0m \{$w\}"
 	if {[string trim [$w selection]] == {}} return
 	if {[llength [$w selection]] > 1} {
-		log_writeOutTv 1 "Selection is bigger than 1. Can't open edit dialog."
+		log_writeOutTv 1 "You have selected mor then one item to edit. Can't open edit dialog."
 		return
 	}
 	
@@ -189,7 +189,7 @@ proc station_itemEdit {w} {
 			incr i
 		}
 	} else {
-		log_writeOutTv 1 "Can't find any video inputs, please check the preferences (analog section)."
+		log_writeOutTv 2 "Can't find any video inputs, please check the preferences (analog section)."
 		foreach window [winfo children .station.top_edit] {
 			destroy $window
 		}
@@ -209,12 +209,12 @@ proc station_itemEdit {w} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyEdit \033\[0m \{$w\} \{$warn\} \{$tree\}"
 		if {[info exists ::choice(entry_station)] == 0 || [info exists ::choice(entry_station)] == 0} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 1 "Please specify name and frequency for each station."
+			log_writeOutTv 2 "Please specify name and frequency for each station."
 			return
 		} else {
 			if {[string trim $::choice(entry_station)] == {} || [string trim $::choice(entry_freq)] == {}} {
 				$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-				log_writeOutTv 1 "Please specify name and frequency for each station."
+				log_writeOutTv 2 "Please specify name and frequency for each station."
 				return
 			}
 		}
@@ -353,7 +353,7 @@ proc station_itemAdd {w} {
 			incr i
 		}
 	} else {
-		log_writeOutTv 1 "Can't find any video inputs, please check the preferences (analog section)."
+		log_writeOutTv 2 "Can't find any video inputs, please check the preferences (analog section)."
 		foreach window [winfo children .station.top_add] {
 			destroy $window
 		}
@@ -373,12 +373,12 @@ proc station_itemAdd {w} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyAdd \033\[0m \{$w\} \{$warn\} \{$tree\}"
 		if {[info exists ::choice(entry_station_apply)] == 0 || [info exists ::choice(entry_freq_apply)] == 0} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 1 "Please specify name and frequency for each station."
+			log_writeOutTv 2 "Please specify name and frequency for each station."
 			return
 		} else {
 			if {[string trim $::choice(entry_station_apply)] == {} || [string trim $::choice(entry_freq_apply)] == {}} {
 				$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-				log_writeOutTv 1 "Please specify name and frequency for each station."
+				log_writeOutTv 2 "Please specify name and frequency for each station."
 				return
 			}
 		}

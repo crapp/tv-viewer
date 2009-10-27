@@ -30,7 +30,7 @@ proc main_systemTrayActivate {} {
 					settooltip .tray [mc "TV-Viewer idle"]
 					log_writeOutTv 0 "Succesfully added Icon to system tray."
 				} else {
-					log_writeOutTv 1 "Could not create an icon in system tray."
+					log_writeOutTv 2 "Could not create an icon in system tray."
 				}
 			}
 		} else {
@@ -85,7 +85,7 @@ proc main_systemTrayToggle {} {
 			}
 		}
 	} else {
-		log_writeOutTv 1 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
+		log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 	}
 }
 
@@ -117,7 +117,7 @@ proc main_systemTrayMini {com} {
 				wm withdraw .
 			}
 		} else {
-			log_writeOutTv 1 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
+			log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 		}
 	} else {
 		bind . <Unmap> {

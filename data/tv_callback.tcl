@@ -62,7 +62,7 @@ proc tv_callbackVidData {} {
 			}
 		} else {
 			if {[string match "A:*V:*A-V:*" $line] != 1} {
-				log_writeOutMpl 0 "# $line"
+				log_writeOutMpl 0 "$line"
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_callbackVidData \033\[0m \{$line\}"
 			}
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
@@ -168,8 +168,8 @@ proc tv_callbackVidData {} {
 			set ::data(report) $line
 		}
 	} else {
-		log_writeOutTv 1 "Tried to read channel ::data(mplayer)."
-		log_writeOutTv 1 "Pipe seems to be broken."
+		log_writeOutTv 2 "Tried to read channel ::data(mplayer)."
+		log_writeOutTv 2 "Pipe seems to be broken."
 	}
 }
 

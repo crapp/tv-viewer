@@ -52,7 +52,7 @@ proc main_readStationFile {} {
 				set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 				if { $status_greppid_record == 0 } {
 					set ::main(running_recording) 1
-					log_writeOutTv 0 "Found an active recording, won't change station."
+					log_writeOutTv 1 "Found an active recording, won't change station."
 				} else {
 					set ::main(running_recording) 0
 				}

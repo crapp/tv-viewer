@@ -331,7 +331,7 @@ timeshift will automatically be stopped."]
 		}
 		proc stnd_opt7 {w w2} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt7 \033\[0m \{$w\} \{$w2\}"
-			log_writeOutTv 0 "Setting record options to default."
+			log_writeOutTv 1 "Setting record options to default."
 			set ::choice(entry_rec_path) "[subst $::stnd_opt(rec_default_path)]"
 			set ::choice(sb_duration_hour) $::stnd_opt(rec_duration_hour)
 			set ::choice(sb_duration_min) $::stnd_opt(rec_duration_min)

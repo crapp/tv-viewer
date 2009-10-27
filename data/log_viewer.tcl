@@ -172,31 +172,44 @@ proc log_viewerMplayer {} {
 			if {[file exists "$::where_is_home/log/videoplayer.log"]} {
 				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for MPlayer."
 				set mlogfile_open [open "$::where_is_home/log/videoplayer.log" r]
-				$w tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold"
+				$w tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #0030C4
+				$w tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #DF0F0F
 				set i 0
 				set match_date ""
 				while {[gets $mlogfile_open line]!=-1} {
-					if {[string match "# <\*>*" $line]} {
-						$w insert end "# [string trim $line {# <\*>}]\n" fat
-					} else {
-						if {[string match "# Start new session*" $line]} {
-							if {"[lindex $line 4]" == "$match_date"} {
-								incr i
-								.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer insert end "Session [lindex $line 4] - $i"
-								set match_date [lindex $line 4]
-								$w insert end $line\n
-								$w mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$w index "end -10 chars"]
-							} else {
-								.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer insert end "Session [lindex $line 4] - 1"
-								set i 1
-								set match_date [lindex $line 4]
-								$w insert end $line\n
-								$w mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$w index "end -10 chars"]
-							}
-						} else {
+					set match 0
+					if {[string match "*WARNING:*" $line]} {
+						set match 1
+						$w insert end $line\n fat_blue
+					}
+					if {[string match "*ERROR:*" $line]} {
+						set match 1
+						$w insert end $line\n fat_red
+					}
+					if {[string match "*DEBUG:*" $line]} {
+						set match 1
+						$w insert end $line\n
+					}
+					if {[string match "# Start new session*" $line]} {
+						set match 1
+						if {"[lindex $line 4]" == "$match_date"} {
+							incr i
+							.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer insert end "Session [lindex $line 4] - $i"
+							set match_date [lindex $line 4]
 							$w insert end $line\n
+							$w mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$w index "end -10 chars"]
+						} else {
+							.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer insert end "Session [lindex $line 4] - 1"
+							set i 1
+							set match_date [lindex $line 4]
+							$w insert end $line\n
+							$w mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$w index "end -10 chars"]
 						}
 					}
+					if {$match == 0} {
+						$w insert end $line\n
+					}
+					unset -nocomplain match
 				}
 				bind .log_viewer_mplayer.f_log_mplayer.lb_log_mplayer <<ListboxSelect>> [list log_viewerMplayerLb .log_viewer_mplayer.f_log_mplayer.lb_log_mplayer]
 				seek $mlogfile_open 0 end
@@ -221,17 +234,25 @@ proc log_viewerMplTail {filename position} {
 		unset -nocomplain ::data(log_mpl_id)
 		return
 	}
-	.log_viewer_mplayer.f_log_mplayer.t_log_mplayer tag configure fat -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_mplayer.f_log_mplayer.t_log_mplayer -size] bold"
+	.log_viewer_mplayer.f_log_mplayer.t_log_mplayer tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_mplayer.f_log_mplayer.t_log_mplayer -size] bold" -foreground #0030C4
+	
+	.log_viewer_mplayer.f_log_mplayer.t_log_mplayer tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_mplayer.f_log_mplayer.t_log_mplayer -size] bold" -foreground #DF0F0F
+	
 	set fh [open $filename r]
 	fconfigure $fh -blocking no -buffering line
 	seek $fh $position start
 	while {[eof $fh] == 0} {
 		gets $fh line
 		if {[string length $line] > 0} {
-			if {[string match "# <\*>*" $line]} {
-				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer insert end "# [string trim $line {# <\*>}]\n" fat
+			if {[string match "*WARNING:*" $line]} {
+				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer insert end $line\n fat_blue
 				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer see end
-			} else {
+			}
+			if {[string match "*ERROR:*" $line]} {
+				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer insert end $line\n fat_red
+				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer see end
+			}
+			if {[string match "*DEBUG:*" $line]} {
 				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer insert end $line\n
 				.log_viewer_mplayer.f_log_mplayer.t_log_mplayer see end
 			}
@@ -253,9 +274,13 @@ proc log_viewerMplayerLb {w} {
 proc log_writeOutMpl {handler text} {
 	set logformat "#"
 	if {$handler == 0} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\]"
-	} else {
-		append logformat " <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] DEBUG: "
+	}
+	if {$handler == 1} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] WARNING: "
+	}
+	if {$handler == 2} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] ERROR: "
 	}
 	puts $::logf_mpl_open_append "$logformat $text"
 	flush $::logf_mpl_open_append
@@ -344,31 +369,44 @@ proc log_viewerScheduler {} {
 			if {[file exists "$::where_is_home/log/scheduler.log"]} {
 				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for Scheduler."
 				set mlogfile_open [open "$::where_is_home/log/scheduler.log" r]
-				$w tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold"
+				$w tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #0030C4
+				$w tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #DF0F0F
 				set i 0
 				set match_date ""
 				while {[gets $mlogfile_open line]!=-1} {
-					if {[string match "# <\*>*" $line]} {
-						$w insert end "# [string trim $line {# <\*>}]\n" fat
-					} else {
-						if {[string match "# Start new session*" $line]} {
-							if {"[lindex $line 4]" == "$match_date"} {
-								incr i
-								.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler insert end "Session [lindex $line 4] - $i"
-								set match_date [lindex $line 4]
-								$w insert end $line\n
-								$w mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$w index "end -10 chars"]
-							} else {
-								.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler insert end "Session [lindex $line 4] - 1"
-								set i 1
-								set match_date [lindex $line 4]
-								$w insert end $line\n
-								$w mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$w index "end -10 chars"]
-							}
-						} else {
+					set match 0
+					if {[string match "*WARNING:*" $line]} {
+						set match 1
+						$w insert end $line\n fat_blue
+					}
+					if {[string match "*ERROR:*" $line]} {
+						set match 1
+						$w insert end $line\n fat_red
+					}
+					if {[string match "*DEBUG:*" $line]} {
+						set match 1
+						$w insert end $line\n
+					}
+					if {[string match "# Start new session*" $line]} {
+						set match 1
+						if {"[lindex $line 4]" == "$match_date"} {
+							incr i
+							.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler insert end "Session [lindex $line 4] - $i"
+							set match_date [lindex $line 4]
 							$w insert end $line\n
+							$w mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$w index "end -10 chars"]
+						} else {
+							.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler insert end "Session [lindex $line 4] - 1"
+							set i 1
+							set match_date [lindex $line 4]
+							$w insert end $line\n
+							$w mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$w index "end -10 chars"]
 						}
 					}
+					if {$match == 0} {
+						$w insert end $line\n
+					}
+					unset -nocomplain match
 				}
 				bind .log_viewer_scheduler.f_log_scheduler.lb_log_scheduler <<ListboxSelect>> [list log_viewerSchedLb .log_viewer_scheduler.f_log_scheduler.lb_log_scheduler]
 				seek $mlogfile_open 0 end
@@ -393,8 +431,9 @@ proc log_viewerSchedTail {filename position} {
 		unset -nocomplain ::data(log_sched_id)
 		return
 	}
+	.log_viewer_scheduler.f_log_scheduler.t_log_scheduler tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_scheduler.f_log_scheduler.t_log_scheduler -size] bold" -foreground #0030C4
 	
-	.log_viewer_scheduler.f_log_scheduler.t_log_scheduler tag configure fat -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_scheduler.f_log_scheduler.t_log_scheduler -size] bold"
+	.log_viewer_scheduler.f_log_scheduler.t_log_scheduler tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_scheduler.f_log_scheduler.t_log_scheduler -size] bold" -foreground #DF0F0F
 	
 	set fh [open $filename r]
 	fconfigure $fh -blocking no -buffering line
@@ -402,13 +441,27 @@ proc log_viewerSchedTail {filename position} {
 	while {[eof $fh] == 0} {
 		gets $fh line
 		if {[string length $line] > 0} {
-			if {[string match "# <\*>*" $line]} {
-				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler insert end "# [string trim $line {# <\*>}]\n" fat
+			set match 0
+			if {[string match "*WARNING:*" $line]} {
+				set match 1
+				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler insert end $line\n fat_blue
 				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler see end
-			} else {
+			}
+			if {[string match "*ERROR:*" $line]} {
+				set match 1
+				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler insert end $line\n fat_red
+				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler see end
+			}
+			if {[string match "*DEBUG:*" $line]} {
+				set match 1
 				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler insert end $line\n
 				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler see end
 			}
+			if {$match == 0} {
+				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler insert end $line\n
+				.log_viewer_scheduler.f_log_scheduler.t_log_scheduler see end
+			}
+			unset -nocomplain match
 		}
 	}
 	set position [tell $fh]
@@ -507,31 +560,44 @@ proc log_viewerTvViewer {} {
 			if {[file exists "$::where_is_home/log/tvviewer.log"]} {
 				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for TV-Viewer."
 				set mlogfile_open [open "$::where_is_home/log/tvviewer.log" r]
-				$w tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold"
+				$w tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #0030C4
+				$w tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #DF0F0F
 				set i 0
 				set match_date ""
 				while {[gets $mlogfile_open line]!=-1} {
-					if {[string match "# <\*>*" $line]} {
-						$w insert end "# [string trim $line {# <\*>}]\n" fat
-					} else {
-						if {[string match "# Start new session*" $line]} {
-							if {"[lindex $line 4]" == "$match_date"} {
-								incr i
-								.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer insert end "Session [lindex $line 4] - $i"
-								set match_date [lindex $line 4]
-								$w insert end $line\n
-								$w mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$w index "end -10 chars"]
-							} else {
-								.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer insert end "Session [lindex $line 4] - 1"
-								set i 1
-								set match_date [lindex $line 4]
-								$w insert end $line\n
-								$w mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$w index "end -10 chars"]
-							}
-						} else {
+					set match 0
+					if {[string match "*WARNING:*" $line]} {
+						set match 1
+						$w insert end $line\n fat_blue
+					}
+					if {[string match "*ERROR:*" $line]} {
+						set match 1
+						$w insert end $line\n fat_red
+					}
+					if {[string match "*DEBUG:*" $line]} {
+						set match 1
+						$w insert end $line\n
+					}
+					if {[string match "# Start new session*" $line]} {
+						set match 1
+						if {"[lindex $line 4]" == "$match_date"} {
+							incr i
+							.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer insert end "Session [lindex $line 4] - $i"
+							set match_date [lindex $line 4]
 							$w insert end $line\n
+							$w mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$w index "end -10 chars"]
+						} else {
+							.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer insert end "Session [lindex $line 4] - 1"
+							set i 1
+							set match_date [lindex $line 4]
+							$w insert end $line\n
+							$w mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$w index "end -10 chars"]
 						}
 					}
+					if {$match == 0} {
+						$w insert end $line\n
+					}
+					unset -nocomplain match
 				}
 				bind .log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer <<ListboxSelect>> [list log_viewerTvLb .log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer]
 				seek $mlogfile_open 0 end
@@ -557,7 +623,9 @@ proc log_viewerTvTail {filename position} {
 		return
 	}
 	
-	.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer tag configure fat -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer -size] bold"
+	.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer -size] bold" -foreground #0030C4
+	
+	.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof .log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer -size] bold" -foreground #DF0F0F
 	
 	set fh [open $filename r]
 	fconfigure $fh -blocking no -buffering line
@@ -565,10 +633,15 @@ proc log_viewerTvTail {filename position} {
 	while {[eof $fh] == 0} {
 		gets $fh line
 		if {[string length $line] > 0} {
-			if {[string match "# <\*>*" $line]} {
-				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer insert end "# [string trim $line {# <\*>}]\n" fat
+			if {[string match "*WARNING:*" $line]} {
+				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer insert end $line\n fat_blue
 				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer see end
-			} else {
+			}
+			if {[string match "*ERROR:*" $line]} {
+				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer insert end $line\n fat_red
+				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer see end
+			}
+			if {[string match "*DEBUG:*" $line]} {
 				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer insert end $line\n
 				.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer see end
 			}
@@ -590,9 +663,13 @@ proc log_viewerTvLb {w} {
 proc log_writeOutTv {handler text} {
 	set logformat "#"
 	if {$handler == 0} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\]"
-	} else {
-		append logformat " <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] DEBUG: "
+	}
+	if {$handler == 1} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] WARNING: "
+	}
+	if {$handler == 2} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] ERROR: "
 	}
 	puts $::logf_tv_open_append "$logformat $text"
 	flush $::logf_tv_open_append

@@ -294,7 +294,7 @@ proc config_wizardReadSettings {} {
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {
-				log_writeOutTv 1 "Config file line incorrect: $line"
+				log_writeOutTv 2 "Config file line incorrect: $line"
 			}
 		}
 		close $open_config_file

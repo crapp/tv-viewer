@@ -54,7 +54,7 @@ proc option_screen_2 {} {
 		
 		proc stnd_opt2 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt2 \033\[0m \{$w\}"
-			log_writeOutTv 0 "Setting dvb options to default."
+			log_writeOutTv 1 "Setting dvb options to default."
 		}
 	}
 }

@@ -124,6 +124,7 @@ proc option_screen_4 {} {
 												append alsa_hw $char
 											}
 										}
+										log_writeOutTv 0 "Found alsa hardware device $alsa_hw $device_name($i)"
 										set device_ident($i) "$alsa_hw $device_name($i)"
 										$w.mbAudio add radiobutton \
 										-label "alsa $device_ident($i)" \
@@ -131,15 +132,28 @@ proc option_screen_4 {} {
 										unset -nocomplain alsa_hw
 									}
 								} else {
-									puts "no alsa devices found"
+									log_writeOutTv 2 "Can't detect alsa hardware devices"
+									log_writeOutTv 2 "Error message: $resultat_alsadev"
 								}
+							} else {
+								log_writeOutTv 2 "Can't detect alsa hardware devices. There is no file /proc/asound/pcm"
 							}
 						}
 					}
 				}
+				set max_mbentries [$w.mbAudio index end]
+				set alsa_found 0
+				for {set i 0} {$i <= $max_mbentries} {incr i} {
+					if {[string trim [$w.mbAudio entrycget $i -label]] == "alsa"} {
+						set alsa_found 1
+					}
+				}
+				if {$alsa_found == 0} {
+					log_writeOutTv 2 "MPlayer did not report back alsa as audio output driver."
+				}
 			} else {
 				$::window(audio_nb1).mb_lf_audio state disabled
-				log_writeOutTv 1 "MPlayer did not report audio ouput drivers. Deactivating menubutton."
+				log_writeOutTv 2 "MPlayer did not report audio ouput drivers. Deactivating menubutton."
 			}
 			
 			if {[info exists ::option(player_audio)]} {
@@ -182,7 +196,7 @@ to the chosen value."]
 		}
 		proc stnd_opt4 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
-			log_writeOutTv 0 "Setting audio options to default."
+			log_writeOutTv 1 "Setting audio options to default."
 			set ::choice(mbAudio) $::stnd_opt(player_audio)
 			set ::choice(cb_softvol) $::stnd_opt(player_aud_softvol)
 			set ::choice(mbAudio_channels) $::stnd_opt(player_audio_channels)

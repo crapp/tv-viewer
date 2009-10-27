@@ -43,7 +43,7 @@ proc record_schedulerPrestart {handler} {
 		.record_wizard configure -cursor watch
 	}
 	if {$::option(rec_allow_sta_change) == 0} {
-		log_writeOutTv 0 "Station change not allowed during recording."
+		log_writeOutTv 1 "Station change not allowed during recording."
 		.bottom_buttons.button_channelup state disabled
 		.bottom_buttons.button_channeldown state disabled
 		.bottom_buttons.button_channeljumpback state disabled
@@ -163,7 +163,7 @@ proc record_schedulerRec {handler} {
 				lassign $line station sdate stime edate etime duration ::tv(current_rec_file)
 			}
 		} else {
-			log_writeOutTv 1 "Fatal, could not detect current_rec.conf"
+			log_writeOutTv 2 "Fatal, could not detect current_rec.conf"
 		}
 	}
 	if {[winfo exists .tray]} {

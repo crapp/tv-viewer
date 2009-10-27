@@ -127,7 +127,7 @@ proc main_readConfig {} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {
 				if {[info exists ::logf_tv_open_append]} {
-					log_writeOutTv 1 "Config file line incorrect: $line"
+					log_writeOutTv 2 "Config file line incorrect: $line"
 				}
 			}
 		}

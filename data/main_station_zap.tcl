@@ -320,8 +320,8 @@ proc main_stationInput {com direct} {
 				return
 			}
 		} else {
-			log_writeOutTv 1 "Can not retrieve video inputs."
-			log_writeOutTv 1 "Error message: $resultat_list_input"
+			log_writeOutTv 2 "Can not retrieve video inputs."
+			log_writeOutTv 2 "Error message: $resultat_list_input"
 		}
 	} else {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -332,8 +332,8 @@ proc main_stationInput {com direct} {
 				log_writeOutTv 0 "Change video input to $::option(video_input)"
 			}
 		} else {
-			log_writeOutTv 1 "Can not change video input."
-			log_writeOutTv 1 "Error message: $resultat_grep_input"
+			log_writeOutTv 2 "Can not change video input."
+			log_writeOutTv 2 "Error message: $resultat_grep_input"
 		}
 	}
 }
@@ -350,8 +350,8 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 		return
 	}
 	if {$secs == 3000} {
-		log_writeOutTv 1 "Waited 3 seconds to change video input to $input."
-		log_writeOutTv 1 "This didn't work, BAD."
+		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
+		log_writeOutTv 2 "This didn't work, BAD."
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -384,8 +384,8 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 			set ::main(change_inputLoop_id) [after 100 [list main_stationInputLoop [expr $secs + 100] $input $freq $snumber $restart $aftmsg]]
 		}
 	} else {
-		log_writeOutTv 1 "Can not change video input to $input."
-		log_writeOutTv 1 "$resultat_grep_input."
+		log_writeOutTv 2 "Can not change video input to $input."
+		log_writeOutTv 2 "$resultat_grep_input."
 		return
 	}
 }
@@ -402,8 +402,8 @@ proc main_stationInputQuery {secs input restart} {
 		return
 	}
 	if {$secs == 3000} {
-		log_writeOutTv 1 "Waited 3 seconds to change video input to $input."
-		log_writeOutTv 1 "This didn't work, BAD."
+		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
+		log_writeOutTv 2 "This didn't work, BAD."
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} check_back_input

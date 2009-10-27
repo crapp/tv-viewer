@@ -56,7 +56,7 @@ proc option_screen_5 {} {
 		proc stnd_opt5 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt5 \033\[0m \{$w\}"
 			# Nothing to do yet
-			log_writeOutTv 0 "Setting radio options to default."
+			log_writeOutTv 1 "Setting radio options to default."
 		}
 	}
 }

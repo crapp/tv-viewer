@@ -157,11 +157,11 @@ proc main_newsreaderCheckUpdate {} {
 				tkwait visibility $w
 			}
 		} else {
-			log_writeOutTv 0 "Newsreader already opened."
+			log_writeOutTv 1 "Newsreader already opened."
 			return
 		}
 	} else {
-		log_writeOutTv 1 "Can't check for news. Do you have an active internet connection?"
+		log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
 		return
 	}
 	

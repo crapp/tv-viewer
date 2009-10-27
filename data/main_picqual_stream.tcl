@@ -51,7 +51,7 @@ proc main_pic_streamPicqualTemporal {} {
 			if {[lindex $read_temporal 1] == $::option(temporal_filter_value) } {
 				log_writeOutTv 0 "Temporal filter set to $::option(temporal_filter_value)"
 			} else {
-				log_writeOutTv 1 "Can't change temporal filter"
+				log_writeOutTv 2 "Can't change temporal filter"
 			}
 		}
 	}
@@ -68,7 +68,7 @@ proc main_pic_streamVbitrate {} {
 				if {[expr ([lindex $read_peak_bitrate 1] / 8) / 1024] == $::option(videopeakbitrate)} {
 					log_writeOutTv 0 "Setting 'video peak bitrate' to $::option(videopeakbitrate)"
 				} else {
-					log_writeOutTv 1 "Can't set 'video peak bitrate'"
+					log_writeOutTv 2 "Can't set 'video peak bitrate'"
 				}
 			}
 		}
@@ -80,7 +80,7 @@ proc main_pic_streamVbitrate {} {
 				if {[expr ([lindex $read_bitrate 1] / 8) / 1024] == $::option(videobitrate)} {
 					log_writeOutTv 0 "Setting 'video bitrate' to $::option(videobitrate)"
 				} else {
-					log_writeOutTv 1 "Can't set 'video bitrate'"
+					log_writeOutTv 2 "Can't set 'video bitrate'"
 				}
 			}
 		}
@@ -142,13 +142,13 @@ proc main_pic_streamAudioV4l2 {} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=volume=[expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]}
 				catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=volume} result_audio
 				if {[string trim [lindex $result_audio end]] != [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))]} {
-					log_writeOutTv 1 "Setting hardware audio level to [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))] wasn't successful."
-					log_writeOutTv 1 "Error message: $result_audio"
+					log_writeOutTv 2 "Setting hardware audio level to [expr round($::option(audio_v4l2_value) * $::option(audio_v4l2_mult))] wasn't successful."
+					log_writeOutTv 2 "Error message: $result_audio"
 				}
 			}
 		} else {
-			log_writeOutTv 1 "Can't access hardware audio control. Error message:"
-			log_writeOutTv 1 "$resultat_audio"
+			log_writeOutTv 2 "Can't access hardware audio control. Error message:"
+			log_writeOutTv 2 "$resultat_audio"
 		}
 	}
 }

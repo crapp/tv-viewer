@@ -117,7 +117,7 @@ proc scheduler_log {} {
 		set ::logf_sched_open_append [open /dev/null a]
 		fconfigure $::logf_sched_open_append -blocking no -buffering line
 	}
-	set ::logf_tv_open_append $::logf_sched_open_append
+	#~ set ::logf_tv_open_append $::logf_sched_open_append
 }
 
 scheduler_log
@@ -125,9 +125,13 @@ scheduler_log
 proc scheduler_logWriteOut {handler text} {
 	set logformat "#"
 	if {$handler == 0} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\]"
-	} else {
-		append logformat " <*>\[[clock format [clock scan now] -format {%H:%M:%S}]\]"
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] DEBUG: "
+	}
+	if {$handler == 1} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] WARNING: "
+	}
+	if {$handler == 2} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] ERROR: "
 	}
 	puts $::logf_sched_open_append "$logformat $text"
 	flush $::logf_sched_open_append
@@ -135,10 +139,10 @@ proc scheduler_logWriteOut {handler text} {
 
 proc scheduler_stations {} {
 	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
-		scheduler_logWriteOut 1 "No valid stations_$::option(frequency_table).conf"
-		scheduler_logWriteOut 1 "Please create one using the Station Editor."
-		scheduler_logWriteOut 1 "Make sure you checked the configuration first!"
-		scheduler_logWriteOut 1 "Scheduler EXIT 1"
+		scheduler_logWriteOut 2 "No valid stations_$::option(frequency_table).conf"
+		scheduler_logWriteOut 2 "Please create one using the Station Editor."
+		scheduler_logWriteOut 2 "Make sure you checked the configuration first!"
+		scheduler_logWriteOut 2 "Scheduler EXIT 1"
 		exit 1
 	} else {
 		set file "$::where_is_home/config/stations_$::option(frequency_table).conf"
@@ -157,10 +161,10 @@ proc scheduler_stations {} {
 		}
 		close $open_channel_file
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			scheduler_logWriteOut 1 "No valid stations_$::option(frequency_table).conf"
-			scheduler_logWriteOut 1 "Please create one using the Station Editor."
-			scheduler_logWriteOut 1 "Make sure you checked the configuration first!"
-			scheduler_logWriteOut 1 "Scheduler EXIT 1"
+			scheduler_logWriteOut 2 "No valid stations_$::option(frequency_table).conf"
+			scheduler_logWriteOut 2 "Please create one using the Station Editor."
+			scheduler_logWriteOut 2 "Make sure you checked the configuration first!"
+			scheduler_logWriteOut 2 "Scheduler EXIT 1"
 			exit 1
 		}
 	}
@@ -264,8 +268,8 @@ proc scheduler_rec_prestart {jobid} {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 		if { $status_greppid_record == 0 } {
-			scheduler_logWriteOut 1 "There is an active recording."
-			scheduler_logWriteOut 1 "Can't record $::recjob($jobid)"
+			scheduler_logWriteOut 2 "There is an active recording."
+			scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
 			puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
 			flush $::data(comsocket)
 			return
@@ -325,8 +329,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 		return
 	}
 	if {$secs == 3000} {
-		scheduler_logWriteOut 1 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
-		scheduler_logWriteOut 1 "This didn't work, BAD."
+		scheduler_logWriteOut 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
+		scheduler_logWriteOut 2 "This didn't work, BAD."
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -352,16 +356,16 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 			set ::scheduler(change_inputLoop_id) [after 100 [list scheduler_change_inputLoop [expr $secs + 100] $snumber $jobid]]
 		}
 	} else {
-		scheduler_logWriteOut 1 "Can not change video input to $::kanalinput($snumber)."
-		scheduler_logWriteOut 1 "$resultat_grep_input."
+		scheduler_logWriteOut 2 "Can not change video input to $::kanalinput($snumber)."
+		scheduler_logWriteOut 2 "$resultat_grep_input."
 		return
 	}
 }
 
 proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {$counter == 10} {
-		scheduler_logWriteOut 1 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
-		scheduler_logWriteOut 1 "This was unsuccessful."
+		scheduler_logWriteOut 2 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
+		scheduler_logWriteOut 2 "This was unsuccessful."
 		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
 		flush $::data(comsocket)
 		return
@@ -388,8 +392,8 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	} else {
 		catch {exec kill $rec_pid}
 		catch {exec ""}
-		scheduler_logWriteOut 1 "File [lindex $::recjob($jobid) end] doesn't exist."
-		scheduler_logWriteOut 1 "Can't record $::recjob($jobid)"
+		scheduler_logWriteOut 2 "File [lindex $::recjob($jobid) end] doesn't exist."
+		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
 		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
 		flush $::data(comsocket)
 	}

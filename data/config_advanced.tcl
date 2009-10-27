@@ -409,7 +409,7 @@ Minimum: 100kb Maximum: 1000kb"]
 		
 		proc stnd_opt8 {w w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt8 \033\[0m \{$w\} \{$w2\}"
-			log_writeOutTv 0 "Setting advanced options to default."
+			log_writeOutTv 1 "Setting advanced options to default."
 			set ::choice(cb_lf_aspect) $::stnd_opt(player_aspect)
 			set ::choice(cb_keepaspect) $::stnd_opt(player_keepaspect)
 			set ::choice(rb_aspect) $::stnd_opt(player_aspect_monpix)

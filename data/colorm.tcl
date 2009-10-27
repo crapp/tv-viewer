@@ -28,14 +28,14 @@ proc colorm_readValues {wfscale} {
 			log_writeOutTv 0 "Default value for hue: $::hue(default)"
 			$wfscale.s_hue configure -from $::hue(min) -to $::hue(max)
 		} else {
-			log_writeOutTv 1 "Can't read default value for hue."
-			log_writeOutTv 1 "Error message: $hue_default_read"
+			log_writeOutTv 2 "Can't read default value for hue."
+			log_writeOutTv 2 "Error message: $hue_default_read"
 			$wfscale.s_hue state disabled
 			$wfscale.l_hue state disabled
 		}
 	} else {
-		log_writeOutTv 1 "Can't read default value for hue."
-		log_writeOutTv 1 "Error message: $hue_default_read"
+		log_writeOutTv 2 "Can't read default value for hue."
+		log_writeOutTv 2 "Error message: $hue_default_read"
 		$wfscale.s_hue state disabled
 		$wfscale.l_hue state disabled
 	}
@@ -49,14 +49,14 @@ proc colorm_readValues {wfscale} {
 			log_writeOutTv 0 "Default value for saturation: $::saturation(default)"
 			$wfscale.s_saturation configure -from $::saturation(min) -to $::saturation(max)
 		} else {
-			log_writeOutTv 1 "Can't read default value for saturation."
-			log_writeOutTv 1 "Error message: $saturation_default_read"
+			log_writeOutTv 2 "Can't read default value for saturation."
+			log_writeOutTv 2 "Error message: $saturation_default_read"
 			$wfscale.s_saturation state disabled
 			$wfscale.l_saturation state disabled
 		}
 	} else {
-		log_writeOutTv 1 "Can't read default value for saturation."
-		log_writeOutTv 1 "Error message: $saturation_default_read"
+		log_writeOutTv 2 "Can't read default value for saturation."
+		log_writeOutTv 2 "Error message: $saturation_default_read"
 		$wfscale.s_saturation state disabled
 		$wfscale.l_saturation state disabled
 	}
@@ -70,14 +70,14 @@ proc colorm_readValues {wfscale} {
 			log_writeOutTv 0 "Default value for contrast: $::contrast(default)"
 			$wfscale.s_contrast configure -from $::contrast(min) -to $::contrast(max)
 		} else {
-			log_writeOutTv 1 "Can't read default value for contrast."
-			log_writeOutTv 1 "Error message: $contrast_default_read"
+			log_writeOutTv 2 "Can't read default value for contrast."
+			log_writeOutTv 2 "Error message: $contrast_default_read"
 			$wfscale.s_contrast state disabled
 			$wfscale.l_contrast state disabled
 		}
 	} else {
-		log_writeOutTv 1 "Can't read default value for contrast."
-		log_writeOutTv 1 "Error message: $contrast_default_read"
+		log_writeOutTv 2 "Can't read default value for contrast."
+		log_writeOutTv 2 "Error message: $contrast_default_read"
 		$wfscale.s_contrast state disabled
 		$wfscale.l_contrast state disabled
 	}
@@ -91,14 +91,14 @@ proc colorm_readValues {wfscale} {
 			log_writeOutTv 0 "Default value for brightness: $::brightness(default)"
 			$wfscale.s_brightness configure -from $::brightness(min) -to $::brightness(max)
 		} else {
-			log_writeOutTv 1 "Can't read default value for brightness."
-			log_writeOutTv 1 "Error message: $brightness_default_read"
+			log_writeOutTv 2 "Can't read default value for brightness."
+			log_writeOutTv 2 "Error message: $brightness_default_read"
 			$wfscale.s_brightness state disabled
 			$wfscale.l_brightness state disabled
 		}
 	} else {
-		log_writeOutTv 1 "Can't read default value for brightness."
-		log_writeOutTv 1 "Error message: $brightness_default_read"
+		log_writeOutTv 2 "Can't read default value for brightness."
+		log_writeOutTv 2 "Error message: $brightness_default_read"
 		$wfscale.s_brightness state disabled
 		$wfscale.l_brightness state disabled
 	}
@@ -242,7 +242,7 @@ proc colorm_saveValues {w} {
 		}
 		close $config_file_append
 	}
-	log_writeOutTv 1 "Closing Color Management."
+	log_writeOutTv 0 "Closing Color Management."
 	destroy .cm
 }
 
@@ -263,7 +263,7 @@ proc colorm_mainUi {} {
 	}
 	
 	if {[winfo exists .cm] == 0} {
-		log_writeOutTv 1 "Setting up Color Management."
+		log_writeOutTv 0 "Setting up Color Management."
 		# Setting up main Interface
 		set cm_w [toplevel .cm -class "TV-Viewer"]
 		place [ttk::frame $cm_w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -388,7 +388,7 @@ proc colorm_mainUi {} {
 		
 		proc colorm_setDefault {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_setDefault \033\[0m \{$w\}"
-			log_writeOutTv 0 "Setting color management values to default."
+			log_writeOutTv 1 "Setting color management values to default."
 			if {[array exists ::hue]} {
 				$w.s_hue configure -value $::hue(default)
 				update

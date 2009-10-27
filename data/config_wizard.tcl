@@ -21,8 +21,8 @@ proc config_wizardMainUi {} {
 	if {[winfo exists .config_wizard]} return
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
-			log_writeOutTv 0 "User attempted to start preferences while main is docked."
-			log_writeOutTv 0 "Will undock main."
+			log_writeOutTv 1 "User attempted to start preferences while main is docked."
+			log_writeOutTv 1 "Will undock main."
 			 main_systemTrayToggle
 		}
 	}

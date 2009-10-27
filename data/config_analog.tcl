@@ -232,8 +232,8 @@ proc option_screen_1 {} {
 		#Additional Code
 		
 		if {[string trim [auto_execok ivtv-tune]] == {} || [string trim [auto_execok v4l2-ctl]] == {}} {
-			log_writeOutTv 1 "Could not detect either ivtv-tune or v4l2-ctl."
-			log_writeOutTv 1 "Please check the system requirements!"
+			log_writeOutTv 2 "Could not detect either ivtv-tune or v4l2-ctl."
+			log_writeOutTv 2 "Please check the system requirements!"
 			$w tab $::window(analog_nb1) -state disabled
 			$w tab $::window(analog_nb2) -state disabled
 			set ::window(analog_nb3) [ttk::frame $w.f_analog_error]
@@ -466,8 +466,8 @@ proc option_screen_1 {} {
 						catch {set ::choice(mbVideo_input) $vinput(1)}
 					}
 				} else {
-					log_writeOutTv 1 "Couldn't detect any video device nodes."
-					log_writeOutTv 1 "Is your tv-card set up correctly?"
+					log_writeOutTv 2 "Couldn't detect any video device nodes."
+					log_writeOutTv 2 "Is your tv-card set up correctly?"
 					$w1.lf_video_device state disabled
 					$w1.lf_mb_video_device state disabled
 					$w1.l_lf_video_standard state disabled
@@ -512,7 +512,7 @@ proc option_screen_1 {} {
 						$w2.s_lf_videobitrate configure -from $videobitrate(min) -to [expr ($videobitrate(max) / 8) / 1024]
 						set ::analog(vbit) $videobitrate(max)
 					} else {
-						log_writeOutTv 1 "Videobitrate can't be set for $::choice(mbVideo)."
+						log_writeOutTv 2 "Videobitrate can't be set for $::choice(mbVideo)."
 						$w2.cb_lf_streambitrate state !disabled
 						$w2.l_lf_videobitrate state disabled
 						$w2.s_lf_videobitrate state disabled
@@ -538,7 +538,7 @@ proc option_screen_1 {} {
 						$w2.s_lf_videopeakbitrate configure -from $peakbitrate(min) -to [expr ($peakbitrate(max) / 8) / 1024]
 						set ::analog(vbitp) $peakbitrate(max)
 					} else {
-						log_writeOutTv 1 "Videobitrate_peak can't be set for $::choice(mbVideo)."
+						log_writeOutTv 2 "Videobitrate_peak can't be set for $::choice(mbVideo)."
 						$w2.cb_lf_streambitrate state disabled
 						$w2.l_lf_videobitrate state disabled
 						$w2.s_lf_videobitrate state disabled
@@ -563,7 +563,7 @@ proc option_screen_1 {} {
 						array set temporal [split [string trim $resultat_temporal] { =}]
 						$w2.sb_lf_temporal configure -from $temporal(min) -to $temporal(max)
 					} else {
-						log_writeOutTv 1 "Temporal Filter can't be set for $::choice(mbVideo)."
+						log_writeOutTv 2 "Temporal Filter can't be set for $::choice(mbVideo)."
 						$w2.cb_lf_temporal state disabled
 						$w2.l_lf_temporal state disabled
 						$w2.sb_lf_temporal configure -state disabled
@@ -583,7 +583,7 @@ proc option_screen_1 {} {
 						$w2.s_audio_v4l2 configure -from $volume(min) -to $volume(max)
 						set ::choice(scale_recordvolume_mult) [expr $volume(max) / 100]
 					} else {
-						log_writeOutTv 1 "Can't change volume for $::choice(mbVideo)."
+						log_writeOutTv 2 "Can't change volume for $::choice(mbVideo)."
 						$w2.cb_audio_v4l2 state disabled
 						$w2.l_audio_v4l2 state disabled
 						$w2.s_audio_v4l2 state disabled
@@ -653,7 +653,7 @@ to change this value."]
 			}
 			proc default_com1 {w1 w2} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_com1 \033\[0m \{$w1\} \{$w2\}"
-				log_writeOutTv 0 "Changing video device node, need to reread some options."
+				log_writeOutTv 1 "Changing video device node, need to reread some options."
 				catch {
 					$w1.mbVideo_input delete 0 end
 				}
@@ -722,7 +722,7 @@ to change this value."]
 						$w2.e_lf_videopeakbitrate_value state !disabled
 					}
 				} else {
-					log_writeOutTv 1 "Videobitrate_peak can't be set for $::choice(mbVideo)."
+					log_writeOutTv 2 "Videobitrate_peak can't be set for $::choice(mbVideo)."
 					$w2.cb_lf_streambitrate state disabled
 					$w2.l_lf_videobitrate state disabled
 					$w2.s_lf_videobitrate state disabled
@@ -745,7 +745,7 @@ to change this value."]
 						$w2.sb_lf_temporal configure -state normal
 					}
 				} else {
-					log_writeOutTv 1 "Temporal Filter can't be set for $::choice(mbVideo)."
+					log_writeOutTv 2 "Temporal Filter can't be set for $::choice(mbVideo)."
 					$w2.cb_lf_temporal state disabled
 					$w2.l_lf_temporal state disabled
 					$w2.sb_lf_temporal configure -state disabled

@@ -43,7 +43,7 @@ proc record_wizardScheduler {sbutton slable com} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
-				log_writeOutTv 0 "Scheduler is running, will stop it."
+				log_writeOutTv 1 "Scheduler is running, will stop it."
 				puts $::data(comsocket) "tv-viewer_scheduler scheduler_exit"
 				flush $::data(comsocket)
 			}
@@ -280,7 +280,7 @@ proc record_wizardUi {} {
 					}
 					close $f_open
 				} else {
-					log_writeOutTv 1 "Although there is an active recording, no current_rec.conf in config path."
+					log_writeOutTv 2 "Although there is an active recording, no current_rec.conf in config path."
 				}
 			} else {
 				log_writeOutTv 0 "No active recording."

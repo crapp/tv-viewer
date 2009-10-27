@@ -248,8 +248,8 @@ proc option_screen_3 {} {
 		
 		#Additional Code
 		if {[string trim [auto_execok mplayer]] == {}} {
-			log_writeOutTv 1 "Could not detect MPlayer."
-			log_writeOutTv 1 "Please check the system requirements!"
+			log_writeOutTv 2 "Could not detect MPlayer."
+			log_writeOutTv 2 "Please check the system requirements!"
 			$w tab $::window(video_nb1) -state disabled
 			set ::window(video_nb2) [ttk::frame $w.f_video_error]
 			$w add $::window(video_nb2) -text [mc "Error"]
@@ -481,7 +481,7 @@ May help in better video playback."]
 			
 			proc stnd_opt3 {w} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt3 \033\[0m \{$w\}"
-				log_writeOutTv 0 "Setting video options to default."
+				log_writeOutTv 1 "Setting video options to default."
 				set ::choice(mbVo) $::stnd_opt(player_vo)
 				set ::choice(mbDeint) $::stnd_opt(player_deint)
 				set ::choice(sb_autoq) $::stnd_opt(player_autoq)

@@ -99,9 +99,9 @@ proc station_editExit {} {
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 nopic
 		}
-		log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
-		log_writeOutTv 1 "Please create one using the Station Editor."
-		log_writeOutTv 1 "Make sure you checked the configuration first!"
+		log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
+		log_writeOutTv 2 "Please create one using the Station Editor."
+		log_writeOutTv 2 "Make sure you checked the configuration first!"
 	} else {
 		set file "$::where_is_home/config/stations_$::option(frequency_table).conf"
 		set open_channel_file [open $file r]
@@ -119,9 +119,9 @@ proc station_editExit {} {
 		}
 		close $open_channel_file
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
-			log_writeOutTv 1 "Please create one using the Station Editor."
-			log_writeOutTv 1 "Make sure you checked the configuration first!"
+			log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
+			log_writeOutTv 2 "Please create one using the Station Editor."
+			log_writeOutTv 2 "Make sure you checked the configuration first!"
 		} else {
 			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
 			if {[file exists "$::where_is_home/config/lastchannel.conf"]} {
@@ -152,7 +152,7 @@ proc station_editExit {} {
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 pic
 		}
-		log_writeOutTv 1 "Disabling widgets due to no valid stations file."
+		log_writeOutTv 2 "Disabling widgets due to no valid stations file."
 		.label_stations configure -text ...
 		foreach widget [split [winfo children .top_buttons]] {
 			$widget state disabled
@@ -162,7 +162,7 @@ proc station_editExit {} {
 			$widget state disabled
 		}
 		if {[winfo exists .tv.slist]} {
-			log_writeOutTv 1 "No valid stations list, disabling station selector for video window."
+			log_writeOutTv 2 "No valid stations list, disabling station selector for video window."
 			destroy .tv.slist
 		}
 		event delete <<record>>
@@ -262,8 +262,8 @@ proc station_editUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0m"
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
-			log_writeOutTv 0 "User attempted to start station editor while main is docked."
-			log_writeOutTv 0 "Will undock main."
+			log_writeOutTv 1 "User attempted to start station editor while main is docked."
+			log_writeOutTv 1 "Will undock main."
 			 main_systemTrayToggle
 		}
 	}
@@ -469,13 +469,13 @@ proc station_editUi {} {
 		if {[string trim [auto_execok "ivtv-tune"]] == {} || [string trim [auto_execok "v4l2-ctl"]] == {}} {
 			$wftop.b_station_search state disabled
 			$wftop.b_station_preview state disabled
-			log_writeOutTv 1 "Could not detect ivtv-tune or/and v4l2-ctl."
-			log_writeOutTv 1 "Check the user guide about system requirements."
+			log_writeOutTv 2 "Could not detect ivtv-tune or/and v4l2-ctl."
+			log_writeOutTv 2 "Check the user guide about system requirements."
 		}
 		if {[string trim [auto_execok mplayer]] == {}} {
 			$wftop.b_station_preview state disabled
-			log_writeOutTv 1 "Could not detect MPlayer."
-			log_writeOutTv 1 "Check the user guide about system requirements."
+			log_writeOutTv 2 "Could not detect MPlayer."
+			log_writeOutTv 2 "Check the user guide about system requirements."
 		}
 		
 		bind $wfstation.tv_station <B1-Motion> break

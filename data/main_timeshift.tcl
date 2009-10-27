@@ -23,8 +23,8 @@ proc timeshift {tbutton} {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 		if { $status_greppid_record == 0 } {
-			log_writeOutTv 1 "There is a running recording (PID $resultat_recordlinkread)"
-			log_writeOutTv 1 "Can't start timeshift."
+			log_writeOutTv 2 "There is a running recording (PID $resultat_recordlinkread)"
+			log_writeOutTv 2 "Can't start timeshift."
 			return
 		}
 	}
@@ -66,7 +66,7 @@ proc timeshift_start_preRec {tbutton} {
 proc timeshift_start_Rec {counter rec_pid tbutton} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_start_Rec \033\[0m \{$counter\} \{$rec_pid\} \{$tbutton\}"
 	if {$counter == 10} {
-		log_writeOutTv 1 "Can't start timeshift. Tried for 30 seconds."
+		log_writeOutTv 2 "Can't start timeshift. Tried for 30 seconds."
 		catch {exec kill $rec_pid}
 		catch {exec ""}
 		if {[winfo exists .tv.l_anigif]} {

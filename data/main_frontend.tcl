@@ -106,7 +106,7 @@ proc main_frontendShowslist {w} {
 		wm resizable . 1 1
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			log_writeOutTv 1 "There are no stations to insert into station list."
+			log_writeOutTv 2 "There are no stations to insert into station list."
 			$wflbox.listbox_slist configure -state disabled
 		} else {
 			for {set i 1} {$i <= $::station(max)} {incr i} {
@@ -143,7 +143,7 @@ proc main_frontendShowslist {w} {
 				set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 				if { $status_greppid_record == 0 || $status_greppid_times == 0 } {
 					if {$::option(rec_allow_sta_change) == 0} {
-						log_writeOutTv 0 "Disabling station list due to an active recording."
+						log_writeOutTv 1 "Disabling station list due to an active recording."
 						$wflbox.listbox_slist configure -state disabled
 					}
 				}
@@ -715,7 +715,7 @@ proc main_frontendUiTvviewer {} {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; event generate . <<teleview>>}
 				}
 			} else {
-				log_writeOutTv 1 "Can't start tv playback, MPlayer is not installed on this system."
+				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
@@ -738,7 +738,7 @@ proc main_frontendUiTvviewer {} {
 				$wftop.button_record state disabled
 				$wftop.button_timeshift state disabled
 				$wfbar.mOptions entryconfigure 4 -state disabled
-				log_writeOutTv 1 "Deactivating Button \"Start TV\" because MPlayer is not installed."
+				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
 				event delete <<record>>
 				event delete <<teleview>>
 				bind . <<record>> {}
@@ -754,7 +754,7 @@ proc main_frontendUiTvviewer {} {
 					after 1500 {wm deiconify . ; tv_playerUi ; event generate . <<teleview>>}
 				}
 			} else {
-				log_writeOutTv 1 "Can't start tv playback, MPlayer is not installed on this system."
+				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
 				after 1500 {wm deiconify . ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
@@ -771,7 +771,7 @@ proc main_frontendUiTvviewer {} {
 				$wftop.button_record state disabled
 				$wftop.button_timeshift state disabled
 				$wfbar.mOptions entryconfigure 4 -state disabled
-				log_writeOutTv 1 "Deactivating Button \"Start TV\" because MPlayer is not installed."
+				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
 				event delete <<record>>
 				event delete <<teleview>>
 				bind . <<record>> {}

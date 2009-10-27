@@ -601,7 +601,7 @@ mouse cursor to invoke it."]
 		}
 		proc stnd_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
-			log_writeOutTv 0 "Setting interface options to default."
+			log_writeOutTv 1 "Setting interface options to default."
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
 			set ::choice(cb_tooltip) $::stnd_opt(tooltips)
 			set ::choice(cb_tooltip_main) $::stnd_opt(tooltips_main)

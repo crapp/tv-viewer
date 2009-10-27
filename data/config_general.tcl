@@ -181,7 +181,7 @@ The Newsreader will check for news about TV-Viewer."]
 		}
 		proc stnd_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt0 \033\[0m \{$w\}"
-			log_writeOutTv 0 "Setting general options to default."
+			log_writeOutTv 1 "Setting general options to default."
 			set ::choice(mbLanguage) $::stnd_opt(language)
 			set ::choice(mbLanguage_value) $::stnd_opt(language_value)
 			msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::where_is/msgs}

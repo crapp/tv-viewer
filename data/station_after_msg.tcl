@@ -49,11 +49,11 @@ proc station_after_msg {var0 var1} {
 				log_writeOutTv 0 "Tuning station $::kanalid($var0) on [lrange $var1 end-1 end] (Input $::kanalinput($var0))."
 			}
 		} else {
-			log_writeOutTv 1 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
-			log_writeOutTv 1 "Error message: $read_signal_strength"
+			log_writeOutTv 2 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
+			log_writeOutTv 2 "Error message: $read_signal_strength"
 		}
 	} else {
-		log_writeOutTv 1 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
-		log_writeOutTv 1 "Error message: $read_signal_strength"
+		log_writeOutTv 2 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
+		log_writeOutTv 2 "Error message: $read_signal_strength"
 	}
 }
