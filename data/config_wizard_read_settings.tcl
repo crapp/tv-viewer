@@ -29,9 +29,9 @@ proc config_wizardReadSettings {} {
 		newsreader_interval 7
 		epg_command "[auto_execok tvbrowser]"
 		#log_files 1
-		#log_size_tvviewer 100
-		#log_size_mplay 100
-		#log_size_scheduler 100
+		#log_size_tvviewer 30
+		#log_size_mplay 30
+		#log_size_scheduler 30
 		#video_device /dev/video0
 		video_standard PAL
 		forcevideo_standard 0
@@ -122,9 +122,9 @@ proc config_wizardReadSettings {} {
 		newsreader_interval 7
 		epg_command "[auto_execok tvbrowser]"
 		log_files 1
-		log_size_tvviewer 100
-		log_size_mplay 100
-		log_size_scheduler 100
+		log_size_tvviewer 30
+		log_size_mplay 30
+		log_size_scheduler 30
 		#video_device /dev/video0
 		video_standard PAL
 		forcevideo_standard 0

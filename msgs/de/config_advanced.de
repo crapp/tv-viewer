@@ -4,6 +4,38 @@
 #
 
 mcset $lang \
+	{Manage aspect ratio} \
+	{Manage aspect ratio}
+
+mcset $lang \
+	{Keep video aspect ratio} \
+	{Video Seitenverhältnis beibehalten}
+
+mcset $lang \
+	{Monitor aspect} \
+	{Monitor Seitenverhältnis}
+
+mcset $lang \
+	{Monitor pixel aspect} \
+	{Monitor pixel aspect}
+
+mcset $lang \
+	{Screenshot} \
+	{Screenshot}
+
+mcset $lang \
+	{Activate screenshot feature} \
+	{Screenshot Feature aktivieren}
+
+mcset $lang \
+	{MPlayer config file} \
+	{MPlayer Konfigurationsdatei}
+
+mcset $lang \
+	{Do not process MPlayer config files} \
+	{MPlayer Konfigurtionsdateien ignorieren}
+
+mcset $lang \
 	{Additional options for MPlayer} \
 	{Optionen für MPlayer}
 

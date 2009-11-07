@@ -101,7 +101,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1b1.23"
+set option(release_version) "0.8.1b1.24"
 
 puts "This is TV-Viewer $option(release_version) ..."
 

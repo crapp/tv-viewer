@@ -106,41 +106,28 @@ proc option_screen_8 {} {
 		ttk::labelframe $::window(advanced_nb3).lf_logging \
 		-labelwidget $::window(advanced_nb3).cb_lf_logging
 		ttk::label $::window(advanced_nb3).l_logging_mplayer \
-		-text [mc "MPlayer logfile size in kBytes"]
-		
-		proc config_advanced_validateLogSb {value1 value2} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_advanced_validateLogSb \033\[0m \{$value1\} \{$value2\}"
-			if {[string is integer $value1] == 0 || $value1 < 100 || $value1 > 1000} {
-				return 0
-			} else {
-				return 1
-			}
-		}
-		
+		-text [mc "MPlayer logfile size in kBytes"]		
 		spinbox $::window(advanced_nb3).sb_logging_mplayer \
-		-from 100 \
-		-to 1000 \
-		-increment 50 \
-		-validate key \
-		-vcmd {config_advanced_validateLogSb %P %W} \
+		-from 10 \
+		-to 100 \
+		-increment 10 \
+		-state readonly \
 		-textvariable choice(sb_logging_mplayer)
 		ttk::label $::window(advanced_nb3).l_logging_sched \
 		-text [mc "Scheduler logfile size in kBytes"]
 		spinbox $::window(advanced_nb3).sb_logging_sched \
-		-from 100 \
-		-to 1000 \
-		-increment 50 \
-		-validate key \
-		-vcmd {config_advanced_validateLogSb %P %W} \
+		-from 10 \
+		-to 100 \
+		-increment 10 \
+		-state readonly \
 		-textvariable choice(sb_logging_sched)
 		ttk::label $::window(advanced_nb3).l_logging_tv \
 		-text [mc "TV-Viewer logfile size in kBytes"]
 		spinbox $::window(advanced_nb3).sb_logging_tv \
-		-from 100 \
-		-to 1000 \
-		-increment 50 \
-		-validate key \
-		-vcmd {config_advanced_validateLogSb %P %W} \
+		-from 10 \
+		-to 100 \
+		-increment 10 \
+		-state readonly \
 		-textvariable choice(sb_logging_tv)
 		
 		grid columnconfigure $::window(advanced_nb1) 0 -weight 1
@@ -280,9 +267,9 @@ proc option_screen_8 {} {
 		proc config_advancedLogging {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_advancedLogging \033\[0m \{$w\}"
 			if {$::choice(cb_lf_logging) == 1} {
-				$w.sb_logging_mplayer configure -state normal
-				$w.sb_logging_sched configure -state normal
-				$w.sb_logging_tv configure -state normal
+				$w.sb_logging_mplayer configure -state readonly
+				$w.sb_logging_sched configure -state readonly
+				$w.sb_logging_tv configure -state readonly
 			} else {
 				$w.sb_logging_mplayer configure -state disabled
 				$w.sb_logging_sched configure -state disabled
@@ -353,17 +340,29 @@ proc option_screen_8 {} {
 				set ::choice(cb_lf_logging) $::stnd_opt(log_files)
 			}
 			if {[info exists ::option(log_size_tvviewer)]} {
-				set ::choice(sb_logging_tv) $::option(log_size_tvviewer)
+				if {$::option(log_size_tvviewer) > 100} {
+					set ::choice(sb_logging_tv) $::stnd_opt(log_size_tvviewer)
+				} else {
+					set ::choice(sb_logging_tv) $::option(log_size_tvviewer)
+				}
 			} else {
 				set ::choice(sb_logging_tv) $::stnd_opt(log_size_tvviewer)
 			}
 			if {[info exists ::option(log_size_mplay)]} {
-				set ::choice(sb_logging_mplayer) $::option(log_size_mplay)
+				if {$::option(log_size_mplay) > 100} {
+					set ::choice(sb_logging_mplayer) $::stnd_opt(log_size_mplay)
+				} else {
+					set ::choice(sb_logging_mplayer) $::option(log_size_mplay)
+				}
 			} else {
 				set ::choice(sb_logging_mplayer) $::stnd_opt(log_size_mplay)
 			}
 			if {[info exists ::option(log_size_scheduler)]} {
-				set ::choice(sb_logging_sched) $::option(log_size_scheduler)
+				if {$::option(log_size_scheduler) > 100} {
+					set ::choice(sb_logging_sched) $::stnd_opt(log_size_scheduler)
+				} else {
+					set ::choice(sb_logging_sched) $::option(log_size_scheduler)
+				}
 			} else {
 				set ::choice(sb_logging_sched) $::stnd_opt(log_size_scheduler)
 			}

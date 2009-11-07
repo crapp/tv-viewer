@@ -26,10 +26,10 @@ proc main_frontendExitViewer {} {
 			log_writeOutTv 0 "Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
 			catch {exec kill $resultat_timeslinkread}
 			catch {file delete "$::where_is_home/tmp/timeshift_lockfile.tmp"}
-			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
-				catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
-			}
 		}
+	}
+	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
+		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
 	catch {file delete "$::where_is_home/tmp/lockfile.tmp"}
 	destroy .top_newsreader

@@ -196,21 +196,21 @@ proc main_newsreaderAutomaticUpdate {} {
 	foreach {years months days} [main_newsreaderDifftimes $actual_date $last_update] {}
 	log_writeOutTv 0 "Newsreader started"
 	log_writeOutTv 0 "Last check: [clock format $last_update -format {%d.%m.%Y}]"
-	log_writeOutTv 0 "Offset: $years Years $months Months $days Days"
+	log_writeOutTv 0 "Offset: $years Year(s) $months Month(s) $days Day(s)"
 	if { $years > 0 } {
-		log_writeOutTv 0 "$years Years since last check"
+		log_writeOutTv 0 "$years Year(s) since last check"
 		set ::query_auto_newsreader 1
 		main_newsreaderCheckUpdate
 		return
 	} else {
 		if { $months > 0 } {
-			log_writeOutTv 0 "$months Months since last check"
+			log_writeOutTv 0 "$months Month(s) since last check"
 			set ::query_auto_newsreader 1
 			main_newsreaderCheckUpdate
 			return
 		} else {
 			if { $days >= $::option(newsreader_interval) } {
-				log_writeOutTv 0 "$days Days since last check"
+				log_writeOutTv 0 "$days Day(s) since last check"
 				set ::query_auto_newsreader 1
 				main_newsreaderCheckUpdate
 				return

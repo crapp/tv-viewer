@@ -182,6 +182,7 @@ proc tv_callbackMplayerRemote {command} {
 		flush $::data(mplayer)
 		return 0
 	} else {
+		log_writeOutTv 2 "Can't access mplayer command pipe."
 		return 1
 	}
 }
