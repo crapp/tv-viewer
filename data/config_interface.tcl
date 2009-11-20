@@ -396,6 +396,7 @@ proc option_screen_6 {} {
 		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew -120}
 		set avail_aligns [dict create {top left} 0 top 1 {top right} 2 left 3 right 5 {bottom left} 6 bottom 7 {bottom right} 8]
 		foreach {key elem} [dict get $avail_aligns] {
+			puts "key $key elem $elem"
 			$frame_nb3.mbOsd_mouse_w add radiobutton \
 			-label "$key" \
 			-value "{$key} $elem" \
@@ -510,8 +511,13 @@ proc option_screen_6 {} {
 			set ::choice(osd_mouse_f) $::option(osd_mouse_f)
 			set ::config_int(cb_osd_mouse_w) [lindex $::choice(osd_mouse_w) 0]
 			set ::config_int(cb_osd_mouse_f) [lindex $::choice(osd_mouse_f) 0]
-			$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [lindex $::choice(osd_mouse_w) 1]
-			$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [lindex $::choice(osd_mouse_f) 1]
+			if {[lindex $::choice(osd_mouse_w) 1] >= 5} {
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [expr [lindex $::choice(osd_mouse_w) 1] - 1]
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [expr [lindex $::choice(osd_mouse_f) 1] - 1]
+			} else {
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [lindex $::choice(osd_mouse_w) 1]
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [lindex $::choice(osd_mouse_f) 1]
+			}
 			set ::choice(osd_lirc) $::option(osd_lirc)
 			if {"[lindex $::choice(osd_lirc) 2]" == "Regular"} {
 				$::window(interface_nb3_cont).f_osd2.b_osd_lirc_fnt configure -text "[lindex $::choice(osd_lirc) 1] | [lindex $::choice(osd_lirc) 3]"
@@ -663,8 +669,13 @@ mouse cursor to invoke it."]
 			set ::choice(osd_mouse_f) $::stnd_opt(osd_mouse_f)
 			set ::config_int(cb_osd_mouse_w) [lindex $::choice(osd_mouse_w) 0]
 			set ::config_int(cb_osd_mouse_f) [lindex $::choice(osd_mouse_f) 0]
-			$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [lindex $::choice(osd_mouse_w) 1]
-			$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [lindex $::choice(osd_mouse_f) 1]
+			if {[lindex $::choice(osd_mouse_w) 1] >= 5} {
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [expr [lindex $::choice(osd_mouse_w) 1] - 1]
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [expr [lindex $::choice(osd_mouse_f) 1] - 1]
+			} else {
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [lindex $::choice(osd_mouse_w) 1]
+				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [lindex $::choice(osd_mouse_f) 1]
+			}
 			set ::choice(osd_lirc) $::stnd_opt(osd_lirc)
 			if {"[lindex $::choice(osd_lirc) 2]" == "Regular"} {
 				$::window(interface_nb3_cont).f_osd2.b_osd_lirc_fnt configure -text "[lindex $::choice(osd_lirc) 1] | [lindex $::choice(osd_lirc) 3]"

@@ -354,6 +354,11 @@ proc main_stationInputLoop {secs input freq snumber restart aftmsg} {
 		log_writeOutTv 2 "This didn't work, BAD."
 		return
 	}
+	if {[file exists $::option(video_device)] == 0} {
+		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
+		log_writeOutTv 2 "Have a look into the preferences and change it."
+		return
+	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
 	if {$status_grep_input == 0} {
@@ -404,6 +409,11 @@ proc main_stationInputQuery {secs input restart} {
 	if {$secs == 3000} {
 		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
 		log_writeOutTv 2 "This didn't work, BAD."
+		return
+	}
+	if {[file exists $::option(video_device)] == 0} {
+		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
+		log_writeOutTv 2 "Have a look into the preferences and change it."
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} check_back_input

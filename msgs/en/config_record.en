@@ -72,7 +72,9 @@ mcset $lang \
 mcset $lang \
 	{Define the minimum free disk space.
 If free disk space is falling below this value
-timeshift will automatically be stopped.} \
+timeshift will automatically be stopped.
+A value of 0 deactivates this feature.} \
 	{Define the minimum free disk space.
 If free disk space is falling below this value
-timeshift will automatically be stopped.}
+timeshift will automatically be stopped.
+A value of 0 deactivates this feature.}

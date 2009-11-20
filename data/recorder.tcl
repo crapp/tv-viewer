@@ -1,4 +1,4 @@
-#!/usr/bin/env wish
+#!/usr/bin/env tclsh
 
 #       recorder.tcl
 #       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
@@ -19,8 +19,6 @@
 #       MA 02110-1301, USA.
 
 package require Tcl 8.5
-
-wm withdraw .
 
 set ::option(appname) tv-viewer_recorder
 
@@ -52,7 +50,7 @@ set filename [lindex $::argv 0]
 set bufsize  8192
 set lifespan [lindex $::argv 2]
 set fdin  [open [lindex $::argv 1] r]
-set fdout [open $filename  w]
+set fdout [open $filename w]
  
 foreach chan [list $fdin $fdout] {
 		chan configure $chan -encoding binary \
@@ -67,3 +65,4 @@ if {"$lifespan" != "infinite"} {
 		exit 0
 	}
 }
+vwait forever

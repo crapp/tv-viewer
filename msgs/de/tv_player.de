@@ -48,6 +48,10 @@ mcset $lang \
 	{Nach rechts bewegen}
 
 mcset $lang \
+	{Center video} \
+	{Video zentrieren}
+
+mcset $lang \
 	{Size} \
 	{Größe}
 

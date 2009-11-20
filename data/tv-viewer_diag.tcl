@@ -1,4 +1,4 @@
-#!/usr/bin/env wish
+#!/usr/bin/env tclsh
 
 #       tv-viewer_diag.tcl
 #       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
@@ -25,8 +25,8 @@ Found version: [info patchlevel]
 Have a closer look to the user guide for the system requirements.
 If you've installed more than one version of Tcl, the symlink wish
 might not point to the correct location.
-/usr/bin/wish is pointing to:
-[file readlink /usr/bin/wish]
+/usr/bin/tclsh is pointing to:
+[file readlink /usr/bin/tclsh]
 "
 	}
 exit 1
@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1b1.24"
+set option(release_version) "0.8.1b1.26"
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}

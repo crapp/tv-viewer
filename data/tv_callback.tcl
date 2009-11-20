@@ -67,7 +67,7 @@ proc tv_callbackVidData {} {
 			}
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
 				log_writeOutTv 0 "MPlayer reported video resolution $resolution."
-				if {$::option(player_aspect) == 1 && $::option(player_keepaspect) == 0} {
+				if {$::option(player_aspect) == 1} {
 					foreach {resolx resoly} [split $resolution x] {
 						set ::option(resolx) $resolx
 						set ::option(resoly) $resoly
@@ -75,6 +75,7 @@ proc tv_callbackVidData {} {
 					.tv.bg configure -width $::option(resolx) -height $::option(resoly)
 					bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
+					bind .tv.bg.w <Configure> {}
 					log_writeOutTv 1 "Video aspect not managed by TV-Viewer."
 				}
 			}
@@ -115,8 +116,17 @@ proc tv_callbackVidData {} {
 				catch {launch_splashPlay cancel 0 0 0}
 				catch {place forget .tv.l_anigif}
 				catch {destroy .tv.l_anigif}
-				place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1
-				bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+				if {$::option(player_aspect) == 1} {
+					if {$::option(player_keepaspect) == 1} {
+						place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1
+						bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+					} else {
+						place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
+					}
+				} else {
+					place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
+					bind .tv.bg.w <Configure> {}
+				}
 				tv_playerVolumeControl .bottom_buttons $::volume_scale
 				set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 				set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]

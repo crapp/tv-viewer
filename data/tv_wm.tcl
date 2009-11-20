@@ -161,11 +161,10 @@ proc tv_wmPanscan {w direct} {
 	}
 	if {$direct == 0} {
 		if {[string trim [place info $w]] == {}} return
-		place $w -relheight 1 -relx 0.5 -rely 0.5
-		log_writeOutTv 0 "Setting zoom to 100% and center video."
+		#~ place $w -relheight 1 -relx 0.5 -rely 0.5
+		place $w -relheight 1
+		log_writeOutTv 0 "Setting zoom to 100%"
 		set ::data(panscan) 0
-		set ::data(movevidX) 0
-		set ::data(movevidY) 0
 		set ::data(panscanAuto) 0
 		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 4:3"]]
@@ -180,13 +179,17 @@ proc tv_wmPanscanAuto {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmPanscanAuto \033\[0m"
 	set status_tvplayback [tv_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
+	if {$::option(player_aspect) == 0} {
+		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, zoom disabled!"
+		return
+	}
 	if {[wm attributes .tv -fullscreen] == 0} {
 		if {$::data(panscanAuto) == 0} {
-			place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5 -anchor center
+			set relativeX [dict get [place info .tv.bg.w] -relx]
+			set relativeY [dict get [place info .tv.bg.w] -rely]
+			place .tv.bg.w -relheight 1 -relx $relativeX -rely $relativeY
 			if {[winfo exists .tv.file_play_bar] == 0} {
-				#~ wm geometry .tv [winfo width .tv]x[expr int(ceil([winfo width .tv].0 / 1.777777778))]
-				wm geometry .tv [winfo width .tv]x[expr int([winfo width .tv].0 / (16.0 / 9.0))]
-				#~ wm geometry .tv [expr [winfo width .tv] - 10]x[expr int([winfo width .tv].0 / (16.0 / 9.0))]
+				wm geometry .tv [winfo width .tv]x[expr int(ceil([winfo width .tv].0 / 1.777777778))]
 			} else {
 				set height [expr int(ceil([winfo width .tv].0 / 1.777777778))]
 				set heightwp [expr $height + [winfo height .tv.file_play_bar]]
@@ -203,7 +206,7 @@ proc tv_wmPanscanAuto {} {
 				#~ after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
 			#~ }
 			set ::data(panscanAuto) 1
-			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0] -anchor center
+			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0]
 		} else {
 			tv_wmPanscan .tv.bg.w 0
 		}
@@ -213,7 +216,9 @@ proc tv_wmPanscanAuto {} {
 				set width_diff [expr [winfo width .tv.bg] - [winfo width .tv.bg.w]]
 				set relheight [expr [dict get [place info .tv.bg.w] -relheight] + ($width_diff.0 / [winfo width .tv.bg.w].0)]
 				if {$relheight == [dict get [place info .tv.bg.w] -relheight]} return
-				place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5
+				set relativeX [dict get [place info .tv.bg.w] -relx]
+				set relativeY [dict get [place info .tv.bg.w] -rely]
+				place .tv.bg.w -relheight 1 -relx $relativeX -rely $relativeY
 				catch {after cancel $::data(panscanAuto_id)}
 				set ::data(panscanAuto_id) [after 1000 {
 				set width_diff [expr [winfo width .tv.bg] - [winfo width .tv.bg.w]]
@@ -254,6 +259,10 @@ proc tv_wmPanscanAuto {} {
 
 proc tv_wmMoveVideo {dir} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmMoveVideo \033\[0m \{$dir\}"
+	if {$::option(player_aspect) == 0} {
+		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, moving video disabled!"
+		return
+	}
 	if {$dir == 0} {
 		if {$::data(movevidX) == 100} return
 		place .tv.bg.w -relx [expr {[dict get [place info .tv.bg.w] -relx] + 0.005}]
@@ -303,6 +312,20 @@ proc tv_wmMoveVideo {dir} {
 		}
 		if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 			after 0 [list tv_osd osd_group_f 1000 [mc "Move y=%" $::data(movevidY)]]
+		}
+		return
+	}
+	if {$dir == 4} {
+		place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5
+		set ::data(movevidX) 0
+		set ::data(movevidY) 0
+		log_writeOutTv 0 "Centering video."
+		set ::data(movevidY) [expr $::data(movevidY) - 1]
+		if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+			after 0 [list tv_osd osd_group_w 1000 [mc "Centering video"]]
+		}
+		if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+			after 0 [list tv_osd osd_group_f 1000 [mc "Centering video" ]]
 		}
 		return
 	}

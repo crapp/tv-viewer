@@ -1,4 +1,4 @@
-#!/usr/bin/env wish
+#!/usr/bin/env tclsh
 
 #       lirc_emitter.tcl
 #       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
@@ -20,7 +20,7 @@
 
 package require Tcl 8.5
 
-wm withdraw .
+#~ wm withdraw .
 
 #set processing_folder [file dirname [file normalize [info script]]]
 if {[file type [info script]] == "link" } {
@@ -30,7 +30,7 @@ if {[file type [info script]] == "link" } {
 }
 set where_is_home "$::env(HOME)/.tv-viewer"
 
-set option(release_version) "0.8.1b1.24"
+set option(release_version) "0.8.1b1.26"
 
 source $where_is/main_read_config.tcl
 source $where_is/log_viewer.tcl
@@ -58,7 +58,7 @@ if {[file exists "$::where_is_home/tmp/comSocket.tmp"]} {
 	exit 1
 }
 
-array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 record 0 timeshift 0 volume_incr 0 volume_decr 0 mute 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
+array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 volume_incr 0 volume_decr 0 mute 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -73,7 +73,7 @@ foreach command_argument $argv {
 	}
 }
 
-if {[array size ::start_options] != 44} {
+if {[array size ::start_options] != 45} {
 	log_writeOutTv 2 "Lirc emitter received unknown command $argv"
 	log_writeOutTv 2 "See the userguide for possible actions."
 	exit 1
@@ -208,6 +208,48 @@ if {$start_options(zoom_auto)} {
 	puts $comsocket "tv-viewer_main tv_wmPanscanAuto"
 	flush $comsocket
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_auto"
+	exit 0
+}
+if {$start_options(size_stnd)} {
+	puts $comsocket "tv-viewer_main tv_wmGivenSize .tv.bg 1"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal size_stnd"
+	exit 0
+}
+if {$start_options(size_double)} {
+	puts $comsocket "tv-viewer_main tv_wmGivenSize .tv.bg 2"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal size_double"
+	exit 0
+}
+if {$start_options(move_right)} {
+	puts $comsocket "tv-viewer_main tv_wmMoveVideo 0"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal move_right"
+	exit 0
+}
+if {$start_options(move_down)} {
+	puts $comsocket "tv-viewer_main tv_wmMoveVideo 1"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal move_down"
+	exit 0
+}
+if {$start_options(move_left)} {
+	puts $comsocket "tv-viewer_main tv_wmMoveVideo 2"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal move_left"
+	exit 0
+}
+if {$start_options(move_up)} {
+	puts $comsocket "tv-viewer_main tv_wmMoveVideo 3"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal move_up"
+	exit 0
+}
+if {$start_options(move_center)} {
+	puts $comsocket "tv-viewer_main tv_wmMoveVideo 4"
+	flush $comsocket
+	log_writeOutTv 0 "Lirc emitter received Signal move_center"
 	exit 0
 }
 if {$start_options(record)} {

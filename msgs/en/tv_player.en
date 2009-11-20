@@ -49,6 +49,10 @@ mcset $lang \
 	{Move right}
 
 mcset $lang \
+	{Center video} \
+	{Center video}
+
+mcset $lang \
 	{Size} \
 	{Size}
 

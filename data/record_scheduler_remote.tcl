@@ -96,12 +96,12 @@ proc record_schedulerPrestart {handler} {
 proc record_scheduler_prestartCancel {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_scheduler_prestartCancel \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
-		log_writeOutTv 0 "Prestart sequence for recording has been canceled."
+		log_writeOutTv 1 "Prestart sequence for recording has been canceled."
 		if {[winfo exists .record_wizard]} {
 			.record_wizard configure -cursor arrow
 		}
 	} else {
-		log_writeOutTv 0 "Prestart sequence for timeshift has been canceled."
+		log_writeOutTv 1 "Prestart sequence for timeshift has been canceled."
 	}
 	. configure -cursor arrow; .tv configure -cursor arrow
 	.top_buttons.button_timeshift state !disabled
@@ -140,6 +140,12 @@ proc record_scheduler_prestartCancel {handler} {
 	bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
+	if {[winfo exists .tv.l_anigif]} {
+		catch {launch_splashPlay cancel 0 0 0}
+		catch {place forget .tv.l_anigif}
+		catch {destroy .tv.l_anigif}
+		place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
+	}
 }
 
 proc record_schedulerRec {handler} {

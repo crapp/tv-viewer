@@ -177,6 +177,12 @@ proc tv_playerUi {} {
 			-image $::icon_s(placeholder) \
 			-command [list tv_wmMoveVideo 0] \
 			-accelerator "Alt+Right"
+			$mw.rightclickViewer.panscan add command \
+			-label [mc "Center video"] \
+			-compound left \
+			-image $::icon_s(placeholder) \
+			-command [list tv_wmMoveVideo 4] \
+			-accelerator "Alt+C"
 		$mw.rightclickViewer add cascade \
 		-label [mc "Size"] \
 		-compound left \
@@ -283,7 +289,7 @@ proc tv_playerUi {} {
 		bind $mw <Alt-Key-Down> [list tv_wmMoveVideo 1]
 		bind $mw <Alt-Key-Left> [list tv_wmMoveVideo 2]
 		bind $mw <Alt-Key-Up> [list tv_wmMoveVideo 3]
-		bind $mw <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
+		bind $mw <Alt-Key-c> [list tv_wmMoveVideo 4]
 		bind $mw <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
 		bind $mw <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
 		bind $mw <Control-Key-m> {colorm_mainUi}

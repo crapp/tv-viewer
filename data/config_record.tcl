@@ -317,7 +317,8 @@ This is necessary for scheduled recordings."]
 					settooltip $::window(rec_nb2).b_lf_times_stnd [mc "Choose path where Timeshift events will be cached."]
 					settooltip $::window(rec_nb2).e_lf_times_df [mc "Define the minimum free disk space.
 If free disk space is falling below this value
-timeshift will automatically be stopped."]
+timeshift will automatically be stopped.
+A value of 0 deactivates this feature."]
 				} else {
 					settooltip $::window(rec_nb1).entry_rec {}
 					settooltip $::window(rec_nb1).button_rec_path {}

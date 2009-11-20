@@ -370,6 +370,23 @@ proc option_screen_8 {} {
 			
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
+					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
+					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
+					set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
+					settooltip $::window(advanced_nb1).cb_advanced_aspect [mc "Let TV-Viewer manage video aspect ratio (recommended)"]
+					settooltip $lf_aspect.cb_keepaspect [mc "Keep video aspect ratio"]
+					settooltip $lf_aspect.rb_moniaspect [mc "Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality."]
+					settooltip $lf_aspect.mb_moniaspect [mc "Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality."]
+					settooltip $lf_aspect.rb_monipixaspect [mc "Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality."]
+					settooltip $lf_aspect.sb_monipixaspect [mc "Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality."]
+					settooltip $lf_shot.cb_advanced_shot [mc "Activate or deactive the screenshot feature.
+Screenshots will be stored in the users home directory."]
+					settooltip $lf_mconfig.cb_advanced_mconfig [mc "If enabled MPlayer will ignore all existing config files.
+This will ensure only values set by TV-Viewer will be used."]
 					settooltip $::window(advanced_nb2).e_lf_additional_mplayer_com [mc "Here you may provide additional command line options for MPlayer.
 Separate the different options with spaces.
 See the MPlayer man pages for more informations."]
@@ -385,16 +402,27 @@ Refer to the 'Help' section of the main interface for the log viewers." $::where
 					settooltip $::window(advanced_nb3).sb_logging_mplayer [mc "Specify the amount of space in kBytes the MPlayer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb"]
+Minimum: 10kb Maximum: 100kb"]
 					settooltip $::window(advanced_nb3).sb_logging_tv [mc "Specify the amount of space in kBytes the TV-Viewer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb"]
+Minimum: 10kb Maximum: 100kb"]
 					settooltip $::window(advanced_nb3).sb_logging_sched [mc "Specify the amount of space in kBytes the Scheduler logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb"]
+Minimum: 10kb Maximum: 100kb"]
 				} else {
+					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
+					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
+					set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
+					settooltip $::window(advanced_nb1).cb_advanced_aspect {}
+					settooltip $lf_aspect.cb_keepaspect {}
+					settooltip $lf_aspect.rb_moniaspect {}
+					settooltip $lf_aspect.mb_moniaspect {}
+					settooltip $lf_aspect.rb_monipixaspect {}
+					settooltip $lf_aspect.sb_monipixaspect {}
+					settooltip $lf_shot.cb_advanced_shot {}
+					settooltip $lf_mconfig.cb_advanced_mconfig {}
 					settooltip $::window(advanced_nb2).e_lf_additional_mplayer_com {}
 					settooltip $::window(advanced_nb2).e_lf_add_vf_mpl {}
 					settooltip $::window(advanced_nb2).e_lf_add_af_mpl {}

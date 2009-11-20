@@ -91,6 +91,10 @@ Sendern umschalten. Aber ein niedriger Wert kann andere Probleme
 verursachen. Der Wert 0 deaktiviert precaching.}
 
 mcset $lang \
+	{Sets the number of threads for decoding.} \
+	{Legt die Anzahl der Threads zur Dekodierung fest.}
+
+mcset $lang \
 	{If checked, enables direct rendering. This is not supported
 for all video ouput drivers.} \
 	{Aktiviert direktes Rendern. Funktioniert nicht mit allen

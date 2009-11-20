@@ -70,8 +70,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		autoq(6) {,pp -autoq 6}
 		softvol(0) {}
 		softvol(1) {-softvol}
-		kaspect(0) {-nokeepaspect}
-		kaspect(1) {}
 		monpixaspect(0) {-monitoraspect}
 		monpixaspect(1) {-monitorpixelaspect}
 		mplayconf(0) {}
@@ -141,7 +139,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 			lappend mcommand -stop-xscreensaver
 		} else {
 			log_writeOutTv 1 "Using heartbeat hack to stop screensaver."
-			set ::data(heartbeat_id) [after 30000 tv_wmHeartbeatCmd 0]
+			set ::data(heartbeat_id) [after 3000 tv_wmHeartbeatCmd 0]
 		}
 	} else {
 		lappend mcommand -nostop-xscreensaver
@@ -150,8 +148,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	
 	lappend mcommand -input conf="$::where_is/shortcuts/input.conf" {*}{-osdlevel 0}
 	
+	lappend mcommand -nokeepaspect
 	if {$::option(player_aspect) == 1} {
-		lappend mcommand {*}$cbopt(kaspect\($::option(player_keepaspect)\))
 		if {$::option(player_aspect_monpix) == 0} {
 			lappend mcommand $cbopt(monpixaspect\($::option(player_aspect_monpix)\)) $::option(player_monaspect_val)
 		} else {

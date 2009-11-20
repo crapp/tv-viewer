@@ -52,6 +52,32 @@ mcset $lang \
 	{Additional audio filter options}
 
 mcset $lang \
+	{Let TV-Viewer manage video aspect ratio (recommended)} \
+	{Let TV-Viewer manage video aspect ratio (recommended)}
+
+mcset $lang \
+	{Keep video aspect ratio} \
+	{Keep video aspect ratio}
+
+mcset $lang \
+	{Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality.} \
+	{Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality.}
+
+mcset $lang \
+	{Activate or deactive the screenshot feature.
+Screenshots will be stored in the users home directory.} \
+	{Activate or deactive the screenshot feature.
+Screenshots will be stored in the users home directory.}
+
+mcset $lang \
+	{If enabled MPlayer will ignore all existing config files.
+This will ensure only values set by TV-Viewer will be used.} \
+	{If enabled MPlayer will ignore all existing config files.
+This will ensure only values set by TV-Viewer will be used.}
+
+mcset $lang \
 	{Here you may provide additional command line options for MPlayer.
 Separate the different options with spaces.
 See the MPlayer man pages for more informations.} \
@@ -107,28 +133,28 @@ mcset $lang \
 	{Specify the amount of space in kBytes the MPlayer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb} \
+Minimum: 10kb Maximum: 100kb} \
 	{Specify the amount of space in kBytes the MPlayer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb}
+Minimum: 10kb Maximum: 100kb}
 
 mcset $lang \
 	{Specify the amount of space in kBytes the TV-Viewer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb} \
+Minimum: 10kb Maximum: 100kb} \
 	{Specify the amount of space in kBytes the TV-Viewer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb}
+Minimum: 10kb Maximum: 100kb}
 
 mcset $lang \
 	{Specify the amount of space in kBytes the Scheduler logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb} \
+Minimum: 10kb Maximum: 100kb} \
 	{Specify the amount of space in kBytes the Scheduler logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb}
+Minimum: 10kb Maximum: 100kb}

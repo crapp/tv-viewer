@@ -53,7 +53,7 @@ proc main_readConfig {} {
 		player_screens 1
 		player_screens_value 0
 		player_aspect 1
-		player_keepaspect 0
+		player_keepaspect 1
 		player_aspect_monpix 1
 		player_monaspect_val 16:9
 		player_pixaspect_val 1.0

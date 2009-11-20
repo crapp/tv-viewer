@@ -90,6 +90,10 @@ But a low value could cause other problems.
 A value of 0 will deactivate cache use.}
 
 mcset $lang \
+	{Sets the number of threads for decoding.} \
+	{Sets the number of threads for decoding.}
+
+mcset $lang \
 	{If checked, enables direct rendering. This is not supported
 for all video ouput drivers.} \
 	{If checked, enables direct rendering. This is not supported

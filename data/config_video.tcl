@@ -442,6 +442,7 @@ proc option_screen_3 {} {
 				
 				if {$::option(tooltips) == 1} {
 					if {$::option(tooltips_wizard) == 1} {
+						set frame_nb1  "$::window(video_nb1_cont).f_video2"
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_vo [mc "Select the video ouput driver.
 xv should provide the best performance."]
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_deint [mc "Select the deinterlace filter."]
@@ -451,7 +452,8 @@ A value of 0 deactivates postprocessing."]
 The lower this value is the faster you may switch between stations.
 But a low value could cause other problems.
 A value of 0 will deactivate cache use."]
-						settooltip $:$::window(video_nb1_cont).f_video2.cb_lf_dr [mc "If checked, enables direct rendering. This is not supported
+						settooltip $frame_nb1.sb_lf_threads [mc "Sets the number of threads for decoding."]
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_dr [mc "If checked, enables direct rendering. This is not supported
 for all video ouput drivers."]
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_double [mc "Double buffering fixes flicker by storing two frames in memory
 and displaying one, while decoding another."]
@@ -463,10 +465,12 @@ May help in better video playback."]
 						settooltip $::window(video_nb1_cont).f_video2.rb_lf_mplayer_screens [mc "Use MPlayer to deactivate the screensaver."]
 						settooltip $::window(video_nb1_cont).f_video2.rb_lf_heartbeat_screens [mc "If MPlayer can't deactivate your screensaver, use this heartbeat hack."]
 					} else {
+						set frame_nb1  "$::window(video_nb1_cont).f_video2"
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_vo {}
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_deint {}
 						settooltip $::window(video_nb1_cont).f_video2.sb_lf_autoq {}
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_cache {}
+						settooltip $frame_nb1.sb_lf_threads {}
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_dr {}
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_double {}
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_slice {}

@@ -1,4 +1,4 @@
-#!/usr/bin/env wish
+#!/usr/bin/env tclsh
 
 #       record_scheduler.tcl
 #       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
@@ -20,7 +20,7 @@
 
 package require Tcl 8.5
 
-wm withdraw .
+#~ wm withdraw .
 
 set ::option(appname) tv-viewer_scheduler
 
@@ -45,7 +45,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1b1.24"
+set option(release_version) "0.8.1b1.26"
 
 if {[file isdirectory $::where_is_home] == 0} {
 	puts "
@@ -294,6 +294,13 @@ proc scheduler_rec_prestart {jobid} {
 			flush $::data(comsocket)
 		}
 	}
+	if {[file exists $::option(video_device)] == 0} {
+		scheduler_logWriteOut 2 "Can not detect Video Device $::option(video_device)"
+		scheduler_logWriteOut 2 "Have a look into the preferences and change it."
+		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
+		flush $::data(comsocket)
+		return
+	}
 	if {$::option(forcevideo_standard) == 1} {
 		main_pic_streamForceVideoStandard
 	}
@@ -331,6 +338,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$secs == 3000} {
 		scheduler_logWriteOut 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "This didn't work, BAD."
+		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
+		flush $::data(comsocket)
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -358,6 +367,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	} else {
 		scheduler_logWriteOut 2 "Can not change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "$resultat_grep_input."
+		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
+		flush $::data(comsocket)
 		return
 	}
 }
@@ -396,6 +407,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
 		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
 		flush $::data(comsocket)
+		return
 	}
 }
 
@@ -418,3 +430,4 @@ proc scheduler_main_loop {} {
 
 command_socket
 scheduler_main_loop
+vwait forever

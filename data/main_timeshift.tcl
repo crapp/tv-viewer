@@ -45,6 +45,11 @@ proc timeshift {tbutton} {
 		}
 	}
 	log_writeOutTv 0 "Starting timeshift..."
+	if {[file exists $::option(video_device)] == 0} {
+		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
+		log_writeOutTv 2 "Have a look into the preferences and change it."
+		return
+	}
 	record_schedulerPrestart timeshift
 	$tbutton state pressed
 	$tbutton state disabled
@@ -79,7 +84,9 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 	}
 	if {[file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
 		catch {exec ln -f -s "$rec_pid" "$::where_is_home/tmp/timeshift_lockfile.tmp"}
-		after 1000 [list timeshift_calcDF 0]
+		if {$::option(timeshift_df) != 0} {
+			after 1000 [list timeshift_calcDF 0]
+		}
 		set ::tv(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
 		record_schedulerRec timeshift
 	} else {

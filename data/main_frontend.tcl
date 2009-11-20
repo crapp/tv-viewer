@@ -723,7 +723,9 @@ proc main_frontendUiTvviewer {} {
 				$wfbar.mOptions entryconfigure 4 -state disabled
 				event delete <<record>>
 				event delete <<teleview>>
+				event delete <<timeshift>>
 				bind . <<record>> {}
+				bind . <<timeshift>> {}
 				bind . <<teleview>> {}
 			}
 		} else {
@@ -734,6 +736,7 @@ proc main_frontendUiTvviewer {} {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
 				}
 			} else {
+				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
 				$wftop.button_starttv state disabled
 				$wftop.button_record state disabled
 				$wftop.button_timeshift state disabled
@@ -741,7 +744,9 @@ proc main_frontendUiTvviewer {} {
 				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
 				event delete <<record>>
 				event delete <<teleview>>
+				event delete <<timeshift>>
 				bind . <<record>> {}
+				bind . <<timeshift>> {}
 				bind . <<teleview>> {}
 			}
 		}
@@ -762,7 +767,9 @@ proc main_frontendUiTvviewer {} {
 				$wfbar.mOptions entryconfigure 4 -state disabled
 				event delete <<record>>
 				event delete <<teleview>>
+				event delete <<timeshift>>
 				bind . <<record>> {}
+				bind . <<timeshift>> {}
 				bind . <<teleview>> {}
 			}
 		} else {
@@ -774,7 +781,9 @@ proc main_frontendUiTvviewer {} {
 				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
 				event delete <<record>>
 				event delete <<teleview>>
+				event delete <<timeshift>>
 				bind . <<record>> {}
+				bind . <<timeshift>> {}
 				bind . <<teleview>> {}
 				after 1500 {wm deiconify . ; tv_playerUi}
 			} else {

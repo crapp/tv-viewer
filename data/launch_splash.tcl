@@ -63,8 +63,10 @@ proc launch_splashAnigif {gif} {
 proc launch_splashPlay {img_list img_list_length index container} {
 	if {"$img_list" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splashPlay \033\[0;1;31m::cancel:: \033\[0m"
-		foreach id $::splash(after_id) {
-			catch {after cancel $id}
+		if {[info exists ::splash(after_id)]} {
+			foreach id $::splash(after_id) {
+				catch {after cancel $id}
+			}
 		}
 		unset -nocomplain ::splash(after_id)
 		return
@@ -72,6 +74,10 @@ proc launch_splashPlay {img_list img_list_length index container} {
 	if {$img_list_length == $index} {
 		set index 0
 	}
-	$container configure -image [lindex $img_list $index]
-	set ::splash(after_id) [after 100 [list launch_splashPlay $img_list $img_list_length [incr index] $container]]
+	if {[winfo exists $container]} {
+		$container configure -image [lindex $img_list $index]
+		set ::splash(after_id) [after 100 [list launch_splashPlay $img_list $img_list_length [incr index] $container]]
+	} else {
+		launch_splashPlay cancel 0 0 0
+	}
 }

@@ -33,7 +33,7 @@ mcset $lang \
 
 mcset $lang \
 	{Space to be left free} \
-	{Platz der freigelassen werde soll}
+	{Platz der freigelassen werden soll}
 
 mcset $lang \
 	{Choose a directory} \
@@ -72,8 +72,10 @@ mcset $lang \
 mcset $lang \
 	{Define the minimum free disk space.
 If free disk space is falling below this value
-timeshift will automatically be stopped.} \
+timeshift will automatically be stopped.
+A value of 0 deactivates this feature.} \
 	{Festlegen wieviel Platz auf der Festplatte
 mindestens frei bleiben soll.
 Wenn der freie Platz unter den angegeben Wert
-fällt, wird Timeshift automatisch angehalten.}
+fällt, wird Timeshift automatisch angehalten.
+Der Wert 0 deaktiviert dieses Feature.}

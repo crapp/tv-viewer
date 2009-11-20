@@ -52,6 +52,36 @@ mcset $lang \
 	{Zusätzliche Angaben für Audiofilter}
 
 mcset $lang \
+	{Let TV-Viewer manage video aspect ratio (recommended)} \
+	{TV-Viewer das Video Seitenverhältnis steuern lassen (Empfohlen)}
+
+mcset $lang \
+	{Keep video aspect ratio} \
+	{Video Seitenverhältnis beibehalten}
+
+mcset $lang \
+	{Choose either monitor aspect ratio or monitor pixel aspect.
+This may improve picture quality.} \
+	{Wählen zwischen Monitor Seitenverhältnis oder
+ Monitor Pixel Verhältnis.
+ Das kann die Bildqualität verbessern.}
+
+mcset $lang \
+	{Activate or deactive the screenshot feature.
+Screenshots will be stored in the users home directory.} \
+	{Die Möglichkeit Screenshots machen zu können
+ an- oder abschalten.
+ Die Screenshots werden im Home-Verzeichnis gespeichert.}
+
+mcset $lang \
+	{If enabled MPlayer will ignore all existing config files.
+This will ensure only values set by TV-Viewer will be used.} \
+	{Wenn aktiviert wird MPlayer alle existierenden 
+Konfigurationdateien ignorieren.
+Damit wird sichergestellt, dass nur die Werte die TV-viewer
+setzt verwendet werden.}
+
+mcset $lang \
 	{Here you may provide additional command line options for MPlayer.
 Separate the different options with spaces.
 See the MPlayer man pages for more informations.} \
@@ -107,28 +137,28 @@ mcset $lang \
 	{Specify the amount of space in kBytes the MPlayer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb} \
+Minimum: 10kb Maximum: 100kb} \
 	{Legt fest, wie groß das Logfile für MPlayer werden darf.
 Wenn die Größe erreicht ist wird die Datei gelöscht und eine
 neue angelegt.
-Minimum: 100kb Maximum: 1000kb}
+Minimum: 10kb Maximum: 100kb}
 
 mcset $lang \
 	{Specify the amount of space in kBytes the TV-Viewer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb} \
+Minimum: 10kb Maximum: 100kb} \
 	{Legt fest, wie groß das Logfile für TV-Viewer werden darf.
 Wenn die Größe erreicht ist wird die Datei gelöscht und eine
 neue angelegt.
-Minimum: 100kb Maximum: 1000kb}
+Minimum: 10kb Maximum: 100kb}
 
 mcset $lang \
 	{Specify the amount of space in kBytes the Scheduler logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
-Minimum: 100kb Maximum: 1000kb} \
+Minimum: 10kb Maximum: 100kb} \
 	{Legt fest, wie groß das Logfile für den Scheduler werden darf.
 Wenn die Größe erreicht ist wird die Datei gelöscht und eine
 neue angelegt.
-Minimum: 100kb Maximum: 1000kb}
+Minimum: 10kb Maximum: 100kb}
