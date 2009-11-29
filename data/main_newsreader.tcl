@@ -33,8 +33,8 @@ proc main_newsreaderCheckUpdate {} {
 			http::cleanup $get_tags
 			set update_news [join [lrange [split $get_current_news "\n"] 0 end] "\n"]
 			set word_tags [join [lrange [split $get_current_tags "\n"] 0 end] "\n"]
-			catch {file delete "$::where_is_home/config/last_update.date"}
-			set date_file [open "$::where_is_home/config/last_update.date" w]
+			catch {file delete "$::option(where_is_home)/config/last_update.date"}
+			set date_file [open "$::option(where_is_home)/config/last_update.date" w]
 			close $date_file
 			
 			set w [toplevel .top_newsreader -class "TV-Viewer"]
@@ -94,8 +94,8 @@ proc main_newsreaderCheckUpdate {} {
 			wm iconphoto $w $::icon_b(newsreader)
 			if {[info exists ::query_auto_newsreader] == 1} {
 				unset ::query_auto_newsreader
-				if {[file exists "$::where_is_home/config/last_read.conf"]} {
-					set open_last_read [open "$::where_is_home/config/last_read.conf" r]
+				if {[file exists "$::option(where_is_home)/config/last_read.conf"]} {
+					set open_last_read [open "$::option(where_is_home)/config/last_read.conf" r]
 					set open_last_read_content [read $open_last_read]
 					close $open_last_read
 					if {"$open_last_read_content" == "$update_news"} {
@@ -103,8 +103,8 @@ proc main_newsreaderCheckUpdate {} {
 						destroy $w
 					} else {
 						log_writeOutTv 0 "Found newer messages."
-						file delete "$::where_is_home/config/last_read.conf"
-						set open_last_write [open "$::where_is_home/config/last_read.conf" w]
+						file delete "$::option(where_is_home)/config/last_read.conf"
+						set open_last_write [open "$::option(where_is_home)/config/last_read.conf" w]
 						puts -nonewline $open_last_write "$update_news"
 						close $open_last_write
 						$mf.t_top_newsr insert end "$update_news\n"
@@ -121,7 +121,7 @@ proc main_newsreaderCheckUpdate {} {
 						tkwait visibility $w
 					}
 				} else {
-					set open_last_write [open "$::where_is_home/config/last_read.conf" w]
+					set open_last_write [open "$::option(where_is_home)/config/last_read.conf" w]
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
 					$mf.t_top_newsr insert end "$update_news\n"
@@ -138,8 +138,8 @@ proc main_newsreaderCheckUpdate {} {
 					tkwait visibility $w
 				}
 			} else {
-				file delete "$::where_is_home/config/last_read.conf"
-				set open_last_write [open "$::where_is_home/config/last_read.conf" w]
+				file delete "$::option(where_is_home)/config/last_read.conf"
+				set open_last_write [open "$::option(where_is_home)/config/last_read.conf" w]
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write
 				$mf.t_top_newsr insert end "$update_news\n"
@@ -183,8 +183,8 @@ proc main_newsreaderCheckUpdate {} {
 
 proc main_newsreaderAutomaticUpdate {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderAutomaticUpdate \033\[0m"}
-	if !{[file exists "$::where_is_home/config/last_update.date"]} {
-		set date_file [open "$::where_is_home/config/last_update.date" w]
+	if !{[file exists "$::option(where_is_home)/config/last_update.date"]} {
+		set date_file [open "$::option(where_is_home)/config/last_update.date" w]
 		close $date_file
 		log_writeOutTv 1 "Newsreader started. Can not determine last check. Will check now."
 		set ::query_auto_newsreader 1
@@ -192,7 +192,7 @@ proc main_newsreaderAutomaticUpdate {} {
 		return
 	}
 	set actual_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
-	set last_update [clock scan [clock format [file mtime "$::where_is_home/config/last_update.date"] -format "%Y%m%d"]]
+	set last_update [clock scan [clock format [file mtime "$::option(where_is_home)/config/last_update.date"] -format "%Y%m%d"]]
 	foreach {years months days} [main_newsreaderDifftimes $actual_date $last_update] {}
 	log_writeOutTv 0 "Newsreader started"
 	log_writeOutTv 0 "Last check: [clock format $last_update -format {%d.%m.%Y}]"

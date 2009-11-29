@@ -208,14 +208,14 @@ proc config_wizardExit {} {
 
 proc config_wizardSaveopts {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardSaveopts \033\[0m"
-	log_writeOutTv 0 "Saving configuration values to $::where_is_home/config/tv-viewer.conf"
-	if {[file exists "$::where_is_home/config/tv-viewer.conf"]} {
-		file delete "$::where_is_home/config/tv-viewer.conf"
+	log_writeOutTv 0 "Saving configuration values to $::option(where_is_home)/config/tv-viewer.conf"
+	if {[file exists "$::option(where_is_home)/config/tv-viewer.conf"]} {
+		file delete "$::option(where_is_home)/config/tv-viewer.conf"
 	}
-	set config_file_open [open "$::where_is_home/config/tv-viewer.conf" w]
+	set config_file_open [open "$::option(where_is_home)/config/tv-viewer.conf" w]
 	puts $config_file_open "#TV-Viewer config file. File is generated automatically, do not edit. Datei wird automatisch erstellt, bitte nicht editieren"
 	close $config_file_open
-	set config_file_open [open "$::where_is_home/config/tv-viewer.conf" a]
+	set config_file_open [open "$::option(where_is_home)/config/tv-viewer.conf" a]
 	foreach {okey oelem} [array get ::choice] {
 		catch {puts $config_file_open "$::opt_choice($okey) \{$oelem\}"}
 	}

@@ -19,64 +19,64 @@
 proc log_viewerCheck {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerCheck \033\[0m"
 	if {$::option(log_files) == 1} {
-		if {[file exists "$::where_is_home/log/tvviewer.log"]} {
-			if {[file size "$::where_is_home/log/tvviewer.log"] > [expr $::option(log_size_tvviewer) * 1000]} {
-				catch {file delete "$::where_is_home/log/tvviewer.log"}
-				set logf_tv_open [open "$::where_is_home/log/tvviewer.log" w]
+		if {[file exists "$::option(where_is_home)/log/tvviewer.log"]} {
+			if {[file size "$::option(where_is_home)/log/tvviewer.log"] > [expr $::option(log_size_tvviewer) * 1000]} {
+				catch {file delete "$::option(where_is_home)/log/tvviewer.log"}
+				set logf_tv_open [open "$::option(where_is_home)/log/tvviewer.log" w]
 				puts $logf_tv_open "
 ########################################################################
-# TV-Viewer logfile. Release version $::option(release_version)
+# TV-Viewer logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 				close $logf_tv_open
-				set ::logf_tv_open_append [open "$::where_is_home/log/tvviewer.log" a]
+				set ::logf_tv_open_append [open "$::option(where_is_home)/log/tvviewer.log" a]
 			} else {
-				set ::logf_tv_open_append [open "$::where_is_home/log/tvviewer.log" a]
+				set ::logf_tv_open_append [open "$::option(where_is_home)/log/tvviewer.log" a]
 				puts $::logf_tv_open_append "
 ########################################################################
-# TV-Viewer logfile. Release version $::option(release_version)
+# TV-Viewer logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 				flush $::logf_tv_open_append
 			}
 		} else {
-			set logf_tv_open [open "$::where_is_home/log/tvviewer.log" w]
+			set logf_tv_open [open "$::option(where_is_home)/log/tvviewer.log" w]
 			puts $logf_tv_open "
 ########################################################################
-# TV-Viewer logfile. Release version $::option(release_version)
+# TV-Viewer logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 			close $logf_tv_open
-			set ::logf_tv_open_append [open "$::where_is_home/log/tvviewer.log" a]
+			set ::logf_tv_open_append [open "$::option(where_is_home)/log/tvviewer.log" a]
 		}
-		if {[file exists "$::where_is_home/log/videoplayer.log"]} {
-			if {[file size "$::where_is_home/log/videoplayer.log"] > [expr $::option(log_size_mplay) * 1000]} {
-				catch {file delete "$::where_is_home/log/videoplayer.log"}
-				set logf_mpl_open [open "$::where_is_home/log/videoplayer.log" w]
+		if {[file exists "$::option(where_is_home)/log/videoplayer.log"]} {
+			if {[file size "$::option(where_is_home)/log/videoplayer.log"] > [expr $::option(log_size_mplay) * 1000]} {
+				catch {file delete "$::option(where_is_home)/log/videoplayer.log"}
+				set logf_mpl_open [open "$::option(where_is_home)/log/videoplayer.log" w]
 				puts $logf_mpl_open "
 ########################################################################
-# MPlayer logfile. Release version $::option(release_version)
+# MPlayer logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 				close $logf_mpl_open
-				set ::logf_mpl_open_append [open "$::where_is_home/log/videoplayer.log" a]
+				set ::logf_mpl_open_append [open "$::option(where_is_home)/log/videoplayer.log" a]
 			} else {
-				set ::logf_mpl_open_append [open "$::where_is_home/log/videoplayer.log" a]
+				set ::logf_mpl_open_append [open "$::option(where_is_home)/log/videoplayer.log" a]
 				puts $::logf_mpl_open_append "
 ########################################################################
-# MPlayer logfile. Release version $::option(release_version)
+# MPlayer logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]"
 				flush $::logf_tv_open_append
 			}
 		} else {
-			set logf_mpl_open [open "$::where_is_home/log/videoplayer.log" w]
+			set logf_mpl_open [open "$::option(where_is_home)/log/videoplayer.log" w]
 			puts $logf_mpl_open "
 ########################################################################
-# MPlayer logfile. Release version $::option(release_version)
+# MPlayer logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 			close $logf_mpl_open
-			set ::logf_mpl_open_append [open "$::where_is_home/log/videoplayer.log" a]
+			set ::logf_mpl_open_append [open "$::option(where_is_home)/log/videoplayer.log" a]
 		}
 		puts $::logf_mpl_open_append "# \[[clock format [clock scan now] -format {%H:%M:%S}]\] Logging is enabled in the configuration.
 # \[[clock format [clock scan now] -format {%H:%M:%S}]\] Starting to log events generated by TV-Viewer and MPlayer."
@@ -169,9 +169,9 @@ proc log_viewerMplayer {} {
 		
 		proc log_viewerMplReadFile {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplReadFile \033\[0m \{$w\}"
-			if {[file exists "$::where_is_home/log/videoplayer.log"]} {
+			if {[file exists "$::option(where_is_home)/log/videoplayer.log"]} {
 				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for MPlayer."
-				set mlogfile_open [open "$::where_is_home/log/videoplayer.log" r]
+				set mlogfile_open [open "$::option(where_is_home)/log/videoplayer.log" r]
 				$w tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #0030C4
 				$w tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #DF0F0F
 				set i 0
@@ -215,7 +215,7 @@ proc log_viewerMplayer {} {
 				seek $mlogfile_open 0 end
 				set position [tell $mlogfile_open]
 				close $mlogfile_open
-				set ::data(log_mpl_id) [after 100 "log_viewerMplTail $::where_is_home/log/videoplayer.log $position"]
+				set ::data(log_mpl_id) [after 100 "log_viewerMplTail $::option(where_is_home)/log/videoplayer.log $position"]
 			}
 		}
 		after 0 [list log_viewerMplReadFile $mf.t_log_mplayer]
@@ -366,9 +366,9 @@ proc log_viewerScheduler {} {
 		
 		proc log_viewerSchedReadFile {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedReadFile \033\[0m \{$w\}"
-			if {[file exists "$::where_is_home/log/scheduler.log"]} {
+			if {[file exists "$::option(where_is_home)/log/scheduler.log"]} {
 				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for Scheduler."
-				set mlogfile_open [open "$::where_is_home/log/scheduler.log" r]
+				set mlogfile_open [open "$::option(where_is_home)/log/scheduler.log" r]
 				$w tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #0030C4
 				$w tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #DF0F0F
 				set i 0
@@ -412,7 +412,7 @@ proc log_viewerScheduler {} {
 				seek $mlogfile_open 0 end
 				set position [tell $mlogfile_open]
 				close $mlogfile_open
-				set ::data(log_sched_id) [after 100 "log_viewerSchedTail $::where_is_home/log/scheduler.log $position"]
+				set ::data(log_sched_id) [after 100 "log_viewerSchedTail $::option(where_is_home)/log/scheduler.log $position"]
 			}
 		}
 		after 0 [list log_viewerSchedReadFile $mf.t_log_scheduler]
@@ -557,9 +557,9 @@ proc log_viewerTvViewer {} {
 		
 		proc log_viewerTvReadFile {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvReadFile \033\[0m \{$w\}"
-			if {[file exists "$::where_is_home/log/tvviewer.log"]} {
+			if {[file exists "$::option(where_is_home)/log/tvviewer.log"]} {
 				log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for TV-Viewer."
-				set mlogfile_open [open "$::where_is_home/log/tvviewer.log" r]
+				set mlogfile_open [open "$::option(where_is_home)/log/tvviewer.log" r]
 				$w tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #0030C4
 				$w tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $w -size] bold" -foreground #DF0F0F
 				set i 0
@@ -603,7 +603,7 @@ proc log_viewerTvViewer {} {
 				seek $mlogfile_open 0 end
 				set position [tell $mlogfile_open]
 				close $mlogfile_open
-				set ::data(log_tv_id) [after 100 "log_viewerTvTail $::where_is_home/log/tvviewer.log $position"]
+				set ::data(log_tv_id) [after 100 "log_viewerTvTail $::option(where_is_home)/log/tvviewer.log $position"]
 			}
 		}
 		after 0 [list log_viewerTvReadFile $mf.t_log_tvviewer]

@@ -18,7 +18,7 @@
 
 proc timeshift {tbutton} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift \033\[0m \{$tbutton\}"
-	set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+	set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 	if { $status_recordlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -29,7 +29,7 @@ proc timeshift {tbutton} {
 		}
 	}
 	catch {exec""}
-	set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+	set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 	if { $status_timeslinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
@@ -38,7 +38,7 @@ proc timeshift {tbutton} {
 			$tbutton state !pressed
 			catch {exec kill $resultat_timeslinkread}
 			after 2000 {catch {exec""}}
-			catch {file delete "$::where_is_home/tmp/timeshift_lockfile.tmp"}
+			catch {file delete "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
 			catch {timeshift_calcDF cancel}
 			record_schedulerPreStop timeshift
 			return
@@ -83,7 +83,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 		return
 	}
 	if {[file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
-		catch {exec ln -f -s "$rec_pid" "$::where_is_home/tmp/timeshift_lockfile.tmp"}
+		catch {exec ln -f -s "$rec_pid" "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
 		if {$::option(timeshift_df) != 0} {
 			after 1000 [list timeshift_calcDF 0]
 		}

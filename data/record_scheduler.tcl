@@ -30,7 +30,7 @@ if {[file type [info script]] == "link" } {
 } else {
 	set where_is [file dirname [file normalize [info script]]]
 }
-set where_is_home "$::env(HOME)/.tv-viewer"
+set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -45,26 +45,26 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1b1.27"
+set option(release_version) {0.8.1b2 28}
 
-if {[file isdirectory $::where_is_home] == 0} {
+if {[file isdirectory $::option(where_is_home)] == 0} {
 	puts "
 Fatal error. Could not detect config directory
-$::where_is_home
+$::option(where_is_home)
 
 Before running the scheduler you have to run the main application.
 EXIT 1"
 	exit 1
 }
 
-set status_lock [catch {exec ln -s "[pid]" "$::where_is_home/tmp/scheduler_lockfile.tmp"} resultat_lock]
+set status_lock [catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
-	set linkread [file readlink "$::where_is_home/tmp/scheduler_lockfile.tmp"]
+	set linkread [file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"]
 	catch {exec ps -eo "%p"} read_ps
 	set status_greppid [catch {agrep -w "$read_ps" $linkread} resultat_greppid]
 	if { $status_greppid != 0 } {
-		catch {file delete "$::where_is_home/tmp/scheduler_lockfile.tmp"}
-		catch {exec ln -s "[pid]" "$::where_is_home/tmp/scheduler_lockfile.tmp"}
+		catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
+		catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
 	} else {
 		puts "
 An instance of the TV-Viewer Scheduler is already running."
@@ -83,35 +83,35 @@ main_readConfig
 
 proc scheduler_log {} {
 	if {$::option(log_files) == 1} {
-		if {[file exists "$::where_is_home/log/scheduler.log"]} {
-			if {[file size "$::where_is_home/log/scheduler.log"] > [expr $::option(log_size_scheduler) * 1000]} {
-				catch {file delete "$::where_is_home/log/scheduler.log"}
-				set logf_sched_open [open "$::where_is_home/log/scheduler.log" w]
+		if {[file exists "$::option(where_is_home)/log/scheduler.log"]} {
+			if {[file size "$::option(where_is_home)/log/scheduler.log"] > [expr $::option(log_size_scheduler) * 1000]} {
+				catch {file delete "$::option(where_is_home)/log/scheduler.log"}
+				set logf_sched_open [open "$::option(where_is_home)/log/scheduler.log" w]
 				puts $logf_sched_open "
 ########################################################################
-# Scheduler logfile. Release version $::option(release_version)
+# Scheduler logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 				close $logf_sched_open
-				set ::logf_sched_open_append [open "$::where_is_home/log/scheduler.log" a]
+				set ::logf_sched_open_append [open "$::option(where_is_home)/log/scheduler.log" a]
 			} else {
-				set ::logf_sched_open_append [open "$::where_is_home/log/scheduler.log" a]
+				set ::logf_sched_open_append [open "$::option(where_is_home)/log/scheduler.log" a]
 				puts $::logf_sched_open_append "
 ########################################################################
-# Scheduler logfile. Release version $::option(release_version)
+# Scheduler logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 				flush $::logf_sched_open_append
 			}
 		} else {
-			set logf_sched_open [open "$::where_is_home/log/scheduler.log" w]
+			set logf_sched_open [open "$::option(where_is_home)/log/scheduler.log" w]
 			puts $logf_sched_open "
 ########################################################################
-# Scheduler logfile. Release version $::option(release_version)
+# Scheduler logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 # Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 #"
 			close $logf_sched_open
-			set ::logf_sched_open_append [open "$::where_is_home/log/scheduler.log" a]
+			set ::logf_sched_open_append [open "$::option(where_is_home)/log/scheduler.log" a]
 		}
 	} else {
 		set ::logf_sched_open_append [open /dev/null a]
@@ -138,14 +138,14 @@ proc scheduler_logWriteOut {handler text} {
 }
 
 proc scheduler_stations {} {
-	if !{[file exists "$::where_is_home/config/stations_$::option(frequency_table).conf"]} {
+	if !{[file exists "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"]} {
 		scheduler_logWriteOut 2 "No valid stations_$::option(frequency_table).conf"
 		scheduler_logWriteOut 2 "Please create one using the Station Editor."
 		scheduler_logWriteOut 2 "Make sure you checked the configuration first!"
 		scheduler_logWriteOut 2 "Scheduler EXIT 1"
 		exit 1
 	} else {
-		set file "$::where_is_home/config/stations_$::option(frequency_table).conf"
+		set file "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"
 		set open_channel_file [open $file r]
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
@@ -173,7 +173,7 @@ proc scheduler_stations {} {
 scheduler_stations
 
 proc scheduler_exit {} {
-	catch {file delete "$::where_is_home/tmp/scheduler_lockfile.tmp"}
+	catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
 	puts $::logf_sched_open_append "#
 #
 # Stop session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
@@ -184,8 +184,8 @@ proc scheduler_exit {} {
 }
 
 proc scheduler_recordings {} {
-	if {[file exists "$::where_is_home/config/scheduled_recordings.conf"]} {
-		set f_open [open "$::where_is_home/config/scheduled_recordings.conf" r]
+	if {[file exists "$::option(where_is_home)/config/scheduled_recordings.conf"]} {
+		set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" r]
 		set i 1
 		while {[gets $f_open line]!=-1} {
 			if {[string trim $line] == {} || [string match #* $line]} continue
@@ -193,7 +193,7 @@ proc scheduler_recordings {} {
 			incr i
 		}
 		close $f_open
-		set f_open [open "$::where_is_home/config/scheduled_recordings.conf" r]
+		set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" r]
 		set i 1
 		while {[gets $f_open line]!=-1} {
 			if {[string trim $line] == {} || [string match #* $line] == 1} continue
@@ -242,8 +242,8 @@ proc scheduler_at {time jobid} {
 }
 
 proc scheduler_delete {args} {
-	file delete -force "$::where_is_home/config/scheduled_recordings.conf"
-	set f_open [open "$::where_is_home/config/scheduled_recordings.conf" a]
+	file delete -force "$::option(where_is_home)/config/scheduled_recordings.conf"
+	set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" a]
 	if {[llength $args] > 1} {
 		foreach id $args {
 			lappend ::recjob(delete) $id
@@ -263,7 +263,7 @@ proc scheduler_delete {args} {
 
 proc scheduler_rec_prestart {jobid} {
 	scheduler_logWriteOut 0 "Attempting to record job number $jobid."
-	set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+	set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 	if { $status_recordlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -275,7 +275,7 @@ proc scheduler_rec_prestart {jobid} {
 			return
 		}
 	}
-	set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+	set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 	if { $status_timeslinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
@@ -284,7 +284,7 @@ proc scheduler_rec_prestart {jobid} {
 			flush $::data(comsocket)
 		}
 	}
-	set status_linkread [catch {file readlink "$::where_is_home/tmp/lockfile.tmp"} resultat_linkread]
+	set status_linkread [catch {file readlink "$::option(where_is_home)/tmp/lockfile.tmp"} resultat_linkread]
 	if { $status_linkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid [catch {agrep -w "$read_ps" $resultat_linkread} resultat_greppid]
@@ -349,11 +349,11 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
 			puts $::data(comsocket) "tv-viewer_main record_schedulerStation {$::kanalid($snumber)} $snumber"
 			flush $::data(comsocket)
-			set last_channel_conf "$::where_is_home/config/lastchannel.conf"
+			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
 			set last_channel_write [open $last_channel_conf w]
 			puts -nonewline $last_channel_write "\{$::kanalid($snumber)\} $::kanalcall($snumber) $snumber"
 			close $last_channel_write
-			catch {file delete "$::where_is_home/tmp/record_lockfile.tmp"}
+			catch {file delete "$::option(where_is_home)/tmp/record_lockfile.tmp"}
 			set duration [string map {{:} { }} [lindex $::recjob($jobid) 4]]
 			set duration_calc [expr ([scan [lindex $duration 0] %d] * 3600) + ([scan [lindex $duration 1] %d] * 60) + [scan [lindex $duration 2] %d]]
 			set rec_pid [exec "$::where_is/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc &]
@@ -384,8 +384,8 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {[file exists "[lindex $::recjob($jobid) end]"]} {
 		if {[file size "[lindex $::recjob($jobid) end]"] > 0} {
 			scheduler_logWriteOut 0 "Recording of job $::recjob($jobid) started successfully."
-			catch {exec ln -s "$rec_pid" "$::where_is_home/tmp/record_lockfile.tmp"}
-			set f_open [open "$::where_is_home/config/current_rec.conf" w]
+			catch {exec ln -s "$rec_pid" "$::option(where_is_home)/tmp/record_lockfile.tmp"}
+			set f_open [open "$::option(where_is_home)/config/current_rec.conf" w]
 			set endtime [expr $duration_calc + [clock scan now]]
 			puts -nonewline $f_open "\{[lindex $::recjob($jobid) 1]\} [clock format [clock scan now] -format {%Y-%m-%d}] [clock format [clock scan now] -format {%H:%M:%S}] [clock format $endtime -format {%Y-%m-%d}] [clock format $endtime -format {%H:%M:%S}] $duration_calc \{[lindex $::recjob($jobid) end]\}"
 			close $f_open

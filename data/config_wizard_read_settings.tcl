@@ -107,9 +107,9 @@ proc config_wizardReadSettings {} {
 		rec_duration_hour 2
 		rec_duration_min 0
 		rec_duration_sec 0
-		rec_sched_auto 0
+		rec_sched_auto 1
 		timeshift_df 1000
-		timeshift_path "$::where_is_home/tmp"
+		timeshift_path "$::option(where_is_home)/tmp"
 	}
 	
 	array set ::stnd_opt {
@@ -200,9 +200,9 @@ proc config_wizardReadSettings {} {
 		rec_duration_hour 2
 		rec_duration_min 0
 		rec_duration_sec 0
-		rec_sched_auto 0
+		rec_sched_auto 1
 		timeshift_df 1000
-		timeshift_path "$::where_is_home/tmp"
+		timeshift_path "$::option(where_is_home)/tmp"
 	}
 
 	array set ::opt_choice {
@@ -289,8 +289,8 @@ proc config_wizardReadSettings {} {
 		osd_lirc osd_lirc
 	}
 
-	if {[file exists "$::where_is_home/config/tv-viewer.conf"]} {
-		set open_config_file [open "$::where_is_home/config/tv-viewer.conf" r]
+	if {[file exists "$::option(where_is_home)/config/tv-viewer.conf"]} {
+		set open_config_file [open "$::option(where_is_home)/config/tv-viewer.conf" r]
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {

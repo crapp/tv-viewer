@@ -33,7 +33,7 @@ proc start_options {} {
 	}
 	if {[array size ::start_options] != 3} {
 		puts "
-TV-Viewer $::option(release_version)
+TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 	
 Unkown option(s): $::argv
 
@@ -48,7 +48,7 @@ Possible options are:
 	}
 	if {$::start_options(--help)} {
 		puts "
-TV-Viewer $::option(release_version)
+TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 
 Possible options are:
 
@@ -61,7 +61,7 @@ Possible options are:
 	}
 	if {$::start_options(--version)} {
 	puts "
-Found TV-Viewer    $::option(release_version)
+Found TV-Viewer    [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 Found Tcl/Tk       [info patchlevel]
 Machine:           [exec uname -m]
 

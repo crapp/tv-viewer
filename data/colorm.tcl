@@ -178,8 +178,8 @@ proc colorm_readValues {wfscale} {
 
 proc colorm_saveValues {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0m colorm_saveValues \{$w\}"
-	log_writeOutTv 0 "Saving color management values to $::where_is_home/config/tv-viewer.conf"
-	set config_file "$::where_is_home/config/tv-viewer.conf"
+	log_writeOutTv 0 "Saving color management values to $::option(where_is_home)/config/tv-viewer.conf"
+	set config_file "$::option(where_is_home)/config/tv-viewer.conf"
 	if {[file exists "$config_file"]} {
 		set open_config_file [open "$config_file" r]
 		set i 1

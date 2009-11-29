@@ -301,6 +301,7 @@ proc option_screen_7 {} {
 			set ::choice(sb_duration_sec) $::option(rec_duration_sec)
 			set ::choice(cb_allow_schange_rec) $::option(rec_allow_sta_change)
 			set ::choice(cb_sched_auto) $::option(rec_sched_auto)
+			config_recordScheduler
 			set ::choice(ent_times_folder) "[subst $::option(timeshift_path)]"
 			set ::choice(ent_times_df) $::option(timeshift_df)
 			if {$::option(tooltips) == 1} {

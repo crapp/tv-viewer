@@ -64,7 +64,7 @@ proc info_helpAbout {} {
 		image delete $t
 		
 		ttk::label $mf.l_about_top \
-		-text [mc "TV-Viewer %" $::option(release_version)] \
+		-text [mc "TV-Viewer % Build %" [lindex $::option(release_version) 0] [lindex $::option(release_version) 1]] \
 		-image $small_icon \
 		-compound left  \
 		-font "systemfont 14 bold"

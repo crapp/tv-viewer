@@ -18,34 +18,34 @@
 
 proc command_socket {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}
-	if {[file exists "$::where_is_home/tmp/comSocket.tmp"] == 0} {
-		set comsocket [open "$::where_is_home/tmp/comSocket.tmp" w]
+	if {[file exists "$::option(where_is_home)/tmp/comSocket.tmp"] == 0} {
+		set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" w]
 		close $comsocket
 	} else {
 		if {"$::option(appname)" == "tv-viewer_main"} {
-			set status_schedlinkread [catch {file readlink "$::where_is_home/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+			set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 			if { $status_schedlinkread == 0 } {
 				catch {exec ps -eo "%p"} readpid_sched
 				set status_greppid_sched [catch {agrep -w "$readpid_sched" $resultat_schedlinkread} resultat_greppid_sched]
 				if { $status_greppid_sched == 0 } {
 					log_writeOutTv 0 "Scheduler is running, will stop it."
 					catch {exec kill $resultat_schedlinkread}
-					catch {file delete "$::where_is_home/tmp/scheduler_lockfile.tmp"}
+					catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
 					after 3000 {catch {exec "$::where_is/data/record_scheduler.tcl" &}}
 				}
 			}
-			catch {file delete "$::where_is_home/tmp/comSocket.tmp"}
-			set comsocket [open "$::where_is_home/tmp/comSocket.tmp" w]
+			catch {file delete "$::option(where_is_home)/tmp/comSocket.tmp"}
+			set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" w]
 			close $comsocket
 		}
 	}
-	set comsocket [open "$::where_is_home/tmp/comSocket.tmp" r]
+	set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" r]
 	seek $comsocket 0 end
 	set position [tell $comsocket]
 	close $comsocket
-	set ::data(comsocket) [open "$::where_is_home/tmp/comSocket.tmp" a]
+	set ::data(comsocket) [open "$::option(where_is_home)/tmp/comSocket.tmp" a]
 	fconfigure $::data(comsocket) -blocking no -buffering line
-	set ::data(comsocket_id) [after 0 [list command_getData "$::where_is_home/tmp/comSocket.tmp" $position]]
+	set ::data(comsocket_id) [after 0 [list command_getData "$::option(where_is_home)/tmp/comSocket.tmp" $position]]
 }
 
 proc command_getData {comfile position} {

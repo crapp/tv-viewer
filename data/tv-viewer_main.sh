@@ -19,7 +19,7 @@
 #       MA 02110-1301, USA.
 
 if {[catch {package require Tcl 8.5}]} {
-catch {puts "Program error. You'll need Tcl version 8.5 or higher.
+	catch {puts "Program error. You'll need Tcl version 8.5 or higher.
 
 Found version: [info patchlevel]
 Have a closer look to the user guide for the system requirements.
@@ -29,7 +29,7 @@ might not point to the correct location.
 [file readlink /usr/bin/wish]
 "
 }
-exit 1
+	exit 1
 }
 
 set status_tk [catch {package require Tk 8.5} resultat_tk]
@@ -68,7 +68,7 @@ if {[file type [info script]] == "link" } {
 #~ Test starting with symlink.
 #~ [file dirname [file dirname [file normalize [file join [info script] bogus]]]]
 
-set where_is_home "$::env(HOME)/.tv-viewer"
+set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
 if {"$::tcl_platform(machine)" == "x86_64"} {
 	catch {load $where_is/extensions/tktray/64/libtktray1.1.so} load_lib_tray
@@ -101,63 +101,106 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) "0.8.1b1.27"
+set option(release_version) {0.8.1b2 28}
 
-puts "This is TV-Viewer $option(release_version) ..."
+puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
-set get_installed_version [glob -nocomplain "$::where_is_home/config/tv-viewer-*.ver"]
+proc main_startupCf {version read_version read_build} {
+	if {[string is integer $read_build]} {
+		set target "tv-viewer$read_version\_build$read_build"
+		set messageFin "Config files from TV-Viewer $read_version Build $read_build can be found in:
+$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\_build$read_build/"
+	}
+	if {"$read_build" == "nobuild"} {
+		set target "tv-viewer$read_version"
+		set messageFin "Config files from TV-Viewer $read_version can be found in:
+$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/"
+	}
+	if {"$read_build" == "unknown"} {
+		set target "unknown_version"
+		set messageFin "Config files from TV-Viewer unknown version can be found in:
+$::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
+	}
+	if {[file isdirectory "$::env(HOME)/.tv-viewer/backup_folder/$target\/"]} {file delete -force -- pathname "$::env(HOME)/.tv-viewer/backup_folder/$target\/"}
+	file mkdir "$::env(HOME)/.tv-viewer/backup_folder/$target\/"
+	catch {exec sh -c "mv $::env(HOME)/.tv-viewer/log/ $::env(HOME)/.tv-viewer/config/ $::env(HOME)/.tv-viewer/tmp/ $::env(HOME)/.tv-viewer/backup_folder/$target\/"}
+	file mkdir "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
+	set get_channels [glob -nocomplain "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/stations_*.conf"]
+	foreach {station_file} [split "$get_channels"] {
+		catch {file copy -force "$station_file" "$::option(where_is_home)/config/"}
+	}
+	set confFiles {tv-viewer scheduler scheduled_recordings last_read}
+	foreach conf $confFiles {
+		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf"] == 0} continue
+		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf" "$::option(where_is_home)/config/"}
+	}
+	set logFiles {tvviewer scheduler videoplayer}
+	foreach log $logFiles {
+		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/log/$log\.log"] == 0} continue
+		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/log/$log\.log" "$::option(where_is_home)/log/"}
+	}
+	set new_version_file [open "$::option(where_is_home)/config/tv-viewer-[lindex $version 0]_build[lindex $version 1]\.ver" w]
+	close $new_version_file
+	puts "$messageFin"
+}
+
+set get_installed_version [glob -nocomplain "$::option(where_is_home)/config/tv-viewer-*.ver"]
 if {[string trim $get_installed_version] != {}} {
 	set normalized_version_file [file normalize "$get_installed_version"]
-	set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\.ver} "$normalized_version_file" <-> read_version]
-	if {[package vcompare $option(release_version) $read_version] != 0} {
-		puts "
+	set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\_build} "$normalized_version_file" <-> read_version]
+	if {$status_regexp_version == 1} {
+		set status_regexp_version2 [regexp {_build([\d]+)\.ver} "$normalized_version_file" <-> read_build]
+		if {[package vcompare [lindex $option(release_version) 0] $read_version] != 0} {
+			puts "
 You've installed a new version of TV-Viewer."
-#		Upgrade or downgrade?
-		if {[package vcompare $option(release_version) $read_version] == -1} {
-#			Downgrade
-			puts "This seems to be a downgrade!"
-			if {[file isdirectory "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"]} {file delete -force -- pathname "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"}
-			file mkdir "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"
-			catch {exec sh -c "mv $::env(HOME)/.tv-viewer/log/ $::env(HOME)/.tv-viewer/config/ $::env(HOME)/.tv-viewer/tmp/ $::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"}
-			file mkdir "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
-			set get_channels [glob -nocomplain "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/stations_*.conf"]
-			foreach {station_file} [split "$get_channels"] {
-				catch {file copy -force "$station_file" "$where_is_home/config/"}
+#			Upgrade or downgrade?
+			if {[package vcompare [lindex $option(release_version) 0] $read_version] == -1} {
+#				Downgrade
+				puts "This seems to be a downgrade!"
+				main_startupCf "$option(release_version)" $read_version $read_build
 			}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/tv-viewer.conf" "$where_is_home/config/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/log/scheduler.log" "$where_is_home/log/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/log/videoplayer.log" "$where_is_home/log/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/log/tvviewer.log" "$where_is_home/log/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/scheduler.conf" "$where_is_home/config/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/scheduled_recordings.conf" "$where_is_home/config/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/last_read.conf" "$where_is_home/config/"}
-			set new_version_file [open "$where_is_home/config/tv-viewer-$option(release_version)\.ver" w]
-			close $new_version_file
-			puts "Config files from TV-Viewer $read_version can be found in:
-$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"
-		}
-		if {[package vcompare $option(release_version) $read_version] == 1} {
+			if {[package vcompare [lindex $option(release_version) 0] $read_version] == 1} {
 #			Upgrade
-			puts "This seems to be an upgrade."
-			if {[file isdirectory "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"]} {file delete -force -- pathname "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"}
-			file mkdir "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"
-			catch {exec sh -c "mv $::env(HOME)/.tv-viewer/log/ $::env(HOME)/.tv-viewer/config/ $::env(HOME)/.tv-viewer/tmp/ $::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"}
-			file mkdir "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
-			set get_channels [glob -nocomplain "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/stations_*.conf"]
-			foreach {station_file} [split "$get_channels"] {
-				catch {file copy -force "$station_file" "$where_is_home/config/"}
+				puts "This seems to be an upgrade."
+				main_startupCf "$option(release_version)" $read_version $read_build
 			}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/tv-viewer.conf" "$where_is_home/config/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/log/scheduler.log" "$where_is_home/log/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/log/videoplayer.log" "$where_is_home/log/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/log/tvviewer.log" "$where_is_home/log/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/scheduler.conf" "$where_is_home/config/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/scheduled_recordings.conf" "$where_is_home/config/"}
-			catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version\/config/last_read.conf" "$where_is_home/config/"}
-			set new_version_file [open "$where_is_home/config/tv-viewer-$option(release_version)\.ver" w]
-			close $new_version_file
-			puts "Config files from TV-Viewer $read_version can be found in:
-$::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"
+		} else {
+			if {[lindex $option(release_version) 1] != $read_build} {
+				puts "
+You've installed a new version of TV-Viewer."
+				if {[lindex $option(release_version) 1] < $read_build} {
+					puts "This seems to be a downgrade!"
+					main_startupCf "$option(release_version)" $read_version $read_build
+				}
+				if {[lindex $option(release_version) 1] < $read_build} {
+					puts "This seems to be an upgrade."
+					main_startupCf "$option(release_version)" $read_version $read_build
+				}
+			}
+		}
+	} else {
+		# Check for old version system.
+		set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\.ver} "$normalized_version_file" <-> read_version]
+		if {[package vcompare [lindex $option(release_version) 0] $read_version] != 0} {
+			puts "
+You've installed a new version of TV-Viewer."
+#			Upgrade or downgrade?
+			if {[package vcompare [lindex $option(release_version) 0] $read_version] == -1} {
+#				Downgrade
+				puts "This seems to be a downgrade!"
+				main_startupCf "$option(release_version)" $read_version nobuild
+			}
+			if {[package vcompare [lindex $option(release_version) 0] $read_version] == 1} {
+#				Upgrade
+				puts "This seems to be an upgrade."
+				main_startupCf "$option(release_version)" $read_version nobuild
+			}
+		} else {
+			#This must be a new version because of new build concept.
+			puts "
+You've installed a new version of TV-Viewer."
+			puts "This seems to be an upgrade."
+			main_startupCf "$option(release_version)" $read_version nobuild
 		}
 	}
 } else {
@@ -165,41 +208,26 @@ $::env(HOME)/.tv-viewer/backup_folder/tv-viewer$read_version/"
 You've installed a new version of TV-Viewer."
 	if {[file isdirectory "$::env(HOME)/.tv-viewer/"]} {
 		puts "Old version could not be recognized."
-		if {[file isdirectory "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/"]} {file delete -force -- pathname "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/"}
-		file mkdir "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
-		catch {exec sh -c "mv $::env(HOME)/.tv-viewer/log/ $::env(HOME)/.tv-viewer/config/ $::env(HOME)/.tv-viewer/tmp/ $::env(HOME)/.tv-viewer/backup_folder/unknown_version/"}
-		file mkdir "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
-		set get_channels [glob -nocomplain "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/config/stations_*.conf"]
-		foreach {station_file} [split "$get_channels"] {
-			catch {file copy -force "$station_file" "$where_is_home/config/"}
-		}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/config/tv-viewer.conf" "$where_is_home/config/"}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/log/scheduler.log" "$where_is_home/log/"}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/log/videoplayer.log" "$where_is_home/log/"}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/log/tvviewer.log" "$where_is_home/log/"}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/config/scheduler.conf" "$where_is_home/config/"}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/config/scheduled_recordings.conf" "$where_is_home/config/"}
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/unknown_version/config/last_read.conf" "$where_is_home/config/"}
-		puts "Config files from unknown version can be found in:
-$::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
+		main_startupCf "$option(release_version)" unknown unknown
 	} else {
 		file mkdir "$::env(HOME)/.tv-viewer/" "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
-		set new_version_file [open "$where_is_home/config/tv-viewer-$option(release_version)\.ver" w]
+		set new_version_file [open "$::env(HOME)/.tv-viewer/config/tv-viewer-[lindex $option(release_version) 0]_build[lindex $option(release_version 1]\.ver" w]
 		close $new_version_file
 	}
 }
+unset -nocomplain get_installed_version normalized_version_file status_regexp_version status_regexp_version2 new_version_file
 
 #source agrep, replaces unix grep command.
 source $::where_is/data/agrep.tcl
 #check whether or not tv-viewer is already running.
-set status_lock [catch {exec ln -s "[pid]" "$::where_is_home/tmp/lockfile.tmp"} resultat_lock]
+set status_lock [catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
-	set linkread [file readlink "$::where_is_home/tmp/lockfile.tmp"]
+	set linkread [file readlink "$::option(where_is_home)/tmp/lockfile.tmp"]
 	catch {exec ps -eo "%p"} readpid
 	set status_greppid [catch {agrep -w "$readpid" $linkread} resultat_greppid]
 	if { $status_greppid != 0 } {
-		catch {file delete "$::where_is_home/tmp/lockfile.tmp"}
-		catch {exec ln -s "[pid]" "$::where_is_home/tmp/lockfile.tmp"}
+		catch {file delete "$::option(where_is_home)/tmp/lockfile.tmp"}
+		catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/lockfile.tmp"}
 	} else {
 		puts "
 An instance of TV-Viewer is already running."

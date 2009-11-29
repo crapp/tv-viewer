@@ -121,22 +121,22 @@ proc record_applyFile {tree lb duration_calc w handler} {
 
 proc record_applyEndgame {tree lb duration_calc w handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyEndgame \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
-	if {[file exist "$::where_is_home/config/scheduler.conf"]} {
-		set open_f [open "$::where_is_home/config/scheduler.conf" r]
+	if {[file exist "$::option(where_is_home)/config/scheduler.conf"]} {
+		set open_f [open "$::option(where_is_home)/config/scheduler.conf" r]
 		set jobid [read $open_f]
 		incr jobid
 		close $open_f
-		set f_open [open "$::where_is_home/config/scheduler.conf" w]
+		set f_open [open "$::option(where_is_home)/config/scheduler.conf" w]
 		puts -nonewline $f_open "$jobid"
 		close $f_open
 	} else {
 		set jobid 1
-		set f_open [open "$::where_is_home/config/scheduler.conf" w]
+		set f_open [open "$::option(where_is_home)/config/scheduler.conf" w]
 		puts -nonewline $f_open "$jobid"
 		close $f_open
 	}
 	catch {exec ""}
-	set status_schedlinkread [catch {file readlink "$::where_is_home/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+	set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 	if { $status_schedlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
@@ -157,8 +157,8 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 		log_writeOutTv 0 "Edit recording:"
 		log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $lbcontent $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 	}
-	catch {file delete -force "$::where_is_home/config/scheduled_recordings.conf"}
-	set f_open [open "$::where_is_home/config/scheduled_recordings.conf" a]
+	catch {file delete -force "$::option(where_is_home)/config/scheduled_recordings.conf"}
+	set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" a]
 	foreach ritem [split [$tree children {}]] {
 		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
 	}
@@ -169,7 +169,7 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	after 2000 {
 		catch {
 			catch {exec ""}
-			set status_schedlinkread [catch {file readlink "$::where_is_home/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+			set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 			if { $status_schedlinkread == 0 } {
 				catch {exec ps -eo "%p"} read_ps
 				set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]

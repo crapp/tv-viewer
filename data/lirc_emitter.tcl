@@ -28,18 +28,18 @@ if {[file type [info script]] == "link" } {
 } else {
 	set where_is [file dirname [file normalize [info script]]]
 }
-set where_is_home "$::env(HOME)/.tv-viewer"
+set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
-set option(release_version) "0.8.1b1.27"
+set option(release_version) {0.8.1b2 28}
 
 source $where_is/main_read_config.tcl
 source $where_is/log_viewer.tcl
 
 main_readConfig
 
-if {[file exists $::where_is_home/log/tvviewer.log]} {
+if {[file exists $::option(where_is_home)/log/tvviewer.log]} {
 	if {$::option(log_files) == 1} {
-		set logf_tv_open_append [open $::where_is_home/log/tvviewer.log a]
+		set logf_tv_open_append [open $::option(where_is_home)/log/tvviewer.log a]
 		fconfigure $logf_tv_open_append -blocking no -buffering line
 	} else {
 		set logf_tv_open_append [open /dev/null a]
@@ -50,8 +50,8 @@ if {[file exists $::where_is_home/log/tvviewer.log]} {
 	fconfigure $logf_tv_open_append -blocking no -buffering line
 }
 
-if {[file exists "$::where_is_home/tmp/comSocket.tmp"]} {
-	set comsocket [open "$::where_is_home/tmp/comSocket.tmp" a]
+if {[file exists "$::option(where_is_home)/tmp/comSocket.tmp"]} {
+	set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" a]
 	fconfigure $comsocket -blocking no -buffering line
 } else {
 	log_writeOutTv 2 "comSocket.tmp does not exist. Can't send commands to main application."

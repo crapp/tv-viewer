@@ -28,7 +28,7 @@ if {[file type [info script]] == "link" } {
 } else {
 	set where_is [file dirname [file normalize [info script]]]
 }
-set where_is_home "$::env(HOME)/.tv-viewer"
+set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
 proc recorderShowProgress { fdin fdout size bytes {error ""} } {
 	if { $error != "" } {

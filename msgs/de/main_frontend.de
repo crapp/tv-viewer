@@ -106,6 +106,10 @@ mcset $lang \
 	{TV-Viewer %s}
 
 mcset $lang \
+	{TV-Viewer % Build %} \
+	{TV-Viewer %s Build %s}
+
+mcset $lang \
 	{A small and simple frontend to watch and record television.} \
 	{Ein kleines und einfaches Programm zum Fernsehen und Aufnehmen.}
 

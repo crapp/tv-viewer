@@ -28,7 +28,7 @@ catch {puts "Program error. You'll need Tcl version 8.5 or higher.
 
 Found version: [info patchlevel]
 Have a closer look to the user guide for the system requirements.
-If you've installed more than one version of Tcl, the symlink wish
+If you've installed more than one version of Tcl, the symlink tclsh
 might not point to the correct location.
 /usr/bin/tclsh is pointing to:
 [file readlink /usr/bin/tclsh]
@@ -37,7 +37,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) "0.8.1b1.27"
+set option(release_version) {0.8.1b2 28}
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
@@ -54,7 +54,7 @@ foreach command_argument $argv {
 }
 if {[array size start_options] != 4} {
 	puts "
-TV-Viewer $option(release_version)
+TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
 Unkown option(s): $argv
 
@@ -116,11 +116,11 @@ TV-Viewer is not installed!
 	}
 }
 
-	puts $::printchan "\n \n ############################################################################"
-	puts $::printchan " ####                                                                    ####"
-	puts $::printchan " ####           Installation of TV-Viewer $option(release_version)                     ####"
-	puts $::printchan " ####                                                                    ####"
-	puts $::printchan " ############################################################################"
+	puts $::printchan "\n \n #########################################################################"
+	puts $::printchan " ####                                                                 ####"
+	puts $::printchan " ####           Installation of TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]                    ####"
+	puts $::printchan " ####                                                                 ####"
+	puts $::printchan " #########################################################################"
 
 after 200
 
@@ -196,7 +196,7 @@ if {$status_schedlinkread == 0} {
 Scheduler is running, will stop it."
 after 1000
 		catch {exec kill $resultat_schedlinkread}
-		catch {file delete "$::where_is_home/tmp/scheduler_lockfile.tmp"}
+		catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
 	}
 }
 

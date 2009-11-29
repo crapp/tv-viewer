@@ -35,6 +35,11 @@ Installing TV-Viewer is done by the following command:
 Don't try to use "sh tv-viewer_install.sh" this won't work.
 If there are any errors during installation, check your build environment
 and try to find the error, otherwise contact the author, or use sourceforge.net.
+Many people encounter problems if they have more than one version of Tcl/Tk
+installed. Please make sure the Symlinks /usr/bin/wish and /usr/bin/tclsh
+point at least on version 8.5. Debian / *buntu users may use
+update alternatives to solve this problem
+("sudo update-alternatives --config wish" and/or "--config tclsh").
 
 See the user guide for details.
 

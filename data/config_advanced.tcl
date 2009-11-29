@@ -398,7 +398,7 @@ E.g. resample=44100:0:0,volnorm
 See the MPlayer man pages for more informations."]
 					settooltip $::window(advanced_nb3).cb_lf_logging [mc "Check this to enable logging of TV-Viewer, Scheduler and MPlayer events.
 You can find the three logfiles in %\/log\/
-Refer to the 'Help' section of the main interface for the log viewers." $::where_is_home]
+Refer to the 'Help' section of the main interface for the log viewers." $::option(where_is_home)]
 					settooltip $::window(advanced_nb3).sb_logging_mplayer [mc "Specify the amount of space in kBytes the MPlayer logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.

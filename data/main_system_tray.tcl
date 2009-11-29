@@ -80,8 +80,10 @@ proc main_systemTrayToggle {} {
 			wm deiconify .
 			log_writeOutTv 0 "Undocking \".\" from system tray."
 			foreach {key elem} [array get ::system_tray] {
-				wm deiconify $elem
-				log_writeOutTv 0 "Undocking \"$elem\" from system tray."
+				if {[winfo exists $elem]} {
+					wm deiconify $elem
+					log_writeOutTv 0 "Undocking \"$elem\" from system tray."
+				}
 			}
 		}
 	} else {

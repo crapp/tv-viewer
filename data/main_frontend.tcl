@@ -18,20 +18,20 @@
 
 proc main_frontendExitViewer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendExitViewer \033\[0m"
-	set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+	set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 	if { $status_timeslinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 		if { $status_greppid_times == 0 } {
 			log_writeOutTv 0 "Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
 			catch {exec kill $resultat_timeslinkread}
-			catch {file delete "$::where_is_home/tmp/timeshift_lockfile.tmp"}
+			catch {file delete "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
 		}
 	}
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
-	catch {file delete "$::where_is_home/tmp/lockfile.tmp"}
+	catch {file delete "$::option(where_is_home)/tmp/lockfile.tmp"}
 	destroy .top_newsreader
 	destroy .top_about
 	if {[winfo exists .tv]} {
@@ -135,8 +135,8 @@ proc main_frontendShowslist {w} {
 				}
 			}
 			$wflbox.listbox_slist see [$wflbox.listbox_slist curselection]
-			set status_timeslinkread [catch {file readlink "$::where_is_home/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-			set status_recordlinkread [catch {file readlink "$::where_is_home/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+			set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+			set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 			if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
 				catch {exec ps -eo "%p"} read_ps
 				set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -700,7 +700,7 @@ proc main_frontendUiTvviewer {} {
 	}
 	
 	wm resizable . 0 0
-	wm title . [mc "TV-Viewer %" $::option(release_version)]
+	wm title . [mc "TV-Viewer %" [lindex $::option(release_version) 0]]
 	wm protocol . WM_DELETE_WINDOW main_frontendExitViewer
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
