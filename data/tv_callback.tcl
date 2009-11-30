@@ -38,7 +38,9 @@ proc tv_callbackVidData {} {
 				.top_buttons.button_starttv state !pressed
 			}
 			tv_fileComputePos cancel
-			tv_wmHeartbeatCmd cancel
+			if {$::option(player_screens_value) == 1} {
+				tv_wmHeartbeatCmd cancel 
+			}
 			if {[winfo exists .tv.file_play_bar] == 1} {
 				.tv.file_play_bar.b_play state !disabled
 				.tv.file_play_bar.b_pause state disabled

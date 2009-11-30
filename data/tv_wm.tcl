@@ -408,10 +408,12 @@ proc tv_wmHeartbeatCmd {com} {
 	if {"$com" == "cancel"} {
 		catch {after cancel $::data(heartbeat_id)}
 		unset -nocomplain ::data(heartbeat_id)
+		catch {exec xdg-screensaver resume $::tv(screensaverId)}
+		unset -nocomplain ::tv(screensaverId)
 		return
 	}
-	catch {exec sh -c "gnome-screensaver-command -p 2>/dev/null" &}
-	catch {exec sh -c "xscreensaver-command -deactivate 2>/dev/null" &}
+	#~ catch {exec sh -c "gnome-screensaver-command -p 2>/dev/null" &}
+	#~ catch {exec sh -c "xscreensaver-command -deactivate 2>/dev/null" &}
 	tk inactive reset
 	set ::data(heartbeat_id) [after 30000 tv_wmHeartbeatCmd 0]
 }

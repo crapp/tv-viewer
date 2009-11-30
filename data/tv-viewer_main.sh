@@ -101,7 +101,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1b2 29 30.11.2009}
+set option(release_version) {0.8.1b2 30 30.11.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 

@@ -139,6 +139,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 			lappend mcommand -stop-xscreensaver
 		} else {
 			log_writeOutTv 1 "Using heartbeat hack to stop screensaver."
+			set ::tv(screensaverId) [winfo id .]
+			catch {exec xdg-screensaver suspend $::tv(screensaverId)}
 			set ::data(heartbeat_id) [after 3000 tv_wmHeartbeatCmd 0]
 		}
 	} else {
@@ -557,7 +559,9 @@ proc tv_playbackStop {com handler} {
 	} else {
 		.top_buttons.button_starttv state !pressed
 	}
-	catch {tv_wmHeartbeatCmd cancel}
+	if {$::option(player_screens_value) == 1} {
+		tv_wmHeartbeatCmd cancel
+	}
 	tv_fileComputePos cancel
 	if {$com == 0} {
 		if {[winfo exists .tv.file_play_bar]} {
