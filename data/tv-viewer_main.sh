@@ -101,7 +101,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1b2 28}
+set option(release_version) {0.8.1b2 29 30.11.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -172,7 +172,7 @@ You've installed a new version of TV-Viewer."
 					puts "This seems to be a downgrade!"
 					main_startupCf "$option(release_version)" $read_version $read_build
 				}
-				if {[lindex $option(release_version) 1] < $read_build} {
+				if {[lindex $option(release_version) 1] > $read_build} {
 					puts "This seems to be an upgrade."
 					main_startupCf "$option(release_version)" $read_version $read_build
 				}

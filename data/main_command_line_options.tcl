@@ -60,7 +60,25 @@ Possible options are:
 		exit 0
 	}
 	if {$::start_options(--version)} {
-	puts "
+		if {[file exists [glob -nocomplain /etc/*release]]} {
+			if {[llength [glob -nocomplain /etc/*release]] > 1} {
+				foreach relf [glob -nocomplain /etc/*release] {
+					set df [open $relf r]
+					set distri [read $df]
+					lappend distri2 "$distri"
+					close $df
+				}
+			} else {
+				set distri [open [glob -nocomplain /etc/*release] r]
+				set distri2 [read $distri]
+			}
+			if {[string trim $distri2] == {}} {
+				set distri2 "Distribution unknown"
+			}
+		} else {
+			set distri2 "Distribution unknown"
+		}
+		puts "
 Found TV-Viewer    [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 Found Tcl/Tk       [info patchlevel]
 Machine:           [exec uname -m]
@@ -68,7 +86,7 @@ Machine:           [exec uname -m]
 OS:    
 
 [exec uname -s] [exec uname -r]
-[exec sh -c "cat /etc/*release"]
+$distri2
 "
 		exit 0
 	}

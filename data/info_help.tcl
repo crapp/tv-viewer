@@ -41,6 +41,19 @@ proc info_helpHelp {} {
 	}
 }
 
+proc info_helpMplayerRev {first strg} {
+	set rev [string range "$strg" [expr $first + 1] [expr $first + 5]]
+	if {[string is integer $rev] == 0} {
+		set first [string first r $strg [expr $first + 1]]
+		if {$first == -1} {
+			return -1
+		}
+		info_helpMplayerRev $first "$strg"
+	} else {
+		return $rev
+	}
+}
+
 proc info_helpAbout {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpAbout \033\[0m"
 	if {[winfo exists .top_about] == 0} {
@@ -88,6 +101,9 @@ proc info_helpAbout {} {
 		-text [mc "Homepage"] \
 		-command info_helpHomepage \
 		-style Toolbutton
+		#~ ttk::labelframe $nb1.lf_version
+		#~ set lf_version $nb1.lf_version
+		ttk::label $nb1.l_version
 		ttk::label $nb1.l_copy \
 		-text [mc "© Copyright 2007 - 2009
 Christian Rapp"] \
@@ -152,7 +168,9 @@ Christian Rapp"] \
 		-pady 10
 		grid $nb1.b_homepage -in $nb1 -row 1 -column 0 \
 		-pady "0 10"
-		grid $nb1.l_copy -in $nb1 -row 2 -column 0 \
+		grid $nb1.l_version -in $nb1 -row 2 -column 0 \
+		-pady "0 10"
+		grid $nb1.l_copy -in $nb1 -row 3 -column 0 \
 		-pady "0 10"
 		grid $nb2.t_credits -in $nb2 -row 0 -column 0 \
 		-sticky nesw
@@ -200,6 +218,33 @@ Christian Rapp"] \
 		wm protocol $w WM_DELETE_WINDOW [list info_helpExitAbout $w]
 		wm iconphoto $w $::icon_b(help-about)
 		wm transient $w .
+		
+		if {[string trim [auto_execok mplayer]] != {}} {
+			catch {exec mplayer} mplayer_ver
+			set agrep_mpl_ver [catch {agrep -m "$mplayer_ver" "MPlayer"} resultat_mpl_ver]
+			if {$agrep_mpl_ver == 0} {
+				set first [string first $resultat_mpl_ver r]
+				set revision [info_helpMplayerRev $first "$resultat_mpl_ver"]
+				if {$revision != -1} {
+					log_writeOutTv 0 "Found MPlayer: SVN r$revision"
+					$nb1.l_version configure -text "Version: [lindex $::option(release_version) 0] (Bazaar r[lindex $::option(release_version) 1]), running on Tcl/Tk [info patchlevel]
+Build date: [lindex $::option(release_version) 2]
+Backend: MPlayer SVN r$revision"
+				} else {
+					log_writeOutTv 1 "Found MPlayer, but could not read SVN revision."
+					log_writeOutTv 1 "$resultat_mpl_ver"
+					$nb1.l_version configure -text "Version: [lindex $::option(release_version) 0] (Bazaar r[lindex $::option(release_version) 1]), running on Tcl/Tk [info patchlevel]
+Build date: [lindex $::option(release_version) 2]
+Backend: MPlayer SVN rUNKNOWN"
+				}
+			} else {
+				log_writeOutTv 1 "Found MPlayer, but could not detect Version"
+				log_writeOutTv 1 "$resultat_mpl_ver"
+				$nb1.l_version configure -text "Version: [lindex $::option(release_version) 0] (Bazaar r[lindex $::option(release_version) 1]), running on Tcl/Tk [info patchlevel]
+Build date: [lindex $::option(release_version) 2]
+Backend: MPlayer SVN rUNKNOWN"
+			}
+		}
 		
 		$nb2.t_credits insert end "Developers:" big
 		$nb2.t_credits insert end "\n
