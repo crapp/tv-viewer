@@ -37,8 +37,8 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1b2 30 30.11.2009}
-array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0}
+set option(release_version) {0.8.1b2 31 01.12.2009}
+array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -52,7 +52,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 4} {
+if {[array size start_options] != 5} {
 	puts "
 TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
@@ -62,6 +62,7 @@ Possible options are:
 
   --uninstall     Uninstalls TV-Viewer.
   --nodebug       Do not print messages of progress to stdout.
+  --nodepcheck    Skip dependencies ckeck.
   --target=PATH   Provide a path for installation (standard /usr/local/share).
   --manpath=PATH  Provide a path for man pages (standard /usr/local/share/man/man1).
  "
@@ -124,43 +125,6 @@ TV-Viewer is not installed!
 
 after 200
 
-if {[file isdirectory "$target/tv-viewer"]} {
-	puts $::printchan "
-Found a previous installation of TV-Viewer.
-Erasing old files..."
-	set status_file [catch {file delete -force -- pathname "$target/tv-viewer/"} resultat_file]
-	if { $status_file != 0 } {
-		puts $::printchan "
-Can't erase folders.
-Error message: $resultat_file
-
-Folder is owned by [file attributes $target/tv-viewer/ -owner].
-You are $::tcl_platform(user).
-"
-		exit 1
-	} else {
-		file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"
-		puts $::printchan "
-Creating folders..."
-	}
-} else {
-	set status_file [catch {file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
-	if { $status_file != 0 } {
-		puts $::printchan "
-Can't create necessary folders.
-Error message: $resultat_file
-
-You probably have to be root.
-"
-		exit 1
-	} else {
-				puts $::printchan "
-Creating folders..."
-	}
-}
-
-after 1000
-
 proc agrep {switch input modifier} {
 	foreach line [split "$input" \n] {
 		if {"$switch" == "-m"} {
@@ -187,39 +151,115 @@ proc agrep {switch input modifier} {
 	}
 }
 
-set status_schedlinkread [catch {file readlink "$::env(HOME)/.tv-viewer/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-if {$status_schedlinkread == 0} {
-	catch {exec ps -eo "%p"} read_ps
-	set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-	if { $status_greppid_sched == 0 } {
+proc install_depCheck {where_is target} {
+	puts $::printchan "
+Checking dependencies...
+"
+	after 100
+	puts -nonewline $::printchan "Tk "
+	set status_tk [catch {package require Tk} version_tk]
+	set i 0
+	while { $i != 3 } {
+		puts -nonewline $::printchan "*"
+		flush stdout
+		after 100
+		incr i
+	}
+	if {$status_tk == 0} {
+		if {[package vsatisfies $version_tk 8.5]} {
+			puts $::printchan " OK"
+		} else {
+			puts $::printchan " FAILED"
+			puts $::printchan "
+TV-Viewer needs Tk >= 8.5 found $version_tk.
+See the README for system requirements.
+Installer EXIT 1"
+			exit 1
+		}
+	} else {
+		puts $::printchan " FAILED"
 		puts $::printchan "
-Scheduler is running, will stop it."
-after 1000
-		catch {exec kill $resultat_schedlinkread}
-		catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
+TV-Viewer needs Tk >= 8.5
+See the README for system requirements.
+Installer EXIT 1"
+		exit 1
+	}
+	
+	set dependencies [dict create ivtv-tune ivtv-utils v4l2-ctl ivtv-utils mplayer MPlayer xdg-email xdg-utils xdg-open xdg-utils xdg-screensaver xdg-utils]
+	
+	foreach {key elem} [dict get $dependencies] {
+		puts -nonewline $::printchan "$key "
+		set i 0
+		while { $i != 3 } {
+			puts -nonewline $::printchan "*"
+			flush stdout
+			after 100
+			incr i
+		}
+		if {[string trim [auto_execok $key]] != {}} {
+			puts $::printchan " OK"
+		} else {
+			puts $::printchan " FAILED"
+			puts $::printchan "
+TV-Viewer needs $elem
+See the README for system requirements.
+Installer EXIT 1"
+			exit 1
+		}
 	}
 }
 
-#~ set status_file_tvviewer [catch {file copy -force "$where_is/tv-viewer_main.sh" "$target/tv-viewer/"} resultat_tvviewerfile]
-#~ if { $status_file_tvviewer != 0 } {
-	#~ puts "
-#~ Could not copy file: tv-viewer_main.sh
-#~ 
-#~ Error message: $resultat_tvviewerfile
-#~ "
-	#~ exit 1
-#~ } else {
-	#~ after 300
-	#~ puts "$target/tv-viewer/tv-viewer_main.sh"
-	#~ set status_permissions_tvviewer [catch {file attributes "$target/tv-viewer/tv-viewer_main.sh" -permissions rwxr-xr-x} resultat_permissions_tvviewer]
-	#~ if {$status_permissions_tvviewer != 0} {
-		#~ puts "
-#~ Could not change permissions for: $target/tv-viewer/tv-viewer_main.sh
-#~ 
-#~ Error message: $resultat_permissions_tvviewer"
-		#~ exit 1
-	#~ }
-#~ }
+proc install_createFolders {where_is target} {
+	if {[file isdirectory "$target/tv-viewer"]} {
+		puts $::printchan "
+Found a previous installation of TV-Viewer.
+Erasing old files..."
+		set status_file [catch {file delete -force -- pathname "$target/tv-viewer/"} resultat_file]
+		if { $status_file != 0 } {
+			puts $::printchan "
+Can't erase folders.
+Error message: $resultat_file
+
+Folder is owned by [file attributes $target/tv-viewer/ -owner].
+You are $::tcl_platform(user).
+	"
+			exit 1
+		} else {
+			file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"
+			puts $::printchan "
+Creating folders..."
+		}
+	} else {
+		set status_file [catch {file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
+		if { $status_file != 0 } {
+			puts $::printchan "
+Can't create necessary folders.
+Error message: $resultat_file
+
+You probably have to be root.
+	"
+			exit 1
+		} else {
+					puts $::printchan "
+Creating folders..."
+		}
+	}
+}
+
+proc install_checkScheduler {where_is target} {
+	set status_schedlinkread [catch {file readlink "$::env(HOME)/.tv-viewer/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+	if {$status_schedlinkread == 0} {
+		catch {exec ps -eo "%p"} read_ps
+		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
+		if { $status_greppid_sched == 0 } {
+			puts $::printchan "
+Scheduler is running, will stop it."
+			after 1000
+			catch {exec kill $resultat_schedlinkread}
+			catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
+		}
+	}
+}
 
 proc install_copyData {where_is target} {
 	set filelist [lsort [glob "$where_is/data/*"]]
@@ -839,6 +879,16 @@ Error message: $resultat_symbolic
 	after 100
 	}
 }
+
+if {$start_options(--nodepcheck) == 0} {
+	install_depCheck "$where_is" "$target"
+	after 1250
+}
+
+install_createFolders "$where_is" "$target"
+after 1250
+
+install_checkScheduler "$where_is" "$target"
 
 puts $::printchan "
 Processing data..."

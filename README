@@ -20,9 +20,9 @@ In order to install and use the program you'll need:
  * Tcl and Tk >= 8.5
  * ivtv-tune and v4l2-ctl (ivtv-utils).
  * Mplayer >= 1.0rc2 (A most recent version of mplayer is recommended)
+ * xdg-utils
 
 It is recommended to install,
- * xdg-utils
  * tkimg (If you use Tcl/Tk < 8.6)
 as well.
 
