@@ -45,9 +45,9 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1b2 33 02.12.2009}
+set option(release_version) {0.8.1b2 34 02.12.2009}
 
-if {[file isdirectory $::option(where_is_home)] == 0} {
+if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
 Fatal error. Could not detect config directory
 $::option(where_is_home)

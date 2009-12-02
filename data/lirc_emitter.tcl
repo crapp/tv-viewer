@@ -30,14 +30,14 @@ if {[file type [info script]] == "link" } {
 }
 set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
-set option(release_version) {0.8.1b2 33 02.12.2009}
+set option(release_version) {0.8.1b2 34 02.12.2009}
 
 source $where_is/main_read_config.tcl
 source $where_is/log_viewer.tcl
 
 main_readConfig
 
-if {[file exists $::option(where_is_home)/log/tvviewer.log]} {
+if {[file exists "$::option(where_is_home)/log/tvviewer.log"]} {
 	if {$::option(log_files) == 1} {
 		set logf_tv_open_append [open $::option(where_is_home)/log/tvviewer.log a]
 		fconfigure $logf_tv_open_append -blocking no -buffering line

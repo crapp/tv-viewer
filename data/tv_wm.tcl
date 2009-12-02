@@ -417,3 +417,4 @@ proc tv_wmHeartbeatCmd {com} {
 	tk inactive reset
 	set ::data(heartbeat_id) [after 30000 tv_wmHeartbeatCmd 0]
 }
+
