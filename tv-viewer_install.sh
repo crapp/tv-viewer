@@ -37,7 +37,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1b2 32 02.12.2009}
+set option(release_version) {0.8.1b2 33 02.12.2009}
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
@@ -167,9 +167,9 @@ Checking dependencies...
 	}
 	if {$status_tk == 0} {
 		if {[package vsatisfies $version_tk 8.5]} {
-			puts $::printchan " OK"
+			puts $::printchan "\033\[0;1;32m OK\033\[0m"
 		} else {
-			puts $::printchan " FAILED"
+			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 			puts $::printchan "
 TV-Viewer needs Tk >= 8.5 found $version_tk.
 See the README for system requirements.
@@ -177,7 +177,7 @@ Installer EXIT 1"
 			exit 1
 		}
 	} else {
-		puts $::printchan " FAILED"
+		puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 		puts $::printchan "
 TV-Viewer needs Tk >= 8.5
 See the README for system requirements.
@@ -197,14 +197,61 @@ Installer EXIT 1"
 			incr i
 		}
 		if {[string trim [auto_execok $key]] != {}} {
-			puts $::printchan " OK"
+			puts $::printchan "\033\[0;1;32m OK\033\[0m"
 		} else {
-			puts $::printchan " FAILED"
+			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 			puts $::printchan "
 TV-Viewer needs $elem
 See the README for system requirements.
 Installer EXIT 1"
 			exit 1
+		}
+	}
+	
+	puts $::printchan "
+Checking for optional dependencies...
+"
+	set opt_dependencies [dict create irexec lirc]
+	
+	foreach {key elem} [dict get $opt_dependencies] {
+		puts -nonewline $::printchan "$key "
+		set i 0
+		while { $i != 3 } {
+			puts -nonewline $::printchan "*"
+			flush stdout
+			after 100
+			incr i
+		}
+		if {[string trim [auto_execok $key]] != {}} {
+			puts $::printchan "\033\[0;1;32m OK\033\[0m"
+		} else {
+			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
+			puts $::printchan "
+Could not detect lirc.
+You won't be able to use a remote control.
+"
+			after 1250
+		}
+	}
+	
+	if {[package vsatisfies [info patchlevel] 8.6] == 0} {
+		puts -nonewline $::printchan "tkimg "
+		set i 0
+		while { $i != 3 } {
+			puts -nonewline $::printchan "*"
+			flush stdout
+			after 100
+			incr i
+		}
+		set status_tkimg [catch {package require Img} tkimg_ver]
+		if {$status_tkimg == 0} {
+			puts $::printchan "\033\[0;1;32m OK\033\[0m"
+		} else {
+			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
+			puts $::printchan "
+Could not detect tkimg (libtk-img).
+No support for high resolution PNG icons."
+			after 1250
 		}
 	}
 }
