@@ -212,6 +212,9 @@ proc log_viewerMplayer {} {
 					unset -nocomplain match
 				}
 				bind .log_viewer_mplayer.f_log_mplayer.lb_log_mplayer <<ListboxSelect>> [list log_viewerMplayerLb .log_viewer_mplayer.f_log_mplayer.lb_log_mplayer]
+				.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer activate end
+				.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer selection set end
+				.log_viewer_mplayer.f_log_mplayer.lb_log_mplayer see end
 				seek $mlogfile_open 0 end
 				set position [tell $mlogfile_open]
 				close $mlogfile_open
@@ -220,6 +223,7 @@ proc log_viewerMplayer {} {
 		}
 		after 0 [list log_viewerMplReadFile $mf.t_log_mplayer]
 		tkwait visibility .log_viewer_mplayer
+		log_viewerMplayerLb .log_viewer_mplayer.f_log_mplayer.lb_log_mplayer
 		wm minsize .log_viewer_mplayer [winfo reqwidth .log_viewer_mplayer] [winfo reqheight .log_viewer_mplayer]
 	} else {
 		log_writeOutTv 0 "Closing log viewer for MPlayer."
@@ -409,6 +413,9 @@ proc log_viewerScheduler {} {
 					unset -nocomplain match
 				}
 				bind .log_viewer_scheduler.f_log_scheduler.lb_log_scheduler <<ListboxSelect>> [list log_viewerSchedLb .log_viewer_scheduler.f_log_scheduler.lb_log_scheduler]
+				.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler activate end
+				.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler selection set end
+				.log_viewer_scheduler.f_log_scheduler.lb_log_scheduler see end
 				seek $mlogfile_open 0 end
 				set position [tell $mlogfile_open]
 				close $mlogfile_open
@@ -417,6 +424,7 @@ proc log_viewerScheduler {} {
 		}
 		after 0 [list log_viewerSchedReadFile $mf.t_log_scheduler]
 		tkwait visibility .log_viewer_scheduler
+		log_viewerSchedLb .log_viewer_scheduler.f_log_scheduler.lb_log_scheduler
 		wm minsize .log_viewer_scheduler [winfo reqwidth .log_viewer_scheduler] [winfo reqheight .log_viewer_scheduler]
 	} else {
 		log_writeOutTv 0 "Closing log viewer for Scheduler."
@@ -600,6 +608,9 @@ proc log_viewerTvViewer {} {
 					unset -nocomplain match
 				}
 				bind .log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer <<ListboxSelect>> [list log_viewerTvLb .log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer]
+				.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer activate end
+				.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer selection set end
+				.log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer see end
 				seek $mlogfile_open 0 end
 				set position [tell $mlogfile_open]
 				close $mlogfile_open
@@ -608,6 +619,7 @@ proc log_viewerTvViewer {} {
 		}
 		after 0 [list log_viewerTvReadFile $mf.t_log_tvviewer]
 		tkwait visibility .log_viewer_tvviewer
+		log_viewerTvLb .log_viewer_tvviewer.f_log_tvviewer.lb_log_tvviewer
 		wm minsize .log_viewer_tvviewer [winfo reqwidth .log_viewer_tvviewer] [winfo reqheight .log_viewer_tvviewer]
 	} else {
 		log_writeOutTv 0 "Closing log viewer for TV-Viewer."
