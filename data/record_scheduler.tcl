@@ -45,7 +45,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1b2 34 02.12.2009}
+set option(release_version) {0.8.1b2 35 06.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
@@ -115,9 +115,9 @@ proc scheduler_log {} {
 		}
 	} else {
 		set ::logf_sched_open_append [open /dev/null a]
-		fconfigure $::logf_sched_open_append -blocking no -buffering line
 	}
-	#~ set ::logf_tv_open_append $::logf_sched_open_append
+	set ::logf_tv_open_append $::logf_sched_open_append
+	fconfigure $::logf_sched_open_append -blocking no -buffering line
 }
 
 scheduler_log
@@ -384,6 +384,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {[file exists "[lindex $::recjob($jobid) end]"]} {
 		if {[file size "[lindex $::recjob($jobid) end]"] > 0} {
 			scheduler_logWriteOut 0 "Recording of job $::recjob($jobid) started successfully."
+			scheduler_logWriteOut 0 "Recorder process PID $rec_pid"
 			catch {exec ln -s "$rec_pid" "$::option(where_is_home)/tmp/record_lockfile.tmp"}
 			set f_open [open "$::option(where_is_home)/config/current_rec.conf" w]
 			set endtime [expr $duration_calc + [clock scan now]]

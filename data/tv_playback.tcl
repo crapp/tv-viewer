@@ -229,6 +229,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
 
 		set ::data(mplayer) [open "|$mcommand" r+]
+		puts "::DATA(MPLAYER) $::data(mplayer)"
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
 		fileevent $::data(mplayer) readable [list tv_callbackVidData]
 	} else {
@@ -284,6 +285,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					.tv.file_play_bar.b_pause state !disabled
 					.tv.file_play_bar.b_play state disabled
 					set ::data(mplayer) [open "|$::tv(mcommand)" r+]
+					puts "::DATA(MPLAYER) $::data(mplayer)"
 					fconfigure $::data(mplayer) -blocking 0 -buffering line
 					fileevent $::data(mplayer) readable [list tv_callbackVidData]
 				}

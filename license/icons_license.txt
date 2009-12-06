@@ -24,6 +24,7 @@ dialog-ok-apply.png/gif
 dialog-ok.png/gif
 dialog-warning.png/gif
 e-mail.png/gif
+floppy.png/gif
 forward-big.png/gif
 forward-small.png/gif
 help-about.png/gif
@@ -39,8 +40,6 @@ placeholder.png/gif
 record.png/gif
 rewind-big.png/gif
 rewind-small.png/gif
-seditor2.png/gif
-seditor3.png/gif
 seditor.png/gif
 settings.png/gif
 starttv.png/gif
@@ -49,7 +48,6 @@ systray.png/gif
 timeshift.png/gif
 undo.png/gif
 volume-error.png/gif
-volume-mute.png/gif
 volume.png/gif
 
 Part of "Crystal Diamond Icons for KDE 3.5 and KDE 4". Thanks for the permission Paolo. License GPL

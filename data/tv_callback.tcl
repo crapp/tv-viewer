@@ -129,7 +129,7 @@ proc tv_callbackVidData {} {
 					place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
 					bind .tv.bg.w <Configure> {}
 				}
-				tv_playerVolumeControl .bottom_buttons $::volume_scale
+				tv_playerVolumeControl .bottom_buttons $::main(volume_scale)
 				set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 				set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 				if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {

@@ -84,7 +84,9 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 	}
 	if {[file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
 		catch {exec ln -f -s "$rec_pid" "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
+		log_writeOutTv 0 "Timeshift process PID $rec_pid"
 		if {$::option(timeshift_df) != 0} {
+			log_writeOutTv 1 "Starting to calculate free disk space for timeshift."
 			after 1000 [list timeshift_calcDF 0]
 		}
 		set ::tv(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
@@ -109,7 +111,7 @@ proc timeshift_calcDF {cancel} {
 		if {[string is digit [lindex $line 3]]} {
 			set remaining_space [expr int([lindex $line 3].0 / 1024)]
 			if {$remaining_space <= $::option(timeshift_df)} {
-				log_writeOutTv 1 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
+				log_writeOutTv 2 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
 				timeshift .top_buttons.button_timeshift
 				return
 			}

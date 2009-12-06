@@ -39,8 +39,8 @@ proc launch_splash_screen {} {
 	
 	wm overrideredirect $w 1
 	::tk::PlaceWindow $w
-	tkwait visibility $w
 	place $f_pb -in $w -anchor se -relx 1.0 -rely 1.0 -x -4 -y -3
+	tkwait visibility $w
 	set img_list_length [llength $img_list]
 	after 0 [list launch_splashPlay $img_list $img_list_length 1 $f_pb.l]
 }

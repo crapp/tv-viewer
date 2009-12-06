@@ -164,5 +164,5 @@ mcset $lang \
 	{Resolution format incorrect!}
 
 mcset $lang \
-	{Choose ouput file} \
-	{Choose ouput file}
+	{Choose output file} \
+	{Choose output file}

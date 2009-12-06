@@ -38,12 +38,12 @@ proc tv_playerVolumeControl {wfbottom value} {
 				after 0 [list tv_osd osd_group_f 1000 "Volume $value"]
 			}
 			
-			set ::volume_scale $value
+			set ::main(volume_scale) $value
 			tv_callbackMplayerRemote "volume [expr int($value)] 1"
 		} else {
 			if {[$wfbottom.scale_volume instate disabled] == 0} {
-				set ::volume(mute_old_value) "$::volume_scale"
-				set ::volume_scale 0
+				set ::volume(mute_old_value) "$::main(volume_scale)"
+				set ::main(volume_scale) 0
 				$wfbottom.scale_volume state disabled
 				$wfbottom.button_mute configure -image $::icon_m(volume-error)
 				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -54,7 +54,7 @@ proc tv_playerVolumeControl {wfbottom value} {
 				}
 				tv_callbackMplayerRemote "volume 0 1"
 			} else {
-				set ::volume_scale "$::volume(mute_old_value)"
+				set ::main(volume_scale) "$::volume(mute_old_value)"
 				$wfbottom.scale_volume state !disabled
 				$wfbottom.button_mute configure -image $::icon_m(volume)
 				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -63,7 +63,7 @@ proc tv_playerVolumeControl {wfbottom value} {
 				if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 					after 0 [list tv_osd osd_group_f 1000 "Volume $::volume(mute_old_value)"]
 				}
-				tv_callbackMplayerRemote "volume [expr int($::volume_scale)] 1"
+				tv_callbackMplayerRemote "volume [expr int($::main(volume_scale))] 1"
 			}
 		}
 	}
@@ -277,8 +277,8 @@ proc tv_playerUi {} {
 		bind $mw <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 		bind $mw <<input_up>> [list main_stationInput 1 1]
 		bind $mw <<input_down>> [list main_stationInput 1 -1]
-		bind $mw <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale - 3]}
-		bind $mw <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale + 3]}
+		bind $mw <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
+		bind $mw <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
 		bind $mw <Key-m> [list tv_playerVolumeControl .bottom_buttons mute]
 		bind $mw <Control-Key-1> [list tv_wmGivenSize $tv_bg 1]
 		bind $mw <Control-Key-2> [list tv_wmGivenSize $tv_bg 2]
@@ -297,6 +297,7 @@ proc tv_playerUi {} {
 		bind $mw <Key-F1> [list info_helpHelp]
 		bind $mw <Control-Key-x> {main_frontendExitViewer}
 		bind $mw <ButtonPress-3> [list tk_popup $mw.rightclickViewer %X %Y]
+		bind $mw <Alt-Key-y> {tv_playerInfoVars}
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 			log_writeOutTv 1 "No valid stations list, will not activate station selector for video window."
@@ -338,6 +339,15 @@ proc tv_playerUi {} {
 		if {$::option(vidwindow_full) == 1} {
 			tv_wmFullscreen $mw $tv_cont $tv_bg
 		}
+	}
+}
+
+proc tv_playerInfoVars {} {
+	foreach var [info globals] {
+		if {[array exists ::$var]} continue
+		puts "
+$var: [set ::$var]
+"
 	}
 }
 

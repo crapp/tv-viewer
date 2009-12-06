@@ -400,11 +400,11 @@ proc main_frontendUiTvviewer {} {
 	
 	ttk::scale $wfbottom.scale_volume \
 	-orient horizontal \
-	-variable volume_scale \
+	-variable main(volume_scale) \
 	-command [list tv_playerVolumeControl $wfbottom] \
 	-from 0 \
 	-to 100
-	set ::volume_scale 100
+	set ::main(volume_scale) 100
 	
 	ttk::button $wfbottom.button_mute \
 	-image $::icon_m(volume) \
@@ -608,8 +608,8 @@ proc main_frontendUiTvviewer {} {
 		bind . <<input_down>> [list main_stationInput 1 -1]
 		event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 		event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale - 3]}
-		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale + 3]}
+		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
+		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
 		event add <<forward_end>> <Key-End>
 		event add <<forward_10s>> <Key-Right>
 		event add <<forward_1m>> <Shift-Key-Right>
@@ -653,8 +653,8 @@ proc main_frontendUiTvviewer {} {
 		bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
 		event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 		event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale - 3]}
-		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::volume_scale + 3]}
+		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
+		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
 		event add <<forward_end>> <Key-End>
 		event add <<forward_10s>> <Key-Right>
 		event add <<forward_1m>> <Shift-Key-Right>

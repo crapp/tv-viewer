@@ -44,8 +44,9 @@ proc command_socket {} {
 	set position [tell $comsocket]
 	close $comsocket
 	set ::data(comsocket) [open "$::option(where_is_home)/tmp/comSocket.tmp" a]
+	puts ":data(comsocket) $:data(comsocket)"
 	fconfigure $::data(comsocket) -blocking no -buffering line
-	set ::data(comsocket_id) [after 0 [list command_getData "$::option(where_is_home)/tmp/comSocket.tmp" $position]]
+	set ::data(comsocket_id) [after 100 [list command_getData "$::option(where_is_home)/tmp/comSocket.tmp" $position]]
 }
 
 proc command_getData {comfile position} {
@@ -63,5 +64,5 @@ proc command_getData {comfile position} {
 	}
 	set position [tell $fh]
 	close $fh
-	set ::data(comsocket_id) [after 10 [list command_getData $comfile $position]]
+	set ::data(comsocket_id) [after 20 [list command_getData $comfile $position]]
 }

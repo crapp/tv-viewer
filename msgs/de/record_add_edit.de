@@ -165,5 +165,5 @@ mcset $lang \
 	{Format der Auflösung falsch!}
 
 mcset $lang \
-	{Choose ouput file} \
+	{Choose output file} \
 	{Ausgabedatei wählen}

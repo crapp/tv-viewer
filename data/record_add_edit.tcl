@@ -551,18 +551,18 @@ proc record_add_editOfile {w} {
 	}
 	if {[info exists ::record(file)]} {
 		if {[string trim $::record(file)] != {}} {
-			set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$::record(file)" -title [mc "Choose ouput file"] -parent $w]
+			set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$::record(file)" -hidden 0 -title [mc "Choose output file"] -parent $w]
 			if {"[file extension $ofile]" != ".mpeg" && [string trim $ofile] != {}} {
 				set ofile "[file rootname $ofile].mpeg"
 			}
 		} else {
-			set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialdir "[subst $::option(rec_default_path)]" -title [mc "Choose ouput file"] -parent $w]
+			set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialdir "[subst $::option(rec_default_path)]" -hidden 0 -title [mc "Choose output file"] -parent $w]
 			if {"[file extension $ofile]" != ".mpeg" && [string trim $ofile] != {}} {
 				set ofile "[file rootname $ofile].mpeg"
 			}
 		}
 	} else {
-		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialdir "[subst $::option(rec_default_path)]" -title [mc "Choose ouput file"] -parent $w]
+		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialdir "[subst $::option(rec_default_path)]" -hidden 0 -title [mc "Choose output file"] -parent $w]
 		if {"[file extension $ofile]" != ".mpeg" && [string trim $ofile] != {}} {
 			set ofile "[file rootname $ofile].mpeg"
 		}

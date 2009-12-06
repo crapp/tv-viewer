@@ -49,6 +49,8 @@ might not point to the correct location.
 	exit 1
 }
 
+unset -nocomplain status_tk resultat_tk
+
 package require http
 package require msgcat
 namespace import msgcat::mc
@@ -100,8 +102,9 @@ This is not recommended!"
 		exit 1
 	}
 }
+unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1b2 34 02.12.2009}
+set option(release_version) {0.8.1b2 35 06.12.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -215,7 +218,7 @@ You've installed a new version of TV-Viewer."
 		close $new_version_file
 	}
 }
-unset -nocomplain get_installed_version normalized_version_file status_regexp_version status_regexp_version2 new_version_file
+unset -nocomplain get_installed_version normalized_version_file status_regexp_version status_regexp_version2 new_version_file read_version
 
 #source agrep, replaces unix grep command.
 source $::where_is/data/agrep.tcl
@@ -234,7 +237,7 @@ An instance of TV-Viewer is already running."
 		exit 0
 	}
 }
-unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
+unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid readpid read_build 
 #source autoscroll function for scrollbars and load package autoscroll
 source $::where_is/extensions/autoscroll/autoscroll.tcl
 package require autoscroll
@@ -271,6 +274,7 @@ if {[msgcat::mcload $where_is/msgs] != 1} {
 #Sourcing logfile and launching log process
 source $::where_is/data/log_viewer.tcl
 log_viewerCheck
+log_writeOutTv 0 "TV-Viewer process PID [pid]"
 #source create icons
 source $::where_is/data/create_icons.tcl
 #create all icons for app.
