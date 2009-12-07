@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1b2 35 06.12.2009}
+set option(release_version) {0.8.1b2 36 06.12.2009}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}
@@ -247,15 +247,24 @@ $resultat_linkcheck"
 after 200
 
 # Checking version of tv-viewer.
-set status_get_installed_version [catch {glob "$dwhere_is_home/.tv-viewer/config/tv-viewer-*.ver"} resultat_get_installed_version]
+set resultat_get_installed_version [glob -nocomplain "$dwhere_is_home/.tv-viewer/config/tv-viewer-*.ver"]
 if {[string trim $resultat_get_installed_version] != {}} {
 	set normalized_version_file [file normalize "$resultat_get_installed_version"]
-	set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\.ver} "$normalized_version_file" <-> read_version]
-	catch {diag_writeOut $diag_file_append "
+	set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\_build} "$normalized_version_file" <-> read_version]
+	if {$status_regexp_version == 1} {
+		set status_regexp_version2 [regexp {_build([\d]+)\.ver} "$normalized_version_file" <-> read_build]
+		set version "$read_version Build $read_build"
+	} else {
+		set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\.ver} "$normalized_version_file" <-> read_version]
+		set version "$read_version Build UNKNOWN"
+	}
+} else {
+	set version UNKNOW
+}
+catch {diag_writeOut $diag_file_append "
 ***********************************************************************
 Checkversion:
-$read_version"
-	}
+$version"
 }
 
 # On which machine are we running.

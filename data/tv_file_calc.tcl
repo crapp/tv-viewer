@@ -29,8 +29,10 @@ proc tv_fileComputeSize {seconds} {
 		#~ unset -nocomplain ::data(file_size)
 		return
 	}
-	set ::data(file_size) [expr [clock seconds] - $seconds]
-	set ::data(file_sizeid) [after 10 [list tv_fileComputeSize $seconds]]
+	if {[winfo exists .tv.file_play_bar.b_pause]} {
+		set ::data(file_size) [expr [clock seconds] - $seconds]
+		set ::data(file_sizeid) [after 50 [list tv_fileComputeSize $seconds]]
+	}
 }
 
 proc tv_fileComputePos {stop} {
@@ -68,9 +70,13 @@ proc tv_fileComputePos {stop} {
 				if {[string length $ssecs] < 2} {
 					set ssecs "0$ssecs"
 				}
-				set ::choice(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
+				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"} {
+					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
+				}
 			}  else {
-				set ::choice(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
+				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / 00:00:00"} {
+					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
+				}
 			}
 			set ::data(file_posid) [after 10 [list tv_fileComputePos 0]]
 		} else {
@@ -99,11 +105,15 @@ proc tv_fileComputePos {stop} {
 				if {[string length $ssecs] < 2} {
 					set ssecs "0$ssecs"
 				}
-				set ::choice(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
+				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"} {
+					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
+				}
 			} else {
-				set ::choice(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
+				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / 00:00:00"} {
+					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
+				}
 			}
-			set ::data(file_posid) [after 10 [list tv_fileComputePos 0]]
+			set ::data(file_posid) [after 50 [list tv_fileComputePos 0]]
 		}
 	}
 }

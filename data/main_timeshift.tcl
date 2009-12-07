@@ -87,7 +87,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 		log_writeOutTv 0 "Timeshift process PID $rec_pid"
 		if {$::option(timeshift_df) != 0} {
 			log_writeOutTv 1 "Starting to calculate free disk space for timeshift."
-			after 1000 [list timeshift_calcDF 0]
+			after 60000 [list timeshift_calcDF 0]
 		}
 		set ::tv(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
 		record_schedulerRec timeshift
@@ -106,16 +106,43 @@ proc timeshift_calcDF {cancel} {
 		unset -nocomplain ::timeshif(df_id)
 		return
 	}
-	catch {exec df "$::option(timeshift_path)/"} df_values
-	foreach line [split $df_values "\n"] {
-		if {[string is digit [lindex $line 3]]} {
-			set remaining_space [expr int([lindex $line 3].0 / 1024)]
-			if {$remaining_space <= $::option(timeshift_df)} {
-				log_writeOutTv 2 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
-				timeshift .top_buttons.button_timeshift
-				return
+	if {[winfo exists .tv.file_play_bar.b_pause]} {
+		catch {exec df "$::option(timeshift_path)/"} df_values
+		foreach line [split $df_values "\n"] {
+			if {[string is digit [lindex $line 3]]} {
+				set remaining_space [expr int([lindex $line 3].0 / 1024)]
+				if {$remaining_space <= $::option(timeshift_df)} {
+					log_writeOutTv 2 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
+					timeshift .top_buttons.button_timeshift
+					return
+				}
 			}
 		}
+		after 60000 [list timeshift_calcDF 0]
 	}
-	after 1000 [list timeshift_calcDF 0]
+}
+
+proc timeshift_Save {tvw} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_Save \033\[0m \{$tvw\}"
+	set types {
+	{{Video Files}      {.mpeg}       }
+	}
+	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d.%m.%Y}].mpeg" 
+	if {[file exists $::option(where_is_home)/tmp/timeshift.mpeg]} {
+		log_writeOutTv 0 "Found timeshift mpeg file, opening file dialog."
+		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
+		if {[string trim $ofile] != {}} {
+			if {[file isdirectory [file dirname "$ofile"]]} {
+				file copy "$::option(where_is_home)/tmp/timeshift.mpeg" "$ofile"
+			} else {
+				log_writeOutTv 2 "Can not save timeshift video file."
+				log_writeOutTv 2 "[file dirname $ofile]"
+				log_writeOutTv 2 "Not a directory."
+			}
+		}
+	} else {
+		log_writeOutTv 2 "Can not find timeshift.mpeg in"
+		log_writeOutTv 2 "$::option(where_is_home)/tmp/"
+		log_writeOutTv 2 "File can not be saved"
+	}
 }

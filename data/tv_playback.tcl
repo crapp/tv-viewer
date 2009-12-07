@@ -229,7 +229,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
 
 		set ::data(mplayer) [open "|$mcommand" r+]
-		puts "::DATA(MPLAYER) $::data(mplayer)"
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
 		fileevent $::data(mplayer) readable [list tv_callbackVidData]
 	} else {
@@ -285,7 +284,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					.tv.file_play_bar.b_pause state !disabled
 					.tv.file_play_bar.b_play state disabled
 					set ::data(mplayer) [open "|$::tv(mcommand)" r+]
-					puts "::DATA(MPLAYER) $::data(mplayer)"
 					fconfigure $::data(mplayer) -blocking 0 -buffering line
 					fileevent $::data(mplayer) readable [list tv_callbackVidData]
 				}
@@ -358,6 +356,12 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	-image $::icon_m(fullscreen) \
 	-takefocus 0 \
 	-command [list tv_wmFullscreen .tv $tv_cont $tv_bg]
+	ttk::button $tv_bar.b_save \
+	-style Toolbutton \
+	-image $::icon_m(floppy) \
+	-takefocus 0 \
+	-state disabled \
+	-command [list timeshift_Save .tv]
 	label $tv_bar.l_time \
 	-width 20 \
 	-background black \
@@ -442,12 +446,15 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	grid $tv_bar.b_fullscreen -in $tv_bar -row 0 -column 11 \
 	-pady 2 \
 	-padx "2 0"
-	grid $tv_bar.l_time -in $tv_bar -row 0 -column 12 \
+	grid $tv_bar.b_save -in $tv_bar -row 0 -column 12 \
+	-pady 2 \
+	-padx "2 0"
+	grid $tv_bar.l_time -in $tv_bar -row 0 -column 13 \
 	-sticky nse \
 	-padx "0 2" \
 	-pady 2
 	
-	grid columnconfigure $tv_bar 12 -weight 1
+	grid columnconfigure $tv_bar 13 -weight 1
 	
 	if {"$handler" != "timeshift"} {
 		catch {launch_splashPlay cancel 0 0 0}

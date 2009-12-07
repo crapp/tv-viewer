@@ -295,6 +295,10 @@ proc record_schedulerPreStop {handler} {
 			.record_wizard.status_frame.l_rec_current_info configure -text "Idle"
 			.record_wizard.status_frame.b_rec_current state disabled
 		}
+	} else {
+		if {[winfo exists .tv.file_play_bar.b_save]} {
+			.tv.file_play_bar.b_save state !disabled
+		}
 	}
 	if {[winfo exists .tv.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}

@@ -415,6 +415,6 @@ proc tv_wmHeartbeatCmd {com} {
 	#~ catch {exec sh -c "gnome-screensaver-command -p 2>/dev/null" &}
 	#~ catch {exec sh -c "xscreensaver-command -deactivate 2>/dev/null" &}
 	tk inactive reset
-	set ::data(heartbeat_id) [after 30000 tv_wmHeartbeatCmd 0]
+	set ::data(heartbeat_id) [after 50000 tv_wmHeartbeatCmd 0]
 }
 

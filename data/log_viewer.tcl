@@ -84,8 +84,6 @@ proc log_viewerCheck {} {
 		set ::logf_mpl_open_append [open /dev/null a]
 		set ::logf_tv_open_append [open /dev/null a]
 	}
-	puts "::logf_mpl_open_append $::logf_mpl_open_append"
-	puts "::logf_tv_open_append $::logf_tv_open_append"
 	fconfigure $::logf_tv_open_append -blocking no -buffering line
 	fconfigure $::logf_mpl_open_append -blocking no -buffering line
 }
@@ -243,6 +241,14 @@ proc log_viewerMplayer {} {
 		}
 		bind $mf.t_log_mplayer <Control-c> {event generate %W <<Copy>>}
 		
+		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
+			settooltip $ftop.b_save [mc "Save logfile to disk"]
+			settooltip $ftop.b_email [mc "Send logfile by e-mail to the authors"]
+			settooltip $ftop.cb_verb_debug [mc "Show/hide Debug messages"]
+			settooltip $ftop.cb_verb_warn [mc "Show/hide Warning messages"]
+			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
+		}
+		
 		set ::log(verboseMpl_debug) 1
 		set ::log(verboseMpl_warn) 1
 		set ::log(verboseMpl_err) 1
@@ -333,45 +339,47 @@ proc log_viewerMplTail {filename position logw} {
 		unset -nocomplain ::data(log_mpl_id)
 		return
 	}
-	$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
-	
-	$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
-	
-	set fh [open $filename r]
-	fconfigure $fh -blocking no -buffering line
-	seek $fh $position start
-	while {[eof $fh] == 0} {
-		gets $fh line
-		if {[string length $line] > 0} {
-			if {$::log(verboseMpl_warn == 1} {
-				if {[string match "*WARNING:*" $line]} {
-					$logw insert end $line\n fat_blue
-					$logw see end
+	if {[winfo exists .log_viewer_mplayer]} {
+		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
+		
+		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
+		
+		set fh [open $filename r]
+		fconfigure $fh -blocking no -buffering line
+		seek $fh $position start
+		while {[eof $fh] == 0} {
+			gets $fh line
+			if {[string length $line] > 0} {
+				if {$::log(verboseMpl_warn) == 1} {
+					if {[string match "*WARNING:*" $line]} {
+						$logw insert end $line\n fat_blue
+						$logw see end
+					}
+				} else {
+					if {[string match "*WARNING:*" $line]} continue
 				}
-			} else {
-				if {[string match "*WARNING:*" $line]} continue
-			}
-			if {$::log(verboseMpl_err == 1} {
-				if {[string match "*ERROR:*" $line]} {
-					$logw insert end $line\n fat_red
-					$logw see end
+				if {$::log(verboseMpl_err) == 1} {
+					if {[string match "*ERROR:*" $line]} {
+						$logw insert end $line\n fat_red
+						$logw see end
+					}
+				} else {
+					if {[string match "*ERROR:*" $line]} continue
 				}
-			} else {
-				if {[string match "*ERROR:*" $line]} continue
-			}
-			if {$::log(verboseMpl_debug == 1} {
-				if {[string match "*DEBUG:*" $line]} {
-					$logw insert end $line\n
-					$logw see end
+				if {$::log(verboseMpl_debug) == 1} {
+					if {[string match "*DEBUG:*" $line]} {
+						$logw insert end $line\n
+						$logw see end
+					}
+				} else {
+					if {[string match "*DEBUG:*" $line]} continue
 				}
-			} else {
-				if {[string match "*DEBUG:*" $line]} continue
 			}
 		}
+		set position [tell $fh]
+		close $fh
+		set ::data(log_mpl_id) [after 1000 [list log_viewerMplTail $filename $position $logw]]
 	}
-	set position [tell $fh]
-	close $fh
-	set ::data(log_mpl_id) [after 100 [list log_viewerMplTail $filename $position $logw]]
 }
 
 proc log_viewerMplayerLb {w} {
@@ -527,6 +535,14 @@ proc log_viewerScheduler {} {
 		}
 		bind $mf.t_log_scheduler <Control-c> {event generate %W <<Copy>>}
 		
+		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
+			settooltip $ftop.b_save [mc "Save logfile to disk"]
+			settooltip $ftop.b_email [mc "Send logfile by e-mail to the authors"]
+			settooltip $ftop.cb_verb_debug [mc "Show/hide Debug messages"]
+			settooltip $ftop.cb_verb_warn [mc "Show/hide Warning messages"]
+			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
+		}
+		
 		set ::log(verboseSched_debug) 1
 		set ::log(verboseSched_warn) 1
 		set ::log(verboseSched_err) 1
@@ -617,54 +633,56 @@ proc log_viewerSchedTail {filename position logw} {
 		unset -nocomplain ::data(log_sched_id)
 		return
 	}
-	$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
-	
-	$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
-	
-	set fh [open $filename r]
-	fconfigure $fh -blocking no -buffering line
-	seek $fh $position start
-	while {[eof $fh] == 0} {
-		gets $fh line
-		if {[string length $line] > 0} {
-			set match 0
-			if {$::log(verboseSched_warn) == 1} {
-				if {[string match "*WARNING:*" $line]} {
-					set match 1
-					$logw insert end $line\n fat_blue
-					$logw see end
+	if {[winfo exists .log_viewer_scheduler]} {
+		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
+		
+		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
+		
+		set fh [open $filename r]
+		fconfigure $fh -blocking no -buffering line
+		seek $fh $position start
+		while {[eof $fh] == 0} {
+			gets $fh line
+			if {[string length $line] > 0} {
+				set match 0
+				if {$::log(verboseSched_warn) == 1} {
+					if {[string match "*WARNING:*" $line]} {
+						set match 1
+						$logw insert end $line\n fat_blue
+						$logw see end
+					}
+				} else {
+					if {[string match "*WARNING:*" $line]} continue
 				}
-			} else {
-				if {[string match "*WARNING:*" $line]} continue
-			}
-			if {$::log(verboseSched_err) == 1} {
-				if {[string match "*ERROR:*" $line]} {
-					set match 1
-					$logw insert end $line\n fat_red
-					$logw see end
+				if {$::log(verboseSched_err) == 1} {
+					if {[string match "*ERROR:*" $line]} {
+						set match 1
+						$logw insert end $line\n fat_red
+						$logw see end
+					}
+				} else {
+					if {[string match "*ERROR:*" $line]} continue
 				}
-			} else {
-				if {[string match "*ERROR:*" $line]} continue
-			}
-			if {$::log(verboseSched_debug) == 1} {
-				if {[string match "*DEBUG:*" $line]} {
-					set match 1
+				if {$::log(verboseSched_debug) == 1} {
+					if {[string match "*DEBUG:*" $line]} {
+						set match 1
+						$logw insert end $line\n
+						$logw see end
+					}
+				} else {
+					if {[string match "*DEBUG:*" $line]} continue
+				}
+				if {$match == 0} {
 					$logw insert end $line\n
 					$logw see end
 				}
-			} else {
-				if {[string match "*DEBUG:*" $line]} continue
+				unset -nocomplain match
 			}
-			if {$match == 0} {
-				$logw insert end $line\n
-				$logw see end
-			}
-			unset -nocomplain match
 		}
+		set position [tell $fh]
+		close $fh
+		set ::data(log_sched_id) [after 1000 [list log_viewerSchedTail $filename $position $logw]]
 	}
-	set position [tell $fh]
-	close $fh
-	set ::data(log_sched_id) [after 100 [list log_viewerSchedTail $filename $position $logw]]
 }
 
 proc log_viewerSchedLb {w} {
@@ -805,10 +823,18 @@ proc log_viewerTvViewer {} {
 		}
 		bind $mf.t_log_tvviewer <Control-c> {event generate %W <<Copy>>}
 		
-		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for TV-Viewer."
+		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
+			settooltip $ftop.b_save [mc "Save logfile to disk"]
+			settooltip $ftop.b_email [mc "Send logfile by e-mail to the authors"]
+			settooltip $ftop.cb_verb_debug [mc "Show/hide Debug messages"]
+			settooltip $ftop.cb_verb_warn [mc "Show/hide Warning messages"]
+			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
+		}
+		
 		set ::log(verboseTv_debug) 1
 		set ::log(verboseTv_warn) 1
 		set ::log(verboseTv_err) 1
+		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for TV-Viewer."
 		after 0 [list log_viewerTvReadFile $mf.t_log_tvviewer $mf.lb_log_tvviewer]
 		tkwait visibility .log_viewer_tvviewer
 		log_viewerTvLb $mf.lb_log_tvviewer
@@ -895,46 +921,47 @@ proc log_viewerTvTail {filename position logw} {
 		unset -nocomplain ::data(log_tv_id)
 		return
 	}
-	
-	$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
-	
-	$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
-	
-	set fh [open $filename r]
-	fconfigure $fh -blocking no -buffering line
-	seek $fh $position start
-	while {[eof $fh] == 0} {
-		gets $fh line
-		if {[string length $line] > 0} {
-			if {$::log(verboseTv_warn) == 1} {
-				if {[string match "*WARNING:*" $line]} {
-					$logw insert end $line\n fat_blue
-					$logw see end
+	if {[winfo exists .log_viewer_tvviewer]} {
+		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
+		
+		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
+		
+		set fh [open $filename r]
+		fconfigure $fh -blocking no -buffering line
+		seek $fh $position start
+		while {[eof $fh] == 0} {
+			gets $fh line
+			if {[string length $line] > 0} {
+				if {$::log(verboseTv_warn) == 1} {
+					if {[string match "*WARNING:*" $line]} {
+						$logw insert end $line\n fat_blue
+						$logw see end
+					}
+				} else {
+					if {$::log(verboseTv_warn) == 1} continue
 				}
-			} else {
-				if {$::log(verboseTv_warn) == 1} continue
-			}
-			if {$::log(verboseTv_err) == 1} {
-				if {[string match "*ERROR:*" $line]} {
-					$logw insert end $line\n fat_red
-					$logw see end
+				if {$::log(verboseTv_err) == 1} {
+					if {[string match "*ERROR:*" $line]} {
+						$logw insert end $line\n fat_red
+						$logw see end
+					}
+				} else {
+					if {[string match "*ERROR:*" $line]} continue
 				}
-			} else {
-				if {[string match "*ERROR:*" $line]} continue
-			}
-			if {$::log(verboseTv_debug) == 1} {
-				if {[string match "*DEBUG:*" $line]} {
-					$logw insert end $line\n
-					$logw see end
+				if {$::log(verboseTv_debug) == 1} {
+					if {[string match "*DEBUG:*" $line]} {
+						$logw insert end $line\n
+						$logw see end
+					}
+				} else {
+					if {$::log(verboseTv_debug) == 1} continue
 				}
-			} else {
-				if {$::log(verboseTv_debug) == 1} continue
 			}
 		}
+		set position [tell $fh]
+		close $fh
+		set ::data(log_tv_id) [after 1000 [list log_viewerTvTail $filename $position $logw]]
 	}
-	set position [tell $fh]
-	close $fh
-	set ::data(log_tv_id) [after 100 [list log_viewerTvTail $filename $position $logw]]
 }
 
 proc log_viewerTvLb {w} {
