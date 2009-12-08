@@ -1,0 +1,24 @@
+#
+#      Translation file for TV-Viewer
+#      Logviewers.
+#
+
+mcset $lang \
+	{Save logfile to disk} \
+	{Save logfile to disk}
+
+mcset $lang \
+	{Send logfile by e-mail to the authors} \
+	{Send logfile by e-mail to the authors}
+
+mcset $lang \
+	{Show/hide Debug messages} \
+	{Show/hide Debug messages}
+
+mcset $lang \
+	{Show/hide Warning messages} \
+	{Show/hide Warning messages}
+
+mcset $lang \
+	{Show/hide Error messages} \
+	{Show/hide Error messages}

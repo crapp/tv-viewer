@@ -20,18 +20,17 @@ proc main_systemTrayActivate {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayActivate \033\[0m"
 	catch {
 		if {[winfo exists .tray] == 0} {
-			tktray::icon .tray -image $::icon_e(tv-viewer_icon_systray)
-			#after 500 {.tray configure -image $::icon_e(tv-viewer_icon_systray)}
-			after 600 {.tray configure -image $::icon_b(placeholder)}
-			after 1000 {
-				.tray configure -image $::icon_e(tv-viewer_icon_systray)
-				bind .tray <Button-1> { main_systemTrayToggle}
-				if {[winfo exists .tray] == 1} {
+			catch {tktray::icon .tray -image $::icon_e(tv-viewer_icon_systray)}
+			if {[winfo exists .tray] == 1} {
+				after 600 {.tray configure -image $::icon_e(systray-dummy)}
+				after 1000 {
+					.tray configure -image $::icon_e(tv-viewer_icon_systray)
+					bind .tray <Button-1> { main_systemTrayToggle}
 					settooltip .tray [mc "TV-Viewer idle"]
 					log_writeOutTv 0 "Succesfully added Icon to system tray."
-				} else {
-					log_writeOutTv 2 "Could not create an icon in system tray."
 				}
+			} else {
+				log_writeOutTv 2 "Could not create an icon in system tray."
 			}
 		} else {
 			bind .tray <Button-1> {}

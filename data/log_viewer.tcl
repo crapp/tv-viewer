@@ -108,7 +108,7 @@ proc log_viewerSaveLog {handler parent} {
 		log_writeOutTv 2 "Not a directory"
 		return
 	}
-	file copy "$::option(where_is_home)/log/$sofile(type\($handler\)).log" "$ofile"
+	file copy -force "$::option(where_is_home)/log/$sofile(type\($handler\)).log" "$ofile"
 }
 
 proc log_viewerMplayer {} {

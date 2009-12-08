@@ -27,10 +27,12 @@ proc tv_callbackVidData {} {
 			place forget .tv.bg.w
 			#~ place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
 			bind .tv.bg.w <Configure> {}
-			if {[winfo exists .tv.l_anigif]} {
-				launch_splashPlay cancel 0 0 0
-				place forget .tv.l_anigif
-				destroy .tv.l_anigif
+			if {[.top_buttons.button_timeshift instate disabled] == 0} {
+				if {[winfo exists .tv.l_anigif]} {
+					launch_splashPlay cancel 0 0 0
+					place forget .tv.l_anigif
+					destroy .tv.l_anigif
+				}
 			}
 			if {[winfo exists .station]} {
 				.station.top_buttons.b_station_preview state !pressed

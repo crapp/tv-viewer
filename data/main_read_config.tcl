@@ -80,6 +80,7 @@ proc main_readConfig {} {
 		theme_keramik #cccccc
 		theme_keramik_alt #cccccc
 		theme_tilegtk #d9d9d9
+		theme_tileqt #d9d9d9
 		tooltips 1
 		tooltips_main 1
 		tooltips_wizard 1

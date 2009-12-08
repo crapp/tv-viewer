@@ -137,44 +137,48 @@ mcset $lang \
 	{Ctrl+Shift+Right}
 
 mcset $lang \
-	{Start playback.} \
-	{Start playback.}
+	{Start playback} \
+	{Start playback}
 
 mcset $lang \
-	{Pause playback.} \
-	{Pause playback.}
+	{Pause playback} \
+	{Pause playback}
 
 mcset $lang \
-	{Stop playback.} \
-	{Stop playback.}
+	{Stop playback} \
+	{Stop playback}
 
 mcset $lang \
-	{Jump to the beginning.} \
-	{Jump to the beginning.}
+	{Jump to the beginning} \
+	{Jump to the beginning}
 
 mcset $lang \
-	{Seek back.} \
-	{Seek back.}
+	{Seek back} \
+	{Seek back}
 
 mcset $lang \
-	{Choose amount of seek back.} \
-	{Choose amount of seek back.}
+	{Choose amount of seek back} \
+	{Choose amount of seek back}
 
 mcset $lang \
-	{Seek forward.} \
-	{Seek forward.}
+	{Seek forward} \
+	{Seek forward}
 
 mcset $lang \
-	{Choose amount of seek forward.} \
-	{Choose amount of seek forward.}
+	{Choose amount of seek forward} \
+	{Choose amount of seek forward}
 
 mcset $lang \
-	{Jump to the end.} \
-	{Jump to the end.}
+	{Jump to the end} \
+	{Jump to the end}
 
 mcset $lang \
-	{Toggle fullscreen.} \
-	{Toggle fullscreen.}
+	{Toggle fullscreen} \
+	{Toggle fullscreen}
+
+mcset $lang \
+	{Save timeshift video file} \
+	{Save timeshift video file}
 
 mcset $lang \
 	{Current position / File length} \

@@ -53,8 +53,8 @@ proc timeshift {tbutton} {
 	record_schedulerPrestart timeshift
 	$tbutton state pressed
 	$tbutton state disabled
-	#~ bind .tv <<timeshift>> {}
-	#~ bind . <<timeshift>> {}
+	bind .tv <<timeshift>> {}
+	bind . <<timeshift>> {}
 	timeshift_start_preRec $tbutton
 }
 
@@ -133,7 +133,7 @@ proc timeshift_Save {tvw} {
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
 		if {[string trim $ofile] != {}} {
 			if {[file isdirectory [file dirname "$ofile"]]} {
-				file copy "$::option(where_is_home)/tmp/timeshift.mpeg" "$ofile"
+				file copy -force "$::option(where_is_home)/tmp/timeshift.mpeg" "$ofile"
 			} else {
 				log_writeOutTv 2 "Can not save timeshift video file."
 				log_writeOutTv 2 "[file dirname $ofile]"
