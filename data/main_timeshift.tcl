@@ -127,13 +127,13 @@ proc timeshift_Save {tvw} {
 	set types {
 	{{Video Files}      {.mpeg}       }
 	}
-	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d.%m.%Y}].mpeg" 
+	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
 	if {[file exists $::option(where_is_home)/tmp/timeshift.mpeg]} {
-		log_writeOutTv 0 "Found timeshift mpeg file, opening file dialog."
+		log_writeOutTv 0 "Found timeshift mpeg file, opening file save dialog."
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
 		if {[string trim $ofile] != {}} {
 			if {[file isdirectory [file dirname "$ofile"]]} {
-				file copy -force "$::option(where_is_home)/tmp/timeshift.mpeg" "$ofile"
+				timeshift_CopyBar "$ofile"
 			} else {
 				log_writeOutTv 2 "Can not save timeshift video file."
 				log_writeOutTv 2 "[file dirname $ofile]"
@@ -144,5 +144,124 @@ proc timeshift_Save {tvw} {
 		log_writeOutTv 2 "Can not find timeshift.mpeg in"
 		log_writeOutTv 2 "$::option(where_is_home)/tmp/"
 		log_writeOutTv 2 "File can not be saved"
+	}
+}
+
+proc timeshift_CopyBar {ofile} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_CopyBar \033\[0m \{$ofile\}"
+	set wtop [toplevel .tv.top_cp_progress]
+	
+	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+	
+	set mf [ttk::frame $wtop.f_main]
+	set bf [ttk::frame $wtop.f_button -style TLabelframe]
+	
+	ttk::label $mf.l_info \
+	-text [mc "Copying timeshift video file.
+Please wait..."] \
+	-compound left \
+	-image $::icon_m(dialog-information)
+	
+	ttk::progressbar $mf.pb_progcp \
+	-orient horizontal \
+	-mode determinate \
+	-variable timeshift(pgp)
+	
+	ttk::button $bf.b_cancel \
+	-text [mc "Cancel"] \
+	-compound left \
+	-image $::icon_s(dialog-cancel)
+	
+	grid $mf -in $wtop -row 0 -column 0 \
+	-sticky nesw
+	grid $bf -in $wtop -row 1 -column 0 \
+	-sticky ew \
+	-padx 3 \
+	-pady 3
+	
+	grid anchor $bf e
+	
+	grid $mf.l_info -in $mf -row 0 -column 0 \
+	-sticky w \
+	-padx 5 \
+	-pady 5
+	grid $mf.pb_progcp -in $mf -row 1 -column 0 \
+	-sticky ew \
+	-padx 10 \
+	-pady "10 5"
+	
+	grid $bf.b_cancel -in $bf -row 0 -column 0 \
+	-padx 3 \
+	-pady 7
+	
+	grid rowconfigure $wtop {0 1} -weight 1
+	
+	grid columnconfigure $wtop 0 -weight 1 -minsize 250
+	grid columnconfigure $mf 0 -weight 1
+	
+	wm resizable $wtop 0 0
+	wm title $wtop [mc "Copying...       %%%" 0]
+	wm protocol $wtop WM_DELETE_WINDOW " "
+	wm protocol . WM_DELETE_WINDOW " "
+	wm protocol .tv WM_DELETE_WINDOW " "
+	wm iconphoto $wtop $::icon_b(floppy)
+	wm transient $wtop .tv
+	
+	
+	set sfile "$::option(where_is_home)/tmp/timeshift.mpeg"
+	set file_size [file size $sfile]
+	set old_size 0
+	set counter 0
+	set increment  [expr $file_size.0 / 100]
+	set ::timeshift(pgp) 0
+	
+	catch {exec cp -f "$sfile" "$ofile" &} cp_pid
+	log_writeOutTv 0 "Copying timeshift video file. Copy process PID: $cp_pid"
+	set ::timeshift(cp_id) [after 0 [list timeshift_CopyBarProgr "$sfile" "$ofile" $counter $file_size $old_size $cp_pid $increment]]
+	$bf.b_cancel configure -command [list timeshift_CopyBarProgr cancel $cp_pid 0 0 0 0 0]
+	
+	tkwait visibility $wtop
+	grab $wtop
+}
+
+proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size cp_pid increment} {
+	if {"$sfile" == "cancel"} {
+		catch {after cancel $::timeshift(cp_id)}
+		unset -nocomplain ::timeshift(cp_id)
+		catch {exec kill $ofile}
+		wm protocol . WM_DELETE_WINDOW main_frontendExitViewer
+		wm protocol .tv WM_DELETE_WINDOW main_frontendExitViewer
+		grab release .tv.top_cp_progress
+		destroy .tv.top_cp_progress
+		return
+	}
+	catch {exec ps -eo "%p"} readpid_cp
+	set status_greppid_cp [catch {agrep -w "$readpid_cp" $cp_pid} resul_greppid_cp]
+	if {$status_greppid_cp == 0} {
+		if {[file exists $ofile]} {
+			if {[file size $ofile] > [expr $old_size + $increment]} {
+				set count_up [expr (([file size $ofile] - $old_size) / $increment)]
+				set counter [expr $counter + $count_up]
+				set ::timeshift(pgp) $counter
+				wm title .tv.top_cp_progress [mc "Copying...       %%%" [format %.2f $counter]]
+				set old_size [file size $ofile]
+				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $cp_pid $increment]]
+			} else {
+				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $cp_pid $increment]]
+			}
+		} else {
+			set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $cp_pid $increment]]
+		}
+	} else {
+		wm title .tv.top_cp_progress [mc "Copying...       finished"]
+		set ::timeshift(pgp) 100
+		log_writeOutTv 0 "Timesift video file copied. Output file:
+$ofile"
+		after 2000 {
+			wm protocol . WM_DELETE_WINDOW main_frontendExitViewer
+			wm protocol .tv WM_DELETE_WINDOW main_frontendExitViewer
+			grab release .tv.top_cp_progress
+			destroy .tv.top_cp_progress
+		}
 	}
 }

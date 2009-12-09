@@ -38,9 +38,9 @@ proc launch_splash_screen {} {
 	grid columnconfigure $f_pb 0 -weight 1
 	
 	wm overrideredirect $w 1
-	::tk::PlaceWindow $w
 	place $f_pb -in $w -anchor se -relx 1.0 -rely 1.0 -x -4 -y -3
 	tkwait visibility $w
+	::tk::PlaceWindow $w
 	set img_list_length [llength $img_list]
 	after 0 [list launch_splashPlay $img_list $img_list_length 1 $f_pb.l]
 }

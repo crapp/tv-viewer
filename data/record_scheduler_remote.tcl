@@ -50,6 +50,12 @@ proc record_schedulerPrestart {handler} {
 		if {[winfo exists .frame_slistbox] == 1} {
 			.frame_slistbox.listbox_slist configure -state disabled
 		}
+		if {[winfo exists .tv.slist.lb_station] == 1} {
+			.tv.slist.lb_station configure -state disabled
+		}
+		if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
+			.tv.slist_lirc.lb_station configure -state disabled
+		}
 		bind .tv <<station_up>> {}
 		bind .tv <<station_down>> {}
 		bind .tv <<station_jump>> {}
@@ -116,6 +122,12 @@ proc record_scheduler_prestartCancel {handler} {
 	.options_bar.mHelp entryconfigure 8 -state normal
 	if {[winfo exists .frame_slistbox] == 1} {
 		.frame_slistbox.listbox_slist configure -state normal
+	}
+	if {[winfo exists .tv.slist.lb_station] == 1} {
+		.tv.slist.lb_station configure -state normal
+	}
+	if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
+		.tv.slist_lirc.lb_station configure -state normal
 	}
 	bind .tv <<teleview>> {tv_playerRendering}
 	bind .tv <<station_down>> [list main_stationChannelDown .label_stations]
@@ -262,6 +274,12 @@ proc record_schedulerPreStop {handler} {
 	.options_bar.mHelp entryconfigure 8 -state normal
 	if {[winfo exists .frame_slistbox] == 1} {
 		.frame_slistbox.listbox_slist configure -state normal
+	}
+	if {[winfo exists .tv.slist.lb_station] == 1} {
+		.tv.slist.lb_station configure -state normal
+	}
+	if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
+		.tv.slist_lirc.lb_station configure -state normal
 	}
 	bind .tv <<teleview>> {tv_playerRendering}
 	bind .tv <<station_down>> [list main_stationChannelDown .label_stations]

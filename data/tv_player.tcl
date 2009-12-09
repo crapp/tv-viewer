@@ -343,12 +343,24 @@ proc tv_playerUi {} {
 }
 
 proc tv_playerInfoVars {} {
+	set varfile [open "$::env(HOME)/varfile" w+]
 	foreach var [info globals] {
-		if {[array exists ::$var]} continue
-		puts "
-$var: [set ::$var]
+		if {[array exists ::$var]} {
+			puts $varfile "FOUND ARRAY $var:"
+			flush $varfile
+			foreach {key elem} [array get ::$var] {
+				puts $varfile "key: $key
+element: $elem
 "
+				flush $varfile
+			}
+		} else {
+			puts $varfile "
+$var: [set ::$var]"
+			flush $varfile
+		}
 	}
+	close $varfile
 }
 
 proc tv_playerRendering {} {

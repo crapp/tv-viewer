@@ -55,8 +55,10 @@ package require http
 package require msgcat
 namespace import msgcat::mc
 #~ Experimental support for QT and GTK theme.
-#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-qt/library"]
-#~ package require tileqt
+#~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library"]} {
+	#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-qt/library"]
+	#~ package require tileqt
+#~ }
 #~ package require ttk::theme::tileqt
 #~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]
 #~ package require ttk::theme::tilegtk
@@ -106,7 +108,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1b3 37 08.12.2009}
+set option(release_version) {0.8.1b3 38 09.12.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
