@@ -128,7 +128,7 @@ proc timeshift_Save {tvw} {
 	{{Video Files}      {.mpeg}       }
 	}
 	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
-	if {[file exists $::option(where_is_home)/tmp/timeshift.mpeg]} {
+	if {[file exists "$::option(where_is_home)/tmp/timeshift.mpeg"]} {
 		log_writeOutTv 0 "Found timeshift mpeg file, opening file save dialog."
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
 		if {[string trim $ofile] != {}} {
@@ -167,6 +167,9 @@ Please wait..."] \
 	-mode determinate \
 	-variable timeshift(pgp)
 	
+	ttk::label $mf.l_inf_progre \
+	-textvariable timeshift(lProgress)
+	
 	ttk::button $bf.b_cancel \
 	-text [mc "Cancel"] \
 	-compound left \
@@ -189,6 +192,9 @@ Please wait..."] \
 	-sticky ew \
 	-padx 10 \
 	-pady "10 5"
+	grid $mf.l_inf_progre -in $mf -row 2 -column 0 \
+	-padx "10 0" \
+	-pady "0 5"
 	
 	grid $bf.b_cancel -in $bf -row 0 -column 0 \
 	-padx 3 \
@@ -210,6 +216,8 @@ Please wait..."] \
 	
 	set sfile "$::option(where_is_home)/tmp/timeshift.mpeg"
 	set file_size [file size $sfile]
+	set file_size_s [format %.2f [expr ($file_size / 1073741824.0)]]
+	set ::timeshift(lProgress) "0 / $file_size_s GB"
 	set old_size 0
 	set counter 0
 	set increment  [expr $file_size.0 / 100]
@@ -217,14 +225,14 @@ Please wait..."] \
 	
 	catch {exec cp -f "$sfile" "$ofile" &} cp_pid
 	log_writeOutTv 0 "Copying timeshift video file. Copy process PID: $cp_pid"
-	set ::timeshift(cp_id) [after 0 [list timeshift_CopyBarProgr "$sfile" "$ofile" $counter $file_size $old_size $cp_pid $increment]]
-	$bf.b_cancel configure -command [list timeshift_CopyBarProgr cancel $cp_pid 0 0 0 0 0]
+	set ::timeshift(cp_id) [after 0 [list timeshift_CopyBarProgr "$sfile" "$ofile" $counter $file_size $old_size $file_size_s $cp_pid $increment]]
+	$bf.b_cancel configure -command [list timeshift_CopyBarProgr cancel $cp_pid 0 0 0 0 0 0]
 	
 	tkwait visibility $wtop
 	grab $wtop
 }
 
-proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size cp_pid increment} {
+proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s cp_pid increment} {
 	if {"$sfile" == "cancel"} {
 		catch {after cancel $::timeshift(cp_id)}
 		unset -nocomplain ::timeshift(cp_id)
@@ -240,20 +248,23 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size cp_pid incre
 	if {$status_greppid_cp == 0} {
 		if {[file exists $ofile]} {
 			if {[file size $ofile] > [expr $old_size + $increment]} {
+				set file_size_o [format %.2f [expr ([file size $ofile] / 1073741824.0)]]
+				set ::timeshift(lProgress) "$file_size_o / $file_size_s GB"
 				set count_up [expr (([file size $ofile] - $old_size) / $increment)]
 				set counter [expr $counter + $count_up]
 				set ::timeshift(pgp) $counter
 				wm title .tv.top_cp_progress [mc "Copying...       %%%" [format %.2f $counter]]
 				set old_size [file size $ofile]
-				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $cp_pid $increment]]
+				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $file_size_s $cp_pid $increment]]
 			} else {
-				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $cp_pid $increment]]
+				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $file_size_s $cp_pid $increment]]
 			}
 		} else {
-			set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $cp_pid $increment]]
+			set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $file_size_s $cp_pid $increment]]
 		}
 	} else {
 		wm title .tv.top_cp_progress [mc "Copying...       finished"]
+		set ::timeshift(lProgress) "$file_size_s / $file_size_s GB"
 		set ::timeshift(pgp) 100
 		log_writeOutTv 0 "Timesift video file copied. Output file:
 $ofile"

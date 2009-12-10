@@ -55,9 +55,9 @@ package require http
 package require msgcat
 namespace import msgcat::mc
 #~ Experimental support for QT and GTK theme.
-#~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library"]} {
+#~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library/libtileqt0.6.so"]} {
 	#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-qt/library"]
-	#~ package require tileqt
+	#~ package require ttk::theme::tileqt
 #~ }
 #~ package require ttk::theme::tileqt
 #~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]

@@ -513,7 +513,6 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 		settooltip $tv_bar.b_forw_choose [mc "Choose amount of seek forward"]
 		settooltip $tv_bar.b_forward_end [mc "Jump to the end"]
 		settooltip $tv_bar.b_fullscreen [mc "Toggle fullscreen"]
-		settooltip $tv_bar.b_save [mc "Save timeshift video file"]
 		settooltip $tv_bar.l_time [mc "Current position / File length"]
 	} else {
 		settooltip $tv_bar.b_play {}
@@ -526,7 +525,6 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 		settooltip $tv_bar.b_forw_choose {}
 		settooltip $tv_bar.b_forward_end {}
 		settooltip $tv_bar.b_fullscreen {}
-		settooltip $tv_bar.b_save {}
 		settooltip $tv_bar.l_time {}
 	}
 }

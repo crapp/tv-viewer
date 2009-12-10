@@ -260,7 +260,7 @@ en_GB Christian Rapp <saedelaere@arcor.de>
 		$nb2.t_credits insert end "\n\n"
 		$nb2.t_credits insert end "Participants:" big
 		$nb2.t_credits insert end "\n
-Martin Dauskardt, Matthias Klostermair.
+Martin Dauskardt, Matthias Klostermair, Thorsten Droege.
 
 Thank you for your help!"
 		
