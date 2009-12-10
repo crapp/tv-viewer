@@ -37,7 +37,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1b3 38 09.12.2009}
+set option(release_version) {0.8.1b3 40 10.12.2009}
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
