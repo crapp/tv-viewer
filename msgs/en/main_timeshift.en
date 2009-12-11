@@ -1,0 +1,12 @@
+#
+#      Translation file for TV-Viewer
+#      Timeshift related.
+#
+
+mcset $lang \
+	{Copying...       %%%} \
+	{Copying...       %s%%}
+
+mcset $lang \
+	{Copying...       finished} \
+	{Copying...       finished}
