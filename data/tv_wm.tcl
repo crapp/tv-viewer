@@ -50,12 +50,13 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 			tv_wmCursorHide $tv_cont 0
 			tv_wmCursorHide $tv_bg 0
 			wm attributes $mw -fullscreen 1
-			after 500 {
+			set ::tv(id_panscanAuto) [after 500 {
 				if {$::data(panscanAuto) == 1} {
+					catch {after cancel $::tv(id_panscanAuto)}
 					set ::data(panscanAuto) 0
 					tv_wmPanscanAuto
 				}
-			}
+			}]
 			log_writeOutTv 0 "Going to full-screen mode."
 			return
 		} else {
@@ -77,12 +78,13 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 			tv_wmCursorHide $tv_bg 0
 			log_writeOutTv 0 "Going to full-screen mode."
 			wm attributes $mw -fullscreen 1
-			after 500 {
+			set ::tv(id_panscanAuto) [after 500 {
 				if {$::data(panscanAuto) == 1} {
+					catch {after cancel $::tv(id_panscanAuto)}
 					set ::data(panscanAuto) 0
 					tv_wmPanscanAuto
 				}
-			}
+			}]
 		}
 		if {[winfo exists .tv.slist] && [string trim [place info .tv.slist]] != {}} {
 			.tv.slist.lb_station selection clear 0 end
@@ -118,12 +120,13 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 		$tv_bg configure -cursor arrow
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
-		after 500 {
+		set ::tv(id_panscanAuto) [after 500 {
 			if {$::data(panscanAuto) == 1} {
+				catch {after cancel $::tv(id_panscanAuto)}
 				set ::data(panscanAuto) 0
 				tv_wmPanscanAuto
 			}
-		}
+		}]
 	}
 }
 
@@ -183,6 +186,11 @@ proc tv_wmPanscanAuto {} {
 		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, zoom disabled!"
 		return
 	}
+	if {[winfo ismapped .tv.bg.w] == 0} {
+		log_writeOutTv 1 "Video player container frame is not mapped."
+		log_writeOutTv 1 "Auto Pan&Scan not possible."
+		return
+	}
 	if {[wm attributes .tv -fullscreen] == 0} {
 		if {$::data(panscanAuto) == 0} {
 			set relativeX [dict get [place info .tv.bg.w] -relx]
@@ -202,9 +210,6 @@ proc tv_wmPanscanAuto {} {
 			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
 			}
-			#~ if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-				#~ after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
-			#~ }
 			set ::data(panscanAuto) 1
 			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0]
 		} else {
@@ -226,9 +231,6 @@ proc tv_wmPanscanAuto {} {
 				set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
 				set ::data(panscan) [expr ($panscan_multi * 5)]
 				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
-				#~ if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-					#~ after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
-				#~ }
 				if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 					after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
 				}
