@@ -108,7 +108,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1b3 42 12.12.2009}
+set option(release_version) {0.8.1b3 43 15.12.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -218,7 +218,7 @@ You've installed a new version of TV-Viewer."
 		main_startupCf "$option(release_version)" unknown unknown
 	} else {
 		file mkdir "$::env(HOME)/.tv-viewer/" "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
-		set new_version_file [open "$::env(HOME)/.tv-viewer/config/tv-viewer-[lindex $option(release_version) 0]_build[lindex $option(release_version 1]\.ver" w]
+		set new_version_file [open "$::env(HOME)/.tv-viewer/config/tv-viewer-[lindex $option(release_version) 0]_build[lindex $option(release_version) 1]\.ver" w]
 		close $new_version_file
 	}
 }
