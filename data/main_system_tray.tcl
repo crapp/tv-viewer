@@ -18,41 +18,36 @@
 
 proc main_systemTrayActivate {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayActivate \033\[0m"
-		if {[winfo exists .tray] == 0} {
-			catch {tktray::icon .tray -image $::icon_e(tv-viewer_icon_systray) -visible 0}
-			if {[winfo exists .tray]} {
-				#~ after 1000 {
-					#~ if {[winfo exists .tray]} {
-						#~ .tray configure -image $::icon_e(systray-dummy-t)
-					#~ }
-				#~ }
-				after 1000 {
-					if {[winfo exists .tray]} {
-						#~ .tray configure -image $::icon_e(tv-viewer_icon_systray)
-						.tray configure -visible 1
-						bind .tray <Button-1> { main_systemTrayToggle}
-						settooltip .tray [mc "TV-Viewer idle"]
-						log_writeOutTv 0 "Succesfully added Icon to system tray."
-					}
+	if {[winfo exists .tray] == 0} {
+		catch {tktray::icon .tray -image $::icon_e(tv-viewer_icon_systray) -visible 0}
+		if {[winfo exists .tray]} {
+			after 1000 {
+				if {[winfo exists .tray]} {
+					.tray configure -visible 1
+					.tray configure -image $::icon_e(tv-viewer_icon_systray)
+					bind .tray <Button-1> { main_systemTrayToggle}
+					settooltip .tray [mc "TV-Viewer idle"]
+					log_writeOutTv 0 "Succesfully added Icon to system tray."
 				}
-			} else {
-				log_writeOutTv 2 "Could not create an icon in system tray."
 			}
 		} else {
-			bind .tray <Button-1> {}
-			destroy .tray
-			if {$::option(systray_mini) == 1} {
-				bind . <Unmap> {
-					if {[winfo ismapped .] == 0} {
-						if {[winfo exists .tray] == 0} {
-							main_systemTrayActivate
-							set ::choice(cb_systray_main) 1
-						}
-						main_systemTrayMini unmap
+			log_writeOutTv 2 "Could not create an icon in system tray."
+		}
+	} else {
+		bind .tray <Button-1> {}
+		destroy .tray
+		if {$::option(systray_mini) == 1} {
+			bind . <Unmap> {
+				if {[winfo ismapped .] == 0} {
+					if {[winfo exists .tray] == 0} {
+						main_systemTrayActivate
+						set ::choice(cb_systray_main) 1
 					}
+					main_systemTrayMini unmap
 				}
 			}
 		}
+	}
 }
 
 proc main_systemTrayToggle {} {
