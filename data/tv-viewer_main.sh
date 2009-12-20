@@ -54,15 +54,6 @@ unset -nocomplain status_tk resultat_tk
 package require http
 package require msgcat
 namespace import msgcat::mc
-#~ Experimental support for QT and GTK theme.
-#~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library/libtileqt0.6.so"]} {
-	#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-qt/library"]
-	#~ package require ttk::theme::tileqt
-#~ }
-#~ package require ttk::theme::tileqt
-#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]
-#~ package require ttk::theme::tilegtk
-
 
 wm withdraw .
 
@@ -75,22 +66,6 @@ if {[file type [info script]] == "link" } {
 #~ [file dirname [file dirname [file normalize [file join [info script] bogus]]]]
 
 set option(where_is_home) "$::env(HOME)/.tv-viewer"
-
-if {"$::tcl_platform(machine)" == "x86_64"} {
-	catch {load $where_is/extensions/tktray/64/libtktray1.1.so} load_lib_tray
-	puts "loading $::tcl_platform(machine) library"
-	if {[string length [string trim $load_lib_tray]] > 1} {
-		puts "ERROR:
-$load_lib_tray"
-	}
-} else {
-	catch {load $where_is/extensions/tktray/32/libtktray1.1.so} load_lib_tray
-	puts "loading $::tcl_platform(machine) library"
-	if {[string length [string trim $load_lib_tray]] > 1} {
-		puts "ERROR:
-$load_lib_tray"
-	}
-}
 
 set ::option(appname) tv-viewer_main
 
@@ -108,7 +83,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1b3 46 16.12.2009}
+set option(release_version) {0.8.1b3 47 20.12.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -241,7 +216,33 @@ An instance of TV-Viewer is already running."
 		exit 0
 	}
 }
-unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid readpid read_build 
+unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid readpid read_build
+
+#~ Experimental support for QT and GTK theme.
+#~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library/libtileqt0.6.so"]} {
+	#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-qt/library"]
+	#~ package require ttk::theme::tileqt
+#~ }
+#~ package require ttk::theme::tileqt
+#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]
+#~ package require ttk::theme::tilegtk
+if {"$::tcl_platform(machine)" == "x86_64"} {
+	set auto_path [linsert $auto_path 0 "$::where_is/extensions/tktray/64"]
+	set status_tray [catch {package require tktray} result_tkray]
+	puts "loading $::tcl_platform(machine) shared libraries"
+	if {$status_tray == 1} {
+		puts "ERROR:
+$result_tktray"
+	}
+} else {
+	set auto_path [linsert $auto_path 0 "$::where_is/extensions/tktray/32"]
+	set status_tray [catch {package require tktray} result_tkray]
+	puts "loading $::tcl_platform(machine) shared libraries"
+	if {$status_tray == 1} {
+		puts "ERROR:
+$result_tktray"
+	}
+}
 #source autoscroll function for scrollbars and load package autoscroll
 source $::where_is/extensions/autoscroll/autoscroll.tcl
 package require autoscroll

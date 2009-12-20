@@ -101,8 +101,6 @@ proc info_helpAbout {} {
 		-text [mc "Homepage"] \
 		-command info_helpHomepage \
 		-style Toolbutton
-		#~ ttk::labelframe $nb1.lf_version
-		#~ set lf_version $nb1.lf_version
 		ttk::label $nb1.l_version
 		ttk::label $nb1.l_copy \
 		-text [mc "© Copyright 2007 - 2009

@@ -248,7 +248,7 @@ proc station_editExit {} {
 		bind . <Unmap> {
 			if {[winfo ismapped .] == 0} {
 				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate
+					main_systemTrayActivate 0
 					set ::choice(cb_systray_main) 1
 				}
 				main_systemTrayMini unmap

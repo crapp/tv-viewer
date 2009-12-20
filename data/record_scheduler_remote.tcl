@@ -33,11 +33,16 @@ proc record_schedulerPrestart {handler} {
 		place forget .tv.l_image
 	}
 	if {$::main(running_recording) != 1} {
-		set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
-		label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-		place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
-		set img_list_length [llength $img_list]
-		after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+		if {[winfo exists .tv.l_anigif] == 0} {
+			set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
+			label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+			place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
+			set img_list_length [llength $img_list]
+			after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+		} else {
+			log_writeOutTv 1 "Animated gif already exists in parent."
+			log_writeOutTv 1 "This should not happen!"
+		}
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor watch
@@ -237,6 +242,7 @@ proc record_schedulerStation {station number} {
 	log_writeOutTv 0 "Scheduler initiated station sequence for main application."
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 	set ::station(last) "\{$station\} $::kanalcall($number) $number"
+	.label_stations configure -text "[lindex $::station(last) 0]"
 }
 
 proc record_schedulerPreStop {handler} {

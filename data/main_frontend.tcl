@@ -185,7 +185,7 @@ proc main_frontendShowslist {w} {
 				bind . <Unmap> {
 					if {[winfo ismapped .] == 0} {
 						if {[winfo exists .tray] == 0} {
-							main_systemTrayActivate
+							main_systemTrayActivate 0
 							set ::choice(cb_systray_main) 1
 						}
 						main_systemTrayMini unmap
@@ -329,7 +329,7 @@ proc main_frontendDiagnosticExit {} {
 		bind . <Unmap> {
 			if {[winfo ismapped .] == 0} {
 				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate
+					main_systemTrayActivate 0
 					set ::choice(cb_systray_main) 1
 				}
 				main_systemTrayMini unmap
@@ -537,7 +537,7 @@ proc main_frontendUiTvviewer {} {
 	-command main_newsreaderCheckUpdate
 	$wfbar.mOptions add checkbutton \
 	-label [mc "System Tray"] \
-	-command main_systemTrayActivate \
+	-command {main_systemTrayActivate 0} \
 	-variable choice(cb_systray_main)
 	$wfbar.mOptions add separator
 	$wfbar.mOptions add command \
@@ -797,7 +797,7 @@ proc main_frontendUiTvviewer {} {
 	}
 	if {$::option(systray_start) == 1} {
 		set ::choice(cb_systray_main) 1
-		main_systemTrayActivate
+		main_systemTrayActivate 1
 		if {[winfo exists .tray]} {
 			settooltip .tray [mc "TV-Viewer idle"]
 		}
@@ -815,7 +815,7 @@ proc main_frontendUiTvviewer {} {
 		bind . <Unmap> {
 			if {[winfo ismapped .] == 0} {
 				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate
+					main_systemTrayActivate 0
 					set ::choice(cb_systray_main) 1
 				}
 				main_systemTrayMini unmap

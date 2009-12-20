@@ -287,7 +287,14 @@ proc option_screen_3 {} {
 			catch {exec mplayer} mplayer_ver
 			set agrep_mpl_ver [catch {agrep -m "$mplayer_ver" "MPlayer"} resultat_mpl_ver]
 			if {$agrep_mpl_ver == 0} {
-				log_writeOutTv 0 "Found MPlayer: $resultat_mpl_ver"
+				set first [string first $resultat_mpl_ver r]
+				set revision [info_helpMplayerRev $first "$resultat_mpl_ver"]
+				if {$revision != -1} {
+					log_writeOutTv 0 "Found MPlayer: SVN r$revision"
+				} else {
+					log_writeOutTv 1 "Found MPlayer, but could not read SVN revision."
+					log_writeOutTv 1 "$resultat_mpl_ver"
+				}
 			} else {
 				log_writeOutTv 1 "Found MPlayer, but could not detect Version"
 				log_writeOutTv 1 "$resultat_mpl_ver"

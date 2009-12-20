@@ -16,14 +16,22 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc main_systemTrayActivate {} {
+proc main_systemTrayActivate {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayActivate \033\[0m"
 	if {[winfo exists .tray] == 0} {
-		catch {tktray::icon .tray -image $::icon_e(tv-viewer_icon_systray) -visible 0}
+		catch {tktray::icon .tray -image $::icon_b(placeholder)}
 		if {[winfo exists .tray]} {
-			after 1000 {
+			if {$handler == 1} {
+				if {$::option(show_splash) == 1} {
+					set after_tray 2500
+				} else {
+					set after_tray 1500
+				}
+			} else {
+				set after_tray 1000
+			}
+			after $after_tray {
 				if {[winfo exists .tray]} {
-					.tray configure -visible 1
 					.tray configure -image $::icon_e(tv-viewer_icon_systray)
 					bind .tray <Button-1> { main_systemTrayToggle}
 					settooltip .tray [mc "TV-Viewer idle"]
@@ -40,7 +48,7 @@ proc main_systemTrayActivate {} {
 			bind . <Unmap> {
 				if {[winfo ismapped .] == 0} {
 					if {[winfo exists .tray] == 0} {
-						main_systemTrayActivate
+						main_systemTrayActivate 0
 						set ::choice(cb_systray_main) 1
 					}
 					main_systemTrayMini unmap
@@ -124,7 +132,7 @@ proc main_systemTrayMini {com} {
 		bind . <Unmap> {
 			if {[winfo ismapped .] == 0} {
 				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate
+					main_systemTrayActivate 0
 					set ::choice(cb_systray_main) 1
 				}
 				main_systemTrayMini unmap

@@ -246,10 +246,11 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
 				log_writeOutMpl 1 "MPlayer command line:"
 				log_writeOutMpl 1 "$mcommand"
-				catch {place forget .tv.l_image}
-				catch {launch_splashPlay cancel 0 0 0}
-				catch {place forget .tv.l_anigif}
-				catch {destroy .tv.l_anigif}
+				if {[winfo exists .tv.l_anigif]} {
+					launch_splashPlay cancel 0 0 0
+					place forget .tv.l_anigif
+					destroy .tv.l_anigif
+				}
 				set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
 				label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
 				place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
