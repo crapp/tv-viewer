@@ -77,7 +77,7 @@ proc tooltips {w1 w2 section} {
 proc showtooltip {tool_tip_widget tool_tip_text} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: showtooltip \033\[0m \{$tool_tip_widget\} \{$tool_tip_text\}"
 	global tcl_platform
-	if { [string match $tool_tip_widget* [winfo containing  [winfo pointerx .] [winfo pointery .]] ] == 0  } {
+	if {[string match $tool_tip_widget* [winfo containing -displayof . [winfo pointerx .] [winfo pointery .]] ] == 0 && "$tool_tip_widget" != ".tray"} {
 		return
 	}
 	catch { destroy $tool_tip_widget.tooltip }
@@ -93,7 +93,7 @@ proc showtooltip {tool_tip_widget tool_tip_text} {
 	set height [winfo reqheight $tooltip.label]
 	
 	set positionX [winfo pointerx .]
-	set positionY [expr [winfo pointery .] + 25]
+	set positionY [expr [winfo pointery .] + 15]
 	
 	if  {[expr $positionX + $width] > [winfo screenwidth .]} {
 		set positionX [expr ($positionX - (($positionX + $width) - [winfo screenwidth .]))]
