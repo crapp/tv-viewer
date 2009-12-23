@@ -28,6 +28,10 @@ mcset $lang \
 	{Eine neue Aufnahme hinzufügen}
 
 mcset $lang \
+	{Edit recording} \
+	{Aufnahme bearbeiten}
+
+mcset $lang \
 	{Choose station to record.} \
 	{Sender wählen der aufgenommen werden soll.}
 

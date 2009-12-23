@@ -32,6 +32,50 @@ proc record_schedulerPrestart {handler} {
 	if {[winfo exists .tv.l_image]} {
 		place forget .tv.l_image
 	}
+	if {[winfo exists .station]} {
+		log_writeOutTv 1 "A recording or timeshift was started while the station editor is open."
+		log_writeOutTv 1 "Will close it now, you will loose all your changes."
+		if {[winfo exists .station.top_search]} {
+			log_writeOutTv 2 "You are running a station search while a recording fired."
+			log_writeOutTv 2 "The recording might be screwed up."
+			station_search 0 cancel 0 0 0 0
+			grab release .station.top_search
+			destroy .station.top_search
+		}
+		if {$::option(systray_mini) == 1} {
+			bind . <Unmap> {
+				if {[winfo ismapped .] == 0} {
+					if {[winfo exists .tray] == 0} {
+						main_systemTrayActivate 0
+						set ::choice(cb_systray_main) 1
+					}
+					main_systemTrayMini unmap
+				}
+			}
+		}
+		grab release .station
+		destroy .station
+	}
+	if {[winfo exists .config_wizard]} {
+		log_writeOutTv 1 "A recording or timeshift was started while the configuration dialog is open."
+		log_writeOutTv 1 "Will close it now, you will loose all your changes."
+		if {$::option(systray_mini) == 1} {
+			bind . <Unmap> {
+				if {[winfo ismapped .] == 0} {
+					if {[winfo exists .tray] == 0} {
+						main_systemTrayActivate 0
+						set ::choice(cb_systray_main) 1
+					}
+					main_systemTrayMini unmap
+				}
+			}
+		}
+		grab release .config_wizard
+		destroy .config_wizard
+	}
+	if {[winfo exists .cm]} {
+		colorm_exit .cm.f_vscale
+	}
 	if {$::main(running_recording) != 1} {
 		if {[winfo exists .tv.l_anigif] == 0} {
 			set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]

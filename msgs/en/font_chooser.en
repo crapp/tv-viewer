@@ -1,0 +1,54 @@
+#
+#      Translation file for TV-Viewer
+#      Font chooser dialog.
+#
+
+mcset $lang \
+	{Family:} \
+	{Family:}
+
+mcset $lang \
+	{Style:} \
+	{Style:}
+
+mcset $lang \
+	{Size:} \
+	{Size:}
+
+mcset $lang \
+	{Font color:} \
+	{Font color:}
+
+mcset $lang \
+	{Display:} \
+	{Display:}
+
+mcset $lang \
+	{Preview:} \
+	{Preview:}
+
+mcset $lang \
+	{Choose font} \
+	{Choose font}
+
+mcset $lang \
+	{Choose a font} \
+	{Choose a font}
+
+mcset $lang \
+	{Choose font style} \
+	{Choose font style}
+
+mcset $lang \
+	{Choose font size} \
+	{Choose font size}
+
+mcset $lang \
+	{Choose font color} \
+	{Choose font color}
+
+mcset $lang \
+	{Specify where the message box the player window
+should be displayed} \
+	{Specify where the message box the player window
+should be displayed}

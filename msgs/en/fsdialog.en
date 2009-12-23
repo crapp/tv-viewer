@@ -6,6 +6,7 @@
 namespace eval ::ttk::dialog::file {   
     ::msgcat::mcset en Location
     ::msgcat::mcset en Filter
+    ::msgcat::mcset en OK
     ::msgcat::mcset en Name
     ::msgcat::mcset en Size
     ::msgcat::mcset en Date

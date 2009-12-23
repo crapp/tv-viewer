@@ -91,8 +91,9 @@ proc station_editSave {w} {
 
 proc station_editExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editExit \033\[0m"
-	array unset ::kanalid
-	array unset ::kanalcall
+	catch {array unset ::kanalid}
+	catch {array unset ::kanalcall}
+	catch {array unset ::kanalinput}
 	log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
 	if !{[file exists "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"]} {
 		set status_tv_playback [tv_callbackMplayerRemote alive]

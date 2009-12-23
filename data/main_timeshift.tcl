@@ -63,9 +63,25 @@ proc timeshift_start_preRec {tbutton} {
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
-	catch {exec ""}
-	set rec_pid [exec "$::where_is/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
-	after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
+	set status [tv_callbackMplayerRemote alive]
+	if {$status != 1} {
+		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
+	} else {
+		catch {exec ""}
+		set rec_pid [exec "$::where_is/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
+	}
+}
+
+proc timeshift_Wait {tbutton} {
+	set status [tv_callbackMplayerRemote alive]
+	if {$status != 1} {
+		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
+	} else {
+		catch {exec ""}
+		set rec_pid [exec "$::where_is/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
+	}
 }
 
 proc timeshift_start_Rec {counter rec_pid tbutton} {
@@ -82,7 +98,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 		record_scheduler_prestartCancel timeshift
 		return
 	}
-	if {[file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
+	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"] && [file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
 		catch {exec ln -f -s "$rec_pid" "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
 		log_writeOutTv 0 "Timeshift process PID $rec_pid"
 		if {$::option(timeshift_df) != 0} {

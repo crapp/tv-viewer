@@ -34,7 +34,7 @@ proc recorderShowProgress { fdin fdout size bytes {error ""} } {
 	if { $error != "" } {
 		catch { chan close $fdin }
 		catch { chan close $fdout }
-		puts "$error"
+		puts "Recorder error: $error"
 		exit 1
 	}
 	if { [eof $fdin] } {

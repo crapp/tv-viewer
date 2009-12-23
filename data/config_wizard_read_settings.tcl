@@ -39,7 +39,7 @@ proc config_wizardReadSettings {} {
 		#video_input_name {}
 		#video_input 0
 		#player_vo xv
-		#player_deint Yadif
+		#player_deint Lowpass5
 		#player_autoq 0
 		#player_cache 2048
 		#player_threads 1
@@ -134,7 +134,7 @@ proc config_wizardReadSettings {} {
 		#video_input_name {}
 		#video_input 0
 		player_vo xv
-		player_deint Yadif
+		player_deint Lowpass5
 		player_autoq 0
 		player_cache 2048
 		player_threads 1

@@ -45,7 +45,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 49 23.12.2009}
+set option(release_version) {0.8.1 50 23.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
@@ -280,6 +280,8 @@ proc scheduler_rec_prestart {jobid} {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 		if { $status_greppid_times == 0 } {
+			scheduler_logWriteOut 1 "Scheduler detected timeshift process."
+			scheduler_logWriteOut 1 "Will stop timeshift!"
 			puts $::data(comsocket) "tv-viewer_main timeshift .top_buttons.button_timeshift"
 			flush $::data(comsocket)
 		}

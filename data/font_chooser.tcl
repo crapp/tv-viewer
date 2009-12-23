@@ -75,7 +75,7 @@ proc font_chooserUi {returnw cvar} {
 	-image $::icon_e(pick-color3) \
 	-command [list font_chooserUiCol $mfpre.f_prev.c_abc]
 	ttk::label $mfcol.l_align \
-	-text [mc "Alignment:"]
+	-text [mc "Display:"]
 	ttk::menubutton $mfcol.mb_align \
 	-menu $mfcol.mbAlign \
 	-textvariable font_chooser(mb_align)
@@ -206,7 +206,7 @@ proc font_chooserUi {returnw cvar} {
 		incr i
 	}
 	
-	set avail_aligns [dict create {top left} 0 top 1 {top right} 2 left 3 center 4 right 5 {bottom left} 6 bottom 7 {bottom right} 8]
+	set avail_aligns [dict create {[mc "top left"]} 0 top 1 {top right} 2 left 3 center 4 right 5 {bottom left} 6 bottom 7 {bottom right} 8]
 	foreach {key elem} [dict get $avail_aligns] {
 		$mfcol.mbAlign add radiobutton \
 		-label "$key" \
@@ -237,6 +237,14 @@ proc font_chooserUi {returnw cvar} {
 	
 	font_chooserUiCfont $mffont.lb_fam $mffont.lb_style $mffont.lb_size $mfpre.f_prev.c_abc
 	$mfpre.f_prev.c_abc itemconfigure theText -fill [lindex $::choice($cvar) end]
+	if {$::option(tooltips) == 1 && $::option(tooltips_wizard) == 1} {
+		settooltip $mffont.lb_fam [mc "Choose a font"]
+		settooltip $mffont.lb_style [mc "Choose font style"]
+		settooltip $mffont.lb_size [mc "Choose font size"]
+		settooltip $mfcol.b_color [mc "Choose font color"]
+		settooltip $mfcol.mb_align [mc "Specify where the message box the player window
+should be displayed"]
+	}
 	wm resizable $w 0 0
 	wm protocol $w WM_DELETE_WINDOW "grab release .config_wizard.fontchooser; destroy .config_wizard.fontchooser; grab .config_wizard"
 	wm title $w [mc "Choose font"]

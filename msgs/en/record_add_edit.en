@@ -28,6 +28,10 @@ mcset $lang \
 	{Add a new recording}
 
 mcset $lang \
+	{Edit recording} \
+	{Edit recording}
+
+mcset $lang \
 	{Choose station to record.} \
 	{Choose station to record.}
 
