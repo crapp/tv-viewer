@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 50 23.12.2009}
+set option(release_version) {0.8.1 51 23.12.2009}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}

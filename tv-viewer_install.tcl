@@ -37,7 +37,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1 50 23.12.2009}
+set option(release_version) {0.8.1 51 23.12.2009}
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
@@ -994,7 +994,7 @@ Use \"tv-viewer\" to start the application.
 To see all possible command line options use
 \"tv-viewer --help\".
 To uninstall tv-viewer run as root
-\"tv-viewer_install.sh --uninstall\".
+\"tv-viewer_install.tcl --uninstall\".
 
 "
 

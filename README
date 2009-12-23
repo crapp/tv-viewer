@@ -29,10 +29,12 @@ as well.
 Installation
 ------------
 Installing TV-Viewer is done by the following command:
-(as root)
-% ./tv-viewer_install.sh
+chmod a+x ./tv-viewer_install.tcl
+(and as root)
+% ./tv-viewer_install.tcl
 
-Don't try to use "sh tv-viewer_install.sh" this won't work.
+Don't try to use "sh tv-viewer_install.tcl" this won't work because this is a
+Tcl and not a Shell script.
 If there are any errors during installation, check your build environment
 and try to find the error, otherwise contact the author, or use sourceforge.net.
 Many people encounter problems if they have more than one version of Tcl/Tk
