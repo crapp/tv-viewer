@@ -79,8 +79,13 @@ proc tv_playerUi {} {
 		set tv_cont [frame $tv_bg.w -background "" -container yes]
 		set tv_slist [frame .tv.slist -bg #004AFF -padx 5 -pady 5]
 		set tv_slist_lirc [frame .tv.slist_lirc -bg #004AFF -padx 5 -pady 5]
-		ttk::label $mw.l_image \
-		-image $::icon_e(logo-tv-viewer08x-noload)
+		if {[clock format [clock seconds] -format {%d%m}] == 2412} {
+			ttk::label $mw.l_image \
+			-image $::icon_e(logo-tv-viewer08x-noload_xmas)
+		} else {
+			ttk::label $mw.l_image \
+			-image $::icon_e(logo-tv-viewer08x-noload)
+		}
 		
 		listbox $tv_slist.lb_station \
 		-yscrollcommand [list $tv_slist.sb_station set] \

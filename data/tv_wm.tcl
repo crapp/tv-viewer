@@ -50,13 +50,13 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 			tv_wmCursorHide $tv_cont 0
 			tv_wmCursorHide $tv_bg 0
 			wm attributes $mw -fullscreen 1
-			set ::tv(id_panscanAuto) [after 500 {
-				if {$::data(panscanAuto) == 1} {
+			if {$::data(panscanAuto) == 1} {
+				set ::tv(id_panscanAuto) [after 500 {
 					catch {after cancel $::tv(id_panscanAuto)}
 					set ::data(panscanAuto) 0
 					tv_wmPanscanAuto
-				}
-			}]
+				}]
+			}
 			log_writeOutTv 0 "Going to full-screen mode."
 			return
 		} else {
@@ -120,13 +120,13 @@ proc tv_wmFullscreen {mw tv_cont tv_bg} {
 		$tv_bg configure -cursor arrow
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
-		set ::tv(id_panscanAuto) [after 500 {
-			if {$::data(panscanAuto) == 1} {
+		if {$::data(panscanAuto) == 1} {
+			set ::tv(id_panscanAuto) [after 500 {
 				catch {after cancel $::tv(id_panscanAuto)}
 				set ::data(panscanAuto) 0
 				tv_wmPanscanAuto
-			}
-		}]
+			}]
+		}
 	}
 }
 
@@ -214,6 +214,7 @@ proc tv_wmPanscanAuto {} {
 			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0]
 		} else {
 			tv_wmPanscan .tv.bg.w 0
+			tv_wmGivenSize .tv.bg 1.0
 		}
 	} else {
 		if {$::data(panscanAuto) == 0} {
@@ -263,6 +264,13 @@ proc tv_wmMoveVideo {dir} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmMoveVideo \033\[0m \{$dir\}"
 	if {$::option(player_aspect) == 0} {
 		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, moving video disabled!"
+		return
+	}
+	set status_tvplayback [tv_callbackMplayerRemote alive]
+	if {$status_tvplayback == 1} {return}
+	if {[winfo ismapped .tv.bg.w] == 0} {
+		log_writeOutTv 1 "Video player container frame is not mapped."
+		log_writeOutTv 1 "Auto Pan&Scan not possible."
 		return
 	}
 	if {$dir == 0} {
@@ -318,7 +326,7 @@ proc tv_wmMoveVideo {dir} {
 		return
 	}
 	if {$dir == 4} {
-		place .tv.bg.w -relheight 1 -relx 0.5 -rely 0.5
+		place .tv.bg.w -relx 0.5 -rely 0.5
 		set ::data(movevidX) 0
 		set ::data(movevidY) 0
 		log_writeOutTv 0 "Centering video."
@@ -369,8 +377,7 @@ proc tv_wmGivenSize {w size} {
 proc tv_wmCursorHide {w com} {
 	if {[info exists ::option(cursor_id\($w\))] == 1} {
 		foreach id [split $::option(cursor_id\($w\))] {
-			#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmCursorHide \033\[0;1;31m::cancel:: \033\[0m"
-			after cancel $id
+			catch {after cancel $id}
 		}
 		unset -nocomplain ::option(cursor_id\($w\))
 	}

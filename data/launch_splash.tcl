@@ -23,7 +23,12 @@ proc launch_splash_screen {} {
 	set w [toplevel .splash -borderwidth 0 -relief raised -highlightthickness 0]
 	set f_img [frame $w.f_img -background #414141]
 	set f_pb [frame $w.f_pb -background #414141]
-	label $f_img.l -image $::icon_e(logo-tv-viewer08x-noload) -borderwidth 0
+	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
+		label $f_img.l -image $::icon_e(logo-tv-viewer08x-noload_xmas) -borderwidth 0
+		log_writeOutTv 0 "Merry christmas :)"
+	} else {
+		label $f_img.l -image $::icon_e(logo-tv-viewer08x-noload) -borderwidth 0
+	}
 	label $f_pb.l -image [lindex $img_list 0] -borderwidth 0 -background #414141 -foreground #414141
 	
 	grid $f_img -in $w -row 0 -column 0 \

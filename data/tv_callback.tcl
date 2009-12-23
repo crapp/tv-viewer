@@ -131,6 +131,23 @@ proc tv_callbackVidData {} {
 					place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
 					bind .tv.bg.w <Configure> {}
 				}
+				if {$::data(movevidX) != 0} {
+					place .tv.bg.w -relx [expr ([dict get [place info .tv.bg.w] -relx] + [expr $::data(movevidX) * 0.005])]
+				}
+				if {$::data(movevidY) != 0} {
+					place .tv.bg.w -rely [expr ([dict get [place info .tv.bg.w] -rely] + [expr $::data(movevidY) * 0.005])]
+				}
+				if {$::data(panscanAuto) == 1} {
+					set ::tv(id_panscanAuto) [after 500 {
+						catch {after cancel $::tv(id_panscanAuto)}
+						set ::data(panscanAuto) 0
+						tv_wmPanscanAuto
+					}]
+				} else {
+					if {$::data(panscan) != 0} {
+						place .tv.bg.w -relheight [expr ([dict get [place info .tv.bg.w] -relheight] + [expr $::data(panscan).0 / 100])]
+					}
+				}
 				tv_playerVolumeControl .bottom_buttons $::main(volume_scale)
 				set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 				set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
