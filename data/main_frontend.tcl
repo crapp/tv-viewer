@@ -197,146 +197,9 @@ proc main_frontendShowslist {w} {
 }
 
 proc msgcat::mcunknown {locale src args} {
-	log_writeOutTv 1 "Unknown string for locale $locale"
+	log_writeOutTv 1 "-=Unknown string for locale $locale"
 	log_writeOutTv 1 "$src $args"
 	return $src
-}
-
-proc main_frontendLaunchDiagnostic {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendLaunchDiagnostic \033\[0m"
-	if {[winfo exists .config_wizard.top_diagnostic] == 0} {
-		
-		set wtop [toplevel .top_diagnostic]
-		
-		place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
-		set mf [ttk::frame $wtop.f_main]
-		
-		set fbottom [ttk::frame $wtop.f_bottom -style TLabelframe]
-		
-		ttk::label $mf.l_diagnostic_msg \
-		-text [mc "Diagnostic Routine is checking your system.
-Please wait..."] \
-		-compound left \
-		-image $::icon_m(dialog-information)
-		
-		ttk::progressbar $mf.pgb_diagnostic \
-		-orient horizontal \
-		-mode indeterminate \
-		-variable choice(pgb_diagnostic)
-		
-		ttk::button $fbottom.b_close \
-		-command {main_frontendDiagnosticExit} \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close)
-		
-		text $mf.t_diagtext \
-		-width 0 \
-		-height 0 \
-		-bd 0 \
-		-relief flat \
-		-highlightthickness 0
-		
-		grid columnconfigure $mf 0 -weight 1 -minsize 350
-		
-		grid $mf -in $wtop -row 0 -column 0 \
-		-sticky nesw
-		
-		grid $mf.l_diagnostic_msg -in $mf -row 0 -column 0 \
-		-padx 5 \
-		-pady 5 \
-		-sticky w
-		grid $mf.pgb_diagnostic -in $mf -row 1 -column 0 \
-		-sticky ew \
-		-padx 10 \
-		-pady 10
-		
-		wm resizable $wtop 0 0
-		wm title $wtop [mc "Diagnostic Routine"]
-		wm protocol $wtop WM_DELETE_WINDOW " "
-		wm iconphoto $wtop $::icon_e(tv-viewer_icon)
-		wm transient $wtop .
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {}
-		}
-		tkwait visibility $wtop
-		grab $wtop
-		
-		$mf.pgb_diagnostic start 10
-		
-		tv_playbackStop 0 pic
-		
-		catch {exec "$::where_is/data/tv-viewer_diag.tcl" &}
-	}
-}
-
-proc main_frontendDiagnosticFinished {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticFinished \033\[0m"
-	if {[winfo exists .top_diagnostic]} {
-		
-		grid rowconfigure .top_diagnostic.f_main {2} -weight 1 -minsize 150
-		
-		grid .top_diagnostic.f_main.t_diagtext -in .top_diagnostic.f_main -row 2 -column 0 \
-		-sticky nesw \
-		-padx 5 \
-		-pady "0 5"
-		
-		grid .top_diagnostic.f_bottom -in .top_diagnostic -row 1 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
-		grid anchor .top_diagnostic.f_bottom e
-		
-		grid .top_diagnostic.f_bottom.b_close -in .top_diagnostic.f_bottom -row 0 -column 0 \
-		-padx 3 \
-		-pady 7
-		
-		set hylink_enter "-foreground #0023FF -underline off"
-		set hylink_leave "-foreground #0064FF -underline on"
-		.top_diagnostic.f_main.t_diagtext tag configure hyper -underline on -foreground #0064FF
-		.top_diagnostic.f_main.t_diagtext tag configure hyper_file -underline on -foreground #0064FF
-		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
-		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
-		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
-		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
-		.top_diagnostic.f_main.t_diagtext tag bind hyper <Button-1> {catch {exec sh -c "xdg-open https://sourceforge.net/tracker2/?group_id=238442" &}}
-		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Button-1> {catch {exec sh -c "xdg-open $::env(HOME)/tv-viewer_diag.out" &}}
-		
-		.top_diagnostic.f_main.pgb_diagnostic stop
-		.top_diagnostic.f_main.pgb_diagnostic configure -mode determinate
-		.top_diagnostic.f_main.pgb_diagnostic configure -value 100
-		.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine finished"]
-		
-		.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
-		.top_diagnostic.f_main.t_diagtext insert end "\n
-$::env(HOME)/tv-viewer_diag.out" hyper_file
-		.top_diagnostic.f_main.t_diagtext insert end "\n\n"
-		.top_diagnostic.f_main.t_diagtext insert end [mc "Create a bug report on "]
-		.top_diagnostic.f_main.t_diagtext insert end "sourceforge.net" hyper
-		.top_diagnostic.f_main.t_diagtext insert end "\n"
-		.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
-		.top_diagnostic.f_main.t_diagtext configure -state disabled
-		
-		wm protocol .top_diagnostic WM_DELETE_WINDOW "main_frontendDiagnosticExit"
-	}
-}
-
-proc main_frontendDiagnosticExit {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDiagnosticExit \033\[0m"
-	grab release .top_diagnostic
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
-	}
-	destroy .top_diagnostic
 }
 
 proc main_frontendUiTvviewer {} {
@@ -577,7 +440,7 @@ proc main_frontendUiTvviewer {} {
 	-label [mc "Diagnostic Routine"] \
 	-compound left \
 	-image $::icon_s(diag) \
-	-command main_frontendLaunchDiagnostic
+	-command diag_Ui
 	$wfbar.mHelp add separator
 	$wfbar.mHelp add command \
 	-command info_helpAbout \
@@ -594,78 +457,10 @@ proc main_frontendUiTvviewer {} {
 			if {[string match *scale_volume $widget] || [string match *button_mute $widget]} continue
 			$widget state disabled
 		}
-		bind . <Key-m> [list tv_playerVolumeControl $wfbottom mute]
-		bind . <Key-F1> [list info_helpHelp]
-		bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
-		bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
-		bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
-		bind . <Control-Key-m> {colorm_mainUi}
-		bind . <Control-Key-e> {station_editUi}
-		bind . <Control-Key-x> {main_frontendExitViewer}
-		event add <<input_up>> <Control-Key-i>
-		event add <<input_down>> <Control-Alt-Key-i>
-		bind . <<input_up>> [list main_stationInput 1 1]
-		bind . <<input_down>> [list main_stationInput 1 -1]
-		event add <<volume_incr>> <Key-plus> <Key-KP_Add>
-		event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
-		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
-		event add <<forward_end>> <Key-End>
-		event add <<forward_10s>> <Key-Right>
-		event add <<forward_1m>> <Shift-Key-Right>
-		event add <<forward_10m>> <Control-Shift-Key-Right>
-		event add <<rewind_start>> <Key-Home>
-		event add <<rewind_10s>> <Key-Left>
-		event add <<rewind_1m>> <Shift-Key-Left>
-		event add <<rewind_1m>> <Control-Shift-Key-Left>
-		event add <<pause>> <Key-p>
-		event add <<start>> <Shift-Key-P>
-		event add <<stop>> <Shift-Key-S>
+		event_constrNoArray
 	} else {
 		.label_stations configure -text [lindex $::station(last) 0]
-		bind . <Key-m> [list tv_playerVolumeControl $wfbottom mute]
-		bind . <Key-F1> [list info_helpHelp]
-		bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
-		bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
-		bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
-		bind . <Control-Key-m> {colorm_mainUi}
-		bind . <Control-Key-e> {station_editUi}
-		bind . <Control-Key-x> {main_frontendExitViewer}
-		event add <<input_up>> <Control-Key-i>
-		event add <<input_down>> <Control-Alt-Key-i>
-		bind . <<input_up>> [list main_stationInput 1 1]
-		bind . <<input_down>> [list main_stationInput 1 -1]
-		event add <<record>> <Key-r>
-		bind . <<record>> [list record_wizardUi]
-		event add <<timeshift>> <Key-t>
-		bind . <<timeshift>> [list timeshift $wftop.button_timeshift]
-		event add <<teleview>> <Key-s>
-		bind . <<teleview>> {tv_playerRendering}
-		event add <<station_up>> <Key-Prior>
-		event add <<station_down>> <Key-Next>
-		event add <<station_jump>> <Key-j>
-		event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
-		event add <<station_key_lirc>> station_key_lirc
-		bind . <<station_up>> [list main_stationChannelUp .label_stations]
-		bind . <<station_down>> [list main_stationChannelDown .label_stations]
-		bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
-		bind . <<station_key>> [list main_stationStationNrKeys %A]
-		bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
-		event add <<volume_incr>> <Key-plus> <Key-KP_Add>
-		event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-		bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
-		bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
-		event add <<forward_end>> <Key-End>
-		event add <<forward_10s>> <Key-Right>
-		event add <<forward_1m>> <Shift-Key-Right>
-		event add <<forward_10m>> <Control-Shift-Key-Right>
-		event add <<rewind_start>> <Key-Home>
-		event add <<rewind_10s>> <Key-Left>
-		event add <<rewind_1m>> <Shift-Key-Left>
-		event add <<rewind_10m>> <Control-Shift-Key-Left>
-		event add <<pause>> <Key-p>
-		event add <<start>> <Shift-Key-P>
-		event add <<stop>> <Shift-Key-S>
+		event_constrArray
 	}
 	
 	# Hier alles einfügen was noch ausgeführt werden muss. picqual ...

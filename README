@@ -26,6 +26,7 @@ It is recommended to install,
  * tkimg (If you use Tcl/Tk < 8.6)
 as well.
 
+
 Installation
 ------------
 Installing TV-Viewer is done by the following command:
@@ -43,7 +44,12 @@ point at least on version 8.5. Debian / *buntu users may use
 update alternatives to solve this problem
 ("sudo update-alternatives --config wish" and/or "--config tclsh").
 
-See the user guide for details.
+Read the user guide for details and run 
+
+% ./tv-viewer_install.tcl --help
+
+to see all configuration options.
+
 
 Usage
 -----
@@ -56,6 +62,7 @@ for details.
 For basic usage informations have a look at the man page.
 $ man tv-viewer
 
+
 License
 -------
 TV-Viewer is distributed under the terms of the GNU General Public License
@@ -67,7 +74,7 @@ The icons, distributed with TV-Viewer, are covered by different licenses. See
 --
 tktray:
 
-The shared library libtktray1.1.so is copyrighted by Anton Kovalenko under the BSD
+The shared library libtktray1.2.so is copyrighted by Anton Kovalenko under the BSD
 license.
 
 http://sw4me.com/wiki/Tktray

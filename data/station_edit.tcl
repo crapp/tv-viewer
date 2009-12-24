@@ -166,20 +166,11 @@ proc station_editExit {} {
 			log_writeOutTv 2 "No valid stations list, disabling station selector for video window."
 			destroy .tv.slist
 		}
-		event delete <<record>>
-		bind . <<record>> {}
-		event delete <<teleview>>
-		bind . <<teleview>> {}
-		event delete <<station_up>>
-		event delete <<station_down>>
-		event delete <<station_jump>>
-		event delete <<station_key>>
-		event delete <<station_key_lirc>>
-		bind . <<station_up>> {}
-		bind . <<station_down>> {}
-		bind . <<station_jump>> {}
-		bind . <<station_key>> {}
-		bind . <<station_key_lirc>> {}
+		if {[winfo exists .tv.slist_lirc]} {
+			log_writeOutTv 2 "No valid stations list, disabling lirc station selector for video window."
+			destroy .tv.slist_lirc
+		}
+		event_deleSedit
 	} else {
 		log_writeOutTv 0 "Inserting all stations into station list."
 		set status_tv_playback [tv_callbackMplayerRemote alive]
@@ -228,20 +219,7 @@ proc station_editExit {} {
 				.tv.slist_lirc.lb_station insert end "$::kanalid($i)"
 			}
 		}
-		event add <<record>> <Key-r>
-		bind . <<record>> [list record_wizardUi]
-		event add <<teleview>> <Key-s>
-		bind . <<teleview>> {tv_playerRendering}
-		event add <<station_up>> <Key-Prior>
-		event add <<station_down>> <Key-Next>
-		event add <<station_jump>> <Key-j>
-		event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
-		event add <<station_key_lirc>> station_key_lirc
-		bind . <<station_up>> [list main_stationChannelUp .label_stations]
-		bind . <<station_down>> [list main_stationChannelDown .label_stations]
-		bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
-		bind . <<station_key>> [list main_stationStationNrKeys %A]
-		bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
+		event_constrArray
 	}
 	log_writeOutTv 0 "Exiting station editor."
 	grab release .station

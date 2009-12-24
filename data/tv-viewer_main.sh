@@ -83,7 +83,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1 52 24.12.2009}
+set option(release_version) {0.8.1 53 24.12.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -326,6 +326,10 @@ source $::where_is/data/main_frontend.tcl
 source $::where_is/data/command_socket.tcl
 #source color management toplevel and related functions.
 source $::where_is/data/colorm.tcl
+#Source diagnostic routine frontend.
+source $::where_is/data/diag_frontend.tcl
+#Source functions to create events and bindings
+source $::where_is/data/event_bind.tcl
 #source station item related stuff.
 source $::where_is/data/station_item.tcl
 #source station editor

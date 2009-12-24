@@ -282,7 +282,7 @@ The Icons, distributed with TV-Viewer, are covered by "
 		$nb3.t_license insert end "\n"
 		$nb3.t_license insert end "\ntktray" big
 		$nb3.t_license insert end "\n\nThe shared library "
-		$nb3.t_license insert end "libtktray1.1.so" link_tktray
+		$nb3.t_license insert end "libtktray1.2.so" link_tktray
 		$nb3.t_license insert end " is copyrighted by Anton Kovalenko
 under the BSD license."
 		$nb3.t_license insert end "\n"

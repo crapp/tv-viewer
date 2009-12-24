@@ -37,8 +37,8 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1 52 24.12.2009}
-array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0}
+set option(release_version) {0.8.1 53 24.12.2009}
+array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -52,7 +52,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 5} {
+if {[array size start_options] != 6} {
 	puts "
 TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
@@ -65,6 +65,22 @@ Possible options are:
   --nodepcheck    Skip dependencies ckeck.
   --target=PATH   Provide a path for installation (standard /usr/local/share).
   --manpath=PATH  Provide a path for man pages (standard /usr/local/share/man/man1).
+ "
+exit 0
+}
+
+if {$start_options(--help)} {
+	puts "
+TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
+	
+Possible options are:
+
+  --uninstall     Uninstalls TV-Viewer.
+  --nodebug       Do not print messages of progress to stdout.
+  --nodepcheck    Skip dependencies ckeck.
+  --target=PATH   Provide a path for installation (standard /usr/local/share).
+  --manpath=PATH  Provide a path for man pages (standard /usr/local/share/man/man1).
+  --help          Show this help.
  "
 exit 0
 }
@@ -321,7 +337,7 @@ Error message: $resultat_dfile
 			exit 1
 		} else {
 			puts $::printchan "$target/tv-viewer/data/[lindex [file split $dfile] end]"
-			if {[string match *tv-viewer_diag* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_scheduler* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/tv-viewer/data/[lindex [file split $dfile] end]"]} {
+			if {[string match *diag_runtime* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_scheduler* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/tv-viewer/data/[lindex [file split $dfile] end]"]} {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rwxr-xr-x} resultat_permissions_dfile]
 			} else {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rw-r--r--} resultat_permissions_dfile]
@@ -883,8 +899,8 @@ Error message: $resultat_symbolic
 		puts $::printchan "tv-viewer"
 	after 100
 	}
-	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_diag" "$bintarget/tv-viewer/data/tv-viewer_diag.tcl"} resultat_symbolic]
-	catch {exec ln -s "$bintarget/tv-viewer/data/tv-viewer_diag.tcl" "$binpath/tv-viewer_diag"}
+	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_diag" "$bintarget/tv-viewer/data/diag_runtime.tcl"} resultat_symbolic]
+	catch {exec ln -s "$bintarget/tv-viewer/data/diag_runtime.tcl" "$binpath/tv-viewer_diag"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer_diag"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
 		puts $::printchan "

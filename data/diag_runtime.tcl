@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh
 
-#       tv-viewer_diag.tcl
+#       diag_runtime.tcl
 #       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 52 24.12.2009}
+set option(release_version) {0.8.1 53 24.12.2009}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}
@@ -80,7 +80,7 @@ if {$start_options(--help)} {
 	puts "
 TV-Viewer Diagnostic Routine [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 
-Usage: tv-viewer_diag.tcl \[OPTION\]
+Usage: diag_runtime.tcl \[OPTION\]
 
 Possible options are:
 
@@ -540,7 +540,7 @@ if {[file isdirectory "$::env(HOME)/.tv-viewer/tmp/"]} {
 	if {[file exists "$::env(HOME)/.tv-viewer/tmp/comSocket.tmp"]} {
 		set comsocket [open "$::env(HOME)/.tv-viewer/tmp/comSocket.tmp" a]
 		fconfigure $comsocket -blocking no -buffering line
-		puts $comsocket "tv-viewer_main main_frontendDiagnosticFinished"
+		puts $comsocket "tv-viewer_main diag_RunFinished"
 		flush $comsocket
 		exit 0
 	} else {
