@@ -394,7 +394,7 @@ proc option_screen_6 {} {
 		}
 		bind $::window(interface_nb3_cont).f_osd2  <Button-4> {config_interfaceMousew 120}
 		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew -120}
-		set avail_aligns [dict create {top left} 0 top 1 {top right} 2 left 3 right 5 {bottom left} 6 bottom 7 {bottom right} 8]
+		set avail_aligns [dict create [mc "top left"] 0 [mc "top"] 1 [mc "top right"] 2 [mc "left"] 3 [mc "right"] 5 [mc "bottom left"] 6 [mc "bottom"] 7 [mc "bottom right"] 8]
 		foreach {key elem} [dict get $avail_aligns] {
 			$frame_nb3.mbOsd_mouse_w add radiobutton \
 			-label "$key" \
@@ -612,6 +612,7 @@ mouse cursor to invoke it."]
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			log_writeOutTv 1 "Setting interface options to default."
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
+			config_interfaceTheme $::stnd_opt(use_theme)
 			set ::choice(cb_tooltip) $::stnd_opt(tooltips)
 			set ::choice(cb_tooltip_main) $::stnd_opt(tooltips_main)
 			set ::choice(cb_tooltip_wizard) $::stnd_opt(tooltips_wizard)

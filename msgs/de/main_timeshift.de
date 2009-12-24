@@ -4,9 +4,19 @@
 #
 
 mcset $lang \
-	{Copying...       %%%} \
-	{Kopiere...       %s%%}
+	{Copying...    %%%} \
+	{Kopiere...    %s%%}
 
 mcset $lang \
-	{Copying...       finished} \
-	{Kopiere...       beendet}
+	{Copying...    finished} \
+	{Kopiere...    beendet}
+
+mcset $lang \
+	{Copying timeshift video file.
+Please wait...} \
+	{Kopiere Timeshift Videofile.
+Bitte warten...}
+
+mcset $lang \
+	{Choose name and location} \
+	{Wähle Dateiname und Speicherort}

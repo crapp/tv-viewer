@@ -52,3 +52,39 @@ mcset $lang \
 should be displayed} \
 	{Specify where the message box the player window
 should be displayed}
+
+mcset $lang \
+	{top left} \
+	{top left}
+
+mcset $lang \
+	{top} \
+	{top}
+
+mcset $lang \
+	{top right} \
+	{top right}
+
+mcset $lang \
+	{left} \
+	{left}
+
+mcset $lang \
+	{center} \
+	{center}
+
+mcset $lang \
+	{right} \
+	{right}
+
+mcset $lang \
+	{bottom left} \
+	{bottom left}
+
+mcset $lang \
+	{bottom} \
+	{bottom}
+
+mcset $lang \
+	{bottom right} \
+	{bottom right}

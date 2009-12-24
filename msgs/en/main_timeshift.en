@@ -10,3 +10,13 @@ mcset $lang \
 mcset $lang \
 	{Copying...       finished} \
 	{Copying...       finished}
+
+mcset $lang \
+	{Copying timeshift video file.
+Please wait...} \
+	{Copying timeshift video file.
+Please wait...}
+
+mcset $lang \
+	{Choose name and location} \
+	{Wähle Dateiname und Speicherort}

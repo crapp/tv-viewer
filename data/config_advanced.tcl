@@ -81,6 +81,12 @@ proc option_screen_8 {} {
 		ttk::checkbutton $lf_mconfig.cb_advanced_mconfig \
 		-text [mc "Do not process MPlayer config files"] \
 		-variable choice(cb_advanced_mconfig)
+		ttk::labelframe $::window(advanced_nb1).lf_advanced_factory \
+		-text [mc "Default settings"]
+		set lf_factory $::window(advanced_nb1).lf_advanced_factory
+		ttk::button $lf_factory.b_reset \
+		-text [mc "Reset"] \
+		-command config_advancedReset
 		
 		set ::window(advanced_nb2) [ttk::frame $w.f_advanced_mplayeropts]
 		$w add $::window(advanced_nb2) -text [mc "Additional options for MPlayer"] -padding 2
@@ -176,6 +182,14 @@ proc option_screen_8 {} {
 		-sticky w \
 		-padx 7 \
 		-pady 3
+		grid $lf_factory -in $::window(advanced_nb1) -row 3 -column 0 \
+		-sticky ew \
+		-padx 5 \
+		-pady "5 0"
+		grid $lf_factory.b_reset -in $lf_factory -row 0 -column 0 \
+		-sticky w \
+		-padx 7 \
+		-pady 3
 		
 		grid $::window(advanced_nb2).lf_additional_mplayer_com -in $::window(advanced_nb2) -row 0 -column 0 \
 		-sticky ew \
@@ -227,7 +241,7 @@ proc option_screen_8 {} {
 		
 		#Additional Code
 		
-		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt2 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)]
+		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)]
 		
 		set monaspects {4:3 16:9 5:4 16:10}
 		foreach aspect $monaspects {
@@ -275,6 +289,18 @@ proc option_screen_8 {} {
 				$w.sb_logging_sched configure -state disabled
 				$w.sb_logging_tv configure -state disabled
 			}
+		}
+		
+		proc config_advancedReset {} {
+			stnd_opt0 $::window(general_nb1)
+			stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)
+			stnd_opt2 $::window(dvb_nb1)
+			stnd_opt3 $::window(video_nb1_cont).f_video2
+			stnd_opt4 $::window(audio_nb1)
+			stnd_opt5 $::window(radio_nb1)
+			stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)
+			stnd_opt7 $::window(rec_nb1) $::window(rec_nb2)
+			stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)
 		}
 		
 		proc default_opt8 {w w2 w3} {
@@ -373,6 +399,7 @@ proc option_screen_8 {} {
 					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
 					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
 					set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
+					set lf_factory $::window(advanced_nb1).lf_advanced_factory
 					settooltip $::window(advanced_nb1).cb_advanced_aspect [mc "Let TV-Viewer manage video aspect ratio (recommended)"]
 					settooltip $lf_aspect.cb_keepaspect [mc "Keep video aspect ratio"]
 					settooltip $lf_aspect.rb_moniaspect [mc "Choose either monitor aspect ratio or monitor pixel aspect.
@@ -387,6 +414,7 @@ This may improve picture quality."]
 Screenshots will be stored in the users home directory."]
 					settooltip $lf_mconfig.cb_advanced_mconfig [mc "If enabled MPlayer will ignore all existing config files.
 This will ensure only values set by TV-Viewer will be used."]
+					settooltip $lf_factory.b_reset [mc "Reset all configuration options."]
 					settooltip $::window(advanced_nb2).e_lf_additional_mplayer_com [mc "Here you may provide additional command line options for MPlayer.
 Separate the different options with spaces.
 See the MPlayer man pages for more informations."]
@@ -415,6 +443,7 @@ Minimum: 10kb Maximum: 100kb"]
 					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
 					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
 					set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
+					set lf_factory $::window(advanced_nb1).lf_advanced_factory
 					settooltip $::window(advanced_nb1).cb_advanced_aspect {}
 					settooltip $lf_aspect.cb_keepaspect {}
 					settooltip $lf_aspect.rb_moniaspect {}

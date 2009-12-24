@@ -150,7 +150,7 @@ proc font_chooserUi {returnw cvar} {
 	-columnspan 2
 	grid $mffont.lb_size -in $mffont -row 1 -column 4 \
 	-rowspan 2 \
-	-sticky ns
+	-sticky nsew
 	grid $mffont.scrollb_sizey -in $mffont -row 1 -column 5 \
 	-rowspan 2 \
 	-sticky ns \
@@ -206,7 +206,7 @@ proc font_chooserUi {returnw cvar} {
 		incr i
 	}
 	
-	set avail_aligns [dict create {[mc "top left"]} 0 top 1 {top right} 2 left 3 center 4 right 5 {bottom left} 6 bottom 7 {bottom right} 8]
+	set avail_aligns [dict create [mc "top left"] 0 [mc "top"] 1 [mc "top right"] 2 [mc "left"] 3 [mc "center"] 4 [mc "right"] 5 [mc "bottom left"] 6 [mc "bottom"] 7 [mc "bottom right"] 8]
 	foreach {key elem} [dict get $avail_aligns] {
 		$mfcol.mbAlign add radiobutton \
 		-label "$key" \

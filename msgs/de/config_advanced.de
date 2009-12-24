@@ -33,7 +33,15 @@ mcset $lang \
 
 mcset $lang \
 	{Do not process MPlayer config files} \
-	{MPlayer Konfigurtionsdateien ignorieren}
+	{MPlayer Konfigurationsdateien ignorieren}
+
+mcset $lang \
+	{Default settings} \
+	{Standardeinstellungen}
+
+mcset $lang \
+	{Reset} \
+	{Zurücksetzen}
 
 mcset $lang \
 	{Additional options for MPlayer} \
@@ -80,6 +88,10 @@ This will ensure only values set by TV-Viewer will be used.} \
 Konfigurationdateien ignorieren.
 Damit wird sichergestellt, dass nur die Werte die TV-viewer
 setzt verwendet werden.}
+
+mcset $lang \
+	{Reset all configuration options.} \
+	{Alle Einstellungen zurücksetzen.}
 
 mcset $lang \
 	{Here you may provide additional command line options for MPlayer.

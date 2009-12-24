@@ -52,3 +52,39 @@ mcset $lang \
 should be displayed} \
 	{Festlegen wo die Benachrichtigungsbox im
 Playerfenster erscheinen soll}
+
+mcset $lang \
+	{top left} \
+	{Oben links}
+
+mcset $lang \
+	{top} \
+	{Oben}
+
+mcset $lang \
+	{top right} \
+	{Oben rechts}
+
+mcset $lang \
+	{left} \
+	{Links}
+
+mcset $lang \
+	{center} \
+	{Mitte}
+
+mcset $lang \
+	{right} \
+	{Rechts}
+
+mcset $lang \
+	{bottom left} \
+	{Unten links}
+
+mcset $lang \
+	{bottom} \
+	{Unten}
+
+mcset $lang \
+	{bottom right} \
+	{Unten rechts}
