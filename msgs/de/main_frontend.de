@@ -90,6 +90,10 @@ mcset $lang \
 	{Diagnoseprogramm beendet}
 
 mcset $lang \
+	{Diagnostic Routine crashed} \
+	{Diagnoseprogramm ist abgestürzt}
+
+mcset $lang \
 	{Generated file:} \
 	{Ausgabedatei:}
 

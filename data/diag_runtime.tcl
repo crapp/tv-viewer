@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 54 25.12.2009}
+set option(release_version) {0.8.1 55 25.12.2009}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}
@@ -540,7 +540,7 @@ if {[file isdirectory "$::env(HOME)/.tv-viewer/tmp/"]} {
 	if {[file exists "$::env(HOME)/.tv-viewer/tmp/comSocket.tmp"]} {
 		set comsocket [open "$::env(HOME)/.tv-viewer/tmp/comSocket.tmp" a]
 		fconfigure $comsocket -blocking no -buffering line
-		puts $comsocket "tv-viewer_main diag_RunFinished"
+		puts $comsocket "tv-viewer_main diag_RunFinished 0"
 		flush $comsocket
 		exit 0
 	} else {

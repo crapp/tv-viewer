@@ -171,6 +171,7 @@ proc station_editExit {} {
 			destroy .tv.slist_lirc
 		}
 		event_deleSedit
+		record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0
 	} else {
 		log_writeOutTv 0 "Inserting all stations into station list."
 		set status_tv_playback [tv_callbackMplayerRemote alive]
@@ -220,6 +221,8 @@ proc station_editExit {} {
 			}
 		}
 		event_constrArray
+		record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0
+		after 2000 {record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1}
 	}
 	log_writeOutTv 0 "Exiting station editor."
 	grab release .station

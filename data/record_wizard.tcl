@@ -35,7 +35,9 @@ proc record_wizardExit {} {
 proc record_wizardScheduler {sbutton slable com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardScheduler \033\[0m \{$sbutton\} \{$slable\} \{$com\}"
 	if {$com == 0} {
-		$sbutton configure -command {}
+		if {[winfo exists $sbutton]} {
+			$sbutton configure -command {}
+		}
 		log_writeOutTv 0 "Stopping Scheduler..."
 		catch {exec ""}
 		set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
@@ -55,22 +57,28 @@ proc record_wizardScheduler {sbutton slable com} {
 				if { $status_schedlinkread == 0 } {
 				catch {exec ps -eo "%p"} read_ps
 					set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-					if { $status_greppid_sched == 0 } {
-						.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
-						.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
-					} else {
+					if {[winfo exists .record_wizard]} {
+						if { $status_greppid_sched == 0 } {
+							.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
+							.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
+						} else {
+							.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
+							.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
+						}
+					}
+				} else {
+					if {[winfo exists .record_wizard]} {
 						.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
 						.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
 					}
-				} else {
-					.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
-					.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
 				}
 			}
 		}
 	}
 	if {$com == 1} {
-		$sbutton configure -command {}
+		if {[winfo exists $sbutton]} {
+			$sbutton configure -command {}
+		}
 		log_writeOutTv 0 "Starting Scheduler..."
 		catch {exec "$::where_is/data/record_scheduler.tcl" &}
 		after 2000 {
@@ -80,16 +88,20 @@ proc record_wizardScheduler {sbutton slable com} {
 				if { $status_schedlinkread == 0 } {
 					catch {exec ps -eo "%p"} read_ps
 					set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-					if { $status_greppid_sched == 0 } {
-						.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
-						.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
-					} else {
+					if {[winfo exists .record_wizard]} {
+						if { $status_greppid_sched == 0 } {
+							.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
+							.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
+						} else {
+							.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
+							.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
+						}
+					}
+				} else {
+					if {[winfo exists .record_wizard]} {
 						.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
 						.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
 					}
-				} else {
-					.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
-					.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
 				}
 			}
 		}

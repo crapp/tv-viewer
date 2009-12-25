@@ -81,12 +81,16 @@ Please wait..."] \
 		
 		tv_playbackStop 0 pic
 		
-		catch {exec "$::where_is/data/diag_runtime.tcl" &}
+		catch {exec "$::where_is/data/diag_runtime.tcl" &} diag_pid
+		set ::diag(wait_id) [after 500 [list diag_checkRunning $diag_pid 0]]
 	}
 }
 
-proc diag_RunFinished {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_RunFinished \033\[0m"
+proc diag_RunFinished {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_RunFinished \033\[0m \{$handler\}"
+	if {$handler == 0} {
+		diag_checkRunning 0 cancel
+	}
 	if {[winfo exists .top_diagnostic]} {
 		
 		grid rowconfigure .top_diagnostic.f_main {2} -weight 1 -minsize 150
@@ -120,18 +124,32 @@ proc diag_RunFinished {} {
 		.top_diagnostic.f_main.pgb_diagnostic stop
 		.top_diagnostic.f_main.pgb_diagnostic configure -mode determinate
 		.top_diagnostic.f_main.pgb_diagnostic configure -value 100
-		.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine finished"]
-		
-		.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
-		.top_diagnostic.f_main.t_diagtext insert end "\n
+		if {$handler == 0} {
+			log_writeOutTv 0 "Diagnostic routine finished"
+			.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine finished"]
+			
+			.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
+			.top_diagnostic.f_main.t_diagtext insert end "\n
 $::env(HOME)/tv-viewer_diag.out" hyper_file
-		.top_diagnostic.f_main.t_diagtext insert end "\n\n"
-		.top_diagnostic.f_main.t_diagtext insert end [mc "Create a bug report on "]
-		.top_diagnostic.f_main.t_diagtext insert end "sourceforge.net" hyper
-		.top_diagnostic.f_main.t_diagtext insert end "\n"
-		.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
-		.top_diagnostic.f_main.t_diagtext configure -state disabled
-		
+			.top_diagnostic.f_main.t_diagtext insert end "\n\n"
+			.top_diagnostic.f_main.t_diagtext insert end [mc "Create a bug report on "]
+			.top_diagnostic.f_main.t_diagtext insert end "sourceforge.net" hyper
+			.top_diagnostic.f_main.t_diagtext insert end "\n"
+			.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
+			.top_diagnostic.f_main.t_diagtext configure -state disabled
+		} else {
+			log_writeOutTv 2 "Diagnostic routine crashed"
+			.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine crashed"] -image $::icon_m(dialog-warning)
+			.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
+			.top_diagnostic.f_main.t_diagtext insert end "\n
+$::env(HOME)/tv-viewer_diag.out" hyper_file
+			.top_diagnostic.f_main.t_diagtext insert end "\n\n"
+			.top_diagnostic.f_main.t_diagtext insert end [mc "Create a bug report on "]
+			.top_diagnostic.f_main.t_diagtext insert end "sourceforge.net" hyper
+			.top_diagnostic.f_main.t_diagtext insert end "\n"
+			.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
+			.top_diagnostic.f_main.t_diagtext configure -state disabled
+		}
 		wm protocol .top_diagnostic WM_DELETE_WINDOW "diag_UiExit"
 	}
 }
@@ -151,4 +169,22 @@ proc diag_UiExit {} {
 		}
 	}
 	destroy .top_diagnostic
+}
+
+proc diag_checkRunning {diag_pid counter} {
+	if {"$counter" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_checkRunning \033\[0;1;31m::cancel:: \033\[0m"
+		catch {after cancel $::diag(wait_id)}
+		unset -nocomplain ::diag(wait_id)
+		return
+	}
+	catch {exec ps -eo "%p"} readpid
+	set status [catch {agrep -w "$readpid" $diag_pid} result]
+	if {$status == 1} {
+		unset -nocomplain ::diag(wait_id)
+		diag_RunFinished 1
+	} else {
+		incr counter
+		set ::diag(wait_id) [after 1000 [list diag_checkRunning $diag_pid $counter]]
+	}
 }

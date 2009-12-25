@@ -20,8 +20,6 @@
 
 package require Tcl 8.5
 
-#~ wm withdraw .
-
 set ::option(appname) tv-viewer_scheduler
 
 #set processing_folder [file dirname [file normalize [info script]]]
@@ -45,7 +43,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 54 25.12.2009}
+set option(release_version) {0.8.1 55 25.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
@@ -319,11 +317,19 @@ proc scheduler_rec_prestart {jobid} {
 	if {$::option(audio_v4l2) == 1} {
 		main_pic_streamAudioV4l2
 	}
+	set match 0
 	for {set i 1} {$i <= $::scheduler(max_stations)} {incr i} {
 		if {"[lindex $::recjob($jobid) 1]" == "$::kanalid($i)"} {
 			set ::scheduler(change_inputLoop_id) [after 100 [list scheduler_change_inputLoop 0 $i $jobid]]
+			set match 1
 			break
 		}
+	}
+	if {$match == 0} {
+		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
+		flush $::data(comsocket)
+		scheduler_logWriteOut 2 "Station \{[lindex $::recjob($jobid) 1]\} does not exist."
+		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
 	}
 }
 

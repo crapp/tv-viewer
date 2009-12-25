@@ -94,6 +94,10 @@ mcset $lang \
 	{Diagnostic Routine finished}
 
 mcset $lang \
+	{Diagnostic Routine crashed} \
+	{Diagnostic Routine crashed}
+
+mcset $lang \
 	{Generated file:} \
 	{Generated file:}
 
