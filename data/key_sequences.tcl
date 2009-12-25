@@ -115,7 +115,7 @@ proc key_sequences {} {
 			}
 			close $open_keyseq
 		}
-		$mftree.tv_key column action -width [expr $line_length + 40]
+		$mftree.tv_key column action -width [exspr $line_length + 40]
 		$mftree.tv_key column key -width [expr [font measure $font [mc "Key Sequence"]] + 25]
 		bind $mftree.tv_key <B1-Motion> break
 		bind $mftree.tv_key <Motion> break

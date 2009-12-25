@@ -83,7 +83,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1 53 24.12.2009}
+set option(release_version) {0.8.1 54 25.12.2009}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -199,9 +199,9 @@ You've installed a new version of TV-Viewer."
 }
 unset -nocomplain get_installed_version normalized_version_file status_regexp_version status_regexp_version2 new_version_file read_version
 
-#source agrep, replaces unix grep command.
+#Source agrep, replaces unix grep command.
 source $::where_is/data/agrep.tcl
-#check whether or not tv-viewer is already running.
+#Check whether or not tv-viewer is already running.
 set status_lock [catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
 	set linkread [file readlink "$::option(where_is_home)/tmp/lockfile.tmp"]
@@ -243,22 +243,22 @@ $result_tktray"
 $result_tktray"
 	}
 }
-#source autoscroll function for scrollbars and load package autoscroll
+#Source autoscroll function for scrollbars and load package autoscroll
 source $::where_is/extensions/autoscroll/autoscroll.tcl
 package require autoscroll
 namespace import ::autoscroll::autoscroll
-#source calendar widget
+#Source calendar widget
 source $::where_is/extensions/callib/callib.tcl
-#append fsdialog to auto_path
+#Append fsdialog to auto_path
 set auto_path [linsert $auto_path 0 "$::where_is/extensions/fsdialog"]
-#source read_config to read all config values
+#Source read_config to read all config values
 source $::where_is/data/main_read_config.tcl
-#source start options
+#Source start options
 source $::where_is/data/main_command_line_options.tcl
 start_options
 #It is time to load all config values
 main_readConfig
-#source additional ttk themes, plastik and keramik
+#Source additional ttk themes, plastik and keramik
 source "$where_is/themes/plastik/plastik.tcl"
 source "$where_is/themes/keramik/keramik.tcl"
 ttk::style theme use $::option(use_theme)
@@ -280,27 +280,31 @@ if {[msgcat::mcload $where_is/msgs] != 1} {
 source $::where_is/data/log_viewer.tcl
 log_viewerCheck
 log_writeOutTv 0 "TV-Viewer process PID [pid]"
-#source create icons
+#Source create icons
 source $::where_is/data/create_icons.tcl
-#create all icons for app.
+#Create all icons for app.
 create_icons
-#source splash screen
+#Source error event handler
+source $::where_is/data/error_interp.tcl
+#Tell tk to use new error handler
+interp bgerror {} [namespace which error_interpUi]
+#Source splash screen
 source $::where_is/data/launch_splash.tcl
-#launching splash screen if wanted.
+#Launching splash screen if wanted.
 if {$::option(show_splash) == 1} {
 	launch_splash_screen
 }
-#source station after message.
+#Source station after message.
 source $::where_is/data/station_after_msg.tcl
-#source alle related functions for station changing.
+#Source alle related functions for station changing.
 source $::where_is/data/main_station_zap.tcl
-#source reading station list
+#Source reading station list
 source $::where_is/data/main_read_station_file.tcl
-#execute reading of station list
+#Execute reading of station list
 main_readStationFile
-#source stream and picqual related stuff.
+#Source stream and picqual related stuff.
 source $::where_is/data/main_picqual_stream.tcl
-#source tv player and related functions
+#Source tv player and related functions
 source $::where_is/data/tv_callback.tcl
 source $::where_is/data/tv_file_calc.tcl
 source $::where_is/data/tv_player.tcl
@@ -308,70 +312,70 @@ source $::where_is/data/tv_playback.tcl
 source $::where_is/data/tv_seek.tcl
 source $::where_is/data/tv_slist.tcl
 source $::where_is/data/tv_wm.tcl
-#source tv osd
+#Source tv osd
 source $::where_is/data/tv_osd.tcl
-#source newsreader ui and update checker.
+#Source newsreader ui and update checker.
 source $::where_is/data/main_newsreader.tcl
-#source system tray.
+#Source system tray.
 source $::where_is/data/main_system_tray.tcl
-#source info toplevel and user guide.
+#Source info toplevel and user guide.
 source $::where_is/data/info_help.tcl
-#source key sequences
+#Source key sequences
 source $::where_is/data/key_sequences.tcl
-#source tooltip
+#Source tooltip
 source $::where_is/data/tooltip.tcl
-#source main ui and related functions
+#Source main ui and related functions
 source $::where_is/data/main_frontend.tcl
-#source command socket
+#Source command socket
 source $::where_is/data/command_socket.tcl
-#source color management toplevel and related functions.
+#Source color management toplevel and related functions.
 source $::where_is/data/colorm.tcl
 #Source diagnostic routine frontend.
 source $::where_is/data/diag_frontend.tcl
 #Source functions to create events and bindings
 source $::where_is/data/event_bind.tcl
-#source station item related stuff.
+#Source station item related stuff.
 source $::where_is/data/station_item.tcl
-#source station editor
+#Source station editor
 source $::where_is/data/station_edit.tcl
-#source station search
+#Source station search
 source $::where_is/data/station_search.tcl
-#source record wizard
+#Source record wizard
 source $::where_is/data/record_wizard.tcl
-#source direct record function
+#Source direct record function
 source $::where_is/data/record_handler.tcl
-#source adding a new recording
+#Source adding a new recording
 source $::where_is/data/record_add_edit.tcl
-#source remote functions for scheduler
+#Source remote functions for scheduler
 source $::where_is/data/record_scheduler_remote.tcl
-#source timeshift
+#Source timeshift
 source $::where_is/data/main_timeshift.tcl
-#source read and set config values for config-wizard.
+#Source read and set config values for config-wizard.
 source $::where_is/data/config_wizard_read_settings.tcl
-#source main ui config
+#Source main ui config
 source $::where_is/data/config_wizard.tcl
-#source general options
+#Source general options
 source $::where_is/data/config_general.tcl
-#source config options analog
+#Source config options analog
 source $::where_is/data/config_analog.tcl
-#source config options dvb
+#Source config options dvb
 source $::where_is/data/config_dvb.tcl
-#source config options video
+#Source config options video
 source $::where_is/data/config_video.tcl
-#source config options audio
+#Source config options audio
 source $::where_is/data/config_audio.tcl
-#source config options radio
+#Source config options radio
 source $::where_is/data/config_radio.tcl
-#source config options interface
+#Source config options interface
 source $::where_is/data/config_interface.tcl
-#source config options record
+#Source config options record
 source $::where_is/data/config_record.tcl
-#source config options advanced
+#Source config options advanced
 source $::where_is/data/config_advanced.tcl
-#source font chooser dialog
+#Source font chooser dialog
 source $::where_is/data/font_chooser.tcl
 
-#launching main ui and all things that need to be done now...
+#Launching main ui and all things that need to be done now...
 
 cd "$::env(HOME)"
 
