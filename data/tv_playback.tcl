@@ -234,6 +234,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	} else {
 		if {[file exists "$file"]} {
 			lappend mcommand -wid $winid "$file"
+			catch {place forget .tv.l_image}
 			if {[winfo exists .tv.file_play_bar] == 0} {
 				tv_PlaybackFileplaybar $tv_bg $tv_cont $handler "$file"
 				if {"$handler" == "timeshift"} {

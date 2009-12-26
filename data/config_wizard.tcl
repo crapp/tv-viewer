@@ -30,6 +30,7 @@ proc config_wizardMainUi {} {
 	if {[wm attributes .tv -fullscreen] == 1} {
 		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
+	tv_playbackStop 1 pic
 	log_writeOutTv 0 "Starting preferences..."
 	
 	# Setting up the interface
@@ -131,6 +132,20 @@ proc config_wizardMainUi {} {
 	settooltip $wfbtn.b_default [mc "Load default values, for the corresponding section."]
 	settooltip $wfbtn.button_quit [mc "Discard changes and close preferences dialog."]
 	
+	set ::config(rec_running) 0
+	set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+	set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+	if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
+		catch {exec ps -eo "%p"} read_ps
+		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
+		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
+		if { $status_greppid_record == 1 || $status_greppid_times == 1 } {
+			log_writeOutTv 1 "There is a running recording/timeshift."
+			log_writeOutTv 1 "Disabling analog settings."
+			set ::config(rec_running) 1
+		}
+	}
+	
 	option_screen_1
 	option_screen_2
 	option_screen_3
@@ -165,24 +180,26 @@ proc config_wizardExit {} {
 	
 	main_readConfig
 	
-	if {$::option(forcevideo_standard) == 1} {
-		main_pic_streamForceVideoStandard
-	}
-	
-	main_pic_streamDimensions
-	
-	if {$::option(streambitrate) == 1} {
-		main_pic_streamVbitrate
-	}
-	if {$::option(temporal_filter) == 1} {
-		main_pic_streamPicqualTemporal
-	}
-	main_pic_streamColormControls
-	
-	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
-	
-	if {$::option(audio_v4l2) == 1} {
-		main_pic_streamAudioV4l2
+	if {$::config(rec_running) == 1} {
+		if {$::option(forcevideo_standard) == 1} {
+			main_pic_streamForceVideoStandard
+		}
+		
+		main_pic_streamDimensions
+		
+		if {$::option(streambitrate) == 1} {
+			main_pic_streamVbitrate
+		}
+		if {$::option(temporal_filter) == 1} {
+			main_pic_streamPicqualTemporal
+		}
+		main_pic_streamColormControls
+		
+		catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
+		
+		if {$::option(audio_v4l2) == 1} {
+			main_pic_streamAudioV4l2
+		}
 	}
 	
 	tooltips .bottom_buttons .top_buttons main

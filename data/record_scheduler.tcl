@@ -43,7 +43,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 55 25.12.2009}
+set option(release_version) {0.8.1 56 26.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "

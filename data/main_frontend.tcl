@@ -379,7 +379,7 @@ proc main_frontendUiTvviewer {} {
 	-compound left \
 	-image $::icon_s(settings) \
 	-accelerator [mc "Ctrl+P"] \
-	-command {tv_playbackStop 0 pic ; config_wizardMainUi}
+	-command {config_wizardMainUi}
 	$wfbar.mOptions add command \
 	-label [mc "Station Editor"] \
 	-compound left \

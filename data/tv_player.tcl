@@ -296,7 +296,7 @@ proc tv_playerUi {} {
 		bind $mw <Alt-Key-Up> [list tv_wmMoveVideo 3]
 		bind $mw <Alt-Key-c> [list tv_wmMoveVideo 4]
 		bind $mw <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
-		bind $mw <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
+		bind $mw <Control-Key-p> {config_wizardMainUi}
 		bind $mw <Control-Key-m> {colorm_mainUi}
 		bind $mw <Control-Key-e> {station_editUi}
 		bind $mw <Key-F1> [list info_helpHelp]

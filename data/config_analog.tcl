@@ -39,6 +39,13 @@ proc option_screen_1 {} {
 			.config_wizard.frame_configoptions.nb add $::window(analog_nb2)
 			.config_wizard.frame_configoptions.nb select $::window(analog_nb1)
 			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)]
+			if {$::config(rec_running) == 1} {
+				.config_wizard.frame_configoptions.nb tab $::window(analog_nb1) -state disabled
+				.config_wizard.frame_configoptions.nb tab $::window(analog_nb2) -state disabled
+				.config_wizard.frame_configoptions.nb add $::window(analog_nb4)
+				.config_wizard.frame_configoptions.nb select $::window(analog_nb4)
+				.config_wizard.frame_buttons.b_default configure -command {}
+			}
 		}
 	} else {
 		log_writeOutTv 0 "Setting up analog section in preferences"
@@ -296,7 +303,21 @@ proc option_screen_1 {} {
 			bind $::window(analog_nb2).e_lf_videopeakbitrate_value <Return> [list config_analog_setScaleVideopeakbitrate $::window(analog_nb2)]
 			bind $::window(analog_nb2).e_lf_videopeakbitrate_value <KP_Enter> [list config_analog_setScaleVideopeakbitrate $::window(analog_nb2)]
 			
-			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)]
+			if {$::config(rec_running) == 1} {
+				set ::window(analog_nb4) [ttk::frame $w.f_analog_rec]
+				$w add $::window(analog_nb4) -text [mc "Disabled"]
+				ttk::label $::window(analog_nb4).l_warn \
+				-text [mc "Analog settings are disabled,
+while running a recording or timeshift"] \
+				-compound left \
+				-image $::icon_m(dialog-warning)
+				
+				grid $::window(analog_nb4).l_warn -in $::window(analog_nb4) -row 0 -column 0 \
+				-pady 10 \
+				-padx 5 \
+				-sticky w
+			}
+				.config_wizard.frame_buttons.b_default configure -command [list stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)]
 			
 			set vidstds {PAL NTSC SECAM}
 			foreach vstds [split $vidstds] {

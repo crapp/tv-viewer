@@ -105,45 +105,11 @@ proc record_schedulerPrestart {handler} {
 		if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
 			.tv.slist_lirc.lb_station configure -state disabled
 		}
-		bind .tv <<station_up>> {}
-		bind .tv <<station_down>> {}
-		bind .tv <<station_jump>> {}
-		bind .tv <<station_key>> {}
-		bind .tv <<input_up>> {}
-		bind .tv <<input_down>> {}
-		bind . <<station_up>> {}
-		bind . <<station_down>> {}
-		bind . <<station_jump>> {}
-		bind . <<station_key>> {}
-		bind . <<station_key_lirc>> {}
-		bind . <<input_up>> {}
-		bind . <<input_down>> {}
 	}
-	bind .tv <<stop>> {tv_playbackStop 1 pic}
-	bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-	bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-	bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-	bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-	bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-	bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-	bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-	bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-	bind . <<teleview>> {}
-	bind . <Control-Key-p> {}
-	bind . <Control-Key-m> {}
-	bind . <Control-Key-e> {}
-	bind .tv <<teleview>> {}
-	bind .tv <Control-Key-p> {}
-	bind .tv <Control-Key-m> {}
-	bind .tv <Control-Key-e> {}
-	if {"$handler" != "timeshift"} {
-		.top_buttons.button_timeshift state disabled
-		bind . <<timeshift>> {}
-		bind .tv <<timeshift>> {}
-	}
+	event_recordStart $handler
 	.top_buttons.button_starttv state disabled
 	.options_bar.mOptions entryconfigure 1 -state disabled
-	.options_bar.mOptions entryconfigure 2 -state disabled
+	#~ .options_bar.mOptions entryconfigure 2 -state disabled
 	.options_bar.mOptions entryconfigure 3 -state disabled
 	.options_bar.mHelp entryconfigure 8 -state disabled
 }
@@ -166,7 +132,7 @@ proc record_scheduler_prestartCancel {handler} {
 	.bottom_buttons.button_channeldown state !disabled
 	.bottom_buttons.button_channeljumpback state !disabled
 	.options_bar.mOptions entryconfigure 1 -state normal
-	.options_bar.mOptions entryconfigure 2 -state normal
+	#~ .options_bar.mOptions entryconfigure 2 -state normal
 	.options_bar.mOptions entryconfigure 3 -state normal
 	.options_bar.mHelp entryconfigure 8 -state normal
 	if {[winfo exists .frame_slistbox] == 1} {
@@ -178,29 +144,7 @@ proc record_scheduler_prestartCancel {handler} {
 	if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
 		.tv.slist_lirc.lb_station configure -state normal
 	}
-	bind .tv <<teleview>> {tv_playerRendering}
-	bind .tv <<station_down>> [list main_stationChannelDown .label_stations]
-	bind .tv <<station_up>> [list main_stationChannelUp .label_stations]
-	bind .tv <<station_jump>> [list main_stationChannelJumper .label_stations]
-	bind .tv <<station_key>> [list main_stationStationNrKeys %A]
-	bind .tv <<input_up>> [list main_stationInput 1 1]
-	bind .tv <<input_down>> [list main_stationInput 1 -1]
-	bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind . <<teleview>> {tv_playerRendering}
-	bind . <<station_up>> [list main_stationChannelUp .label_stations]
-	bind . <<station_down>> [list main_stationChannelDown .label_stations]
-	bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
-	bind . <<station_key>> [list main_stationStationNrKeys %A]
-	bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
-	bind . <<input_up>> [list main_stationInput 1 1]
-	bind . <<input_down>> [list main_stationInput 1 -1]
-	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind .tv <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
-	bind .tv <Control-Key-m> {colorm_mainUi}
-	bind .tv <Control-Key-e> {station_editUi}
-	bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
-	bind . <Control-Key-m> {colorm_mainUi}
-	bind . <Control-Key-e> {station_editUi}
+	event_recordStop
 	if {[winfo exists .tv.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
 		catch {place forget .tv.l_anigif}
@@ -319,7 +263,7 @@ proc record_schedulerPreStop {handler} {
 	.bottom_buttons.button_channeldown state !disabled
 	.bottom_buttons.button_channeljumpback state !disabled
 	.options_bar.mOptions entryconfigure 1 -state normal
-	.options_bar.mOptions entryconfigure 2 -state normal
+	#~ .options_bar.mOptions entryconfigure 2 -state normal
 	.options_bar.mOptions entryconfigure 3 -state normal
 	.options_bar.mHelp entryconfigure 8 -state normal
 	if {[winfo exists .frame_slistbox] == 1} {
@@ -331,29 +275,7 @@ proc record_schedulerPreStop {handler} {
 	if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
 		.tv.slist_lirc.lb_station configure -state normal
 	}
-	bind .tv <<teleview>> {tv_playerRendering}
-	bind .tv <<station_down>> [list main_stationChannelDown .label_stations]
-	bind .tv <<station_up>> [list main_stationChannelUp .label_stations]
-	bind .tv <<station_jump>> [list main_stationChannelJumper .label_stations]
-	bind .tv <<station_key>> [list main_stationStationNrKeys %A]
-	bind .tv <<input_up>> [list main_stationInput 1 1]
-	bind .tv <<input_down>> [list main_stationInput 1 -1]
-	bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind . <<teleview>> {tv_playerRendering}
-	bind . <<station_up>> [list main_stationChannelUp .label_stations]
-	bind . <<station_down>> [list main_stationChannelDown .label_stations]
-	bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
-	bind . <<station_key>> [list main_stationStationNrKeys %A]
-	bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
-	bind . <<input_up>> [list main_stationInput 1 1]
-	bind . <<input_down>> [list main_stationInput 1 -1]
-	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind .tv <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
-	bind .tv <Control-Key-m> {colorm_mainUi}
-	bind .tv <Control-Key-e> {station_editUi}
-	bind . <Control-Key-p> {tv_playbackStop 0 pic ; config_wizardMainUi}
-	bind . <Control-Key-m> {colorm_mainUi}
-	bind . <Control-Key-e> {station_editUi}
+	event_recordStop
 	if {[wm attributes .tv -fullscreen] == 1} {
 		bind .tv.bg.w <Motion> {tv_wmCursorHide .tv.bg.w 0}
 		bind .tv.bg <Motion> {tv_wmCursorHide .tv.bg 0}
