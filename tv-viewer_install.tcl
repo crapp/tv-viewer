@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       tv-viewer_install.tcl
-#       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1 56 26.12.2009}
+set option(release_version) {0.8.1 57 27.12.2009}
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {

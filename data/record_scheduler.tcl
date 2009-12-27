@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       record_scheduler.tcl
-#       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 56 26.12.2009}
+set option(release_version) {0.8.1 57 27.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "

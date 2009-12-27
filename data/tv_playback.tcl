@@ -1,5 +1,5 @@
 #       tv_playback.tcl
-#       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -580,10 +580,12 @@ proc tv_playbackStop {com handler} {
 		}
 		tv_fileComputeSize cancel
 	} else {
-		.tv.file_play_bar.b_play state !disabled
-		.tv.file_play_bar.b_pause state disabled
-		.tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
-		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+		if {[winfo exists .tv.file_play_bar]} {
+			.tv.file_play_bar.b_play state !disabled
+			.tv.file_play_bar.b_pause state disabled
+			.tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+			bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+		}
 	}
 	log_writeOutTv 0 "Stopping playback"
 }

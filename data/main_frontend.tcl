@@ -1,5 +1,5 @@
 #       main_frontend.tcl
-#       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -397,7 +397,7 @@ proc main_frontendUiTvviewer {} {
 	-label [mc "Newsreader"] \
 	-compound left \
 	-image $::icon_s(newsreader) \
-	-command main_newsreaderCheckUpdate
+	-command [list main_newsreaderCheckUpdate 0]
 	$wfbar.mOptions add checkbutton \
 	-label [mc "System Tray"] \
 	-command {main_systemTrayActivate 0} \

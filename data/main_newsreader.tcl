@@ -1,5 +1,5 @@
 #       main_newsreader.tcl
-#       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -16,23 +16,70 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc main_newsreaderCheckUpdate {} {
+proc main_newsreaderCheckUpdate {handler} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m"}
 	log_writeOutTv 0 "Checking for news..."
-	if {[string match de* $::env(LANG)] != 1} {
-		set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/current_eng_neu.html"} get_news]
+	if {$::option(language_value) == 0} {
+		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
+		array set locales {
+			en english
+			de german
+		}
+		if {[string trim [array get locales $locale_split]] != {}} {
+			set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/newsreader_[string trim $locale_split].html"} get_news]
+		} else {
+			set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/newsreader_en.html"} get_news]
+		}
 	} else {
-		set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/current_neu.html"} get_news]
+		set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/newsreader_$::option(language_value).html"} get_news]
+	}
+	if {$status_http == 0} {
+		if {[::http::ncode $get_news] != 404} {
+			set status $status_http
+		} else {
+			set status 1
+		}
+	} else {
+		set status 1
 	}
 	set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/underline_words.html"} get_tags]
 	if {$status_http == 0} {
+		if {[::http::ncode $get_tags] != 404} {
+			set status [expr $status + $status_http]
+		} else {
+			set status 1
+		}
+	} else {
+		set status 1
+	}
+	set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/html_links.html"} get_links]
+	if {$status_http == 0} {
+		if {[::http::ncode $get_links] != 404} {
+			set status [expr $status + $status_http]
+		} else {
+			set status 1
+		}
+	} else {
+		set status 1
+	}
+	if {$status == 0} {
 		if {[winfo exists .top_newsreader] == 0} {
 			set get_current_news [http::data $get_news]
 			set get_current_tags [http::data $get_tags]
+			set get_current_links [http::data $get_links]
 			http::cleanup $get_news
 			http::cleanup $get_tags
+			http::cleanup $get_links
 			set update_news [join [lrange [split $get_current_news "\n"] 0 end] "\n"]
 			set word_tags [join [lrange [split $get_current_tags "\n"] 0 end] "\n"]
+			foreach line [split $get_current_links \n] {
+				if {[string trim $line] == {}} continue
+				if {[info exists hyperlinks] == 0} {
+					set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
+				} else {
+					dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
+				}
+			}
 			catch {file delete "$::option(where_is_home)/config/last_update.date"}
 			set date_file [open "$::option(where_is_home)/config/last_update.date" w]
 			close $date_file
@@ -92,8 +139,8 @@ proc main_newsreaderCheckUpdate {} {
 			wm protocol $w WM_DELETE_WINDOW [list main_newsreaderExit $w]
 			wm resizable $w 0 0
 			wm iconphoto $w $::icon_b(newsreader)
-			if {[info exists ::query_auto_newsreader] == 1} {
-				unset ::query_auto_newsreader
+			
+			if {$handler == 1} {
 				if {[file exists "$::option(where_is_home)/config/last_read.conf"]} {
 					set open_last_read [open "$::option(where_is_home)/config/last_read.conf" r]
 					set open_last_read_content [read $open_last_read]
@@ -108,15 +155,8 @@ proc main_newsreaderCheckUpdate {} {
 						puts -nonewline $open_last_write "$update_news"
 						close $open_last_write
 						$mf.t_top_newsr insert end "$update_news\n"
-						$mf.t_top_newsr tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $mf.t_top_newsr -size] bold"
-						set search_index 0.0
-						foreach tag_word [split $word_tags] {
-							if {[string trim $tag_word] == {}} continue
-							set index [$mf.t_top_newsr search -exact $tag_word $search_index end]
-							set word_length [string length $tag_word]
-							set index2 "$index + $word_length char"
-							$mf.t_top_newsr tag add new_day "$index wordstart" "$index2"
-						}
+						main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
+						main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
 						$mf.t_top_newsr configure -state disabled
 						tkwait visibility $w
 					}
@@ -125,15 +165,8 @@ proc main_newsreaderCheckUpdate {} {
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
 					$mf.t_top_newsr insert end "$update_news\n"
-					$mf.t_top_newsr tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $mf.t_top_newsr -size] bold"
-					set search_index 0.0
-					foreach tag_word [split $word_tags] {
-						if {[string trim $tag_word] == {}} continue
-						set index [$mf.t_top_newsr search -exact $tag_word $search_index end]
-						set word_length [string length $tag_word]
-						set index2 "$index + $word_length char"
-						$mf.t_top_newsr tag add new_day "$index wordstart" "$index2"
-					}
+					main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
+					main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
 					$mf.t_top_newsr configure -state disabled
 					tkwait visibility $w
 				}
@@ -143,16 +176,8 @@ proc main_newsreaderCheckUpdate {} {
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write
 				$mf.t_top_newsr insert end "$update_news\n"
-				$mf.t_top_newsr tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $mf.t_top_newsr -size] bold"
-				set search_index 0.0
-				foreach tag_word [split $word_tags] {
-					if {[string trim $tag_word] == {}} continue
-					set index [$mf.t_top_newsr search -exact $tag_word $search_index end]
-					set word_length [string length $tag_word]
-					set index2 "$index + $word_length char"
-					$mf.t_top_newsr tag add new_day "$index wordstart" "$index2"
-					
-				}
+				main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
+				main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
 				$mf.t_top_newsr configure -state disabled
 				tkwait visibility $w
 			}
@@ -164,20 +189,53 @@ proc main_newsreaderCheckUpdate {} {
 		log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
 		return
 	}
-	
-	proc main_newsreaderHomepage {} {
-		catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
-		log_writeOutTv 0 "Executing your favorite web browser."
-		if {[string match de* $::env(LANG)] != 1} {
-			catch {exec xdg-open "http://home.arcor.de/saedelaere/index_eng.html" &}
-		} else {
-			catch {exec xdg-open "http://home.arcor.de/saedelaere/index.html" &}
+}
+
+proc main_newsreaderExit {w} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderExit \033\[0m \{$w\}"}
+	log_writeOutTv 0 "Closing Newsreader."
+	destroy $w
+}
+
+proc main_newsreaderHomepage {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
+	log_writeOutTv 0 "Executing your favorite web browser."
+	if {[string match de* $::env(LANG)] != 1} {
+		catch {exec xdg-open "http://home.arcor.de/saedelaere/index_eng.html" &}
+	} else {
+		catch {exec xdg-open "http://home.arcor.de/saedelaere/index.html" &}
+	}
+}
+
+proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
+	if {$handler == 0} {
+		$textw tag configure new_day -underline on -font "TkTextFont [font actual TkTextFont -displayof $textw -size] bold"
+		set search_index 0.0
+		foreach tag_word [split $word_tags] {
+			if {[string trim $tag_word] == {}} continue
+			set index [$textw search -exact $tag_word $search_index end]
+			if {[string trim $index] == {}} continue
+			set word_length [string length $tag_word]
+			set index2 "$index + $word_length char"
+			$textw tag add new_day "$index wordstart" "$index2"
 		}
 	}
-	proc main_newsreaderExit {w} {
-		catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderExit \033\[0m \{$w\}"}
-		log_writeOutTv 0 "Closing Newsreader."
-		destroy $w
+	if {$handler == 1} {
+		set hylink_enter "-foreground #0023FF -underline off"
+		set hylink_leave "-foreground #0064FF -underline on"
+		foreach {key elem} [dict get $hyperlinks] {
+			$textw tag configure $key -foreground #0064FF -underline on
+			$textw tag bind $key <Any-Enter> "$textw tag configure $key $hylink_enter; $textw configure -cursor hand1"
+			$textw tag bind $key <Any-Leave> "$textw tag configure $key $hylink_leave; $textw configure -cursor {}"
+			$textw tag bind $key <Button-1> "catch {exec xdg-open $elem &}"
+		}
+		set search_index 0.0
+		foreach {key elem} [dict get $hyperlinks] {
+			set index [$textw search -exact $key $search_index end]
+			if {[string trim $index] == {}} continue
+			$textw tag add $key "$index wordstar" $index
+			$textw delete $index "$index wordend"
+		}
 	}
 }
 
@@ -187,8 +245,7 @@ proc main_newsreaderAutomaticUpdate {} {
 		set date_file [open "$::option(where_is_home)/config/last_update.date" w]
 		close $date_file
 		log_writeOutTv 1 "Newsreader started. Can not determine last check. Will check now."
-		set ::query_auto_newsreader 1
-		main_newsreaderCheckUpdate
+		main_newsreaderCheckUpdate 1
 		return
 	}
 	set actual_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
@@ -199,20 +256,17 @@ proc main_newsreaderAutomaticUpdate {} {
 	log_writeOutTv 0 "Offset: $years Year(s) $months Month(s) $days Day(s)"
 	if { $years > 0 } {
 		log_writeOutTv 0 "$years Year(s) since last check"
-		set ::query_auto_newsreader 1
-		main_newsreaderCheckUpdate
+		main_newsreaderCheckUpdate 1
 		return
 	} else {
 		if { $months > 0 } {
 			log_writeOutTv 0 "$months Month(s) since last check"
-			set ::query_auto_newsreader 1
-			main_newsreaderCheckUpdate
+			main_newsreaderCheckUpdate 1
 			return
 		} else {
 			if { $days >= $::option(newsreader_interval) } {
 				log_writeOutTv 0 "$days Day(s) since last check"
-				set ::query_auto_newsreader 1
-				main_newsreaderCheckUpdate
+				main_newsreaderCheckUpdate 1
 				return
 			} else {
 				log_writeOutTv 0 "Next automatic check in [expr $::option(newsreader_interval) - $days] day(s)"

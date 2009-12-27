@@ -29,8 +29,9 @@ as well.
 
 Installation
 ------------
-Installing TV-Viewer is done by the following command:
-chmod a+x ./tv-viewer_install.tcl
+Installing TV-Viewer is done by the following commands:
+
+% chmod a+x ./tv-viewer_install.tcl
 (and as root)
 % ./tv-viewer_install.tcl
 
@@ -102,5 +103,5 @@ See http://sourceforge.net/projects/tv-viewer/
 
 
 --
-2005-2009 by Christian Rapp
+2007-2010 by Christian Rapp
 saedelaere(at)arcor(dot)de

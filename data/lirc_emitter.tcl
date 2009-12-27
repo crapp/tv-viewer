@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       lirc_emitter.tcl
-#       © Copyright 2007-2009 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ if {[file type [info script]] == "link" } {
 }
 set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
-set option(release_version) {0.8.1 56 26.12.2009}
+set option(release_version) {0.8.1 57 27.12.2009}
 
 source $where_is/main_read_config.tcl
 source $where_is/log_viewer.tcl
