@@ -58,6 +58,11 @@ proc error_interpUi {msg options} {
 	-text [mc "Save to disk"] \
 	-command [list error_interpSdisk $msg $options]
 	
+	grid rowconfigure $w 0 -weight 1
+	grid rowconfigure $mf 0 -weight 1
+	grid columnconfigure $w 0 -weight 1
+	grid columnconfigure $mf 0 -weight 1
+	
 	grid $mf -in $w -row 0 -column 0 \
 	-sticky nesw
 	grid $bf -in $w -row 1 -column 0 \
@@ -110,8 +115,9 @@ proc error_interpUi {msg options} {
 	::tk::PlaceWindow $w
 	raise $w
 	::tk::SetFocusGrab $w
-	
+
 	tkwait visibility $w
+	$mf.l_info configure -wraplength [winfo reqwidth $mf.t_info]
 	tkwait window $w
 	::tk::RestoreFocusGrab $w destroy
 }

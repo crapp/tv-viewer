@@ -292,15 +292,27 @@ proc option_screen_8 {} {
 		}
 		
 		proc config_advancedReset {} {
-			stnd_opt0 $::window(general_nb1)
-			stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)
-			stnd_opt2 $::window(dvb_nb1)
-			stnd_opt3 $::window(video_nb1_cont).f_video2
-			stnd_opt4 $::window(audio_nb1)
-			stnd_opt5 $::window(radio_nb1)
-			stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)
-			stnd_opt7 $::window(rec_nb1) $::window(rec_nb2)
-			stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)
+			if {$::config(rec_running) == 0} {
+				stnd_opt0 $::window(general_nb1)
+				stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)
+				stnd_opt2 $::window(dvb_nb1)
+				stnd_opt3 $::window(video_nb1_cont).f_video2
+				stnd_opt4 $::window(audio_nb1)
+				stnd_opt5 $::window(radio_nb1)
+				stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)
+				stnd_opt7 $::window(rec_nb1) $::window(rec_nb2)
+				stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)
+			} else {
+				stnd_opt0 $::window(general_nb1)
+				#~ stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)
+				stnd_opt2 $::window(dvb_nb1)
+				stnd_opt3 $::window(video_nb1_cont).f_video2
+				stnd_opt4 $::window(audio_nb1)
+				stnd_opt5 $::window(radio_nb1)
+				stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)
+				stnd_opt7 $::window(rec_nb1) $::window(rec_nb2)
+				stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)
+			}
 		}
 		
 		proc default_opt8 {w w2 w3} {

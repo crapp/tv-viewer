@@ -180,7 +180,7 @@ proc config_wizardExit {} {
 	
 	main_readConfig
 	
-	if {$::config(rec_running) == 1} {
+	if {$::config(rec_running) == 0} {
 		if {$::option(forcevideo_standard) == 1} {
 			main_pic_streamForceVideoStandard
 		}
