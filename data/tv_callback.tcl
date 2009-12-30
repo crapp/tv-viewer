@@ -25,7 +25,6 @@ proc tv_callbackVidData {} {
 			catch {close $::data(mplayer)}
 			unset -nocomplain ::data(mplayer)
 			place forget .tv.bg.w
-			#~ place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
 			bind .tv.bg.w <Configure> {}
 			if {[.top_buttons.button_timeshift instate disabled] == 0} {
 				if {[winfo exists .tv.l_anigif]} {

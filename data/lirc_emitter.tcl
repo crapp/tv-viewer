@@ -20,8 +20,6 @@
 
 package require Tcl 8.5
 
-#~ wm withdraw .
-
 #set processing_folder [file dirname [file normalize [info script]]]
 if {[file type [info script]] == "link" } {
 	set where_is [file dirname [file normalize [file readlink [info script]]]]
@@ -30,7 +28,7 @@ if {[file type [info script]] == "link" } {
 }
 set option(where_is_home) "$::env(HOME)/.tv-viewer"
 
-set option(release_version) {0.8.1.1 59 30.12.2009}
+set option(release_version) {0.8.1.1 60 30.12.2009}
 
 source $where_is/main_read_config.tcl
 source $where_is/log_viewer.tcl

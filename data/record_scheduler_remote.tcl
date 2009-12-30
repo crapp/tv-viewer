@@ -109,7 +109,6 @@ proc record_schedulerPrestart {handler} {
 	event_recordStart $handler
 	.top_buttons.button_starttv state disabled
 	.options_bar.mOptions entryconfigure 1 -state disabled
-	#~ .options_bar.mOptions entryconfigure 2 -state disabled
 	.options_bar.mOptions entryconfigure 3 -state disabled
 	.options_bar.mHelp entryconfigure 8 -state disabled
 }
@@ -126,13 +125,13 @@ proc record_scheduler_prestartCancel {handler} {
 	}
 	. configure -cursor arrow; .tv configure -cursor arrow
 	.top_buttons.button_timeshift state !disabled
+	.top_buttons.button_timeshift state !pressed
 	.top_buttons.button_epg state !disabled
 	.top_buttons.button_starttv state !disabled
 	.bottom_buttons.button_channelup state !disabled
 	.bottom_buttons.button_channeldown state !disabled
 	.bottom_buttons.button_channeljumpback state !disabled
 	.options_bar.mOptions entryconfigure 1 -state normal
-	#~ .options_bar.mOptions entryconfigure 2 -state normal
 	.options_bar.mOptions entryconfigure 3 -state normal
 	.options_bar.mHelp entryconfigure 8 -state normal
 	if {[winfo exists .frame_slistbox] == 1} {
@@ -262,7 +261,6 @@ proc record_schedulerPreStop {handler} {
 	.bottom_buttons.button_channeldown state !disabled
 	.bottom_buttons.button_channeljumpback state !disabled
 	.options_bar.mOptions entryconfigure 1 -state normal
-	#~ .options_bar.mOptions entryconfigure 2 -state normal
 	.options_bar.mOptions entryconfigure 3 -state normal
 	.options_bar.mHelp entryconfigure 8 -state normal
 	if {[winfo exists .frame_slistbox] == 1} {
@@ -314,7 +312,7 @@ proc record_schedulerPreStop {handler} {
 }
 
 proc record_schedulerRemote {com} {
-	puts "record_schedulerRemote $com"
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerRemote \033\[0m \{$com\}"
 	if {$com == 0} {
 		if {[winfo exists .record_wizard]} {
 			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]

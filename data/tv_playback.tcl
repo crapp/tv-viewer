@@ -269,7 +269,11 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				}
 				log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
 				after $delay {
-					grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
+					if {[winfo exists .tv.file_play_bar]} {
+						if {[string trim [grid info .tv.file_play_bar]] == {}} {
+							grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
+						}
+					}
 					.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]
 					.top_buttons.button_timeshift state !disabled
 					bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
@@ -462,7 +466,6 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 		catch {launch_splashPlay cancel 0 0 0}
 		catch {place forget .tv.l_anigif}
 		catch {destroy .tv.l_anigif}
-		grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
 	}
 	
 	$tv_bar.l_time configure -background black -foreground white -relief sunken -borderwidth 2
@@ -491,19 +494,6 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	}
 	.tv.file_play_bar.b_pause state disabled
 	
-	if {[wm attributes .tv -fullscreen] == 1} {
-		grid remove .tv.file_play_bar
-		bind $tv_cont <Motion> {
-			tv_wmCursorHide .tv.bg.w 0
-			tv_wmCursorPlaybar %Y
-			tv_slistCursor %X %Y
-		}
-		bind $tv_bg <Motion> {
-			tv_wmCursorHide .tv.bg 0
-			tv_wmCursorPlaybar %Y
-			tv_slistCursor %X %Y
-		}
-	}
 	if {$::option(tooltips_player) == 1} {
 		settooltip $tv_bar.b_play [mc "Start playback"]
 		settooltip $tv_bar.b_pause [mc "Pause playback"]
@@ -528,6 +518,23 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 		settooltip $tv_bar.b_forward_end {}
 		settooltip $tv_bar.b_fullscreen {}
 		settooltip $tv_bar.l_time {}
+	}
+	
+	if {[wm attributes .tv -fullscreen] == 1} {
+		bind $tv_cont <Motion> {
+			tv_wmCursorHide .tv.bg.w 0
+			tv_wmCursorPlaybar %Y
+			tv_slistCursor %X %Y
+		}
+		bind $tv_bg <Motion> {
+			tv_wmCursorHide .tv.bg 0
+			tv_wmCursorPlaybar %Y
+			tv_slistCursor %X %Y
+		}
+	} else {
+		if {"$handler" != "timeshift"} {
+			grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
+		}
 	}
 }
 

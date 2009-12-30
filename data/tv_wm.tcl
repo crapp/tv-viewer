@@ -164,7 +164,6 @@ proc tv_wmPanscan {w direct} {
 	}
 	if {$direct == 0} {
 		if {[string trim [place info $w]] == {}} return
-		#~ place $w -relheight 1 -relx 0.5 -rely 0.5
 		place $w -relheight 1
 		log_writeOutTv 0 "Setting zoom to 100%"
 		set ::data(panscan) 0
@@ -421,8 +420,6 @@ proc tv_wmHeartbeatCmd {com} {
 		unset -nocomplain ::tv(screensaverId)
 		return
 	}
-	#~ catch {exec sh -c "gnome-screensaver-command -p 2>/dev/null" &}
-	#~ catch {exec sh -c "xscreensaver-command -deactivate 2>/dev/null" &}
 	tk inactive reset
 	set ::data(heartbeat_id) [after 50000 tv_wmHeartbeatCmd 0]
 }

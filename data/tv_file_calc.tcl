@@ -26,7 +26,6 @@ proc tv_fileComputeSize {seconds} {
 	if {"$seconds" == "cancel_rec"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_fileComputeSize ::cancel_rec:: \033\[0m"
 		catch {after cancel $::data(file_sizeid)}
-		#~ unset -nocomplain ::data(file_size)
 		return
 	}
 	if {[winfo exists .tv.file_play_bar.b_pause]} {
@@ -39,7 +38,6 @@ proc tv_fileComputePos {stop} {
 	if {"$stop" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_fileComputePos \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::data(file_posid)}
-		#~ unset
 		return
 	}
 	if {[winfo exists .tv.file_play_bar.b_pause]} {

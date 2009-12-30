@@ -340,9 +340,11 @@ proc tv_playerUi {} {
 		if {$::option(vidwindow_attach) == 1} {
 			wm transient $mw .
 		}
-		tkwait visibility $mw
 		if {$::option(vidwindow_full) == 1} {
 			tv_wmFullscreen $mw $tv_cont $tv_bg
+			tkwait visibility $mw
+		} else {
+			tkwait visibility $mw
 		}
 	}
 }

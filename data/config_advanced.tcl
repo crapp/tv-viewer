@@ -304,7 +304,6 @@ proc option_screen_8 {} {
 				stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)
 			} else {
 				stnd_opt0 $::window(general_nb1)
-				#~ stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)
 				stnd_opt2 $::window(dvb_nb1)
 				stnd_opt3 $::window(video_nb1_cont).f_video2
 				stnd_opt4 $::window(audio_nb1)

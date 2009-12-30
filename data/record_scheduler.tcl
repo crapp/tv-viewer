@@ -43,7 +43,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1.1 59 30.12.2009}
+set option(release_version) {0.8.1.1 60 30.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
@@ -455,8 +455,6 @@ proc scheduler_Init {handler} {
 		scheduler_main_loop
 	} else {
 		main_readConfig
-		#~ scheduler_log
-		#~ command_socket
 		scheduler_stations
 		scheduler_logWriteOut 1 "Scheduler has been reinitiated by main application."
 		set ::scheduler(loop_date) 0

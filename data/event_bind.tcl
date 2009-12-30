@@ -145,11 +145,9 @@ proc event_recordStart {handler} {
 	bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
 	bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
 	bind . <<teleview>> {}
-	#~ bind . <Control-Key-p> {}
 	bind . <Control-Key-m> {}
 	bind . <Control-Key-e> {}
 	bind .tv <<teleview>> {}
-	#~ bind .tv <Control-Key-p> {}
 	bind .tv <Control-Key-m> {}
 	bind .tv <Control-Key-e> {}
 	if {"$handler" != "timeshift"} {
@@ -177,10 +175,8 @@ proc event_recordStop {} {
 	bind . <<input_up>> [list main_stationInput 1 1]
 	bind . <<input_down>> [list main_stationInput 1 -1]
 	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	#~ bind .tv <Control-Key-p> {config_wizardMainUi}
 	bind .tv <Control-Key-m> {colorm_mainUi}
 	bind .tv <Control-Key-e> {station_editUi}
-	#~ bind . <Control-Key-p> {config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
 }

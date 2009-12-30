@@ -37,7 +37,7 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1.1 59 30.12.2009}
+set option(release_version) {0.8.1.1 60 30.12.2009}
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
@@ -885,7 +885,6 @@ proc install_createSymbolic {where_is target} {
 		set binpath /usr/bin
 		set bintarget $target
 	}
-	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer" "$bintarget/tv-viewer/data/tv-viewer_main.sh"} resultat_symbolic]
 	catch {exec ln -s "$bintarget/tv-viewer/data/tv-viewer_main.sh" "$binpath/tv-viewer"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
@@ -899,7 +898,6 @@ Error message: $resultat_symbolic
 		puts $::printchan "tv-viewer"
 	after 100
 	}
-	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_diag" "$bintarget/tv-viewer/data/diag_runtime.tcl"} resultat_symbolic]
 	catch {exec ln -s "$bintarget/tv-viewer/data/diag_runtime.tcl" "$binpath/tv-viewer_diag"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer_diag"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
@@ -913,7 +911,6 @@ Error message: $resultat_symbolic
 		puts $::printchan "tv-viewer_diag"
 	after 100
 	}
-	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_lirc" "$bintarget/tv-viewer/data/lirc_emitter.tcl"} resultat_symbolic]
 	catch {exec ln -s "$bintarget/tv-viewer/data/lirc_emitter.tcl" "$binpath/tv-viewer_lirc"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer_lirc"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
@@ -927,7 +924,6 @@ Error message: $resultat_symbolic
 		puts $::printchan "tv-viewer_lirc"
 	after 100
 	}
-	#~ set status_symbolic [catch {file link -symbolic "$binpath/tv-viewer_scheduler" "$bintarget/tv-viewer/data/record_scheduler.tcl"} resultat_symbolic]
 	catch {exec ln -s "$bintarget/tv-viewer/data/record_scheduler.tcl" "$binpath/tv-viewer_scheduler"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer_scheduler"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
@@ -1013,33 +1009,5 @@ To uninstall tv-viewer run as root
 \"tv-viewer_install.tcl --uninstall\".
 
 "
-
-
-   #~ 1. proc xcopy {src dest recurse {pattern *}} {
-   #~ 2. file mkdir $dest
-   #~ 3. foreach file [glob -nocomplain [file join $src $pattern]] {
-   #~ 4. set base [file tail $file]
-   #~ 5. set sub [file join $dest $base]
-   #~ 6.  
-   #~ 7. # Exclude CVS, SCCS, ... automatically, and possibly the temp
-   #~ 8. # hierarchy itself too.
-   #~ 9.  
-  #~ 10. if {0 == [string compare CVS $base]} {continue}
-  #~ 11. if {0 == [string compare SCCS $base]} {continue}
-  #~ 12. if {0 == [string compare BitKeeper $base]} {continue}
-  #~ 13. # if {[string match ${package_name}-* $base]} {continue}
-  #~ 14. if {[string match *~ $base]} {continue}
-  #~ 15.  
-  #~ 16. if {[file isdirectory $file]} then {
-  #~ 17. if {$recurse} {
-  #~ 18. file mkdir $sub
-  #~ 19. xcopy $file $sub $recurse $pattern
-  #~ 20. }
-  #~ 21. } else {
-  #~ 22. puts -nonewline stdout . ; flush stdout
-  #~ 23. file copy -force $file $sub
-  #~ 24. }
-  #~ 25. }
-  #~ 26. }
 
 exit 0
