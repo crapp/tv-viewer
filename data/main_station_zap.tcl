@@ -35,25 +35,29 @@ proc main_stationChannelDown {w} {
 			log_writeOutTv 0 "Station prior $::kanalid($calculation)."
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 			set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-			if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
-			} else {
-				set status_tv [tv_callbackMplayerRemote alive]
-				if {$status_tv != 1} {
-					tv_playbackStop 0 nopic
-					set restart 1
+			if {$status_get_input == 0} {
+				if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 				} else {
-					set restart 0
+					set status_tv [tv_callbackMplayerRemote alive]
+					if {$status_tv != 1} {
+						tv_playbackStop 0 nopic
+						set restart 1
+					} else {
+						set restart 0
+					}
+					main_stationInputLoop cancel 0 0 0 0 0
+					set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 				}
-				main_stationInputLoop cancel 0 0 0 0 0
-				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
+				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+				set last_channel_write [open $last_channel_conf w]
+				puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
+				close $last_channel_write
+				return
+			} else {
+				log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 			}
-			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
-			set last_channel_write [open $last_channel_conf w]
-			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
-			close $last_channel_write
-			return
 		}
 	}
 }
@@ -77,25 +81,29 @@ proc main_stationChannelUp {w} {
 			log_writeOutTv 0 "Station next $::kanalid($calculation)."
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 			set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-			if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
-			} else {
-				set status_tv [tv_callbackMplayerRemote alive]
-				if {$status_tv != 1} {
-					tv_playbackStop 0 nopic
-					set restart 1
+			if {$status_get_input == 0} {
+				if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 				} else {
-					set restart 0
+					set status_tv [tv_callbackMplayerRemote alive]
+					if {$status_tv != 1} {
+						tv_playbackStop 0 nopic
+						set restart 1
+					} else {
+						set restart 0
+					}
+					main_stationInputLoop cancel 0 0 0 0 0
+					set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 				}
-				main_stationInputLoop cancel 0 0 0 0 0
-				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
+				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+				set last_channel_write [open $last_channel_conf w]
+				puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
+				close $last_channel_write
+				return
+			} else {
+				log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 			}
-			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
-			set last_channel_write [open $last_channel_conf w]
-			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
-			close $last_channel_write
-			return
 		}
 	}
 }
@@ -116,24 +124,28 @@ proc main_stationChannelJumper {w} {
 		log_writeOutTv 0 "Jumping to station $::kanalid([lindex $::station(old) 2])."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-		if {$::kanalinput([lindex $::station(old) 2]) == [lindex $resultat_get_input 3]} {
-			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(old) 1]} resultat_v4l2ctl
-			after 1000 [list station_after_msg [lindex $::station(old) 2] $resultat_v4l2ctl]
-		} else {
-			set status_tv [tv_callbackMplayerRemote alive]
-			if {$status_tv != 1} {
-				tv_playbackStop 0 nopic
-				set restart 1
+		if {$status_get_input == 0} {
+			if {$::kanalinput([lindex $::station(old) 2]) == [lindex $resultat_get_input 3]} {
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(old) 1]} resultat_v4l2ctl
+				after 1000 [list station_after_msg [lindex $::station(old) 2] $resultat_v4l2ctl]
 			} else {
-				set restart 0
+				set status_tv [tv_callbackMplayerRemote alive]
+				if {$status_tv != 1} {
+					tv_playbackStop 0 nopic
+					set restart 1
+				} else {
+					set restart 0
+				}
+				main_stationInputLoop cancel 0 0 0 0 0
+				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(old) 2]) [lindex $::station(old) 1] [lindex $::station(old) 2] $restart 1]]
 			}
-			main_stationInputLoop cancel 0 0 0 0 0
-			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(old) 2]) [lindex $::station(old) 1] [lindex $::station(old) 2] $restart 1]]
+			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			set last_channel_write [open $last_channel_conf w]
+			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
+			close $last_channel_write
+		} else {
+			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 		}
-		set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
-		set last_channel_write [open $last_channel_conf w]
-		puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
-		close $last_channel_write
 	} else {
 		$w configure -text "[lindex $::station(last) 0]"
 		if {[winfo exists .frame_slistbox] == 1} {
@@ -148,24 +160,28 @@ proc main_stationChannelJumper {w} {
 		log_writeOutTv 0 "Jumping to station $::kanalid([lindex $::station(last) 2])."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-		if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-			after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
-		} else {
-			set status_tv [tv_callbackMplayerRemote alive]
-			if {$status_tv != 1} {
-				tv_playbackStop 0 nopic
-				set restart 1
+		if {$status_get_input == 0} {
+			if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 			} else {
-				set restart 0
+				set status_tv [tv_callbackMplayerRemote alive]
+				if {$status_tv != 1} {
+					tv_playbackStop 0 nopic
+					set restart 1
+				} else {
+					set restart 0
+				}
+				main_stationInputLoop cancel 0 0 0 0 0
+				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 			}
-			main_stationInputLoop cancel 0 0 0 0 0
-			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
+			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			set last_channel_write [open $last_channel_conf w]
+			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
+			close $last_channel_write
+		} else {
+			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 		}
-		set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
-		set last_channel_write [open $last_channel_conf w]
-		puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
-		close $last_channel_write
 	}
 }
 
@@ -180,34 +196,38 @@ proc main_stationListboxStations {slist} {
 		log_writeOutTv 0 "Station listbox has been used to tune $::kanalid([lindex $::station(last) 2])."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-		if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-			after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
-		} else {
-			set status_tv [tv_callbackMplayerRemote alive]
-			if {$status_tv != 1} {
-				tv_playbackStop 0 nopic
-				set restart 1
+		if {$status_get_input == 0} {
+			if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 			} else {
-				set restart 0
-			}
-			main_stationInputLoop cancel 0 0 0 0 0
-			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
-		}
-		if {"$slist" == ".tv.slist.lb_station"} {
-			if {[winfo exists .frame_slistbox] == 1} {
-				.frame_slistbox.listbox_slist see [expr [lindex $::station(last) 2] - 1]
-				if {[string trim [.frame_slistbox.listbox_slist curselection]] != {}} {
-					.frame_slistbox.listbox_slist selection clear [.frame_slistbox.listbox_slist curselection]
-					.frame_slistbox.listbox_slist activate [expr [lindex $::station(last) 2] - 1]
+				set status_tv [tv_callbackMplayerRemote alive]
+				if {$status_tv != 1} {
+					tv_playbackStop 0 nopic
+					set restart 1
+				} else {
+					set restart 0
 				}
-				.frame_slistbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
+				main_stationInputLoop cancel 0 0 0 0 0
+				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 			}
+			if {"$slist" == ".tv.slist.lb_station"} {
+				if {[winfo exists .frame_slistbox] == 1} {
+					.frame_slistbox.listbox_slist see [expr [lindex $::station(last) 2] - 1]
+					if {[string trim [.frame_slistbox.listbox_slist curselection]] != {}} {
+						.frame_slistbox.listbox_slist selection clear [.frame_slistbox.listbox_slist curselection]
+						.frame_slistbox.listbox_slist activate [expr [lindex $::station(last) 2] - 1]
+					}
+					.frame_slistbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
+				}
+			}
+			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			set last_channel_write [open $last_channel_conf w]
+			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
+			close $last_channel_write
+		} else {
+			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 		}
-		set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
-		set last_channel_write [open $last_channel_conf w]
-		puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
-		close $last_channel_write
 	}
 }
 
@@ -260,26 +280,30 @@ proc main_stationStationNr {w number} {
 	log_writeOutTv 0 "Keycode, tuning station $::kanalid($number)."
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-	if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-		catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-		after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
-	} else {
-		set status_tv [tv_callbackMplayerRemote alive]
-		if {$status_tv != 1} {
-			tv_playbackStop 0 nopic
-			set restart 1
+	if {$status_get_input == 0} {
+		if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+			after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 		} else {
-			set restart 0
+			set status_tv [tv_callbackMplayerRemote alive]
+			if {$status_tv != 1} {
+				tv_playbackStop 0 nopic
+				set restart 1
+			} else {
+				set restart 0
+			}
+			catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$::kanalinput([lindex $::station(last) 2])}
+			main_stationInputLoop cancel 0 0 0 0 0
+			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 		}
-		catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$::kanalinput([lindex $::station(last) 2])}
-		main_stationInputLoop cancel 0 0 0 0 0
-		set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
+		set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+		set last_channel_write [open $last_channel_conf w]
+		puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
+		close $last_channel_write
+		return
+	} else {
+		log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 	}
-	set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
-	set last_channel_write [open $last_channel_conf w]
-	puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
-	close $last_channel_write
-	return
 }
 
 proc main_stationInput {com direct} {

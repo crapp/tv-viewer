@@ -120,7 +120,9 @@ proc main_readConfig {} {
 		timeshift_path "$::option(where_is_home)/tmp"
 	}
 	if {[info exists ::logf_tv_open_append]} {
-		log_writeOutTv 0 "Reading configuration values."
+		if {"$::option(appname)" == "tv-viewer_main"} {
+			log_writeOutTv 0 "Reading configuration values."
+		}
 	}
 	if {[file exists "$::option(where_is_home)/config/tv-viewer.conf"]} {
 		set open_config_file [open "$::option(where_is_home)/config/tv-viewer.conf" r]

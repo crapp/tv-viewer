@@ -578,8 +578,18 @@ proc record_add_editOfile {w} {
 proc record_add_editDelete {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\}"
 	if {[string trim [$tree selection]] == {}} return
-	puts $::data(comsocket) "tv-viewer_scheduler scheduler_exit"
-	flush $::data(comsocket)
+	set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+	if { $status_schedlinkread == 0 } {
+		catch {exec ps -eo "%p"} read_ps
+		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
+		if { $status_greppid_sched == 0 } {
+			set start 0
+		} else {
+			set start 1
+		}
+	} else {
+		set start 1
+	}
 	log_writeOutTv 0 "Deleting recording [$tree selection]."
 	if {[llength [$tree selection]] > 1} {
 		foreach element [$tree selection] {
@@ -594,27 +604,14 @@ proc record_add_editDelete {tree} {
 		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
 	}
 	close $f_open
-	log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
-	catch {exec "$::where_is/data/record_scheduler.tcl" &}
-	after 2000 {
-		catch {
-			catch {exec ""}
-			set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-			if { $status_schedlinkread == 0 } {
-				catch {exec ps -eo "%p"} read_ps
-				set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-				if { $status_greppid_sched == 0 } {
-					.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
-					.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
-				} else {
-					.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
-					.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
-				}
-			} else {
-				.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
-				.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
-			}
-		}
+	if {$start} {
+		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		catch {exec ""}
+		catch {exec "$::where_is/data/record_scheduler.tcl" &}
+	} else {
+		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
+		log_writeOutTv 0 "Reinitiating scheduler"
+		puts $::data(comsocket) "tv-viewer_scheduler scheduler_Init 1"
 	}
 }
 

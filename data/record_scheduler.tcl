@@ -43,7 +43,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1 58 28.12.2009}
+set option(release_version) {0.8.1.1 59 30.12.2009}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
@@ -77,7 +77,7 @@ source $where_is/main_newsreader.tcl
 source $where_is/command_socket.tcl
 source $where_is/agrep.tcl
 
-main_readConfig
+
 
 proc scheduler_log {} {
 	if {$::option(log_files) == 1} {
@@ -118,8 +118,6 @@ proc scheduler_log {} {
 	fconfigure $::logf_sched_open_append -blocking no -buffering line
 }
 
-scheduler_log
-
 proc scheduler_logWriteOut {handler text} {
 	set logformat "#"
 	if {$handler == 0} {
@@ -145,6 +143,9 @@ proc scheduler_stations {} {
 	} else {
 		set file "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"
 		set open_channel_file [open $file r]
+		catch {array unset ::kanalid}
+		catch {array unset ::kanalcall}
+		catch {array unset ::kanalinput}
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
@@ -168,8 +169,6 @@ proc scheduler_stations {} {
 	}
 }
 
-scheduler_stations
-
 proc scheduler_exit {} {
 	catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
 	puts $::logf_sched_open_append "#
@@ -178,6 +177,8 @@ proc scheduler_exit {} {
 ########################################################################
 "
 	close $::logf_sched_open_append
+	puts $::data(comsocket) "tv-viewer_main record_schedulerRemote 1"
+	flush $::data(comsocket)
 	exit 0
 }
 
@@ -230,7 +231,7 @@ proc scheduler_recordings {} {
 proc scheduler_at {time jobid} {
 	set dt [expr {([clock scan $time]-[clock seconds])*1000}]
 	if { $dt >= -600000 } {
-		after $dt [list scheduler_rec_prestart $jobid]
+		lappend ::scheduler(at_id) [after $dt [list scheduler_rec_prestart $jobid]]
 		scheduler_logWriteOut 0 "Job number [lindex $::recjob($jobid) 0] will be recorded today at $time"
 	} else {
 		scheduler_logWriteOut 1 "Job $::recjob($jobid) expired."
@@ -427,6 +428,12 @@ proc scheduler_zombie {} {
 proc scheduler_main_loop {} {
 	if {[info exists ::scheduler(loop_date)]} {
 		if {[clock format [clock scan now] -format {%Y%m%d}] != $::scheduler(loop_date)} {
+			if {[info exists ::scheduler(at_id)]} {
+				foreach at $::scheduler(at_id) {
+					catch {after cancel $at}
+				}
+				unset -nocomplain ::scheduler(at_id)
+			}
 			array unset ::recjob
 			scheduler_recordings
 		}
@@ -437,6 +444,26 @@ proc scheduler_main_loop {} {
 	after 20000 [list scheduler_main_loop]
 }
 
-command_socket
-scheduler_main_loop
+proc scheduler_Init {handler} {
+	if {$handler == 0} {
+		main_readConfig
+		scheduler_log
+		command_socket
+		puts $::data(comsocket) "tv-viewer_main record_schedulerRemote 0"
+		flush $::data(comsocket)
+		scheduler_stations
+		scheduler_main_loop
+	} else {
+		main_readConfig
+		#~ scheduler_log
+		#~ command_socket
+		scheduler_stations
+		scheduler_logWriteOut 1 "Scheduler has been reinitiated by main application."
+		set ::scheduler(loop_date) 0
+		scheduler_main_loop
+	}
+}
+
+scheduler_Init 0
+
 vwait forever

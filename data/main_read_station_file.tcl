@@ -70,11 +70,15 @@ proc main_readStationFile {} {
 				if {$::main(running_recording) == 0} {
 					catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 					set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-					if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-						after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+					if {$status_get_input == 0} {
+						if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+							after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+						} else {
+							set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] 0 1]]
+						}
 					} else {
-						set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] 0 1]]
+						log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 					}
 				}
 				close $open_lastchannel
@@ -89,11 +93,15 @@ proc main_readStationFile {} {
 				if {$::main(running_recording) == 0} {
 					catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 					set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
-					if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-						after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+					if {$status_get_input == 0} {
+						if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
+							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+							after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+						} else {
+							set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] 0 1]]
+						}
 					} else {
-						set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] 0 1]]
+						log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 					}
 				}
 			}

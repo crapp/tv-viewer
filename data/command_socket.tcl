@@ -18,50 +18,45 @@
 
 proc command_socket {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}
-	if {[file exists "$::option(where_is_home)/tmp/comSocket.tmp"] == 0} {
+	if {"$::option(appname)" == "tv-viewer_main"} {
 		set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" w]
 		close $comsocket
-	} else {
-		if {"$::option(appname)" == "tv-viewer_main"} {
-			set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-			if { $status_schedlinkread == 0 } {
-				catch {exec ps -eo "%p"} readpid_sched
-				set status_greppid_sched [catch {agrep -w "$readpid_sched" $resultat_schedlinkread} resultat_greppid_sched]
-				if { $status_greppid_sched == 0 } {
-					log_writeOutTv 0 "Scheduler is running, will stop it."
-					catch {exec kill $resultat_schedlinkread}
-					catch {file delete "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"}
-					after 3000 {catch {exec "$::where_is/data/record_scheduler.tcl" &}}
-				}
-			}
-			catch {file delete "$::option(where_is_home)/tmp/comSocket.tmp"}
-			set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" w]
-			close $comsocket
-		}
 	}
-	set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" r]
-	seek $comsocket 0 end
-	set position [tell $comsocket]
-	close $comsocket
-	set ::data(comsocket) [open "$::option(where_is_home)/tmp/comSocket.tmp" a]
-	fconfigure $::data(comsocket) -blocking no -buffering line
-	set ::data(comsocket_id) [after 100 [list command_getData "$::option(where_is_home)/tmp/comSocket.tmp" $position]]
+	if {[file exists "$::option(where_is_home)/tmp/comSocket.tmp"]} {
+		set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" r]
+		seek $comsocket 0 end
+		set position [tell $comsocket]
+		close $comsocket
+		set ::data(comsocket) [open "$::option(where_is_home)/tmp/comSocket.tmp" a]
+		fconfigure $::data(comsocket) -blocking no -buffering line
+		set ::data(comsocket_id) [after 50 [list command_getData "$::option(where_is_home)/tmp/comSocket.tmp" $position]]
+	}
 }
 
 proc command_getData {comfile position} {
-	set fh [open $comfile r]
-	fconfigure $fh -blocking no -buffering line
-	seek $fh $position start
-	while {[eof $fh] == 0} {
-		gets $fh line
-		if {[string length $line] > 0} {
-			if {"[lindex $line 0]" == "$::option(appname)"} {
-				set com [lrange $line 1 end]
-				{*}$com
+	if {"$position" == "cancel"} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: command_getData \033\[0;1;31m::cancel:: \033\[0m"
+		catch {after cancel $::data(comsocket_id)}
+		unset -nocomplain ::data(comsocket_id)
+		return
+	}
+	if {[file exists "$comfile"]} {
+		set fh [open $comfile r]
+		fconfigure $fh -blocking no -buffering line
+		seek $fh $position start
+		while {[eof $fh] == 0} {
+			gets $fh line
+			if {[string length $line] > 0} {
+				if {"[lindex $line 0]" == "$::option(appname)"} {
+					set com [lrange $line 1 end]
+					{*}$com
+				}
 			}
 		}
+		set position [tell $fh]
+		close $fh
+		set ::data(comsocket_id) [after 50 [list command_getData $comfile $position]]
+	} else {
+		command_getData 0 cancel
 	}
-	set position [tell $fh]
-	close $fh
-	set ::data(comsocket_id) [after 50 [list command_getData $comfile $position]]
 }

@@ -323,6 +323,8 @@ Please wait..."] \
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$input}
 				after 1000 [list station_searchLoopInput $counter $tree $::search(mbVinput_nr)]
 			}
+		} else {
+			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
 		}
 	}
 	

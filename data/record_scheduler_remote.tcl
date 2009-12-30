@@ -249,7 +249,6 @@ proc record_schedulerPreStop {handler} {
 				catch {file delete -force "$::option(where_is_home)/tmp/record_lockfile.tmp"}
 				after 3000 {
 					puts $::data(comsocket) "tv-viewer_scheduler scheduler_zombie"
-					flush $::data(comsocket)
 				}
 			}
 		}
@@ -287,17 +286,22 @@ proc record_schedulerPreStop {handler} {
 		}
 	} else {
 		if {[winfo exists .tv.file_play_bar.b_save]} {
-			.tv.file_play_bar.b_save state !disabled
-			if {$::option(tooltips_player) == 1} {
-				set file_size [expr round((([file size "$::option(where_is_home)/tmp/timeshift.mpeg"] / 1024.0) / 1024.0))]
-				if {$file_size > 1000} {
-					set file_size [expr round($file_size / 1024)]
-					set file_size "$file_size GB"
-				} else {
-					set file_size "$file_size MB"
+			if {[file exists "$::option(where_is_home)/tmp/timeshift.mpeg"]} {
+				.tv.file_play_bar.b_save state !disabled
+				if {$::option(tooltips_player) == 1} {
+					set file_size [expr round((([file size "$::option(where_is_home)/tmp/timeshift.mpeg"] / 1024.0) / 1024.0))]
+					if {$file_size > 1000} {
+						set file_size [expr round($file_size / 1024)]
+						set file_size "$file_size GB"
+					} else {
+						set file_size "$file_size MB"
+					}
+					settooltip .tv.file_play_bar.b_save "Save timeshift video file
+	File size $file_size"
 				}
-				settooltip .tv.file_play_bar.b_save "Save timeshift video file
-File size $file_size"
+			} else {
+				log_writeOutTv 2 "Can not detect timeshift video file."
+				log_writeOutTv 2 "Saving timeshift video file not possible"
 			}
 		}
 	}
@@ -307,4 +311,20 @@ File size $file_size"
 		catch {destroy .tv.l_anigif}
 	}
 	tv_fileComputeSize cancel_rec
+}
+
+proc record_schedulerRemote {com} {
+	puts "record_schedulerRemote $com"
+	if {$com == 0} {
+		if {[winfo exists .record_wizard]} {
+			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
+			.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
+		}
+	}
+	if {$com == 1} {
+		if {[winfo exists .record_wizard]} {
+			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
+			.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
+		}
+	}
 }
