@@ -44,17 +44,7 @@ proc main_systemTrayActivate {handler} {
 	} else {
 		bind .tray <Button-1> {}
 		destroy .tray
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {
-				if {[winfo ismapped .] == 0} {
-					if {[winfo exists .tray] == 0} {
-						main_systemTrayActivate 0
-						set ::choice(cb_systray_main) 1
-					}
-					main_systemTrayMini unmap
-				}
-			}
-		}
+		wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
 	}
 }
 
@@ -98,46 +88,55 @@ proc main_systemTrayToggle {} {
 	}
 }
 
-proc main_systemTrayMini {com} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayMini \033\[0m \{$com\}"
-	if {"$com" == "unmap"} {
-		if {[winfo exists .tray] == 1} {
-			bind . <Unmap> {}
-			bind . <Map> [list main_systemTrayMini map]
-			if {$::option(systray_tv) == 1} {
-				array unset ::system_tray
-				foreach w [winfo children .] {
-					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
-					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
-					wm withdraw $::system_tray($w)
-					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
-				}
-				log_writeOutTv 0 "Docking \".\" to system tray."
-				wm withdraw .
-			} else {
-				array unset ::system_tray
-				foreach w [winfo children .] {
-					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1 || [string match .tv [winfo toplevel $w]] == 1} continue
-					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
-					wm withdraw $::system_tray($w)
-					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
-				}
-				log_writeOutTv 0 "Docking \".\" to system tray."
-				wm withdraw .
-			}
-		} else {
-			log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
-		}
-	} else {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
-		bind . <Map> {}
+#~ proc main_systemTrayClose {com} {
+	#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayClose \033\[0m \{$com\}"
+	#~ if {"$com" == "tray"} {
+		#~ if {[winfo exists .tray] == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+			#~ bind . <Map> [list main_systemTrayMini map]
+			#~ if {$::option(systray_tv) == 1} {
+				#~ array unset ::system_tray
+				#~ foreach w [winfo children .] {
+					#~ if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
+					#~ set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
+					#~ wm withdraw $::system_tray($w)
+					#~ log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
+				#~ }
+				#~ log_writeOutTv 0 "Docking \".\" to system tray."
+				#~ wm withdraw .
+			#~ } else {
+				#~ array unset ::system_tray
+				#~ foreach w [winfo children .] {
+					#~ if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1 || [string match .tv [winfo toplevel $w]] == 1} continue
+					#~ set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
+					#~ wm withdraw $::system_tray($w)
+					#~ log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
+				#~ }
+				#~ log_writeOutTv 0 "Docking \".\" to system tray."
+				#~ wm withdraw .
+			#~ }
+		#~ } else {
+			#~ log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
+		#~ }
+	#~ }
+	 #~ else {
+		#~ bind . <Unmap> {
+			#~ if {[winfo ismapped .] == 0} {
+				#~ if {[winfo exists .tray] == 0} {
+					#~ main_systemTrayActivate 0
+					#~ set ::choice(cb_systray_main) 1
+				#~ }
+				#~ main_systemTrayMini unmap
+			#~ }
+		#~ }
+		#~ bind . <Map> {}
+	#~ }
+#~ }
+
+proc main_systemTrayTogglePre {} {
+	if {[winfo exists .tray] == 0} {
+		main_systemTrayActivate 0
+		set ::choice(cb_systray_main) 1
 	}
+	main_systemTrayToggle
 }

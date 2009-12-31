@@ -94,7 +94,7 @@ proc main_readConfig {} {
 		vidwindow_full 0
 		systray_tv 0
 		systray_start 0
-		systray_mini 0
+		systray_close 0
 		osd_enabled 1
 		osd_font "DejaVu Sans Mono"
 		osd_font_size 72

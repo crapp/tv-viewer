@@ -102,9 +102,9 @@ proc option_screen_6 {} {
 		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_dock \
 		-text [mc "Dock TV-Viewer after initialization"] \
 		-variable choice(cb_systray_start)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_mini \
-		-text [mc "Minimize to Tray"] \
-		-variable choice(cb_systray_mini)
+		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_close \
+		-text [mc "Close to Tray"] \
+		-variable choice(cb_systray_close)
 		
 		set ::window(interface_nb3) [ttk::frame $w.f_osd]
 		$w add $::window(interface_nb3) -text [mc "On screen Display"] -padding 2
@@ -274,7 +274,7 @@ proc option_screen_6 {} {
 		-sticky w \
 		-padx 7 \
 		-pady 3
-		grid $::window(interface_nb2).cb_lf_systray_mini -in $::window(interface_nb2).lf_systray -row 2 -column 0 \
+		grid $::window(interface_nb2).cb_lf_systray_close -in $::window(interface_nb2).lf_systray -row 2 -column 0 \
 		-sticky w \
 		-padx 7 \
 		-pady 3
@@ -463,7 +463,7 @@ proc option_screen_6 {} {
 			set ::choice(cb_tvfullscr) $::option(vidwindow_full)
 			set ::choice(cb_systray_tv) $::option(systray_tv)
 			set ::choice(cb_systray_start) $::option(systray_start)
-			set ::choice(cb_systray_mini) $::option(systray_mini)
+			set ::choice(cb_systray_close) $::option(systray_close)
 			set ::choice(osd_station_w) $::option(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {
@@ -551,8 +551,8 @@ Requires a restart of TV-Viewer."]
 					settooltip $::window(interface_nb2).cb_lf_systray_tv [mc "With this option enabled, the video window will be
 docked to the system tray with the rest of TV-Viewer."]
 					settooltip $::window(interface_nb2).cb_lf_systray_dock [mc "Enable this option if you want to dock TV-Viewer after initialization."]
-					settooltip $::window(interface_nb2).cb_lf_systray_mini [mc "Docks the application into the system tray if the
-main window is minimized."]
+					settooltip $::window(interface_nb2).cb_lf_systray_close [mc "Docks the application into the system tray if the
+main window is closed."]
 					settooltip $w3.cb_osd_station_w [mc "OSD for station name in windowed mode."]
 					settooltip $w3.cb_osd_station_f [mc "OSD for station name in full-screen mode."]
 					settooltip $w3.b_osd_station_fnt_w [mc "Change font, color and alignment."]
@@ -626,7 +626,7 @@ mouse cursor to invoke it."]
 			set ::choice(cb_tvfullscr) $::stnd_opt(vidwindow_full)
 			set ::choice(cb_systray_tv) $::stnd_opt(systray_tv)
 			set ::choice(cb_systray_start) $::stnd_opt(systray_start)
-			set ::choice(cb_systray_mini) $::stnd_opt(systray_mini)
+			set ::choice(cb_systray_close) $::stnd_opt(systray_close)
 			set ::choice(osd_station_w) $::stnd_opt(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {

@@ -181,16 +181,8 @@ proc main_frontendShowslist {w} {
 			grid remove $wflbox
 			wm geometry . [lindex [wm minsize .] 0]x$newheight
 			wm resizable . 0 0
-			if {$::option(systray_mini) == 1} {
-				bind . <Unmap> {
-					if {[winfo ismapped .] == 0} {
-						if {[winfo exists .tray] == 0} {
-							main_systemTrayActivate 0
-							set ::choice(cb_systray_main) 1
-						}
-						main_systemTrayMini unmap
-					}
-				}
+			if {$::option(systray_close) == 1} {
+				wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 			}
 		}
 	}
@@ -606,18 +598,12 @@ proc main_frontendUiTvviewer {} {
 	if {$::option(show_slist) == 1} {
 		main_frontendShowslist $wfbottom
 	}
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
+	if {$::option(systray_close) == 1} {
+		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	} else {
-		bind . <Unmap> {}
-		bind . <Map> {}
+		wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
+	}
+	if {$::option(systray_close) == 1} {
+		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	}
 }

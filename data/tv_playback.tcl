@@ -269,9 +269,11 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				}
 				log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
 				after $delay {
-					if {[winfo exists .tv.file_play_bar]} {
-						if {[string trim [grid info .tv.file_play_bar]] == {}} {
-							grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
+					if {[wm attributes .tv -fullscreen] == 0} {
+						if {[winfo exists .tv.file_play_bar]} {
+							if {[string trim [grid info .tv.file_play_bar]] == {}} {
+								grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
+							}
 						}
 					}
 					.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]

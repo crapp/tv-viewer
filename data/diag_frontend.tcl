@@ -71,8 +71,8 @@ Please wait..."] \
 		wm protocol $wtop WM_DELETE_WINDOW " "
 		wm iconphoto $wtop $::icon_e(tv-viewer_icon)
 		wm transient $wtop .
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {}
+		if {$::option(systray_close) == 1} {
+			wm protocol . WM_DELETE_WINDOW {  }
 		}
 		tkwait visibility $wtop
 		grab $wtop
@@ -157,16 +157,8 @@ $::env(HOME)/tv-viewer_diag.out" hyper_file
 proc diag_UiExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_UiExit \033\[0m"
 	grab release .top_diagnostic
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
+	if {$::option(systray_close) == 1} {
+		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	}
 	destroy .top_diagnostic
 }

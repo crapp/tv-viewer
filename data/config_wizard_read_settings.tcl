@@ -94,7 +94,7 @@ proc config_wizardReadSettings {} {
 		vidwindow_full 0
 		systray_tv 0
 		systray_start 0
-		systray_mini 0
+		systray_close 0
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -189,7 +189,7 @@ proc config_wizardReadSettings {} {
 		vidwindow_full 0
 		systray_tv 0
 		systray_start 0
-		systray_mini 0
+		systray_close 0
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -208,54 +208,49 @@ proc config_wizardReadSettings {} {
 		timeshift_df 1000
 		timeshift_path "$::option(where_is_home)/tmp"
 	}
-
-	array set ::opt_choice {
+	
+	array set ::opt_choiceGeneral {
+		mbLanguage language
+		mbLanguage_value language_value
 		checkbutton_starttv starttv_startup
 		checkbutton_newsreader newsreader
-		cb_tooltip_station tooltips_editor
-		cb_video_standard forcevideo_standard
+		sb_newsreader newsreader_interval
 		entry_epg epg_command
+	}
+	array set ::opt_choiceAnalog {
+		mbVideo video_device
+		mbVideo_standard video_standard
+		cb_video_standard forcevideo_standard
 		mbFreqtable frequency_table
 		mbVideo_input video_input_name
 		mbVideo_input_value video_input
-		mbVideo video_device
-		mbVideo_standard video_standard
-		entry_pbitrate_value videopeakbitrate
+	}
+	array set ::opt_choiceStream {
 		cb_streambitrate streambitrate
-		mbTheme use_theme
-		cb_tooltip_main tooltips_main
-		mbLanguage language
-		mbLanguage_value language_value
-		sb_newsreader newsreader_interval
+		entry_vbitrate_value videobitrate
+		entry_pbitrate_value videopeakbitrate
 		cb_temporal temporal_filter
 		spinbox_temporal temporal_filter_value
-		entry_vbitrate_value videobitrate
-		entry_rec_path rec_default_path
-		sb_duration_hour rec_duration_hour
-		sb_duration_min rec_duration_min
-		sb_duration_sec rec_duration_sec
-		cb_tooltip_colorm tooltips_colorm
-		cb_tooltip_wizard tooltips_wizard
-		cb_tooltip tooltips
-		cb_tooltip_player tooltips_player
-		cb_tooltip_record tooltips_record
-		cb_splash show_splash
-		cb_slist show_slist
-		cb_lf_screensaver player_screens
-		rb_screensaver player_screens_value
-		cb_framedrop player_fd
-		cb_hframedrop player_hfd
-		cb_slice player_slice
-		cb_double player_double
-		cb_dr player_dr
+		cb_audio_v4l2 audio_v4l2
+		scale_recordvolume audio_v4l2_value
+		scale_recordvolume_mult audio_v4l2_mult
+	}
+	array set ::opt_choiceVideo {
+		mbVo player_vo
+		mbDeint player_deint
+		sb_autoq player_autoq
+		mbCache player_cache
+		sb_threads player_threads
 		mbAudio player_audio
 		mbAudio_channels player_audio_channels
 		cb_softvol player_aud_softvol
-		mbCache player_cache
-		sb_threads player_threads
-		sb_autoq player_autoq
-		mbDeint player_deint
-		mbVo player_vo
+		cb_dr player_dr
+		cb_double player_double
+		cb_slice player_slice
+		cb_framedrop player_fd
+		cb_hframedrop player_hfd
+		cb_lf_screensaver player_screens
+		rb_screensaver player_screens_value
 		cb_lf_aspect player_aspect
 		cb_keepaspect player_keepaspect
 		rb_aspect player_aspect_monpix
@@ -266,22 +261,25 @@ proc config_wizardReadSettings {} {
 		entry_mplayer_add_coms player_additional_commands
 		entry_vf_mplayer player_add_vf_commands
 		entry_af_mplayer player_add_af_commands
-		cb_allow_schange_rec rec_allow_sta_change
-		cb_lf_logging log_files
-		sb_logging_tv log_size_tvviewer
-		sb_logging_mplayer log_size_mplay
-		sb_logging_sched log_size_scheduler
+	}
+	array set ::opt_choiceInterface {
+		mbTheme use_theme
+		cb_tooltip tooltips
+		cb_tooltip_main tooltips_main
+		cb_tooltip_wizard tooltips_wizard
+		cb_tooltip_station tooltips_editor
+		cb_tooltip_colorm tooltips_colorm
+		cb_tooltip_player tooltips_player
+		cb_tooltip_record tooltips_record
+		cb_splash show_splash
+		cb_slist show_slist
 		cb_tvattach vidwindow_attach
+		cb_tvfullscr vidwindow_full
 		cb_systray_tv systray_tv
 		cb_systray_start systray_start
-		cb_systray_mini systray_mini
-		cb_audio_v4l2 audio_v4l2
-		scale_recordvolume audio_v4l2_value
-		scale_recordvolume_mult audio_v4l2_mult
-		cb_sched_auto rec_sched_auto
-		cb_tvfullscr vidwindow_full
-		ent_times_folder timeshift_path
-		ent_times_df timeshift_df
+		cb_systray_close systray_close
+	}
+	array set ::opt_choiceOsd {
 		osd_station_w osd_station_w
 		osd_station_f osd_station_f
 		osd_group_w osd_group_w
@@ -291,6 +289,22 @@ proc config_wizardReadSettings {} {
 		osd_mouse_w osd_mouse_w
 		osd_mouse_f osd_mouse_f
 		osd_lirc osd_lirc
+	}
+	array set ::opt_choiceRec {
+		entry_rec_path rec_default_path
+		rcb_allow_schange_rec rec_allow_sta_change
+		sb_duration_hour rec_duration_hour
+		sb_duration_min rec_duration_min
+		sb_duration_sec rec_duration_sec
+		cb_sched_auto rec_sched_auto
+		ent_times_df timeshift_df
+		ent_times_folder timeshift_path
+	}
+	array set ::opt_choiceLog {
+		cb_lf_logging log_files
+		sb_logging_tv log_size_tvviewer
+		sb_logging_mplayer log_size_mplay
+		sb_logging_sched log_size_scheduler
 	}
 
 	if {[file exists "$::option(where_is_home)/config/tv-viewer.conf"]} {

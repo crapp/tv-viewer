@@ -253,8 +253,12 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		catch {after cancel $::timeshift(cp_id)}
 		unset -nocomplain ::timeshift(cp_id)
 		catch {exec kill $ofile}
-		wm protocol . WM_DELETE_WINDOW main_frontendExitViewer
-		wm protocol .tv WM_DELETE_WINDOW main_frontendExitViewer
+		if {$::option(systray_close) == 1} {
+			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		} else {
+			wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
+		}
+		wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 		grab release .tv.top_cp_progress
 		destroy .tv.top_cp_progress
 		return
@@ -285,8 +289,12 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		log_writeOutTv 0 "Timesift video file copied. Output file:
 $ofile"
 		after 2000 {
-			wm protocol . WM_DELETE_WINDOW main_frontendExitViewer
-			wm protocol .tv WM_DELETE_WINDOW main_frontendExitViewer
+			if {$::option(systray_close) == 1} {
+				wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+			} else {
+				wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
+			}
+			wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 			grab release .tv.top_cp_progress
 			destroy .tv.top_cp_progress
 		}

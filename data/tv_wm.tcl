@@ -391,23 +391,25 @@ proc tv_wmCursorHide {w com} {
 
 proc tv_wmCursorPlaybar {ypos} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmCursorPlaybar \033\[0m \{$ypos\}"
-	if {[string trim [grid info .tv.file_play_bar]] == {}} {
-		if {$ypos > [expr [winfo screenheight .] - 20]} {
-			grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
-			log_writeOutTv 0 "Adding video player bar to grid window manager."
+	if {[winfo exists .tv.file_play_bar]} {
+		if {[string trim [grid info .tv.file_play_bar]] == {}} {
+			if {$ypos > [expr [winfo screenheight .] - 20]} {
+				grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
+				log_writeOutTv 0 "Adding video player bar to grid window manager."
+			}
+			return
 		}
-		return
-	}
-	if {[string trim [grid info .tv.file_play_bar]] != {}} {
-		if {$ypos < [expr [winfo screenheight .] - 60]} {
-			grid remove .tv.file_play_bar
-			log_writeOutTv 0 "Removing video player bar from grid window manager."
-			.tv.bg configure -cursor arrow
-			.tv.bg.w configure -cursor arrow
-			tv_wmCursorHide .tv.bg 1
-			tv_wmCursorHide .tv.bg.w 1
+		if {[string trim [grid info .tv.file_play_bar]] != {}} {
+			if {$ypos < [expr [winfo screenheight .] - 60]} {
+				grid remove .tv.file_play_bar
+				log_writeOutTv 0 "Removing video player bar from grid window manager."
+				.tv.bg configure -cursor arrow
+				.tv.bg.w configure -cursor arrow
+				tv_wmCursorHide .tv.bg 1
+				tv_wmCursorHide .tv.bg.w 1
+			}
+			return
 		}
-		return
 	}
 }
 

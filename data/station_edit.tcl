@@ -179,7 +179,7 @@ proc station_editExit {} {
 			destroy .tv.slist_lirc
 		}
 		event_deleSedit
-		record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0
+		puts $::data(comsocket) "tv-viewer_scheduler scheduler_Init 1"
 	} else {
 		log_writeOutTv 0 "Inserting all stations into station list."
 		set status_tv_playback [tv_callbackMplayerRemote alive]
@@ -229,21 +229,12 @@ proc station_editExit {} {
 			}
 		}
 		event_constrArray
-		record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0
-		after 2000 {record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1}
+		puts $::data(comsocket) "tv-viewer_scheduler scheduler_Init 1"
 	}
 	log_writeOutTv 0 "Exiting station editor."
 	grab release .station
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
+	if {$::option(systray_close) == 1} {
+		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	}
 	destroy .station
 }
@@ -499,8 +490,8 @@ Deactivated stations will be marked red."]
 		if {$status_tv_playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
 		}
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {}
+		if {$::option(systray_close) == 1} {
+			wm protocol . WM_DELETE_WINDOW {  }
 		}
 		tkwait visibility $w
 		grab $w

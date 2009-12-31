@@ -120,8 +120,8 @@ mcset $lang \
 	{TV-Viewer nach dem Programmstart docken}
 
 mcset $lang \
-	{Minimize to Tray} \
-	{Minimieren in den System Tray}
+	{Close to Tray} \
+	{Schließen in den System Tray}
 
 mcset $lang \
 	{Windowed mode} \
@@ -180,9 +180,9 @@ in den System Tray gedockt werden soll.}
 
 mcset $lang \
 	{Docks the application into the system tray if the
-main window is minimized.} \
+main window is closed.} \
 	{Die Anwendung wird in den System Tray gedockt wenn
-das Hauptfenster minimiert wird.}
+das Hauptfenster geschlossen wird.}
 
 mcset $lang \
 	{OSD for station name in windowed mode.} \

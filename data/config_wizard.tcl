@@ -156,8 +156,8 @@ proc config_wizardMainUi {} {
 	option_screen_8
 	option_screen_0
 	
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {}
+	if {$::option(systray_close) == 1} {
+		wm protocol . WM_DELETE_WINDOW {  }
 	}
 	
 	tkwait visibility $w
@@ -204,19 +204,10 @@ proc config_wizardExit {} {
 	
 	tooltips .bottom_buttons .top_buttons main
 	
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
+	if {$::option(systray_close) == 1} {
+		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	} else {
-		bind . <Unmap> {}
-		bind . <Map> {}
+		wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
 	}
 	
 	grab release .config_wizard
@@ -230,12 +221,76 @@ proc config_wizardSaveopts {} {
 		file delete "$::option(where_is_home)/config/tv-viewer.conf"
 	}
 	set config_file_open [open "$::option(where_is_home)/config/tv-viewer.conf" w]
-	puts $config_file_open "#TV-Viewer config file. File is generated automatically, do not edit. Datei wird automatisch erstellt, bitte nicht editieren"
+	puts $config_file_open "#TV-Viewer config file. File is generated automatically, do not edit manually."
 	close $config_file_open
 	set config_file_open [open "$::option(where_is_home)/config/tv-viewer.conf" a]
+	puts $config_file_open "
+#General settings
+"
 	foreach {okey oelem} [array get ::choice] {
-		catch {puts $config_file_open "$::opt_choice($okey) \{$oelem\}"}
+		if {[string trim [array names ::opt_choiceGeneral $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceGeneral($okey) \{$oelem\}"
+		}
 	}
+puts $config_file_open "
+#Analog settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceAnalog $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceAnalog($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#Stream settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceStream $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceStream($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#Video settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceVideo $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceVideo($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#Interface settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceInterface $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceInterface($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#OSD settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceOsd $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceOsd($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#Recording / timeshift settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceRec $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceRec($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#Logfile settings
+"
+	foreach {okey oelem} [array get ::choice] {
+		if {[string trim [array names ::opt_choiceLog $okey]] != {}} {
+			puts $config_file_open "$::opt_choiceLog($okey) \{$oelem\}"
+		}
+	}
+	puts $config_file_open "
+#Videocard controls (hue / saturation / brightness / contrast)
+"
 	if {[string trim [array get ::option hue]] != {}} {
 		puts $config_file_open "hue \{$::option(hue)\}"
 	}
@@ -249,5 +304,6 @@ proc config_wizardSaveopts {} {
 		puts $config_file_open "contrast \{$::option(contrast)\}"
 	}
 	close $config_file_open
+	puts $::data(comsocket) "tv-viewer_scheduler scheduler_Init 1"
 	config_wizardExit
 }

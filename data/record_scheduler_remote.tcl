@@ -42,16 +42,8 @@ proc record_schedulerPrestart {handler} {
 			grab release .station.top_search
 			destroy .station.top_search
 		}
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {
-				if {[winfo ismapped .] == 0} {
-					if {[winfo exists .tray] == 0} {
-						main_systemTrayActivate 0
-						set ::choice(cb_systray_main) 1
-					}
-					main_systemTrayMini unmap
-				}
-			}
+		if {$::option(systray_close) == 1} {
+			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 		}
 		grab release .station
 		destroy .station
@@ -59,16 +51,8 @@ proc record_schedulerPrestart {handler} {
 	if {[winfo exists .config_wizard]} {
 		log_writeOutTv 1 "A recording or timeshift was started while the configuration dialog is open."
 		log_writeOutTv 1 "Will close it now, you will loose all your changes."
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {
-				if {[winfo ismapped .] == 0} {
-					if {[winfo exists .tray] == 0} {
-						main_systemTrayActivate 0
-						set ::choice(cb_systray_main) 1
-					}
-					main_systemTrayMini unmap
-				}
-			}
+		if {$::option(systray_close) == 1} {
+			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 		}
 		grab release .config_wizard
 		destroy .config_wizard
@@ -117,13 +101,12 @@ proc record_scheduler_prestartCancel {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_scheduler_prestartCancel \033\[0m \{$handler\}"
 	if {"$handler" != "timeshift"} {
 		log_writeOutTv 1 "Prestart sequence for recording has been canceled."
-		if {[winfo exists .record_wizard]} {
-			.record_wizard configure -cursor arrow
-		}
 	} else {
 		log_writeOutTv 1 "Prestart sequence for timeshift has been canceled."
 	}
-	. configure -cursor arrow; .tv configure -cursor arrow
+	if {[winfo exists .record_wizard]} {
+		.record_wizard configure -cursor arrow
+	}
 	.top_buttons.button_timeshift state !disabled
 	.top_buttons.button_timeshift state !pressed
 	.top_buttons.button_epg state !disabled
@@ -196,7 +179,9 @@ Started at %" [lindex $::station(last) 0] $stime]
 	} else {
 		catch {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
 	}
-	. configure -cursor arrow; .tv configure -cursor arrow
+	if {[winfo exists .record_wizard]} {
+		.record_wizard configure -cursor arrow
+	}
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard]} {
 			.record_wizard configure -cursor arrow

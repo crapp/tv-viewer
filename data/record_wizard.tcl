@@ -18,17 +18,9 @@
 
 proc record_wizardExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardExit \033\[0m"
-	if {$::option(systray_mini) == 1} {
-		bind . <Unmap> {
-			if {[winfo ismapped .] == 0} {
-				if {[winfo exists .tray] == 0} {
-					main_systemTrayActivate 0
-					set ::choice(cb_systray_main) 1
-				}
-				main_systemTrayMini unmap
-			}
-		}
-	}
+	#~ if {$::option(systray_close) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ }
 	destroy .record_wizard
 }
 
@@ -224,9 +216,9 @@ proc record_wizardUi {} {
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <Key-F1> [list info_helpHelp]
 		
-		if {$::option(systray_mini) == 1} {
-			bind . <Unmap> {}
-		}
+		#~ if {$::option(systray_close) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {  }
+		#~ }
 		set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 		if { $status_recordlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps
