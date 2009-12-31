@@ -184,7 +184,7 @@ proc colorm_saveValues {w} {
 		set open_config_file [open "$config_file" r]
 		set i 1
 		while {[gets $open_config_file line]!=-1} {
-			if {[string match brightness* $line] || [string match hue* $line] || [string match saturation* $line] || [string match contrast* $line] || [string trim $line] == {} } continue
+			if {[string match brightness* $line] || [string match hue* $line] || [string match saturation* $line] || [string match contrast* $line]} continue
 			set linien($i) $line
 			set total_lines $i
 			incr i
@@ -221,9 +221,12 @@ proc colorm_saveValues {w} {
 		close $config_file_append
 	} else {
 		set config_file_write [open $config_file w]
-		puts $config_file_write "#TV-Viewer config file. File is generated automatically, do not edit. Datei wird automatisch erstellt, bitte nicht editieren"
+		puts $config_file_write "#TV-Viewer config file. File is generated automatically, do not edit manually."
 		close $config_file_write
 		set config_file_append [open $config_file a]
+		puts $config_file_append "
+#Videocard controls (hue / saturation / brightness / contrast)
+"
 		if {[info exists ::l_brightness_value]} {
 			puts $config_file_append "brightness \{$::l_brightness_value\}"
 			set ::option(brightness) $::l_brightness_value
