@@ -83,7 +83,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1.1 64 02.01.2010}
+set option(release_version) {0.8.1.1 65 03.01.2010}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
