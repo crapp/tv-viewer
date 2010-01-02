@@ -302,7 +302,7 @@ proc tv_playerUi {} {
 		bind $mw <Key-F1> [list info_helpHelp]
 		bind $mw <Control-Key-x> {main_frontendExitViewer}
 		bind $mw <ButtonPress-3> [list tk_popup $mw.rightclickViewer %X %Y]
-		bind $mw <Alt-Key-y> {tv_playerInfoVars}
+		bind $mw <Alt-Key-y> {command_WritePipe "tv-viewer_scheduler puts TEST"}
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 			log_writeOutTv 1 "No valid stations list, will not activate station selector for video window."

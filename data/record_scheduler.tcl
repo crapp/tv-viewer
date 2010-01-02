@@ -43,7 +43,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1.1 62 31.12.2009}
+set option(release_version) {0.8.1.1 63 02.01.2010}
 
 if {[file isdirectory "$::option(where_is_home)"] == 0} {
 	puts "
@@ -177,8 +177,9 @@ proc scheduler_exit {} {
 ########################################################################
 "
 	close $::logf_sched_open_append
-	puts $::data(comsocket) "tv-viewer_main record_schedulerRemote 1"
-	flush $::data(comsocket)
+	command_WritePipe "tv-viewer_main record_schedulerRemote 1"
+	catch {close $::data(comsocketRead)}
+	catch {close $::data(comsocketWrite)}
 	exit 0
 }
 
@@ -261,7 +262,7 @@ proc scheduler_delete {args} {
 }
 
 proc scheduler_rec_prestart {jobid} {
-	scheduler_logWriteOut 0 "Attempting to record job number $jobid."
+	scheduler_logWriteOut 0 "Attempting to record job number [lindex $::recjob($jobid) 0]."
 	set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 	if { $status_recordlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
@@ -269,8 +270,7 @@ proc scheduler_rec_prestart {jobid} {
 		if { $status_greppid_record == 0 } {
 			scheduler_logWriteOut 2 "There is an active recording."
 			scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
-			puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-			flush $::data(comsocket)
+			command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
 			return
 		}
 	}
@@ -281,9 +281,13 @@ proc scheduler_rec_prestart {jobid} {
 		if { $status_greppid_times == 0 } {
 			scheduler_logWriteOut 1 "Scheduler detected timeshift process."
 			scheduler_logWriteOut 1 "Will stop timeshift!"
-			puts $::data(comsocket) "tv-viewer_main timeshift .top_buttons.button_timeshift"
-			flush $::data(comsocket)
+			command_WritePipe "tv-viewer_main timeshift .top_buttons.button_timeshift"
 		}
+	}
+	if {[file exists $::option(video_device)] == 0} {
+		scheduler_logWriteOut 2 "Can not detect Video Device $::option(video_device)"
+		scheduler_logWriteOut 2 "Have a look into the preferences and change it."
+		return
 	}
 	set status_linkread [catch {file readlink "$::option(where_is_home)/tmp/lockfile.tmp"} resultat_linkread]
 	if { $status_linkread == 0 } {
@@ -291,16 +295,8 @@ proc scheduler_rec_prestart {jobid} {
 		set status_greppid [catch {agrep -w "$read_ps" $resultat_linkread} resultat_greppid]
 		if { $status_greppid == 0 } {
 			scheduler_logWriteOut 0 "Scheduler detected TV-Viewer is running, sending commands via socket."
-			puts $::data(comsocket) "tv-viewer_main record_schedulerPrestart record"
-			flush $::data(comsocket)
+			command_WritePipe "tv-viewer_main record_schedulerPrestart record"
 		}
-	}
-	if {[file exists $::option(video_device)] == 0} {
-		scheduler_logWriteOut 2 "Can not detect Video Device $::option(video_device)"
-		scheduler_logWriteOut 2 "Have a look into the preferences and change it."
-		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-		flush $::data(comsocket)
-		return
 	}
 	if {$::option(forcevideo_standard) == 1} {
 		main_pic_streamForceVideoStandard
@@ -327,8 +323,7 @@ proc scheduler_rec_prestart {jobid} {
 		}
 	}
 	if {$match == 0} {
-		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-		flush $::data(comsocket)
+		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
 		scheduler_logWriteOut 2 "Station \{[lindex $::recjob($jobid) 1]\} does not exist."
 		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
 	}
@@ -347,8 +342,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$secs == 3000} {
 		scheduler_logWriteOut 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "This didn't work, BAD."
-		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-		flush $::data(comsocket)
+		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -356,8 +350,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$status_grep_input == 0} {
 		if {$::kanalinput($snumber) == [lindex $resultat_grep_input 3]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
-			puts $::data(comsocket) "tv-viewer_main record_schedulerStation {$::kanalid($snumber)} $snumber"
-			flush $::data(comsocket)
+			command_WritePipe "tv-viewer_main record_schedulerStation {$::kanalid($snumber)} $snumber"
 			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
 			set last_channel_write [open $last_channel_conf w]
 			puts -nonewline $last_channel_write "\{$::kanalid($snumber)\} $::kanalcall($snumber) $snumber"
@@ -376,8 +369,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	} else {
 		scheduler_logWriteOut 2 "Can not change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "$resultat_grep_input."
-		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-		flush $::data(comsocket)
+		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
 		return
 	}
 }
@@ -386,8 +378,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {$counter == 10} {
 		scheduler_logWriteOut 2 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
 		scheduler_logWriteOut 2 "This was unsuccessful."
-		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-		flush $::data(comsocket)
+		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
 		return
 	}
 	if {[file exists "[lindex $::recjob($jobid) end]"]} {
@@ -400,8 +391,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			puts -nonewline $f_open "\{[lindex $::recjob($jobid) 1]\} [clock format [clock scan now] -format {%Y-%m-%d}] [clock format [clock scan now] -format {%H:%M:%S}] [clock format $endtime -format {%Y-%m-%d}] [clock format $endtime -format {%H:%M:%S}] $duration_calc \{[lindex $::recjob($jobid) end]\}"
 			close $f_open
 			after [expr $duration_calc * 1000] {catch {exec ""}}
-			puts $::data(comsocket) "tv-viewer_main record_schedulerRec record"
-			flush $::data(comsocket)
+			command_WritePipe "tv-viewer_main record_schedulerRec record"
 			scheduler_delete [list $jobid]
 		} else {
 			catch {exec kill $rec_pid}
@@ -415,8 +405,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 		catch {exec ""}
 		scheduler_logWriteOut 2 "File [lindex $::recjob($jobid) end] doesn't exist."
 		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
-		puts $::data(comsocket) "tv-viewer_main record_scheduler_prestartCancel record"
-		flush $::data(comsocket)
+		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
 		return
 	}
 }
@@ -449,8 +438,7 @@ proc scheduler_Init {handler} {
 		main_readConfig
 		scheduler_log
 		command_socket
-		puts $::data(comsocket) "tv-viewer_main record_schedulerRemote 0"
-		flush $::data(comsocket)
+		command_WritePipe "tv-viewer_main record_schedulerRemote 0"
 		scheduler_stations
 		scheduler_main_loop
 	} else {

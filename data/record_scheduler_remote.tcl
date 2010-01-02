@@ -232,7 +232,7 @@ proc record_schedulerPreStop {handler} {
 				catch {exec kill $resultat_greppid_record}
 				catch {file delete -force "$::option(where_is_home)/tmp/record_lockfile.tmp"}
 				after 3000 {
-					puts $::data(comsocket) "tv-viewer_scheduler scheduler_zombie"
+					command_WritePipe "tv-viewer_scheduler scheduler_zombie"
 				}
 			}
 		}
@@ -298,6 +298,7 @@ proc record_schedulerPreStop {handler} {
 
 proc record_schedulerRemote {com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerRemote \033\[0m \{$com\}"
+	
 	if {$com == 0} {
 		if {[winfo exists .record_wizard]} {
 			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]

@@ -1,4 +1,4 @@
-#       log_viewer.tcl
+#       command_socket.tcl
 #       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -17,46 +17,75 @@
 #       MA 02110-1301, USA.
 
 proc command_socket {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}	
+	catch {exec mkfifo "$::option(where_is_home)/tmp/ComSocketSched"}
+	catch {exec mkfifo "$::option(where_is_home)/tmp/ComSocketMain"}
 	if {"$::option(appname)" == "tv-viewer_main"} {
-		set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" w]
-		close $comsocket
+		set ::data(comsocketRead) [open "$::option(where_is_home)/tmp/ComSocketMain" r+]
+		set ::data(comsocketWrite) [open "$::option(where_is_home)/tmp/ComSocketSched" r+]
+		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		fileevent $::data(comsocketRead) readable [list command_getData log_writeOutTv]
 	}
-	if {[file exists "$::option(where_is_home)/tmp/comSocket.tmp"]} {
-		set comsocket [open "$::option(where_is_home)/tmp/comSocket.tmp" r]
-		seek $comsocket 0 end
-		set position [tell $comsocket]
-		close $comsocket
-		set ::data(comsocket) [open "$::option(where_is_home)/tmp/comSocket.tmp" a]
-		fconfigure $::data(comsocket) -blocking no -buffering line
-		set ::data(comsocket_id) [after 50 [list command_getData "$::option(where_is_home)/tmp/comSocket.tmp" $position]]
+	if {"$::option(appname)" == "tv-viewer_scheduler"} {
+		set ::data(comsocketRead) [open "$::option(where_is_home)/tmp/ComSocketSched" r+]
+		set ::data(comsocketWrite) [open "$::option(where_is_home)/tmp/ComSocketMain" r+]
+		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		fileevent $::data(comsocketRead) readable [list command_getData scheduler_logWriteOut]
+	}
+	if {"$::option(appname)" == "tv-viewer_lirc" || "$::option(appname)" == "tv-viewer_diag"} {
+		#~ set ::data(comsocketRead) [open "$::option(where_is_home)/tmp/ComSocketSched" r+]
+		set ::data(comsocketWrite) [open "$::option(where_is_home)/tmp/ComSocketMain" r+]
+		#~ fconfigure $::data(comsocketRead) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		#~ fileevent $::data(comsocketRead) readable [list command_getData]
 	}
 }
 
-proc command_getData {comfile position} {
-	if {"$position" == "cancel"} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: command_getData \033\[0;1;31m::cancel:: \033\[0m"
-		catch {after cancel $::data(comsocket_id)}
-		unset -nocomplain ::data(comsocket_id)
-		return
-	}
-	if {[file exists "$comfile"]} {
-		set fh [open $comfile r]
-		fconfigure $fh -blocking no -buffering line
-		seek $fh $position start
-		while {[eof $fh] == 0} {
-			gets $fh line
-			if {[string length $line] > 0} {
+proc command_getData {logw} {
+	if {[info exists ::data(comsocketRead)]} {
+		set status [catch { gets $::data(comsocketRead) line } result]
+		if {[eof $::data(comsocketRead)]} {
+			{*}$logw 2 "CommandSocket reached EOF."
+			catch {close $::data(comsocketRead)}
+			unset -nocomplain ::data(comsocketRead)
+			return
+		}
+		if { $status != 0 } {
+			{*}$logw 2 "Error reading $::data(comsocketRead): $result"
+		} elseif { $result >= 0 } {
+			# Successfully read the channel
+			puts "got: $line"
+			if {[string length [string trim $line]] > 0} {
 				if {"[lindex $line 0]" == "$::option(appname)"} {
 					set com [lrange $line 1 end]
 					{*}$com
 				}
 			}
+		} elseif { [fblocked $::data(comsocketRead)] } {
+			# Read blocked.  Just return
+		} else {
+			# Something else
+			{*}$logw 2 "Error in CommandSocket $::data(comsocketRead), unknown."
 		}
-		set position [tell $fh]
-		close $fh
-		set ::data(comsocket_id) [after 50 [list command_getData $comfile $position]]
+	}
+}
+
+proc command_WritePipe {com} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_WritePipe \033\[0m \{$com\}"}
+	if {[info exists ::data(comsocketWrite)] == 0} {return 1}
+	if {[string trim $::data(comsocketWrite)] != {}} {
+		puts -nonewline $::data(comsocketWrite) "$com \n"
+		flush $::data(comsocketWrite)
+		return 0
 	} else {
-		command_getData 0 cancel
+		if {"$::option(appname)" == "tv-viewer_main"} {
+			log_writeOutTv 2 "Can't access application command pipe."
+		}
+		if {"$::option(appname)" == "tv-viewer_scheduler"} {
+			scheduler_logWriteOut 2 "Can't access application command pipe."
+		}
+		return 1
 	}
 }

@@ -36,7 +36,7 @@ proc record_wizardScheduler {sbutton slable com} {
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
 				log_writeOutTv 1 "Scheduler is running, will stop it."
-				puts $::data(comsocket) "tv-viewer_scheduler scheduler_exit"
+				command_WritePipe "tv-viewer_scheduler scheduler_exit"
 			}
 		}
 		after 2000 {catch {exec ""}}
@@ -216,9 +216,6 @@ proc record_wizardUi {} {
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <Key-F1> [list info_helpHelp]
 		
-		#~ if {$::option(systray_close) == 1} {
-			#~ wm protocol . WM_DELETE_WINDOW {  }
-		#~ }
 		set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 		if { $status_recordlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps

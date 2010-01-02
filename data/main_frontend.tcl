@@ -59,6 +59,8 @@ proc main_frontendExitViewer {} {
 "
 	close $::logf_tv_open_append
 	close $::logf_mpl_open_append
+	catch {close $::data(comsocketRead)}
+	catch {close $::data(comsocketWrite)}
 	destroy .tv
 	exit 0
 }

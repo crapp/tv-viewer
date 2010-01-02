@@ -611,7 +611,7 @@ proc record_add_editDelete {tree} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		puts $::data(comsocket) "tv-viewer_scheduler scheduler_Init 1"
+		command_WritePipe "tv-viewer_scheduler scheduler_Init 1"
 	}
 }
 

@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1.1 62 31.12.2009}
+set option(release_version) {0.8.1.1 63 02.01.2010}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}
@@ -537,18 +537,12 @@ and attach the created file.
 
 after 200
 if {[file isdirectory "$::env(HOME)/.tv-viewer/tmp/"]} {
-	if {[file exists "$::env(HOME)/.tv-viewer/tmp/comSocket.tmp"]} {
-		set comsocket [open "$::env(HOME)/.tv-viewer/tmp/comSocket.tmp" a]
-		fconfigure $comsocket -blocking no -buffering line
-		puts $comsocket "tv-viewer_main diag_RunFinished 0"
-		flush $comsocket
-		exit 0
-	} else {
-		diag_writeOut $diag_file_append "
-Fatal error. Could not open com socket"
-		close $diag_file_append
-		exit 1
-	}
+	catch {exec mkfifo "$::env(HOME)/.tv-viewer/tmp/ComSocketMain"}
+	set comsocket [open "$::env(HOME)/.tv-viewer/tmp/ComSocketMain" r+]
+	fconfigure $comsocket -blocking 0 -buffering line
+	puts -nonewline $comsocket "tv-viewer_main diag_RunFinished 0 \n"
+	flush $comsocket
+	exit 0
 } else {
 	close $diag_file_append
 	exit 0
