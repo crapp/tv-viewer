@@ -83,7 +83,7 @@ This is not recommended!"
 }
 unset -nocomplain root_test root_test_open
 
-set option(release_version) {0.8.1.1 63 02.01.2010}
+set option(release_version) {0.8.1.1 64 02.01.2010}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -228,19 +228,31 @@ unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_gre
 #~ package require ttk::theme::tilegtk
 if {"$::tcl_platform(machine)" == "x86_64"} {
 	set auto_path [linsert $auto_path 0 "$::where_is/extensions/tktray/64"]
-	set status_tray [catch {package require tktray} result_tkray]
-	puts "loading $::tcl_platform(machine) shared libraries"
-	if {$status_tray == 1} {
-		puts "ERROR:
+	if {[file exists "$::where_is/extensions/tktray/64/libtktray1.2.so"]} {
+		set status_tray [catch {package require tktray} result_tkray]
+		puts "loading $::tcl_platform(machine) shared libraries"
+		if {$status_tray == 1} {
+			puts "ERROR:
 $result_tktray"
+		}
+	} else {
+		puts "ERROR:
+Can not find shared library in
+$::where_is/extensions/tktray/64"
 	}
 } else {
 	set auto_path [linsert $auto_path 0 "$::where_is/extensions/tktray/32"]
-	set status_tray [catch {package require tktray} result_tkray]
-	puts "loading $::tcl_platform(machine) shared libraries"
-	if {$status_tray == 1} {
+	if {[file exists "$::where_is/extensions/tktray/32/libtktray1.2.so"]} {
+		set status_tray [catch {package require tktray} result_tkray]
+		puts "loading $::tcl_platform(machine) shared libraries"
+		if {$status_tray == 1} {
+			puts "ERROR:
+	$result_tktray"
+		}
+	} else {
 		puts "ERROR:
-$result_tktray"
+Can not find shared library in
+$::where_is/extensions/tktray/32"
 	}
 }
 #Source autoscroll function for scrollbars and load package autoscroll
