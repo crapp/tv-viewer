@@ -11,5 +11,5 @@ Exec=tv-viewer
 Icon=tv-viewer
 Terminal=false
 Categories=AudioVideo;TV;
-StartupNotify=true
+StartupNotify=false
 X-KDE-StartupNotify=false

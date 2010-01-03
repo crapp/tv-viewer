@@ -20,11 +20,10 @@
 
 package require Tcl 8.5
 
-set ::option(appname) tv-viewer_scheduler
-
+set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
-set option(root) 
+set option(release_version) {0.8.1.1 68 03.01.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -38,8 +37,6 @@ This is not recommended!"
 		exit 1
 	}
 }
-
-set option(release_version) {0.8.1.1 67 03.01.2010}
 
 if {[file isdirectory "$::option(home)"] == 0} {
 	puts "

@@ -35,9 +35,9 @@ exit 1
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set target /usr/local/share
 set printchan stdout
-set option(release_version) {0.8.1.1 67 03.01.2010}
+set option(release_version) {0.8.1.1 68 03.01.2010}
 
-array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --help 0}
+array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -51,7 +51,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 7} {
+if {[array size start_options] != 9} {
 	puts "
 TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
@@ -64,7 +64,13 @@ Possible options are:
   --nodepcheck    Skip dependencies ckeck.
   --arch=ARCH     Select your systems architecture (32 / 64)
   --target=PATH   Provide a path for installation (standard /usr/local/share).
-  --manpath=PATH  Provide a path for man pages (standard /usr/local/share/man/man1).
+  --manpath=PATH  Provide a path for man pages (standard 
+                  /usr/local/share/man/man1).
+  --pixmap=PATH   Provide a path for pixmaps. If omitted, TV-Viewer will
+                  try to determine best location.
+  --desktop=PATH  Provide a path for desktop files. If omitted, TV-Viewer
+                  will try to determine best location.
+  --help          Print help.
  "
 exit 0
 }
@@ -80,7 +86,12 @@ Possible options are:
   --nodepcheck    Skip dependencies ckeck.
   --arch=ARCH     Select your systems architecture (32 / 64)
   --target=PATH   Provide a path for installation (standard /usr/local/share).
-  --manpath=PATH  Provide a path for man pages (standard /usr/local/share/man/man1).
+  --manpath=PATH  Provide a path for man pages (standard 
+                  /usr/local/share/man/man1).
+  --pixmap=PATH   Provide a path for pixmaps. If omitted, TV-Viewer will
+                  try to determine best location.
+  --desktop=PATH  Provide a path for desktop files. If omitted, TV-Viewer
+                  will try to determine best location.
   --help          Show this help.
  "
 exit 0
@@ -93,8 +104,8 @@ if {$start_options(--nodebug)} {
 
 if {$start_options(--target)} {
 	puts $::printchan "
-Target set to $start_values(--target)"
-	set target $start_values(--target)
+Target set to [file normalize $start_values(--target)]"
+	set target [file normalize $start_values(--target)]
 }
 
 if {$start_options(--uninstall)} {
@@ -114,8 +125,31 @@ You are $::tcl_platform(user).
 "
 			exit 1
 		} else {
-			catch {file delete -force "/usr/bin/tv-viewer" "/usr/bin/tv-viewer_lirc" "/usr/bin/tv-viewer_diag" "/usr/bin/tv-viewer_scheduler" "$target/applications/tv-viewer.desktop" "$target/pixmaps/tv-viewer.png" "/usr/local/man/man1/tv-viewer.1.gz"}
-			
+			catch {file delete -force "/usr/bin/tv-viewer" "/usr/bin/tv-viewer_lirc" "/usr/bin/tv-viewer_diag" "/usr/bin/tv-viewer_scheduler"}
+			if {$::start_options(--desktop)} {
+				set desk_target "[file normalize $::start_values(--desktop)]"
+			} else {
+				set desk_target "$target/applications"
+			}
+			catch {file delete -force "$desk_target/tv-viewer.desktop"}
+			if {$::start_options(--pixmap)} {
+				set pixmap_target "[file normalize $::start_values(--pixmap)]"
+			} else {
+				set pixmap_target "$target/pixmaps"
+			}
+			catch {file delete -force "$pixmap_target/tv-viewer.png"}
+			if {$::start_options(--pixmap)} {
+				set pixmap_target "[file normalize $::start_values(--pixmap)]"
+			} else {
+				set pixmap_target "$target/pixmaps"
+			}
+			catch {file delete -force "$pixmap_target/tv-viewer.png"}
+			if {$::start_options(--manpath)} {
+				set manpath_target "[file normalize $::start_values(--manpath)]"
+			} else {
+				set manpath_target "$target/man"
+			}
+			catch {file delete -force "$manpath_target/man1/tv-viewer.1.gz"}
 			puts $::printchan "
 TV-Viewer has been uninstalled successfully.
 
@@ -353,10 +387,18 @@ Error message: $resultat_permissions_dfile"
 		}
 	}
 	
-	if {[file isdirectory "$target/applications"] == 0} {
-		file mkdir "$target/applications"
+	if {$::start_options(--desktop)} {
+		set desk_target "[file normalize $::start_values(--desktop)]"
+		if {[file isdirectory "$desk_target"] == 0} {
+			file mkdir "$desk_target"
+		}
+	} else {
+		if {[file isdirectory "$target/applications"] == 0} {
+			file mkdir "$target/applications"
+		}
+		set desk_target "$target/applications"
 	}
-	set status_desktop [catch {file copy -force "$where_is/data/tv-viewer.desktop" "$target/applications/"} result_desktop]
+	set status_desktop [catch {file copy -force "$where_is/data/tv-viewer.desktop" "$desk_target/"} result_desktop]
 	if { $status_desktop != 0 } {
 		puts $::printchan "
 Could not copy file: $where_is/data/tv-viewer.desktop
@@ -365,11 +407,11 @@ Error message: $result_desktop
 	"
 		exit 1
 	} else {
-		puts $::printchan "$target/applications/tv-viewer.desktop"
-		set status_permissions_desktop [catch {file attributes "$target/applications/tv-viewer.desktop" -permissions rw-r--r--} resultat_permissions_desktop]
+		puts $::printchan "$desk_target/tv-viewer.desktop"
+		set status_permissions_desktop [catch {file attributes "$desk_target/tv-viewer.desktop" -permissions rw-r--r--} resultat_permissions_desktop]
 		if {$status_permissions_desktop != 0} {
 			puts $::printchan "
-Could not change permissions for: $target/applications/tv-viewer.desktop
+Could not change permissions for: $desk_target/tv-viewer.desktop
 
 Error message: $resultat_permissions_desktop"
 			exit 1
@@ -622,10 +664,18 @@ Error message: $resultat_permissions_ifile"
 		}
 	}
 
-	if {[file isdirectory "$target/pixmaps"] == 0} {
-		file mkdir "$target/pixmaps"
+	if {$::start_options(--pixmap)} {
+		set pixmap_target "[file normalize $::start_values(--pixmap)]"
+		if {[file isdirectory "$pixmap_target"] == 0} {
+			file mkdir "$pixmap_target"
+		}
+	} else {
+		if {[file isdirectory "$target/pixmaps"] == 0} {
+			file mkdir "$target/pixmaps"
+		}
+		set pixmap_target "$target/pixmaps"
 	}
-	set status_tvicon [catch {file copy -force "$where_is/icons/extras/tv-viewer_icon.png" "$target/pixmaps/"} result_tvicon]
+	set status_tvicon [catch {file copy -force "$where_is/icons/extras/tv-viewer_icon.png" "$pixmap_target/"} result_tvicon]
 	if { $status_tvicon != 0 } {
 		puts $::printchan "
 Could not copy file: $where_is/icons/extras/tv-viewer_icon.png
@@ -634,16 +684,16 @@ Error message: $result_tvicon
 	"
 		exit 1
 	} else {
-		puts $::printchan "$target/pixmaps/tv-viewer_icon.png"
-		set status_permissions_tvicon [catch {file attributes "$target/pixmaps/tv-viewer_icon.png" -permissions rw-r--r--} resultat_permissions_tvicon]
+		puts $::printchan "$pixmap_target/tv-viewer_icon.png"
+		set status_permissions_tvicon [catch {file attributes "$pixmap_target/tv-viewer_icon.png" -permissions rw-r--r--} resultat_permissions_tvicon]
 		if {$status_permissions_tvicon != 0} {
 			puts $::printchan "
-Could not change permissions for: $target/pixmaps/tv-viewer_icon.png
+Could not change permissions for: $pixmap_target/tv-viewer_icon.png
 
 Error message: $resultat_permissions_tvicon"
 			exit 1
 		}
-		catch {file rename -force "$target/pixmaps/tv-viewer_icon.png" "$target/pixmaps/tv-viewer.png"}
+		catch {file rename -force "$pixmap_target/tv-viewer_icon.png" "$pixmap_target/tv-viewer.png"}
 	}
 }
 
@@ -674,7 +724,7 @@ Error message: $resultat_permissions_lfile"
 
 proc install_copyMan {where_is target} {
 	if {$::start_options(--manpath)} {
-		set manpath $::start_values(--manpath)
+		set manpath [file normalize $::start_values(--manpath)]
 	} else {
 		set manpath /usr/local/man
 	}
