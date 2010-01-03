@@ -148,7 +148,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	}
 	set winid [expr [winfo id $tv_cont]]
 	
-	lappend mcommand -input conf="$::where_is/shortcuts/input.conf" {*}{-osdlevel 0}
+	lappend mcommand -input conf="$::option(root)/shortcuts/input.conf" {*}{-osdlevel 0}
 	
 	lappend mcommand -nokeepaspect
 	if {$::option(player_aspect) == 1} {
@@ -222,7 +222,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 			place forget .tv.l_anigif
 			destroy .tv.l_anigif
 		}
-		set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
+		set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
 		label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
 		place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
 		set img_list_length [llength $img_list]
@@ -252,7 +252,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					place forget .tv.l_anigif
 					destroy .tv.l_anigif
 				}
-				set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
+				set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
 				label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
 				place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
 				set img_list_length [llength $img_list]

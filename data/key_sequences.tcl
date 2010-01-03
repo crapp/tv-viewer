@@ -84,14 +84,14 @@ proc key_sequences {} {
 		$mftree.tv_key tag configure small -font "TkTextFont 1"
 		
 		if {$::option(language_value) != 0} {
-			set keseq "$::where_is/shortcuts/keysequ_$::option(language_value).conf"
+			set keseq "$::option(root)/shortcuts/keysequ_$::option(language_value).conf"
 		} else {
 			set locale_split [lindex [split $::env(LANG) _] 0]
-			set keseq "$::where_is/shortcuts/keysequ_$locale_split.conf"
+			set keseq "$::option(root)/shortcuts/keysequ_$locale_split.conf"
 			if {[file exists "$keseq"] == 0} {
 				log_writeOutTv 1 "No translated Key Sequences for $::env(LANG)"
 				log_writeOutTv 1 "Switching back to english."
-				set keseq "$::where_is/shortcuts/keysequ_en.conf"
+				set keseq "$::option(root)/shortcuts/keysequ_en.conf"
 			}
 		}
 		if {[file exists "$keseq"]} {

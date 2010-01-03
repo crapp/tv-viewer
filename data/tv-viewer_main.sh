@@ -57,17 +57,16 @@ namespace import msgcat::mc
 
 wm withdraw .
 
-if {[file type [info script]] == "link" } {
-	set where_is [file dirname [file dirname [file normalize [file readlink [info script]]]]]
-} else {
-	set where_is [file dirname [file dirname [file normalize [info script]]]]
-}
-#~ Test starting with symlink.
-#~ [file dirname [file dirname [file normalize [file join [info script] bogus]]]]
+#~ if {[file type [info script]] == "link" } {
+	#~ set where_is [file dirname [file dirname [file normalize [file readlink [info script]]]]]
+#~ } else {
+	#~ set where_is [file dirname [file dirname [file normalize [info script]]]]
+#~ }
 
-set option(where_is_home) "$::env(HOME)/.tv-viewer"
-
-set ::option(appname) tv-viewer_main
+set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
+set option(home) "$::env(HOME)/.tv-viewer"
+set option(appname) tv-viewer_main
+set option(release_version) {0.8.1.1 66 03.01.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -82,8 +81,6 @@ This is not recommended!"
 	}
 }
 unset -nocomplain root_test root_test_open
-
-set option(release_version) {0.8.1.1 65 03.01.2010}
 
 puts "This is TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] ..."
 
@@ -109,24 +106,24 @@ $::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
 	file mkdir "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
 	set get_channels [glob -nocomplain "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/stations_*.conf"]
 	foreach {station_file} [split "$get_channels"] {
-		catch {file copy -force "$station_file" "$::option(where_is_home)/config/"}
+		catch {file copy -force "$station_file" "$::option(home)/config/"}
 	}
 	set confFiles {tv-viewer scheduler scheduled_recordings last_read}
 	foreach conf $confFiles {
 		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf"] == 0} continue
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf" "$::option(where_is_home)/config/"}
+		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf" "$::option(home)/config/"}
 	}
 	set logFiles {tvviewer scheduler videoplayer}
 	foreach log $logFiles {
 		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/log/$log\.log"] == 0} continue
-		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/log/$log\.log" "$::option(where_is_home)/log/"}
+		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/log/$log\.log" "$::option(home)/log/"}
 	}
-	set new_version_file [open "$::option(where_is_home)/config/tv-viewer-[lindex $version 0]_build[lindex $version 1]\.ver" w]
+	set new_version_file [open "$::option(home)/config/tv-viewer-[lindex $version 0]_build[lindex $version 1]\.ver" w]
 	close $new_version_file
 	puts "$messageFin"
 }
 
-set get_installed_version [glob -nocomplain "$::option(where_is_home)/config/tv-viewer-*.ver"]
+set get_installed_version [glob -nocomplain "$::option(home)/config/tv-viewer-*.ver"]
 if {[string trim $get_installed_version] != {}} {
 	set normalized_version_file [file normalize "$get_installed_version"]
 	set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\_build} "$normalized_version_file" <-> read_version]
@@ -200,16 +197,16 @@ You've installed a new version of TV-Viewer."
 unset -nocomplain get_installed_version normalized_version_file status_regexp_version status_regexp_version2 new_version_file read_version
 
 #Source agrep, replaces unix grep command.
-source $::where_is/data/agrep.tcl
+source $::option(root)/data/agrep.tcl
 #Check whether or not tv-viewer is already running.
-set status_lock [catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/lockfile.tmp"} resultat_lock]
+set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
-	set linkread [file readlink "$::option(where_is_home)/tmp/lockfile.tmp"]
+	set linkread [file readlink "$::option(home)/tmp/lockfile.tmp"]
 	catch {exec ps -eo "%p"} readpid
 	set status_greppid [catch {agrep -w "$readpid" $linkread} resultat_greppid]
 	if { $status_greppid != 0 } {
-		catch {file delete "$::option(where_is_home)/tmp/lockfile.tmp"}
-		catch {exec ln -s "[pid]" "$::option(where_is_home)/tmp/lockfile.tmp"}
+		catch {file delete "$::option(home)/tmp/lockfile.tmp"}
+		catch {exec ln -s "[pid]" "$::option(home)/tmp/lockfile.tmp"}
 	} else {
 		puts "
 An instance of TV-Viewer is already running."
@@ -227,8 +224,8 @@ unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_gre
 #~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]
 #~ package require ttk::theme::tilegtk
 if {"$::tcl_platform(machine)" == "x86_64"} {
-	set auto_path [linsert $auto_path 0 "$::where_is/extensions/tktray/64"]
-	if {[file exists "$::where_is/extensions/tktray/64/libtktray1.2.so"]} {
+	set auto_path [linsert $auto_path 0 "$::option(root)/extensions/tktray/64"]
+	if {[file exists "$::option(root)/extensions/tktray/64/libtktray1.2.so"]} {
 		set status_tray [catch {package require tktray} result_tkray]
 		puts "loading $::tcl_platform(machine) shared libraries"
 		if {$status_tray == 1} {
@@ -238,11 +235,11 @@ $result_tktray"
 	} else {
 		puts "ERROR:
 Can not find shared library in
-$::where_is/extensions/tktray/64"
+$::option(root)/extensions/tktray/64"
 	}
 } else {
-	set auto_path [linsert $auto_path 0 "$::where_is/extensions/tktray/32"]
-	if {[file exists "$::where_is/extensions/tktray/32/libtktray1.2.so"]} {
+	set auto_path [linsert $auto_path 0 "$::option(root)/extensions/tktray/32"]
+	if {[file exists "$::option(root)/extensions/tktray/32/libtktray1.2.so"]} {
 		set status_tray [catch {package require tktray} result_tkray]
 		puts "loading $::tcl_platform(machine) shared libraries"
 		if {$status_tray == 1} {
@@ -252,27 +249,27 @@ $::where_is/extensions/tktray/64"
 	} else {
 		puts "ERROR:
 Can not find shared library in
-$::where_is/extensions/tktray/32"
+$::option(root)/extensions/tktray/32"
 	}
 }
 #Source autoscroll function for scrollbars and load package autoscroll
-source $::where_is/extensions/autoscroll/autoscroll.tcl
+source $::option(root)/extensions/autoscroll/autoscroll.tcl
 package require autoscroll
 namespace import ::autoscroll::autoscroll
 #Source calendar widget
-source $::where_is/extensions/callib/callib.tcl
+source $::option(root)/extensions/callib/callib.tcl
 #Append fsdialog to auto_path
-set auto_path [linsert $auto_path 0 "$::where_is/extensions/fsdialog"]
+set auto_path [linsert $auto_path 0 "$::option(root)/extensions/fsdialog"]
 #Source read_config to read all config values
-source $::where_is/data/main_read_config.tcl
+source $::option(root)/data/main_read_config.tcl
 #Source start options
-source $::where_is/data/main_command_line_options.tcl
+source $::option(root)/data/main_command_line_options.tcl
 start_options
 #It is time to load all config values
 main_readConfig
 #Source additional ttk themes, plastik and keramik
-source "$where_is/themes/plastik/plastik.tcl"
-source "$where_is/themes/keramik/keramik.tcl"
+source "$option(root)/themes/plastik/plastik.tcl"
+source "$option(root)/themes/keramik/keramik.tcl"
 ttk::style theme use $::option(use_theme)
 if {"$::option(use_theme)" == "clam"} {
 	ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
@@ -283,109 +280,109 @@ if {$::option(language_value) != 0} {
 } else {
 	msgcat::mclocale $::env(LANG)
 }
-if {[msgcat::mcload $where_is/msgs] != 1} {
+if {[msgcat::mcload $option(root)/msgs] != 1} {
 	msgcat::mclocale en
-	msgcat::mcload $where_is/msgs
+	msgcat::mcload $option(root)/msgs
 	puts "$::env(LANG) no translation found"
 }
 #Sourcing logfile and launching log process
-source $::where_is/data/log_viewer.tcl
+source $::option(root)/data/log_viewer.tcl
 log_viewerCheck
 log_writeOutTv 0 "TV-Viewer process PID [pid]"
 #Source create icons
-source $::where_is/data/create_icons.tcl
+source $::option(root)/data/create_icons.tcl
 #Create all icons for app.
 create_icons
 #Source error event handler
-source $::where_is/data/error_interp.tcl
+source $::option(root)/data/error_interp.tcl
 #Tell tk to use new error handler
 interp bgerror {} [namespace which error_interpUi]
 #Source splash screen
-source $::where_is/data/launch_splash.tcl
+source $::option(root)/data/launch_splash.tcl
 #Launching splash screen if wanted.
 if {$::option(show_splash) == 1} {
 	launch_splash_screen
 }
 #Source station after message.
-source $::where_is/data/station_after_msg.tcl
+source $::option(root)/data/station_after_msg.tcl
 #Source alle related functions for station changing.
-source $::where_is/data/main_station_zap.tcl
+source $::option(root)/data/main_station_zap.tcl
 #Source reading station list
-source $::where_is/data/main_read_station_file.tcl
+source $::option(root)/data/main_read_station_file.tcl
 #Execute reading of station list
 main_readStationFile
 #Source stream and picqual related stuff.
-source $::where_is/data/main_picqual_stream.tcl
+source $::option(root)/data/main_picqual_stream.tcl
 #Source tv player and related functions
-source $::where_is/data/tv_callback.tcl
-source $::where_is/data/tv_file_calc.tcl
-source $::where_is/data/tv_player.tcl
-source $::where_is/data/tv_playback.tcl
-source $::where_is/data/tv_seek.tcl
-source $::where_is/data/tv_slist.tcl
-source $::where_is/data/tv_wm.tcl
+source $::option(root)/data/tv_callback.tcl
+source $::option(root)/data/tv_file_calc.tcl
+source $::option(root)/data/tv_player.tcl
+source $::option(root)/data/tv_playback.tcl
+source $::option(root)/data/tv_seek.tcl
+source $::option(root)/data/tv_slist.tcl
+source $::option(root)/data/tv_wm.tcl
 #Source tv osd
-source $::where_is/data/tv_osd.tcl
+source $::option(root)/data/tv_osd.tcl
 #Source newsreader ui and update checker.
-source $::where_is/data/main_newsreader.tcl
+source $::option(root)/data/main_newsreader.tcl
 #Source system tray.
-source $::where_is/data/main_system_tray.tcl
+source $::option(root)/data/main_system_tray.tcl
 #Source info toplevel and user guide.
-source $::where_is/data/info_help.tcl
+source $::option(root)/data/info_help.tcl
 #Source key sequences
-source $::where_is/data/key_sequences.tcl
+source $::option(root)/data/key_sequences.tcl
 #Source tooltip
-source $::where_is/data/tooltip.tcl
+source $::option(root)/data/tooltip.tcl
 #Source main ui and related functions
-source $::where_is/data/main_frontend.tcl
+source $::option(root)/data/main_frontend.tcl
 #Source command socket
-source $::where_is/data/command_socket.tcl
+source $::option(root)/data/command_socket.tcl
 #Source color management toplevel and related functions.
-source $::where_is/data/colorm.tcl
+source $::option(root)/data/colorm.tcl
 #Source diagnostic routine frontend.
-source $::where_is/data/diag_frontend.tcl
+source $::option(root)/data/diag_frontend.tcl
 #Source functions to create events and bindings
-source $::where_is/data/event_bind.tcl
+source $::option(root)/data/event_bind.tcl
 #Source station item related stuff.
-source $::where_is/data/station_item.tcl
+source $::option(root)/data/station_item.tcl
 #Source station editor
-source $::where_is/data/station_edit.tcl
+source $::option(root)/data/station_edit.tcl
 #Source station search
-source $::where_is/data/station_search.tcl
+source $::option(root)/data/station_search.tcl
 #Source record wizard
-source $::where_is/data/record_wizard.tcl
+source $::option(root)/data/record_wizard.tcl
 #Source direct record function
-source $::where_is/data/record_handler.tcl
+source $::option(root)/data/record_handler.tcl
 #Source adding a new recording
-source $::where_is/data/record_add_edit.tcl
+source $::option(root)/data/record_add_edit.tcl
 #Source remote functions for scheduler
-source $::where_is/data/record_scheduler_remote.tcl
+source $::option(root)/data/record_scheduler_remote.tcl
 #Source timeshift
-source $::where_is/data/main_timeshift.tcl
+source $::option(root)/data/main_timeshift.tcl
 #Source read and set config values for config-wizard.
-source $::where_is/data/config_wizard_read_settings.tcl
+source $::option(root)/data/config_wizard_read_settings.tcl
 #Source main ui config
-source $::where_is/data/config_wizard.tcl
+source $::option(root)/data/config_wizard.tcl
 #Source general options
-source $::where_is/data/config_general.tcl
+source $::option(root)/data/config_general.tcl
 #Source config options analog
-source $::where_is/data/config_analog.tcl
+source $::option(root)/data/config_analog.tcl
 #Source config options dvb
-source $::where_is/data/config_dvb.tcl
+source $::option(root)/data/config_dvb.tcl
 #Source config options video
-source $::where_is/data/config_video.tcl
+source $::option(root)/data/config_video.tcl
 #Source config options audio
-source $::where_is/data/config_audio.tcl
+source $::option(root)/data/config_audio.tcl
 #Source config options radio
-source $::where_is/data/config_radio.tcl
+source $::option(root)/data/config_radio.tcl
 #Source config options interface
-source $::where_is/data/config_interface.tcl
+source $::option(root)/data/config_interface.tcl
 #Source config options record
-source $::where_is/data/config_record.tcl
+source $::option(root)/data/config_record.tcl
 #Source config options advanced
-source $::where_is/data/config_advanced.tcl
+source $::option(root)/data/config_advanced.tcl
 #Source font chooser dialog
-source $::where_is/data/font_chooser.tcl
+source $::option(root)/data/font_chooser.tcl
 
 #Launching main ui and all things that need to be done now...
 

@@ -18,7 +18,7 @@
 
 proc timeshift {tbutton} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift \033\[0m \{$tbutton\}"
-	set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+	set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 	if { $status_recordlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -29,7 +29,7 @@ proc timeshift {tbutton} {
 		}
 	}
 	catch {exec""}
-	set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+	set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
 	if { $status_timeslinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
@@ -38,7 +38,7 @@ proc timeshift {tbutton} {
 			$tbutton state !pressed
 			catch {exec kill $resultat_timeslinkread}
 			after 2000 {catch {exec""}}
-			catch {file delete "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
+			catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
 			catch {timeshift_calcDF cancel}
 			record_schedulerPreStop timeshift
 			return
@@ -68,7 +68,7 @@ proc timeshift_start_preRec {tbutton} {
 		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
 	} else {
 		catch {exec ""}
-		set rec_pid [exec "$::where_is/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
 		after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
 	}
 }
@@ -79,7 +79,7 @@ proc timeshift_Wait {tbutton} {
 		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
 	} else {
 		catch {exec ""}
-		set rec_pid [exec "$::where_is/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
 		after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
 	}
 }
@@ -99,7 +99,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 		return
 	}
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"] && [file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
-		catch {exec ln -f -s "$rec_pid" "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"}
+		catch {exec ln -f -s "$rec_pid" "$::option(home)/tmp/timeshift_lockfile.tmp"}
 		log_writeOutTv 0 "Timeshift process PID $rec_pid"
 		if {$::option(timeshift_df) != 0} {
 			log_writeOutTv 1 "Starting to calculate free disk space for timeshift."
@@ -110,7 +110,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 	} else {
 		catch {exec kill $rec_pid}
 		catch {exec ""}
-		set rec_pid [exec "$::where_is/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
 		after 3000 [list timeshift_start_Rec [expr $counter + 1] $rec_pid $tbutton]
 	}
 }
@@ -144,7 +144,7 @@ proc timeshift_Save {tvw} {
 	{{Video Files}      {.mpeg}       }
 	}
 	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
-	if {[file exists "$::option(where_is_home)/tmp/timeshift.mpeg"]} {
+	if {[file exists "$::option(home)/tmp/timeshift.mpeg"]} {
 		log_writeOutTv 0 "Found timeshift mpeg file, opening file save dialog."
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
 		if {[string trim $ofile] != {}} {
@@ -158,7 +158,7 @@ proc timeshift_Save {tvw} {
 		}
 	} else {
 		log_writeOutTv 2 "Can not find timeshift.mpeg in"
-		log_writeOutTv 2 "$::option(where_is_home)/tmp/"
+		log_writeOutTv 2 "$::option(home)/tmp/"
 		log_writeOutTv 2 "File can not be saved"
 	}
 }
@@ -230,7 +230,7 @@ Please wait..."] \
 	wm transient $wtop .tv
 	
 	
-	set sfile "$::option(where_is_home)/tmp/timeshift.mpeg"
+	set sfile "$::option(home)/tmp/timeshift.mpeg"
 	set file_size [file size $sfile]
 	set file_size_s [format %.2f [expr ($file_size / 1073741824.0)]]
 	set ::timeshift(lProgress) "0 / $file_size_s GB"

@@ -578,7 +578,7 @@ proc record_add_editOfile {w} {
 proc record_add_editDelete {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\}"
 	if {[string trim [$tree selection]] == {}} return
-	set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 	if { $status_schedlinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
@@ -598,8 +598,8 @@ proc record_add_editDelete {tree} {
 	} else {
 		$tree delete [$tree selection]
 	}
-	catch {file delete -force "$::option(where_is_home)/config/scheduled_recordings.conf"}
-	set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" a]
+	catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
+	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
 	foreach ritem [split [$tree children {}]] {
 		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
 	}
@@ -607,7 +607,7 @@ proc record_add_editDelete {tree} {
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::where_is/data/record_scheduler.tcl" &}
+		catch {exec "$::option(root)/data/record_scheduler.tcl" &}
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"

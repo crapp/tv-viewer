@@ -111,7 +111,7 @@ proc config_wizardReadSettings {} {
 		rec_duration_sec 0
 		rec_sched_auto 1
 		timeshift_df 1000
-		timeshift_path "$::option(where_is_home)/tmp"
+		timeshift_path "$::option(home)/tmp"
 	}
 	
 	array set ::stnd_opt {
@@ -206,7 +206,7 @@ proc config_wizardReadSettings {} {
 		rec_duration_sec 0
 		rec_sched_auto 1
 		timeshift_df 1000
-		timeshift_path "$::option(where_is_home)/tmp"
+		timeshift_path "$::option(home)/tmp"
 	}
 	
 	array set ::opt_choiceGeneral {
@@ -307,8 +307,8 @@ proc config_wizardReadSettings {} {
 		sb_logging_sched log_size_scheduler
 	}
 
-	if {[file exists "$::option(where_is_home)/config/tv-viewer.conf"]} {
-		set open_config_file [open "$::option(where_is_home)/config/tv-viewer.conf" r]
+	if {[file exists "$::option(home)/config/tv-viewer.conf"]} {
+		set open_config_file [open "$::option(home)/config/tv-viewer.conf" r]
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {

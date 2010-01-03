@@ -22,13 +22,8 @@ package require Tcl 8.5
 
 set ::option(appname) tv-viewer_recorder
 
-#set processing_folder [file dirname [file normalize [info script]]]
-if {[file type [info script]] == "link" } {
-	set where_is [file dirname [file normalize [file readlink [info script]]]]
-} else {
-	set where_is [file dirname [file normalize [info script]]]
-}
-set option(where_is_home) "$::env(HOME)/.tv-viewer"
+set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
+set option(home) "$::env(HOME)/.tv-viewer"
 
 proc recorderShowProgress { fdin fdout size bytes {error ""} } {
 	if { $error != "" } {

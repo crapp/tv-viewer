@@ -43,15 +43,15 @@ proc option_screen_0 {} {
 		-background $::option(theme_$::option(use_theme))
 		$::window(general_nb1).mbLanguage add radiobutton \
 		-variable choice(mbLanguage) \
-		-command {set ::choice(mbLanguage_value) 0; msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::where_is/msgs}} \
+		-command {set ::choice(mbLanguage_value) 0; msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::option(root)/msgs}} \
 		-label [mc "Autodetect"]
 		$::window(general_nb1).mbLanguage add radiobutton \
 		-variable choice(mbLanguage) \
-		-command {set ::choice(mbLanguage_value) en; msgcat::mclocale en; catch {msgcat::mcload $::where_is/msgs}} \
+		-command {set ::choice(mbLanguage_value) en; msgcat::mclocale en; catch {msgcat::mcload $::option(root)/msgs}} \
 		-label [mc "English (en)"]
 		$::window(general_nb1).mbLanguage add radiobutton \
 		-variable choice(mbLanguage) \
-		-command {set ::choice(mbLanguage_value) de; msgcat::mclocale de; catch {msgcat::mcload $::where_is/msgs}} \
+		-command {set ::choice(mbLanguage_value) de; msgcat::mclocale de; catch {msgcat::mcload $::option(root)/msgs}} \
 		-label [mc "German (de)"]
 		ttk::labelframe $::window(general_nb1).lf_starttv \
 		-text [mc "Start TV on startup"]
@@ -184,7 +184,7 @@ The Newsreader will check for news about TV-Viewer."]
 			log_writeOutTv 1 "Setting general options to default."
 			set ::choice(mbLanguage) $::stnd_opt(language)
 			set ::choice(mbLanguage_value) $::stnd_opt(language_value)
-			msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::where_is/msgs}
+			msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::option(root)/msgs}
 			set ::choice(checkbutton_starttv) $::stnd_opt(starttv_startup)
 			set ::choice(checkbutton_newsreader) $::stnd_opt(newsreader)
 			set ::choice(sb_newsreader) $::stnd_opt(newsreader_interval)

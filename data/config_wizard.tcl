@@ -133,8 +133,8 @@ proc config_wizardMainUi {} {
 	settooltip $wfbtn.button_quit [mc "Discard changes and close preferences dialog."]
 	
 	set ::config(rec_running) 0
-	set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-	set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+	set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+	set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 	if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
 		catch {exec ps -eo "%p"} read_ps
 		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -216,14 +216,14 @@ proc config_wizardExit {} {
 
 proc config_wizardSaveopts {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardSaveopts \033\[0m"
-	log_writeOutTv 0 "Saving configuration values to $::option(where_is_home)/config/tv-viewer.conf"
-	if {[file exists "$::option(where_is_home)/config/tv-viewer.conf"]} {
-		file delete "$::option(where_is_home)/config/tv-viewer.conf"
+	log_writeOutTv 0 "Saving configuration values to $::option(home)/config/tv-viewer.conf"
+	if {[file exists "$::option(home)/config/tv-viewer.conf"]} {
+		file delete "$::option(home)/config/tv-viewer.conf"
 	}
-	set config_file_open [open "$::option(where_is_home)/config/tv-viewer.conf" w]
+	set config_file_open [open "$::option(home)/config/tv-viewer.conf" w]
 	puts $config_file_open "#TV-Viewer config file. File is generated automatically, do not edit manually."
 	close $config_file_open
-	set config_file_open [open "$::option(where_is_home)/config/tv-viewer.conf" a]
+	set config_file_open [open "$::option(home)/config/tv-viewer.conf" a]
 	puts $config_file_open "
 #General settings
 "

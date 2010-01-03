@@ -24,49 +24,49 @@ proc create_icons {} {
 		if { $status_img != 0 } {
 			log_writeOutTv 1 "Your version of Tcl/Tk doesn't support png."
 			log_writeOutTv 1 "Install tkimg (libtk-img) to get high quality icons."
-			foreach ic [split [glob $::where_is/icons/16x16/*.gif]] {
+			foreach ic [split [glob $::option(root)/icons/16x16/*.gif]] {
 				set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
-			foreach ic [split [glob $::where_is/icons/22x22/*.gif]] {
+			foreach ic [split [glob $::option(root)/icons/22x22/*.gif]] {
 				set ::icon_m([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
-			foreach ic [split [glob $::where_is/icons/32x32/*.gif]] {
+			foreach ic [split [glob $::option(root)/icons/32x32/*.gif]] {
 				set ::icon_b([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
-			foreach ic [split [glob $::where_is/icons/extras/*.gif]] {
+			foreach ic [split [glob $::option(root)/icons/extras/*.gif]] {
 				set ::icon_e([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
 		} else {
 			log_writeOutTv 0 "Found package tkimg, activating png support for icons."
-			foreach ic [split [glob $::where_is/icons/16x16/*.png]] {
+			foreach ic [split [glob $::option(root)/icons/16x16/*.png]] {
 				set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
-			foreach ic [split [glob $::where_is/icons/22x22/*.png]] {
+			foreach ic [split [glob $::option(root)/icons/22x22/*.png]] {
 				set ::icon_m([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
-			foreach ic [split [glob $::where_is/icons/32x32/*.png]] {
+			foreach ic [split [glob $::option(root)/icons/32x32/*.png]] {
 				set ::icon_b([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
-			foreach ic [split [glob $::where_is/icons/extras/*.png]] {
+			foreach ic [split [glob $::option(root)/icons/extras/*.png]] {
 				set ::icon_e([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 			}
 		}
 	} else {
 		log_writeOutTv 0 "Found Tcl/Tk >=8.6 , activating png support for icons."
-		foreach ic [split [glob $::where_is/icons/16x16/*.png]] {
+		foreach ic [split [glob $::option(root)/icons/16x16/*.png]] {
 			set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 		}
-		foreach ic [split [glob $::where_is/icons/22x22/*.png]] {
+		foreach ic [split [glob $::option(root)/icons/22x22/*.png]] {
 			set ::icon_m([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 		}
-		foreach ic [split [glob $::where_is/icons/32x32/*.png]] {
+		foreach ic [split [glob $::option(root)/icons/32x32/*.png]] {
 			set ::icon_b([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 		}
-		foreach ic [split [glob $::where_is/icons/extras/*.png]] {
+		foreach ic [split [glob $::option(root)/icons/extras/*.png]] {
 			set ::icon_e([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 		}
 	}
 	# Creating a special icon for choosing font color.
-	set ::icon_e(pick-color3) [image create bitmap -file "$::where_is/icons/extras/pick-color3.xbm"]
-	set ::icon_e(arrow-d) [image create photo -file "$::where_is/icons/extras/arrow-d.gif"]
+	set ::icon_e(pick-color3) [image create bitmap -file "$::option(root)/icons/extras/pick-color3.xbm"]
+	set ::icon_e(arrow-d) [image create photo -file "$::option(root)/icons/extras/arrow-d.gif"]
 }

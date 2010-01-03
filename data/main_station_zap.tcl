@@ -50,7 +50,7 @@ proc main_stationChannelDown {w} {
 					main_stationInputLoop cancel 0 0 0 0 0
 					set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 				}
-				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+				set last_channel_conf "$::option(home)/config/lastchannel.conf"
 				set last_channel_write [open $last_channel_conf w]
 				puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 				close $last_channel_write
@@ -96,7 +96,7 @@ proc main_stationChannelUp {w} {
 					main_stationInputLoop cancel 0 0 0 0 0
 					set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 				}
-				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+				set last_channel_conf "$::option(home)/config/lastchannel.conf"
 				set last_channel_write [open $last_channel_conf w]
 				puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 				close $last_channel_write
@@ -139,7 +139,7 @@ proc main_stationChannelJumper {w} {
 				main_stationInputLoop cancel 0 0 0 0 0
 				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(old) 2]) [lindex $::station(old) 1] [lindex $::station(old) 2] $restart 1]]
 			}
-			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			set last_channel_conf "$::option(home)/config/lastchannel.conf"
 			set last_channel_write [open $last_channel_conf w]
 			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 			close $last_channel_write
@@ -175,7 +175,7 @@ proc main_stationChannelJumper {w} {
 				main_stationInputLoop cancel 0 0 0 0 0
 				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 			}
-			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			set last_channel_conf "$::option(home)/config/lastchannel.conf"
 			set last_channel_write [open $last_channel_conf w]
 			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 			close $last_channel_write
@@ -221,7 +221,7 @@ proc main_stationListboxStations {slist} {
 					.frame_slistbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
 				}
 			}
-			set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			set last_channel_conf "$::option(home)/config/lastchannel.conf"
 			set last_channel_write [open $last_channel_conf w]
 			puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 			close $last_channel_write
@@ -296,7 +296,7 @@ proc main_stationStationNr {w number} {
 			main_stationInputLoop cancel 0 0 0 0 0
 			set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] $restart 1]]
 		}
-		set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+		set last_channel_conf "$::option(home)/config/lastchannel.conf"
 		set last_channel_write [open $last_channel_conf w]
 		puts -nonewline $last_channel_write "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 		close $last_channel_write

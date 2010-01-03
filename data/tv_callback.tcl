@@ -49,7 +49,7 @@ proc tv_callbackVidData {} {
 				bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
-				set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+				set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 				if { $status_recordlinkread == 0 } {
 					catch {exec ps -eo "%p"} read_ps
 					set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -84,8 +84,8 @@ proc tv_callbackVidData {} {
 			}
 			if {[string match -nocase "ID_LENGTH=*" $line]} {
 				log_writeOutTv 0 "This is a recording, starting to calculate file size and position."
-				set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-				set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+				set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+				set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 				if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
 					catch {exec ps -eo "%p"} read_ps
 					set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -148,8 +148,8 @@ proc tv_callbackVidData {} {
 					}
 				}
 				tv_playerVolumeControl .bottom_buttons $::main(volume_scale)
-				set status_timeslinkread [catch {file readlink "$::option(where_is_home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-				set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+				set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
+				set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 				if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
 					catch {exec ps -eo "%p"} read_ps
 					set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]

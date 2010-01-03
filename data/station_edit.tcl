@@ -70,12 +70,12 @@ proc station_editZap {w} {
 
 proc station_editSave {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editSave \033\[0m \{$w\}"
-	log_writeOutTv 0 "Writing stations to $::option(where_is_home)/config/stations_$::option(frequency_table).conf"
-	catch {file delete "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"}
-	catch {file delete "$::option(where_is_home)/config/lastchannel.conf"}
+	log_writeOutTv 0 "Writing stations to $::option(home)/config/stations_$::option(frequency_table).conf"
+	catch {file delete "$::option(home)/config/stations_$::option(frequency_table).conf"}
+	catch {file delete "$::option(home)/config/lastchannel.conf"}
 	foreach sitem [split [$w children {}]] {
-		if {[file exists "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"] != 1} {
-			set open_sfile_write [open "$::option(where_is_home)/config/stations_$::option(frequency_table).conf" w]
+		if {[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"] != 1} {
+			set open_sfile_write [open "$::option(home)/config/stations_$::option(frequency_table).conf" w]
 			if {"[$w item $sitem -tags]" == "disabled"} {
 				puts -nonewline $open_sfile_write "\#\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2]"
 			} else {
@@ -83,7 +83,7 @@ proc station_editSave {w} {
 			}
 			close $open_sfile_write
 		} else {
-			set open_sfile_append [open "$::option(where_is_home)/config/stations_$::option(frequency_table).conf" a]
+			set open_sfile_append [open "$::option(home)/config/stations_$::option(frequency_table).conf" a]
 			if {"[$w item $sitem -tags]" == "disabled"} {
 				puts -nonewline $open_sfile_append "
 \#\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2]"
@@ -103,7 +103,7 @@ proc station_editExit {} {
 	catch {array unset ::kanalcall}
 	catch {array unset ::kanalinput}
 	log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
-	if !{[file exists "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"]} {
+	if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 		set status_tv_playback [tv_callbackMplayerRemote alive]
 		if {$status_tv_playback != 1} {
 			tv_playbackStop 0 nopic
@@ -112,7 +112,7 @@ proc station_editExit {} {
 		log_writeOutTv 2 "Please create one using the Station Editor."
 		log_writeOutTv 2 "Make sure you checked the configuration first!"
 	} else {
-		set file "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"
+		set file "$::option(home)/config/stations_$::option(frequency_table).conf"
 		set open_channel_file [open $file r]
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
@@ -133,8 +133,8 @@ proc station_editExit {} {
 			log_writeOutTv 2 "Make sure you checked the configuration first!"
 		} else {
 			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
-			if {[file exists "$::option(where_is_home)/config/lastchannel.conf"]} {
-				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			if {[file exists "$::option(home)/config/lastchannel.conf"]} {
+				set last_channel_conf "$::option(home)/config/lastchannel.conf"
 				set open_lastchannel [open $last_channel_conf r]
 				set open_lastchannel_read [read $open_lastchannel]
 				lassign $open_lastchannel_read kanal channel sendernummer
@@ -144,7 +144,7 @@ proc station_editExit {} {
 				close $open_lastchannel
 				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 			} else {
-				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+				set last_channel_conf "$::option(home)/config/lastchannel.conf"
 				set fileId [open $last_channel_conf "w"]
 				puts -nonewline $fileId "\{$::kanalid(1)\} $::kanalcall(1) 1"
 				close $fileId
@@ -418,8 +418,8 @@ proc station_editUi {} {
 		$wfstation.tv_station column frequency -width [expr [font measure $font $name] + 20]
 		$wfstation.tv_station column input -width [expr [font measure $font $name] + 60]
 		$wfstation.tv_station tag configure disabled -foreground red
-		if {[file exists "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"]} {
-			set file "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"
+		if {[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
+			set file "$::option(home)/config/stations_$::option(frequency_table).conf"
 			set open_channels_file [open $file r]
 			set i 1
 			while {[gets $open_channels_file line]!=-1} {

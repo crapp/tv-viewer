@@ -57,7 +57,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1.1 65 03.01.2010}
+set option(release_version) {0.8.1.1 66 03.01.2010}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}
@@ -214,11 +214,6 @@ diag_writeOut $diag_file_append "
 ***********************************************************************
 Dircheck(/home/.tv-viewer):
 $resultat_dircheck"
-#~ set dircheck2 [catch {exec sh -c "ls -R $dwhere_is/*"} resultat_dircheck2]
-#~ diag_writeOut $diag_file_append "
-#~ ***********************************************************************
-#~ Dircheck(/usr/share/tv-viewer):
-#~ $resultat_dircheck2"
 
 after 500
 

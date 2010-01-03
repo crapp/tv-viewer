@@ -18,13 +18,13 @@
 
 proc main_readStationFile {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readStationFile \033\[0m"
-	if !{[file exists "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"]} {
+	if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 		log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
 		log_writeOutTv 1 "Please create one using the Station Editor."
 		log_writeOutTv 1 "Make sure you checked the configuration first!"
 		set ::main(running_recording) 0
 	} else {
-		set file "$::option(where_is_home)/config/stations_$::option(frequency_table).conf"
+		set file "$::option(home)/config/stations_$::option(frequency_table).conf"
 		set open_channel_file [open $file r]
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
@@ -46,7 +46,7 @@ proc main_readStationFile {} {
 			set ::main(running_recording) 0
 		} else {
 			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
-			set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+			set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 			if { $status_recordlinkread == 0 } {
 				catch {exec ps -eo "%p"} read_ps
 				set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
@@ -59,8 +59,8 @@ proc main_readStationFile {} {
 			} else {
 				set ::main(running_recording) 0
 			}
-			if {[file exists "$::option(where_is_home)/config/lastchannel.conf"]} {
-				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+			if {[file exists "$::option(home)/config/lastchannel.conf"]} {
+				set last_channel_conf "$::option(home)/config/lastchannel.conf"
 				set open_lastchannel [open $last_channel_conf r]
 				set open_lastchannel_read [read $open_lastchannel]
 				lassign $open_lastchannel_read kanal channel sendernummer
@@ -83,7 +83,7 @@ proc main_readStationFile {} {
 				}
 				close $open_lastchannel
 			} else {
-				set last_channel_conf "$::option(where_is_home)/config/lastchannel.conf"
+				set last_channel_conf "$::option(home)/config/lastchannel.conf"
 				set fileId [open $last_channel_conf "w"]
 				puts -nonewline $fileId "\{$::kanalid(1)\} $::kanalcall(1) 1"
 				close $fileId

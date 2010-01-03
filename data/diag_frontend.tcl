@@ -81,7 +81,7 @@ Please wait..."] \
 		
 		tv_playbackStop 0 pic
 		
-		catch {exec "$::where_is/data/diag_runtime.tcl" &} diag_pid
+		catch {exec "$::option(root)/data/diag_runtime.tcl" &} diag_pid
 		set ::diag(wait_id) [after 500 [list diag_checkRunning $diag_pid 0]]
 	}
 }

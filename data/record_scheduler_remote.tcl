@@ -62,7 +62,7 @@ proc record_schedulerPrestart {handler} {
 	}
 	if {$::main(running_recording) != 1} {
 		if {[winfo exists .tv.l_anigif] == 0} {
-			set img_list [launch_splashAnigif "$::where_is/icons/extras/BigBlackIceRoller.gif"]
+			set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
 			label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
 			place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
 			set img_list_length [llength $img_list]
@@ -149,8 +149,8 @@ proc record_schedulerRec {handler} {
 		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
 	}
 	if {"$handler" != "timeshift"} {
-		if {[file exists "$::option(where_is_home)/config/current_rec.conf"]} {
-			set open_f [open "$::option(where_is_home)/config/current_rec.conf" r]
+		if {[file exists "$::option(home)/config/current_rec.conf"]} {
+			set open_f [open "$::option(home)/config/current_rec.conf" r]
 			while {[gets $open_f line]!=-1} {
 				if {[string trim $line] == {}} continue
 				lassign $line station sdate stime edate etime duration ::tv(current_rec_file)
@@ -190,8 +190,8 @@ Started at %" [lindex $::station(last) 0] $stime]
 			foreach ritem [split [.record_wizard.tree_frame.tv_rec children {}]] {
 				.record_wizard.tree_frame.tv_rec delete $ritem
 			}
-			if {[file exists "$::option(where_is_home)/config/scheduled_recordings.conf"]} {
-				set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" r]
+			if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
+				set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
 				while {[gets $f_open line]!=-1} {
 					if {[string trim $line] == {} || [string match #* $line]} continue
 					.record_wizard.tree_frame.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6]]
@@ -223,14 +223,14 @@ proc record_schedulerPreStop {handler} {
 		log_writeOutTv 0 "Prestop sequence for recording initiated."
 		catch {after cancel $::record(after_prestop_id)}
 		unset -nocomplain ::record(after_prestop_id)
-		set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+		set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 		if { $status_recordlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 			if { $status_greppid_record == 0 } {
 				log_writeOutTv 0 "There is an active recording (PID $resultat_recordlinkread)."
 				catch {exec kill $resultat_greppid_record}
-				catch {file delete -force "$::option(where_is_home)/tmp/record_lockfile.tmp"}
+				catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
 				after 3000 {
 					command_WritePipe "tv-viewer_scheduler scheduler_zombie"
 				}
@@ -269,10 +269,10 @@ proc record_schedulerPreStop {handler} {
 		}
 	} else {
 		if {[winfo exists .tv.file_play_bar.b_save]} {
-			if {[file exists "$::option(where_is_home)/tmp/timeshift.mpeg"]} {
+			if {[file exists "$::option(home)/tmp/timeshift.mpeg"]} {
 				.tv.file_play_bar.b_save state !disabled
 				if {$::option(tooltips_player) == 1} {
-					set file_size [expr round((([file size "$::option(where_is_home)/tmp/timeshift.mpeg"] / 1024.0) / 1024.0))]
+					set file_size [expr round((([file size "$::option(home)/tmp/timeshift.mpeg"] / 1024.0) / 1024.0))]
 					if {$file_size > 1000} {
 						set file_size [expr round($file_size / 1024)]
 						set file_size "$file_size GB"

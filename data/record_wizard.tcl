@@ -30,7 +30,7 @@ proc record_wizardScheduler {sbutton slable com} {
 		if {[winfo exists $sbutton]} {
 			$sbutton configure -command {}
 		}
-		set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+		set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 		if { $status_schedlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
@@ -47,7 +47,7 @@ proc record_wizardScheduler {sbutton slable com} {
 		}
 		log_writeOutTv 0 "Starting Scheduler..."
 		catch {exec ""}
-		catch {exec "$::where_is/data/record_scheduler.tcl" &}
+		catch {exec "$::option(root)/data/record_scheduler.tcl" &}
 	}
 }
 
@@ -216,13 +216,13 @@ proc record_wizardUi {} {
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <Key-F1> [list info_helpHelp]
 		
-		set status_recordlinkread [catch {file readlink "$::option(where_is_home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
+		set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
 		if { $status_recordlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 			if { $status_greppid_record == 0 } {
-				if {[file exists "$::option(where_is_home)/config/current_rec.conf"]} {
-					set f_open [open "$::option(where_is_home)/config/current_rec.conf" r]
+				if {[file exists "$::option(home)/config/current_rec.conf"]} {
+					set f_open [open "$::option(home)/config/current_rec.conf" r]
 					while {[gets $f_open line]!=-1} {
 						if {[string trim $line] == {}} continue
 						lassign $line station sdate stime edate etime duration recfile
@@ -245,7 +245,7 @@ proc record_wizardUi {} {
 			$statf.b_rec_current state disabled
 		}
 		catch {exec ""}
-		set status_schedlinkread [catch {file readlink "$::option(where_is_home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+		set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 		if { $status_schedlinkread == 0 } {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
@@ -260,8 +260,8 @@ proc record_wizardUi {} {
 			log_writeOutTv 0 "Scheduler is not running."
 			record_schedulerRemote 1
 		}
-		if {[file exists "$::option(where_is_home)/config/scheduled_recordings.conf"]} {
-			set f_open [open "$::option(where_is_home)/config/scheduled_recordings.conf" r]
+		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
+			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
 			while {[gets $f_open line]!=-1} {
 				if {[string trim $line] == {} || [string match #* $line]} continue
 				$treef.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6]]

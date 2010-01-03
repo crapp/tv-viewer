@@ -20,26 +20,21 @@
 
 package require Tcl 8.5
 
-#set processing_folder [file dirname [file normalize [info script]]]
-if {[file type [info script]] == "link" } {
-	set where_is [file dirname [file normalize [file readlink [info script]]]]
-} else {
-	set where_is [file dirname [file normalize [info script]]]
-}
-set option(where_is_home) "$::env(HOME)/.tv-viewer"
+set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
+set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.1.1 65 03.01.2010}
+set option(release_version) {0.8.1.1 66 03.01.2010}
 
-source $where_is/main_read_config.tcl
-source $where_is/log_viewer.tcl
-source $where_is/command_socket.tcl
+source $option(root)/main_read_config.tcl
+source $option(root)/log_viewer.tcl
+source $option(root)/command_socket.tcl
 
 main_readConfig
 
-if {[file exists "$::option(where_is_home)/log/tvviewer.log"]} {
+if {[file exists "$::option(home)/log/tvviewer.log"]} {
 	if {$::option(log_files) == 1} {
-		set logf_tv_open_append [open $::option(where_is_home)/log/tvviewer.log a]
+		set logf_tv_open_append [open $::option(home)/log/tvviewer.log a]
 		fconfigure $logf_tv_open_append -blocking no -buffering line
 	} else {
 		set logf_tv_open_append [open /dev/null a]

@@ -18,11 +18,6 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-
-set where_is "[file dirname [file normalize [info script]]]"
-set target /usr/local/share
-set printchan stdout
-
 if {[catch {package require Tcl 8.5}]} {
 catch {puts "Program error. You'll need Tcl version 8.5 or higher.
 
@@ -37,7 +32,11 @@ might not point to the correct location.
 exit 1
 }
 
-set option(release_version) {0.8.1.1 65 03.01.2010}
+set where_is "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
+set target /usr/local/share
+set printchan stdout
+set option(release_version) {0.8.1.1 66 03.01.2010}
+
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {

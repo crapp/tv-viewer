@@ -313,7 +313,7 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag configure link_icons -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_icons <Any-Enter> "$nb3.t_license tag configure link_icons $hylink_enter; $nb3.t_license configure -cursor hand1"
 		$nb3.t_license tag bind link_icons <Any-Leave> "$nb3.t_license tag configure link_icons $hylink_leave; $nb3.t_license configure -cursor {}"
-		$nb3.t_license tag bind link_icons <Button-1> {catch {exec sh -c "xdg-open $::where_is/license/icons_license.txt" &}}
+		$nb3.t_license tag bind link_icons <Button-1> {catch {exec sh -c "xdg-open $::option(root)/license/icons_license.txt" &}}
 		
 		$nb3.t_license tag configure link_tktray -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_tktray <Any-Enter> "$nb3.t_license tag configure link_tktray $hylink_enter; $nb3.t_license configure -cursor hand1"
@@ -328,7 +328,7 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag configure link_autoscr -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_autoscr <Any-Enter> "$nb3.t_license tag configure link_autoscr $hylink_enter; $nb3.t_license configure -cursor hand1"
 		$nb3.t_license tag bind link_autoscr <Any-Leave> "$nb3.t_license tag configure link_autoscr $hylink_leave; $nb3.t_license configure -cursor {}"
-		$nb3.t_license tag bind link_autoscr <Button-1> {catch {exec sh -c "xdg-open $::where_is/extensions/autoscroll/license.terms" &}}
+		$nb3.t_license tag bind link_autoscr <Button-1> {catch {exec sh -c "xdg-open $::option(root)/extensions/autoscroll/license.terms" &}}
 		
 		$nb3.t_license tag configure link_fsdialog -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_fsdialog <Any-Enter> "$nb3.t_license tag configure link_fsdialog $hylink_enter; $nb3.t_license configure -cursor hand1"
