@@ -32,10 +32,10 @@ might not point to the correct location.
 exit 1
 }
 
-set where_is "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
+set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set target /usr/local/share
 set printchan stdout
-set option(release_version) {0.8.1.1 66 03.01.2010}
+set option(release_version) {0.8.1.1 67 03.01.2010}
 
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --help 0}
 foreach command_argument $argv {
