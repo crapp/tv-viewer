@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.1.1 68 03.01.2010}
+set option(release_version) {0.8.1.1 69 04.01.2010}
 
 source $option(root)/main_read_config.tcl
 source $option(root)/log_viewer.tcl
@@ -158,7 +158,7 @@ if {$start_options(fullscreen)} {
 	exit 0
 }
 if {$start_options(quit)} {
-	command_WritePipe "tv-viewer_main main_frontendExitViewer"
+	command_WritePipe "tv-viewer_main event generate . <<exit>>"
 	log_writeOutTv 0 "Lirc emitter received Signal quit"
 	exit 0
 }

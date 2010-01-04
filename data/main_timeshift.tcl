@@ -144,7 +144,7 @@ proc timeshift_Save {tvw} {
 	{{Video Files}      {.mpeg}       }
 	}
 	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
-	if {[file exists "$::option(home)/tmp/timeshift.mpeg"]} {
+	if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
 		log_writeOutTv 0 "Found timeshift mpeg file, opening file save dialog."
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
 		if {[string trim $ofile] != {}} {
@@ -158,7 +158,7 @@ proc timeshift_Save {tvw} {
 		}
 	} else {
 		log_writeOutTv 2 "Can not find timeshift.mpeg in"
-		log_writeOutTv 2 "$::option(home)/tmp/"
+		log_writeOutTv 2 "$::option(timeshift_path)/"
 		log_writeOutTv 2 "File can not be saved"
 	}
 }
@@ -230,7 +230,7 @@ Please wait..."] \
 	wm transient $wtop .tv
 	
 	
-	set sfile "$::option(home)/tmp/timeshift.mpeg"
+	set sfile "$::option(timeshift_path)/timeshift.mpeg"
 	set file_size [file size $sfile]
 	set file_size_s [format %.2f [expr ($file_size / 1073741824.0)]]
 	set ::timeshift(lProgress) "0 / $file_size_s GB"
@@ -256,7 +256,7 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		if {$::option(systray_close) == 1} {
 			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 		} else {
-			wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
+			wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 		}
 		wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 		grab release .tv.top_cp_progress

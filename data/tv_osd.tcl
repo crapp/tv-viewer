@@ -43,15 +43,19 @@ proc tv_osd {ident atime osd_text} {
 	set color [lindex $::option($ident) 5]
 	
 	set osd [frame .tv.osd -bg #004AFF -padx 5 -pady 5]
-	pack [label $osd.label -bg white -fg $color -text "$osd_text" -justify left]
+	pack [label $osd.label -bg white -fg "$color" -text "$osd_text" -justify left]
 	
 	if {"$style" == "regular"} {
 		$osd.label configure -font "{$font} $size"
 	} else {
 		$osd.label configure -font "{$font} $size {$style}"
 	}
-	
 	place $osd -in .tv {*}$alignment($bias)
+	if {[string match -nocase "#ffffff" [$osd.label cget -fg]]} {
+		log_writeOutTv 1 "OSD with white foreground not possible"
+		log_writeOutTv 1 "Changing font color to black"
+		$osd.label configure -foreground #000000
+	}
 	set ::data(after_id_osd) [after $atime "destroy .tv.osd"]
 	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
 }

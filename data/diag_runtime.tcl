@@ -34,14 +34,7 @@ exit 1
 
 after 200
 
-if {[file type [info script]] == "link" } {
-	set dwhere_is [file dirname [file normalize [file readlink [info script]]]]
-	set dwhere_is [file join {*}[lrange [file split $dwhere_is] 0 end-1]]
-} else {
-	set dwhere_is [file dirname [file normalize [info script]]]
-	set dwhere_is [file join {*}[lrange [file split $dwhere_is] 0 end-1]]
-}
-
+set dwhere_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set dwhere_is_home "$::env(HOME)"
 
 set droot_test "/usr/bin/tv-viewer.tst"
@@ -57,7 +50,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1.1 68 03.01.2010}
+set option(release_version) {0.8.1.1 69 04.01.2010}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}

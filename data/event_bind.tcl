@@ -28,7 +28,8 @@ proc event_constrNoArray {} {
 	bind . <Control-Key-p> {config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
-	bind . <Control-Key-x> {main_frontendExitViewer}
+	event add <<exit>> <Control-Key-x>
+	bind . <<exit>> {main_frontendExitViewer}
 	event add <<input_up>> <Control-Key-i>
 	event add <<input_down>> <Control-Alt-Key-i>
 	bind . <<input_up>> [list main_stationInput 1 1]
@@ -62,7 +63,8 @@ proc event_constrArray {} {
 	bind . <Control-Key-p> {config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
-	bind . <Control-Key-x> {main_frontendExitViewer}
+	event add <<exit>> <Control-Key-x>
+	bind . <<exit>> {main_frontendExitViewer}
 	event add <<input_up>> <Control-Key-i>
 	event add <<input_down>> <Control-Alt-Key-i>
 	bind . <<input_up>> [list main_stationInput 1 1]

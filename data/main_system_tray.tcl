@@ -44,7 +44,7 @@ proc main_systemTrayActivate {handler} {
 	} else {
 		bind .tray <Button-1> {}
 		destroy .tray
-		wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
+		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	}
 }
 

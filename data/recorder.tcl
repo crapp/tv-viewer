@@ -22,8 +22,37 @@ package require Tcl 8.5
 
 set ::option(appname) tv-viewer_recorder
 
-set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
+set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
+
+source "$option(root)/agrep.tcl"
+
+proc recorderCheckMain {com fdin fdout} {
+	if {"$com" == "cancel"} {
+		
+		return
+	}
+	set status [catch {file readlink "$::option(home)/tmp/lockfile.tmp"} result]
+	if {$status == 0} {
+		catch {exec ps -eo "%p"} read_pid
+		set status_greppid [catch {agrep -w "$read_pid" $result} result_greppid]
+		if { $status_greppid != 0 } {
+			catch { chan close $fdin }
+			catch { chan close $fdout }
+			puts "Recorder error: Main app died while running timeshift."
+			exit 1
+		} else {
+			after 1000 [list recorderCheckMain 0 $fdin $fdout]
+		}
+	} else {
+		# Main is dead but recorder is doing timeshift. This is not
+		# possible.
+		catch { chan close $fdin }
+		catch { chan close $fdout }
+		puts "Recorder error: Main app died while running timeshift."
+		exit 1
+	}
+}
 
 proc recorderShowProgress { fdin fdout size bytes {error ""} } {
 	if { $error != "" } {
@@ -57,7 +86,10 @@ if {"$lifespan" != "infinite"} {
 	after [expr {$lifespan * 1000}] {
 		catch { chan close $fdin }
 		catch { chan close $fdout }
+		catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
 		exit 0
 	}
+} else {
+	after 1000 [list recorderCheckMain 0 $fdin $fdout]
 }
 vwait forever

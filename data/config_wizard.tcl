@@ -207,7 +207,7 @@ proc config_wizardExit {} {
 	if {$::option(systray_close) == 1} {
 		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	} else {
-		wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
+		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	}
 	
 	grab release .config_wizard

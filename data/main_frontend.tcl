@@ -61,6 +61,18 @@ proc main_frontendExitViewer {} {
 	close $::logf_mpl_open_append
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
+	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
+	if { $status_schedlinkread == 0 } {
+		catch {exec ps -eo "%p"} read_ps
+		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
+		if { $status_greppid_sched != 0 } {
+			catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
+			catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
+		}
+	} else {
+		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
+		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
+	}
 	destroy .tv
 	exit 0
 }
@@ -401,7 +413,7 @@ proc main_frontendUiTvviewer {} {
 	-label [mc "Exit"] \
 	-compound left \
 	-image $::icon_s(dialog-close) \
-	-command main_frontendExitViewer \
+	-command [list event generate . <<exit>>] \
 	-accelerator [mc "Ctrl+X"]
 	
 	$wfbar.mHelp add separator
@@ -490,7 +502,7 @@ proc main_frontendUiTvviewer {} {
 	
 	wm resizable . 0 0
 	wm title . [mc "TV-Viewer %" [lindex $::option(release_version) 0]]
-	wm protocol . WM_DELETE_WINDOW main_frontendExitViewer
+	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
 	command_socket
@@ -603,9 +615,6 @@ proc main_frontendUiTvviewer {} {
 	if {$::option(systray_close) == 1} {
 		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	} else {
-		wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
-	}
-	if {$::option(systray_close) == 1} {
-		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	}
 }

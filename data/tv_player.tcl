@@ -260,7 +260,7 @@ proc tv_playerUi {} {
 		-label [mc "Exit"] \
 		-compound left \
 		-image $::icon_s(dialog-close) \
-		-command main_frontendExitViewer \
+		-command [list event generate . <<exit>>] \
 		-accelerator [mc "Ctrl+X"]
 		
 		set ::tv(stayontop) 0
@@ -300,7 +300,7 @@ proc tv_playerUi {} {
 		bind $mw <Control-Key-m> {colorm_mainUi}
 		bind $mw <Control-Key-e> {station_editUi}
 		bind $mw <Key-F1> [list info_helpHelp]
-		bind $mw <Control-Key-x> {main_frontendExitViewer}
+		bind $mw <<exit>> {main_frontendExitViewer}
 		bind $mw <ButtonPress-3> [list tk_popup $mw.rightclickViewer %X %Y]
 		bind $mw <Alt-Key-y> {command_WritePipe "tv-viewer_scheduler puts TEST"}
 		
@@ -330,7 +330,7 @@ proc tv_playerUi {} {
 			bind $tv_bg <Motion> {tv_slistCursor %X %Y}
 		}
 		
-		wm protocol $mw WM_DELETE_WINDOW main_frontendExitViewer
+		wm protocol $mw WM_DELETE_WINDOW [list event generate . <<exit>>]
 		wm iconphoto $mw $::icon_b(starttv)
 		if {[info exists ::station(last)]} {
 			wm title $mw "TV - [lindex $::station(last) 0]"

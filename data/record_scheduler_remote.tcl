@@ -269,10 +269,10 @@ proc record_schedulerPreStop {handler} {
 		}
 	} else {
 		if {[winfo exists .tv.file_play_bar.b_save]} {
-			if {[file exists "$::option(home)/tmp/timeshift.mpeg"]} {
+			if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
 				.tv.file_play_bar.b_save state !disabled
 				if {$::option(tooltips_player) == 1} {
-					set file_size [expr round((([file size "$::option(home)/tmp/timeshift.mpeg"] / 1024.0) / 1024.0))]
+					set file_size [expr round((([file size "$::option(timeshift_path)/timeshift.mpeg"] / 1024.0) / 1024.0))]
 					if {$file_size > 1000} {
 						set file_size [expr round($file_size / 1024)]
 						set file_size "$file_size GB"
