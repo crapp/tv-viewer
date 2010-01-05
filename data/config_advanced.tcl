@@ -253,6 +253,7 @@ proc option_screen_8 {} {
 		# Subprocs
 		
 		proc config_advancedAspectLF {cb_keepaspect rb_moniaspect mb_moniaspect rb_monipixaspect sb_monipixaspect} {
+			#Change states for all widgets in labelframe
 			if {$::choice(cb_lf_aspect) == 0} {
 				$cb_keepaspect state disabled
 				$rb_moniaspect state disabled
@@ -269,6 +270,7 @@ proc option_screen_8 {} {
 		}
 		
 		proc config_advancedAspect {mb_moniaspect sb_monipixaspect} {
+			#Radiobutton for Monitor aspect and corresponding spinboxes.
 			if {$::choice(rb_aspect) == 0} {
 				$sb_monipixaspect configure -state disabled
 				$mb_moniaspect state !disabled
@@ -279,6 +281,7 @@ proc option_screen_8 {} {
 		}
 		
 		proc config_advancedLogging {w} {
+			#Change states for all widgets in labelframe
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_advancedLogging \033\[0m \{$w\}"
 			if {$::choice(cb_lf_logging) == 1} {
 				$w.sb_logging_mplayer configure -state readonly
@@ -292,6 +295,7 @@ proc option_screen_8 {} {
 		}
 		
 		proc config_advancedReset {} {
+			#Function to reset alle TV-Viewer options to defaults.
 			if {$::config(rec_running) == 0} {
 				stnd_opt0 $::window(general_nb1)
 				stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)
@@ -315,6 +319,7 @@ proc option_screen_8 {} {
 		}
 		
 		proc default_opt8 {w w2 w3} {
+			#Collect and set data for advanced section.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt8 \033\[0m \{$w\} \{$w2\}"
 			log_writeOutTv 0 "Starting to collect data for advanced section."
 			if {[info exists ::option(player_aspect)]} {
@@ -475,6 +480,7 @@ Minimum: 10kb Maximum: 100kb"]
 		}
 		
 		proc stnd_opt8 {w w2 w3} {
+			#Defaults for advanced section.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt8 \033\[0m \{$w\} \{$w2\}"
 			log_writeOutTv 1 "Setting advanced options to default."
 			set ::choice(cb_lf_aspect) $::stnd_opt(player_aspect)

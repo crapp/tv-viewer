@@ -1,4 +1,4 @@
-#       main_timeshift.tcl
+#       timeshift.tcl
 #       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ proc timeshift {tbutton} {
 			after 2000 {catch {exec""}}
 			catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
 			catch {timeshift_calcDF cancel}
-			record_schedulerPreStop timeshift
+			record_linkerPreStop timeshift
 			return
 		}
 	}
@@ -50,7 +50,7 @@ proc timeshift {tbutton} {
 		log_writeOutTv 2 "Have a look into the preferences and change it."
 		return
 	}
-	record_schedulerPrestart timeshift
+	record_linkerPrestart timeshift
 	$tbutton state pressed
 	$tbutton state disabled
 	bind .tv <<timeshift>> {}
@@ -95,7 +95,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 			place forget .tv.l_anigif
 			destroy .tv.l_anigif
 		}
-		record_scheduler_prestartCancel timeshift
+		record_linkerPrestartCancel timeshift
 		return
 	}
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"] && [file size "[subst $::option(timeshift_path)/timeshift.mpeg]"] > 0} {
@@ -106,7 +106,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 			after 60000 [list timeshift_calcDF 0]
 		}
 		set ::tv(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
-		record_schedulerRec timeshift
+		record_linkerRec timeshift
 	} else {
 		catch {exec kill $rec_pid}
 		catch {exec ""}

@@ -18,15 +18,18 @@
 
 proc colorm_readValues {wfscale} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_readValues \033\[0m \{$wfscale\}"
+	#Read all standard values for hue, bridhtness, saturation and
+	#contrast from the video device using v4l2-ctl.
+	#The values will be stored in different arrays.
 	tkwait visibility .cm
 	catch {exec v4l2-ctl --device=$::option(video_device) -l} read_v4l2ctl
 	set status_v4l2ctl [catch {agrep -w "$read_v4l2ctl" hue} hue_default_read]
 	if {$status_v4l2ctl == 0} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=hue} check_hue_available
 		if { "[string tolower [lindex $check_hue_available 0]]" == "hue:" } {
-			array set ::hue [split [string trim $hue_default_read] { =}]
-			log_writeOutTv 0 "Default value for hue: $::hue(default)"
-			$wfscale.s_hue configure -from $::hue(min) -to $::hue(max)
+			array set ::colorm_hue [split [string trim $hue_default_read] { =}]
+			log_writeOutTv 0 "Default value for hue: $::colorm_hue(default)"
+			$wfscale.s_hue configure -from $::colorm_hue(min) -to $::colorm_hue(max)
 		} else {
 			log_writeOutTv 2 "Can't read default value for hue."
 			log_writeOutTv 2 "Error message: $hue_default_read"
@@ -45,9 +48,9 @@ proc colorm_readValues {wfscale} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=saturation} check_saturation_available
 		if { "[string tolower [lindex $check_saturation_available 0]]" == "saturation:" } {
 			split [string trim $saturation_default_read] { =}
-			array set ::saturation [split [string trim $saturation_default_read] { =}]
-			log_writeOutTv 0 "Default value for saturation: $::saturation(default)"
-			$wfscale.s_saturation configure -from $::saturation(min) -to $::saturation(max)
+			array set ::colorm_saturation [split [string trim $saturation_default_read] { =}]
+			log_writeOutTv 0 "Default value for saturation: $::colorm_saturation(default)"
+			$wfscale.s_saturation configure -from $::colorm_saturation(min) -to $::colorm_saturation(max)
 		} else {
 			log_writeOutTv 2 "Can't read default value for saturation."
 			log_writeOutTv 2 "Error message: $saturation_default_read"
@@ -66,9 +69,9 @@ proc colorm_readValues {wfscale} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=contrast} check_contrast_available
 		if { "[string tolower [lindex $check_contrast_available 0]]" == "contrast:" } {
 			split [string trim $contrast_default_read] { =}
-			array set ::contrast [split [string trim $contrast_default_read] { =}]
-			log_writeOutTv 0 "Default value for contrast: $::contrast(default)"
-			$wfscale.s_contrast configure -from $::contrast(min) -to $::contrast(max)
+			array set ::colorm_contrast [split [string trim $contrast_default_read] { =}]
+			log_writeOutTv 0 "Default value for contrast: $::colorm_contrast(default)"
+			$wfscale.s_contrast configure -from $::colorm_contrast(min) -to $::colorm_contrast(max)
 		} else {
 			log_writeOutTv 2 "Can't read default value for contrast."
 			log_writeOutTv 2 "Error message: $contrast_default_read"
@@ -87,9 +90,9 @@ proc colorm_readValues {wfscale} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=brightness} check_brightness_available
 		if { "[string tolower [lindex $check_brightness_available 0]]" == "brightness:" } {
 			split [string trim $brightness_default_read] { =}
-			array set ::brightness [split [string trim $brightness_default_read] { =}]
-			log_writeOutTv 0 "Default value for brightness: $::brightness(default)"
-			$wfscale.s_brightness configure -from $::brightness(min) -to $::brightness(max)
+			array set ::colorm_brightness [split [string trim $brightness_default_read] { =}]
+			log_writeOutTv 0 "Default value for brightness: $::colorm_brightness(default)"
+			$wfscale.s_brightness configure -from $::colorm_brightness(min) -to $::colorm_brightness(max)
 		} else {
 			log_writeOutTv 2 "Can't read default value for brightness."
 			log_writeOutTv 2 "Error message: $brightness_default_read"
@@ -103,81 +106,83 @@ proc colorm_readValues {wfscale} {
 		$wfscale.l_brightness state disabled
 	}
 	if {[info exists ::option(hue)] == 0} {
-		if {[array exists ::hue]} {
+		if {[array exists ::colorm_hue]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=hue} hue_read
 			foreach {id wert} [split $hue_read] {
 				$wfscale.s_hue configure -value $wert
 				update
-				set ::l_hue_value $wert
-				set ::option(hue_old) $wert
+				set ::colorm(l_hue_value) $wert
+				set ::colorm(hue_old) $wert
 				place $wfscale.l_hue_value -x [lindex [$wfscale.s_hue coords] 0] -rely 0 -anchor s -in $wfscale.s_hue
 			}
 		}
 	} else {
 		$wfscale.s_hue configure -value $::option(hue)
 		update
-		set ::l_hue_value $::option(hue)
-		set ::option(hue_old) $::option(hue)
+		set ::colorm(l_hue_value) $::option(hue)
+		set ::colorm(hue_old) $::option(hue)
 		place $wfscale.l_hue_value -x [lindex [$wfscale.s_hue coords] 0] -rely 0 -anchor s -in $wfscale.s_hue
 	}
 	if {[info exists ::option(saturation)] == 0} {
-		if {[array exists ::saturation]} {
+		if {[array exists ::colorm_saturation]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=saturation} saturation_read
 			foreach {id wert} [split $saturation_read] {
 				$wfscale.s_saturation configure -value $wert
 				update
-				set ::l_saturation_value $wert
-				set ::option(saturation_old) $wert
+				set ::colorm(l_saturation_value) $wert
+				set ::colorm(saturation_old) $wert
 				place $wfscale.l_saturation_value -x [lindex [$wfscale.s_saturation coords] 0] -rely 0 -anchor s -in $wfscale.s_saturation
 			}
 		}
 	} else {
 		$wfscale.s_saturation configure -value $::option(saturation)
 		update
-		set ::l_saturation_value $::option(saturation)
-		set ::option(saturation_old) $::option(saturation)
+		set ::colorm(l_saturation_value) $::option(saturation)
+		set ::colorm(saturation_old) $::option(saturation)
 		place $wfscale.l_saturation_value -x [lindex [$wfscale.s_saturation coords] 0] -rely 0 -anchor s -in $wfscale.s_saturation
 	}
 	if {[info exists ::option(contrast)] == 0} {
-		if {[array exists ::contrast]} {
+		if {[array exists ::colorm_contrast]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=contrast} contrast_read
 			foreach {id wert} [split $contrast_read] {
 				$wfscale.s_contrast configure -value $wert
 				update
-				set ::l_contrast_value $wert
-				set ::option(contrast_old) $wert
+				set ::colorm(l_contrast_value) $wert
+				set ::colorm(contrast_old) $wert
 				place $wfscale.l_contrast_value -x [lindex [$wfscale.s_contrast coords] 0] -rely 0 -anchor s -in $wfscale.s_contrast
 			}
 		}
 	} else {
 		$wfscale.s_contrast configure -value $::option(contrast)
 		update
-		set ::l_contrast_value $::option(contrast)
-		set ::option(contrast_old) $::option(contrast)
+		set ::colorm(l_contrast_value) $::option(contrast)
+		set ::colorm(contrast_old) $::option(contrast)
 		place $wfscale.l_contrast_value -x [lindex [$wfscale.s_contrast coords] 0] -rely 0 -anchor s -in $wfscale.s_contrast
 	}
 	if {[info exists ::option(brightness)] == 0} {
-		if {[array exists ::brightness]} {
+		if {[array exists ::colorm_brightness]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=brightness} brightness_read
 			foreach {id wert} [split $brightness_read] {
 				$wfscale.s_brightness configure -value $wert
 				update
-				set ::l_brightness_value $wert
-				set ::option(brightness_old) $wert
+				set ::colorm(l_brightness_value) $wert
+				set ::colorm(brightness_old) $wert
 				place $wfscale.l_brightness_value -x [lindex [$wfscale.s_brightness coords] 0] -rely 0 -anchor s -in $wfscale.s_brightness
 			}
 		}
 	} else {
 		$wfscale.s_brightness configure -value $::option(brightness)
 		update
-		set ::l_brightness_value $::option(brightness)
-		set ::option(brightness_old) $::option(brightness)
+		set ::colorm(l_brightness_value) $::option(brightness)
+		set ::colorm(brightness_old) $::option(brightness)
 		place $wfscale.l_brightness_value -x [lindex [$wfscale.s_brightness coords] 0] -rely 0 -anchor s -in $wfscale.s_brightness
 	}
 }
 
 proc colorm_saveValues {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0m colorm_saveValues \{$w\}"
+	#On exit of the color management dialog the new values can be saved.
+	#They are stored in the standard tv-viewer config file.
 	log_writeOutTv 0 "Saving color management values to $::option(home)/config/tv-viewer.conf"
 	set config_file "$::option(home)/config/tv-viewer.conf"
 	if {[file exists "$config_file"]} {
@@ -202,21 +207,21 @@ proc colorm_saveValues {w} {
 			}
 		}
 		set config_file_append [open $config_file a]
-		if {[info exists ::l_brightness_value]} {
-			puts $config_file_append "brightness \{$::l_brightness_value\}"
-			set ::option(brightness) $::l_brightness_value
+		if {[info exists ::colorm(l_brightness_value)]} {
+			puts $config_file_append "brightness \{$::colorm(l_brightness_value)\}"
+			set ::option(brightness) $::colorm(l_brightness_value)
 		}
-		if {[info exists ::l_contrast_value]} {
-			puts $config_file_append "contrast \{$::l_contrast_value\}"
-			set ::option(contrast) $::l_contrast_value
+		if {[info exists ::colorm(l_contrast_value)]} {
+			puts $config_file_append "contrast \{$::colorm(l_contrast_value)\}"
+			set ::option(contrast) $::colorm(l_contrast_value)
 		}
-		if {[info exists ::l_hue_value]} {
-			puts $config_file_append "hue \{$::l_hue_value\}"
-			set ::option(hue) $::l_hue_value
+		if {[info exists ::colorm(l_hue_value)]} {
+			puts $config_file_append "hue \{$::colorm(l_hue_value)\}"
+			set ::option(hue) $::colorm(l_hue_value)
 		}
-		if {[info exists ::l_saturation_value]} {
-			puts -nonewline $config_file_append "saturation \{$::l_saturation_value\}"
-			set ::option(saturation) $::l_saturation_value
+		if {[info exists ::colorm(l_saturation_value)]} {
+			puts -nonewline $config_file_append "saturation \{$::colorm(l_saturation_value)\}"
+			set ::option(saturation) $::colorm(l_saturation_value)
 		}
 		close $config_file_append
 	} else {
@@ -227,21 +232,21 @@ proc colorm_saveValues {w} {
 		puts $config_file_append "
 #Videocard controls (hue / saturation / brightness / contrast)
 "
-		if {[info exists ::l_brightness_value]} {
-			puts $config_file_append "brightness \{$::l_brightness_value\}"
-			set ::option(brightness) $::l_brightness_value
+		if {[info exists ::colorm(l_brightness_value)]} {
+			puts $config_file_append "brightness \{$::colorm(l_brightness_value)\}"
+			set ::option(brightness) $::colorm(l_brightness_value)
 		}
-		if {[info exists ::l_contrast_value]} {
-			puts $config_file_append "contrast \{$::l_contrast_value\}"
-			set ::option(contrast) $::l_contrast_value
+		if {[info exists ::colorm(l_contrast_value)]} {
+			puts $config_file_append "contrast \{$::colorm(l_contrast_value)\}"
+			set ::option(contrast) $::colorm(l_contrast_value)
 		}
-		if {[info exists ::l_hue_value]} {
-			puts $config_file_append "hue \{$::l_hue_value\}"
-			set ::option(hue) $::l_hue_value
+		if {[info exists ::colorm(l_hue_value)]} {
+			puts $config_file_append "hue \{$::colorm(l_hue_value)\}"
+			set ::option(hue) $::colorm(l_hue_value)
 		}
-		if {[info exists ::l_saturation_value]} {
-			puts -nonewline $config_file_append "saturation \{$::l_saturation_value\}"
-			set ::option(saturation) $::l_saturation_value
+		if {[info exists ::colorm(l_saturation_value)]} {
+			puts -nonewline $config_file_append "saturation \{$::colorm(l_saturation_value)\}"
+			set ::option(saturation) $::colorm(l_saturation_value)
 		}
 		close $config_file_append
 	}
@@ -250,12 +255,13 @@ proc colorm_saveValues {w} {
 }
 
 proc colorm_exit {w} {
+	#Exit Color management without saving values and apply old ones.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: colom_exit \033\[0m \{$w\}"
 	log_writeOutTv 1 "Closing Color Management without saving values."
-	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::option(hue_old)}
-	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::option(saturation_old)}
-	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::option(brightness_old)}
-	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=contrast=$::option(contrast_old)}
+	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::colorm(hue_old)}
+	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::colorm(saturation_old)}
+	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::colorm(brightness_old)}
+	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=contrast=$::colorm(contrast_old)}
 	destroy .cm
 }
 
@@ -288,16 +294,16 @@ proc colorm_mainUi {} {
 		-command [list colormScalemove $wfscale.s_saturation $wfscale.l_saturation_value]
 		
 		ttk::label $wfscale.l_brightness_value \
-		-textvariable l_brightness_value
+		-textvariable colorm(l_brightness_value)
 		
 		ttk::label $wfscale.l_contrast_value \
-		-textvariable l_contrast_value
+		-textvariable colorm(l_contrast_value)
 		
 		ttk::label $wfscale.l_hue_value \
-		-textvariable l_hue_value
+		-textvariable colorm(l_hue_value)
 		
 		ttk::label $wfscale.l_saturation_value \
-		-textvariable l_saturation_value
+		-textvariable colorm(l_saturation_value)
 		
 		ttk::label $wfscale.l_brightness \
 		-text [mc "Brightness"] \
@@ -382,6 +388,8 @@ proc colorm_mainUi {} {
 		# Subprocs
 		
 		proc colormScalemove {scale label val} {
+			#Special function so a value can be displayed above
+			#ttk::scales
 			upvar #0 [$label cget -textvariable] var
 			set xpos [lindex [$scale coords] 0]
 			set var [expr {round($val)}]
@@ -390,35 +398,36 @@ proc colorm_mainUi {} {
 		}
 		
 		proc colorm_setDefault {w} {
+			#Set all values back to defaults.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_setDefault \033\[0m \{$w\}"
 			log_writeOutTv 1 "Setting color management values to default."
-			if {[array exists ::hue]} {
-				$w.s_hue configure -value $::hue(default)
+			if {[array exists ::colorm_hue]} {
+				$w.s_hue configure -value $::colorm_hue(default)
 				update
-				set ::l_hue_value $::hue(default)
+				set ::colorm(l_hue_value) $::colorm_hue(default)
 				place $w.l_hue_value -x [lindex [$w.s_hue coords] 0] -rely 0 -anchor s -in $w.s_hue
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::hue(default)}
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::colorm_hue(default)}
 			}
-			if {[array exists ::brightness]} {
-				$w.s_brightness configure -value $::brightness(default)
+			if {[array exists ::colorm_brightness]} {
+				$w.s_brightness configure -value $::colorm_brightness(default)
 				update
-				set ::l_brightness_value $::brightness(default)
+				set ::colorm(l_brightness_value) $::colorm_brightness(default)
 				place $w.l_brightness_value -x [lindex [$w.s_brightness coords] 0] -rely 0 -anchor s -in $w.s_brightness
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::brightness(default)}
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::colorm_brightness(default)}
 			}
-			if {[array exists ::saturation]} {
-				$w.s_saturation configure -value $::saturation(default)
+			if {[array exists ::colorm_saturation]} {
+				$w.s_saturation configure -value $::colorm_saturation(default)
 				update
-				set ::l_saturation_value $::saturation(default)
+				set ::colorm(l_saturation_value) $::colorm_saturation(default)
 				place $w.l_saturation_value -x [lindex [$w.s_saturation coords] 0] -rely 0 -anchor s -in $w.s_saturation
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::saturation(default)}
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::colorm_saturation(default)}
 			}
-			if {[array exists ::contrast]} {
-				$w.s_contrast configure -value $::contrast(default)
+			if {[array exists ::colorm_contrast]} {
+				$w.s_contrast configure -value $::colorm_contrast(default)
 				update
-				set ::l_contrast_value $::contrast(default)
+				set ::colorm(l_contrast_value) $::colorm_contrast(default)
 				place $w.l_contrast_value -x [lindex [$w.s_contrast coords] 0] -rely 0 -anchor s -in $w.s_contrast
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=contrast=$::contrast(default)}
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=contrast=$::colorm_contrast(default)}
 			}
 		}
 		

@@ -130,6 +130,7 @@ proc option_screen_0 {} {
 		
 		# Subprocs
 		proc config_generalNewsreaderChange {w} {
+			#Change state of all widgets in labelframe
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalNewsreaderChange \033\[0m \{$w\}"
 			if {$::choice(checkbutton_newsreader) == 0} {
 				$w.sb_newsreader configure -state disabled
@@ -140,6 +141,7 @@ proc option_screen_0 {} {
 			}
 		}
 		proc config_generalChooseEpg {w} {
+			#Choose epg application
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalChooseEpg \033\[0m \{$w\}"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "
 			set ::choice(entry_epg) [ttk::getOpenFile -parent .config_wizard -title [mc "Choose an EPG application"] -initialfile $::choice(entry_epg) -initialdir [file dirname $::choice(entry_epg)]]

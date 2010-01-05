@@ -47,12 +47,14 @@ proc option_screen_2 {} {
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt2 $::window(dvb_nb1)]
 		
 		proc default_opt2 {w} {
+			#Find and values for dvb section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt2 \033\[0m \{$w\}"
 			log_writeOutTv 0 "Starting to collect data for dvb section."
 			# Nothing to do yet
 		}
 		
 		proc stnd_opt2 {w} {
+			#Setting defaults for dvb section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt2 \033\[0m \{$w\}"
 			log_writeOutTv 1 "Setting dvb options to default."
 		}

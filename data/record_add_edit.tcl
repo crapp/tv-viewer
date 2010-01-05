@@ -92,7 +92,7 @@ proc record_add_edit {tree com} {
 	ttk::entry $recf.ent_date \
 	-textvariable record(date) \
 	-width 11 \
-	-state disabled
+	-state readonly
 	ttk::button $recf.b_date \
 	-width 0 \
 	-compound image \
@@ -213,7 +213,7 @@ proc record_add_edit {tree com} {
 	-text [mc "Output file"]
 	ttk::entry $recf.ent_file \
 	-textvariable record(file) \
-	-state disabled
+	-state readonly
 	ttk::button $recf.b_file \
 	-text "..." \
 	-width 3 \
@@ -362,15 +362,6 @@ proc record_add_edit {tree com} {
 	-pady 7 \
 	-padx "0 3"
 	
-	wm resizable $w 0 0
-	if {$com == 0} {
-		wm title $w [mc "Add a new recording"]
-	} else {
-		wm title $w [mc "Edit recording"]
-	}
-	wm protocol $w WM_DELETE_WINDOW "record_add_editExit $w"
-	wm iconphoto $w $::icon_b(record)
-	wm transient $w .record_wizard
 	
 	proc record_add_editTimeHour {} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHour \033\[0m"
@@ -453,6 +444,19 @@ proc record_add_edit {tree com} {
 			set ::record(resolution_height) $::record(resolution_height_max)
 		}
 	}
+	
+	wm resizable $w 0 0
+	if {$com == 0} {
+		wm title $w [mc "Add a new recording"]
+	} else {
+		wm title $w [mc "Edit recording"]
+	}
+	wm protocol $w WM_DELETE_WINDOW "record_add_editExit $w"
+	wm iconphoto $w $::icon_b(record)
+	wm transient $w .record_wizard
+	
+	bind $recf.ent_date <Double-ButtonPress-1> {record_add_editDate}
+	bind $recf.ent_file <Double-ButtonPress-1> [list record_add_editOfile $w]
 	
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		$lbf.lb_stations insert end $::kanalid($i)
@@ -569,9 +573,7 @@ proc record_add_editOfile {w} {
 	}
 	log_writeOutTv 0 "Chosen output file:"
 	log_writeOutTv 0 "$ofile"
-	$w.record_frame.ent_file state !disabled
 	set ::record(file) "$ofile"
-	$w.record_frame.ent_file state disabled
 }
 
 
@@ -607,7 +609,7 @@ proc record_add_editDelete {tree} {
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/record_scheduler.tcl" &}
+		catch {exec "$::option(root)/data/scheduler.tcl" &}
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
@@ -811,9 +813,7 @@ proc record_add_editDateYearMonth {cal label com} {
 
 proc record_add_editDateApply {w label} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDateApply \033\[0m \{$w\} \{$label\}"
-	.record_wizard.add_edit.record_frame.ent_date state !disabled
 	set ::record(date) [$label cget -text]
 	log_writeOutTv 0 "Chosen date [$label cget -text]."
-	.record_wizard.add_edit.record_frame.ent_date state disabled
 	grab release $w; grab .record_wizard.add_edit; destroy $w; wm protocol .record_wizard.add_edit WM_DELETE_WINDOW {record_add_editExit .record_wizard.add_edit}
 }

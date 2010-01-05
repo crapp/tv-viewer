@@ -103,16 +103,12 @@ proc record_applyFile {tree lb duration_calc w handler} {
 	if {[info exists ::record(file)] != 1} {
 		set lbindex [$lb curselection]
 		set lbcontent [$lb get $lbindex]
-		$w.record_frame.ent_file state !disabled
 		set ::record(file) "[subst $::option(rec_default_path)]/[string map {{ } {}} [string map {{/} {}} $lbcontent]]\_$::record(date)\_$::record(time_hour)\:$::record(time_min).mpeg"
-		$w.record_frame.ent_file state disabled
 	} else {
 		if {[string trim $::record(file)] == {}} {
 			set lbindex [$lb curselection]
 			set lbcontent [$lb get $lbindex]
-			$w.record_frame.ent_file state !disabled
 			set ::record(file) "[subst $::option(rec_default_path)]/[string map {{ } {}} [string map {{/} {}} $lbcontent]]\_$::record(date)\_$::record(time_hour)\:$::record(time_min).mpeg"
-			$w.record_frame.ent_file state disabled
 		}
 	}
 	log_writeOutTv 0 "Record file $::record(file)."
@@ -168,7 +164,7 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/record_scheduler.tcl" &}
+		catch {exec "$::option(root)/data/scheduler.tcl" &}
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"

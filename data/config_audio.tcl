@@ -88,6 +88,7 @@ proc option_screen_4 {} {
 		#Subprocs
 		
 		proc default_opt4 {w} {
+			#Find and set values for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
 			log_writeOutTv 0 "Starting to collect data for audio section."
 			catch {exec [auto_execok mplayer] -ao help} audio_out
@@ -195,6 +196,7 @@ to the chosen value."]
 			}
 		}
 		proc stnd_opt4 {w} {
+			#Setting defaults for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
 			log_writeOutTv 1 "Setting audio options to default."
 			set ::choice(mbAudio) $::stnd_opt(player_audio)

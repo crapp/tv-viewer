@@ -35,7 +35,7 @@ exit 1
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set target /usr/local/share
 set printchan stdout
-set option(release_version) {0.8.1.1 69 04.01.2010}
+set option(release_version) {0.8.1.1 70 05.01.2010}
 
 array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --help 0}
 foreach command_argument $argv {
@@ -372,7 +372,7 @@ Error message: $resultat_dfile
 			exit 1
 		} else {
 			puts $::printchan "$target/tv-viewer/data/[lindex [file split $dfile] end]"
-			if {[string match *diag_runtime* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_scheduler* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/tv-viewer/data/[lindex [file split $dfile] end]"]} {
+			if {[string match *diag_runtime* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *scheduler* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/tv-viewer/data/[lindex [file split $dfile] end]"]} {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rwxr-xr-x} resultat_permissions_dfile]
 			} else {
 				set status_permissions_dfile [catch {file attributes "$target/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rw-r--r--} resultat_permissions_dfile]
@@ -971,7 +971,7 @@ proc install_createSymbolic {where_is target} {
 		set binpath /usr/bin
 		set bintarget $target
 	}
-	catch {exec ln -s "$bintarget/tv-viewer/data/tv-viewer_main.sh" "$binpath/tv-viewer"}
+	catch {exec ln -s "$bintarget/tv-viewer/data/tv-viewer_main.tcl" "$binpath/tv-viewer"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
 		puts $::printchan "
@@ -1010,7 +1010,7 @@ Error message: $resultat_symbolic
 		puts $::printchan "tv-viewer_lirc"
 	after 100
 	}
-	catch {exec ln -s "$bintarget/tv-viewer/data/record_scheduler.tcl" "$binpath/tv-viewer_scheduler"}
+	catch {exec ln -s "$bintarget/tv-viewer/data/scheduler.tcl" "$binpath/tv-viewer_scheduler"}
 	set status_symbolic [catch {file link "$binpath/tv-viewer_scheduler"} resultat_symbolic]
 	if { $status_symbolic != 0 } {
 		puts $::printchan "

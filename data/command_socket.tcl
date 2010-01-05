@@ -17,6 +17,9 @@
 #       MA 02110-1301, USA.
 
 proc command_socket {} {
+	#TV-Viewer uses different fifos for communication between the
+	#different parts of the program. Here all named pipes will be
+	#created
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}	
 	catch {exec mkfifo "$::option(home)/tmp/ComSocketSched"}
 	catch {exec mkfifo "$::option(home)/tmp/ComSocketMain"}
@@ -44,6 +47,7 @@ proc command_socket {} {
 }
 
 proc command_getData {logw} {
+	#Analyze data send through the named pipes.
 	if {[info exists ::data(comsocketRead)]} {
 		set status [catch { gets $::data(comsocketRead) line } result]
 		if {[eof $::data(comsocketRead)]} {
@@ -56,7 +60,6 @@ proc command_getData {logw} {
 			{*}$logw 2 "Error reading $::data(comsocketRead): $result"
 		} elseif { $result >= 0 } {
 			# Successfully read the channel
-			puts "got: $line"
 			if {[string length [string trim $line]] > 0} {
 				if {"[lindex $line 0]" == "$::option(appname)"} {
 					set com [lrange $line 1 end]
@@ -73,6 +76,7 @@ proc command_getData {logw} {
 }
 
 proc command_WritePipe {com} {
+	#Write commands to the named pipes.
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_WritePipe \033\[0m \{$com\}"}
 	if {[info exists ::data(comsocketWrite)] == 0} {return 1}
 	if {[string trim $::data(comsocketWrite)] != {}} {

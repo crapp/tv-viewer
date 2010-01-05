@@ -1,6 +1,6 @@
 #!/usr/bin/env wish
 
-#       tv-viewer_main.sh
+#       tv-viewer_main.tcl
 #       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -66,7 +66,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.1.1 69 04.01.2010}
+set option(release_version) {0.8.1.1 70 05.01.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -356,9 +356,9 @@ source $::option(root)/data/record_handler.tcl
 #Source adding a new recording
 source $::option(root)/data/record_add_edit.tcl
 #Source remote functions for scheduler
-source $::option(root)/data/record_scheduler_remote.tcl
+source $::option(root)/data/record_linker.tcl
 #Source timeshift
-source $::option(root)/data/main_timeshift.tcl
+source $::option(root)/data/timeshift.tcl
 #Source read and set config values for config-wizard.
 source $::option(root)/data/config_wizard_read_settings.tcl
 #Source main ui config

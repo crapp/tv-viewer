@@ -347,7 +347,7 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb4.t_changelog tag configure link_sourceforge_bazaar -foreground #0064FF -underline on
 		$nb4.t_changelog tag bind link_sourceforge_bazaar <Any-Enter> "$nb4.t_changelog tag configure link_sourceforge_bazaar $hylink_enter; $nb4.t_changelog configure -cursor hand1"
 		$nb4.t_changelog tag bind link_sourceforge_bazaar <Any-Leave> "$nb4.t_changelog tag configure link_sourceforge_bazaar $hylink_leave; $nb4.t_changelog configure -cursor {}"
-		$nb4.t_changelog tag bind link_sourceforge_bazaar <Button-1> {catch {exec sh -c "xdg-open http://tv-viewer.bzr.sourceforge.net/bzr/tv-viewer/changes" &}}
+		$nb4.t_changelog tag bind link_sourceforge_bazaar <Button-1> {catch {exec sh -c "xdg-open http://tv-viewer.bzr.sourceforge.net/bzr/tv-viewer/trunk/changes" &}}
 		
 		$nb4.t_changelog tag configure link_changelog -foreground #0064FF -underline on
 		$nb4.t_changelog tag bind link_changelog <Any-Enter> "$nb4.t_changelog tag configure link_changelog $hylink_enter; $nb4.t_changelog configure -cursor hand1"

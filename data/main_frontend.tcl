@@ -511,7 +511,7 @@ proc main_frontendUiTvviewer {} {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_linkerPrestart record ; record_linkerRec record}
 				} else {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; event generate . <<teleview>>}
 				}
@@ -532,7 +532,7 @@ proc main_frontendUiTvviewer {} {
 		} else {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi ; record_linkerPrestart record ; record_linkerRec record}
 				} else {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
 				}
@@ -555,7 +555,7 @@ proc main_frontendUiTvviewer {} {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 1500 {wm deiconify . ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+					after 1500 {wm deiconify . ; tv_playerUi ; record_linkerPrestart record ; record_linkerRec record}
 				} else {
 					after 1500 {wm deiconify . ; tv_playerUi ; event generate . <<teleview>>}
 				}
@@ -589,7 +589,7 @@ proc main_frontendUiTvviewer {} {
 				after 1500 {wm deiconify . ; tv_playerUi}
 			} else {
 				if {$::main(running_recording) == 1} {
-					after 1500 {wm deiconify . ; tv_playerUi ; record_schedulerPrestart record ; record_schedulerRec record}
+					after 1500 {wm deiconify . ; tv_playerUi ; record_linkerPrestart record ; record_linkerRec record}
 				} else {
 					after 1500 {wm deiconify . ; tv_playerUi}
 				}

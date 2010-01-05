@@ -1,4 +1,4 @@
-#       record_scheduler_remote.tcl
+#       record_linker.tcl
 #       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,9 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc record_schedulerPrestart {handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerPrestart \033\[0m \{$handler\}"
+proc record_linkerPrestart {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPrestart \033\[0m \{$handler\}"
+	#Prestart means deactivate everything that could interfere with a starting recording or timeshift.
 	if {"$handler" == "record"} {
 		log_writeOutTv 0 "Scheduler initiated prestart sequence for recording."
 	} else {
@@ -97,8 +98,9 @@ proc record_schedulerPrestart {handler} {
 	.options_bar.mHelp entryconfigure 8 -state disabled
 }
 
-proc record_scheduler_prestartCancel {handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_scheduler_prestartCancel \033\[0m \{$handler\}"
+proc record_linkerPrestartCancel {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPrestartCancel \033\[0m \{$handler\}"
+	#Undo everything that was done by record_linkerPrestart in case stating of timeshift / recording failed.
 	if {"$handler" != "timeshift"} {
 		log_writeOutTv 1 "Prestart sequence for recording has been canceled."
 	} else {
@@ -135,8 +137,9 @@ proc record_scheduler_prestartCancel {handler} {
 	}
 }
 
-proc record_schedulerRec {handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerRec \033\[0m \{$handler\}"
+proc record_linkerRec {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerRec \033\[0m \{$handler\}"
+	#When starting of timeshift / recording was succesful, do the appropriate bindings, namings ...
 	if {"$handler" != "timeshift"} {
 		log_writeOutTv 0 "Scheduler initiated record sequence for main application."
 	} else {
@@ -202,23 +205,25 @@ Started at %" [lindex $::station(last) 0] $stime]
 			set timed [clock format [clock scan $edate] -format "%Y%m%d"]
 			set timet [clock format [clock scan $etime] -format "%H%M%S"]
 			set dt [expr {([clock scan $timed\T$timet]-[clock seconds])*1000}]
-			set ::record(after_prestop_id) [after $dt {record_schedulerPreStop record}]
+			set ::record(after_prestop_id) [after $dt {record_linkerPreStop record}]
 		} else {
-			set ::record(after_prestop_id) [after [expr {$duration * 1000}] {record_schedulerPreStop record}]
+			set ::record(after_prestop_id) [after [expr {$duration * 1000}] {record_linkerPreStop record}]
 		}
 	}
 }
 
-proc record_schedulerStation {station number} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerStation \033\[0m \{$station\} \{$number\}"
+proc record_linkerStationMain {station number} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerStationMain \033\[0m \{$station\} \{$number\}"
+	#Main is running while scheduler started a recording. Now make sure to adapt the new station settings. Scheduler may have changed station. 
 	log_writeOutTv 0 "Scheduler initiated station sequence for main application."
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 	set ::station(last) "\{$station\} $::kanalcall($number) $number"
 	.label_stations configure -text "[lindex $::station(last) 0]"
 }
 
-proc record_schedulerPreStop {handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerPreStop \033\[0m \{$handler\}"
+proc record_linkerPreStop {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPreStop \033\[0m \{$handler\}"
+	#Recording / timeshift has been finished, set all widgets and functions to standard behaviour, so one can start tv playback again for example. 
 	if {"$handler" != "timeshift"} {
 		log_writeOutTv 0 "Prestop sequence for recording initiated."
 		catch {after cancel $::record(after_prestop_id)}
@@ -294,21 +299,4 @@ proc record_schedulerPreStop {handler} {
 		catch {destroy .tv.l_anigif}
 	}
 	tv_fileComputeSize cancel_rec
-}
-
-proc record_schedulerRemote {com} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_schedulerRemote \033\[0m \{$com\}"
-	
-	if {$com == 0} {
-		if {[winfo exists .record_wizard]} {
-			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
-			.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
-		}
-	}
-	if {$com == 1} {
-		if {[winfo exists .record_wizard]} {
-			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
-			.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
-		}
-	}
 }

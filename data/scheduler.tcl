@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh
 
-#       record_scheduler.tcl
+#       scheduler.tcl
 #       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@ package require Tcl 8.5
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
-set option(release_version) {0.8.1.1 69 04.01.2010}
+set option(release_version) {0.8.1.1 70 05.01.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -170,9 +170,21 @@ proc scheduler_exit {} {
 ########################################################################
 "
 	close $::logf_sched_open_append
-	command_WritePipe "tv-viewer_main record_schedulerRemote 1"
+	command_WritePipe "tv-viewer_main record_wizardExecSchedulerCback 1"
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
+	set status_mainlinkread [catch {file readlink "$::option(home)/tmp/lockfile.tmp"} resultat_mainlinkread]
+	if {$status_mainlinkread == 0} {
+		catch {exec ps -eo "%p"} read_ps
+		set status_greppid_main [catch {agrep -w "$read_ps" $resultat_mainlinkread} resultat_greppid_main]
+		if {$status_greppid_main != 0} {
+			catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
+			catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
+		}
+	} else {
+		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
+		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
+	}
 	exit 0
 }
 
@@ -263,7 +275,7 @@ proc scheduler_rec_prestart {jobid} {
 		if { $status_greppid_record == 0 } {
 			scheduler_logWriteOut 2 "There is an active recording."
 			scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
-			command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
+			command_WritePipe "tv-viewer_main record_linkerPrestartCancel record"
 			return
 		}
 	}
@@ -288,7 +300,7 @@ proc scheduler_rec_prestart {jobid} {
 		set status_greppid [catch {agrep -w "$read_ps" $resultat_linkread} resultat_greppid]
 		if { $status_greppid == 0 } {
 			scheduler_logWriteOut 0 "Scheduler detected TV-Viewer is running, sending commands via socket."
-			command_WritePipe "tv-viewer_main record_schedulerPrestart record"
+			command_WritePipe "tv-viewer_main record_linkerPrestart record"
 		}
 	}
 	if {$::option(forcevideo_standard) == 1} {
@@ -316,7 +328,7 @@ proc scheduler_rec_prestart {jobid} {
 		}
 	}
 	if {$match == 0} {
-		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
+		command_WritePipe "tv-viewer_main record_linkerPrestartCancel record"
 		scheduler_logWriteOut 2 "Station \{[lindex $::recjob($jobid) 1]\} does not exist."
 		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
 	}
@@ -335,7 +347,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$secs == 3000} {
 		scheduler_logWriteOut 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "This didn't work, BAD."
-		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
+		command_WritePipe "tv-viewer_main record_linkerPrestartCancel record"
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -343,7 +355,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$status_grep_input == 0} {
 		if {$::kanalinput($snumber) == [lindex $resultat_grep_input 3]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
-			command_WritePipe "tv-viewer_main record_schedulerStation {$::kanalid($snumber)} $snumber"
+			command_WritePipe "tv-viewer_main record_linkerStationMain {$::kanalid($snumber)} $snumber"
 			set last_channel_conf "$::option(home)/config/lastchannel.conf"
 			set last_channel_write [open $last_channel_conf w]
 			puts -nonewline $last_channel_write "\{$::kanalid($snumber)\} $::kanalcall($snumber) $snumber"
@@ -362,7 +374,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	} else {
 		scheduler_logWriteOut 2 "Can not change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "$resultat_grep_input."
-		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
+		command_WritePipe "tv-viewer_main record_linkerPrestartCancel record"
 		return
 	}
 }
@@ -371,7 +383,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {$counter == 10} {
 		scheduler_logWriteOut 2 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
 		scheduler_logWriteOut 2 "This was unsuccessful."
-		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
+		command_WritePipe "tv-viewer_main record_linkerPrestartCancel record"
 		return
 	}
 	if {[file exists "[lindex $::recjob($jobid) end]"]} {
@@ -384,7 +396,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			puts -nonewline $f_open "\{[lindex $::recjob($jobid) 1]\} [clock format [clock scan now] -format {%Y-%m-%d}] [clock format [clock scan now] -format {%H:%M:%S}] [clock format $endtime -format {%Y-%m-%d}] [clock format $endtime -format {%H:%M:%S}] $duration_calc \{[lindex $::recjob($jobid) end]\}"
 			close $f_open
 			after [expr $duration_calc * 1000] {catch {exec ""}}
-			command_WritePipe "tv-viewer_main record_schedulerRec record"
+			command_WritePipe "tv-viewer_main record_linkerRec record"
 			scheduler_delete [list $jobid]
 		} else {
 			catch {exec kill $rec_pid}
@@ -398,7 +410,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 		catch {exec ""}
 		scheduler_logWriteOut 2 "File [lindex $::recjob($jobid) end] doesn't exist."
 		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
-		command_WritePipe "tv-viewer_main record_scheduler_prestartCancel record"
+		command_WritePipe "tv-viewer_main record_linkerPrestartCancel record"
 		return
 	}
 }
@@ -431,7 +443,7 @@ proc scheduler_Init {handler} {
 		main_readConfig
 		scheduler_log
 		command_socket
-		command_WritePipe "tv-viewer_main record_schedulerRemote 0"
+		command_WritePipe "tv-viewer_main record_wizardExecSchedulerCback 0"
 		scheduler_stations
 		scheduler_main_loop
 	} else {

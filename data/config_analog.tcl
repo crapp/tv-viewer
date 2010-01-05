@@ -353,6 +353,7 @@ while running a recording or timeshift"] \
 			}
 			
 			proc config_analogStreambitrate {w} {
+				#Change states for all widgets in labelframe
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogStreambitrate \033\[0m \{$w\}"
 				if {$::choice(cb_streambitrate) == 0} {
 					$w.l_lf_videobitrate state disabled
@@ -371,6 +372,7 @@ while running a recording or timeshift"] \
 				}
 			}
 			proc config_analogTemporal {w} {
+				#Change states for all widgets in labelframe
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogTemporal \033\[0m \{$w\}"
 				if {$::choice(cb_temporal) == 0} {
 					$w.l_lf_temporal state disabled
@@ -381,6 +383,7 @@ while running a recording or timeshift"] \
 				}
 			}
 			proc config_analogValidateVb {value1 value2} {
+				#Validation script
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogValidateVb \033\[0m \{$value1\} \{$value2\}"
 				if {[string is integer $value1] == 0 || $value1 < 0 || $value1 > [expr ($::analog(vbit) / 8) / 1024]} {
 					return 0
@@ -389,6 +392,7 @@ while running a recording or timeshift"] \
 				}
 			}
 			proc config_analogValidateVbp {value1 value2} {
+				#Validation script
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogValidateVbp \033\[0m \{$value1\} \{$value2\}"
 				if {[string is integer $value1] == 0 || $value1 < 0 || $value1 > [expr ($::analog(vbitp) / 8) / 1024]} {
 					return 0
@@ -415,6 +419,7 @@ while running a recording or timeshift"] \
 				$::window(analog_nb2).l_audio_v4l2_val configure -text "[expr round($displayed_value)]%"
 			}
 			proc default_opt1 {w1 w2} {
+				#Find and set values for analog section 
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt1 \033\[0m \{$w1\} \{$w2\}"
 				log_writeOutTv 0 "Starting to collect data for analog section..."
 				catch {
@@ -673,6 +678,7 @@ to change this value."]
 				}
 			}
 			proc default_com1 {w1 w2} {
+				#Find and set values for analog section after changing device node.
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_com1 \033\[0m \{$w1\} \{$w2\}"
 				log_writeOutTv 1 "Changing video device node, need to reread some options."
 				catch {
@@ -799,6 +805,7 @@ to change this value."]
 			}
 			
 			proc stnd_opt1 {w1 w2} {
+				#Setting defaults for analog section 
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt1 \033\[0m \{$w1\} \{$w2\}"
 				catch {
 					$w1.mbVideo_input delete 0 end

@@ -24,7 +24,7 @@ proc record_wizardExit {} {
 	destroy .record_wizard
 }
 
-proc record_wizardScheduler {sbutton slable com} {
+proc record_wizardExecScheduler {sbutton slable com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardScheduler \033\[0m \{$sbutton\} \{$slable\} \{$com\}"
 	if {$com == 0} {
 		if {[winfo exists $sbutton]} {
@@ -47,7 +47,24 @@ proc record_wizardScheduler {sbutton slable com} {
 		}
 		log_writeOutTv 0 "Starting Scheduler..."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/record_scheduler.tcl" &}
+		catch {exec "$::option(root)/data/scheduler.tcl" &}
+	}
+}
+
+proc record_wizardExecSchedulerCback {com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardExecSchedulerCback \033\[0m \{$com\}"
+	
+	if {$com == 0} {
+		if {[winfo exists .record_wizard]} {
+			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
+			.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardExecScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
+		}
+	}
+	if {$com == 1} {
+		if {[winfo exists .record_wizard]} {
+			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
+			.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardExecScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
+		}
 	}
 }
 
@@ -104,7 +121,7 @@ proc record_wizardUi {} {
 		ttk::label $statf.l_rec_current_info
 		ttk::button $statf.b_rec_current \
 		-text [mc "Stop recording"] \
-		-command [list record_schedulerPreStop record]
+		-command [list record_linkerPreStop record]
 		
 		ttk::button $bf.b_exit \
 		-text [mc "Exit"] \
@@ -251,14 +268,14 @@ proc record_wizardUi {} {
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
 				log_writeOutTv 0 "Scheduler is running (PID $resultat_schedlinkread)."
-				record_schedulerRemote 0
+				record_wizardExecSchedulerCback 0
 			} else {
 				log_writeOutTv 0 "Scheduler is not running."
-				record_schedulerRemote 1
+				record_wizardExecSchedulerCback 1
 			}
 		} else {
 			log_writeOutTv 0 "Scheduler is not running."
-			record_schedulerRemote 1
+			record_wizardExecSchedulerCback 1
 		}
 		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
