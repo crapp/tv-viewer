@@ -25,11 +25,11 @@ proc tv_playerVolumeControl {wfbottom value} {
 			set value [expr int($value)]
 			if {$value > 100} {
 				set value 100
-				return
+				#return
 			}
 			if {$value < 0} {
 				set value 0
-				return
+				#return
 			}
 			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 "Volume $value"]

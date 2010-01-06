@@ -345,11 +345,11 @@ proc main_frontendUiTvviewer {} {
 	-pady 2 \
 	-sticky ns
 	grid $wfbottom.scale_volume -in $wfbottom -row 0 -column 5 \
-	-padx 2 
+	-padx 2
 	grid $wfbottom.button_mute -in $wfbottom -row 0 -column 4 \
 	-padx "10 2" \
 	-pady 2 \
-	-sticky ns
+	-sticky nes
 	
 	grid $wftop.button_timeshift -in $wftop -row 0 -column 0 \
 	-padx 2 \
@@ -370,6 +370,7 @@ proc main_frontendUiTvviewer {} {
 	
 	grid rowconfigure . 4 -weight 1
 	grid columnconfigure . 0 -weight 1
+	grid columnconfigure $wfbottom 4 -weight 1
 	
 	# Additional Code
 	
