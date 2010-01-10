@@ -35,9 +35,9 @@ exit 1
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set target /usr/local/share
 set printchan stdout
-set option(release_version) {0.8.1.1 71 05.01.2010}
+set option(release_version) {0.8.1.1 72 10.01.2010}
 
-array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --help 0}
+array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -51,7 +51,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 9} {
+if {[array size start_options] != 10} {
 	puts "
 TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
@@ -62,10 +62,13 @@ Possible options are:
   --uninstall     Uninstalls TV-Viewer.
   --nodebug       Do not print messages of progress to stdout.
   --nodepcheck    Skip dependencies ckeck.
-  --arch=ARCH     Select your systems architecture (32 / 64)
   --target=PATH   Provide a path for installation (standard /usr/local/share).
   --manpath=PATH  Provide a path for man pages (standard 
                   /usr/local/share/man/man1).
+  --arch=ARCH     Select your systems architecture (32 / 64) or, if omitted,
+                  let the installer choose it.
+  --lib           If omitted shared libs will go into /usr/local/lib/tcl$tcl_version
+                  Otherwise into [tcl library]
   --pixmap=PATH   Provide a path for pixmaps. If omitted, TV-Viewer will
                   try to determine best location.
   --desktop=PATH  Provide a path for desktop files. If omitted, TV-Viewer
@@ -84,10 +87,13 @@ Possible options are:
   --uninstall     Uninstalls TV-Viewer.
   --nodebug       Do not print messages of progress to stdout.
   --nodepcheck    Skip dependencies ckeck.
-  --arch=ARCH     Select your systems architecture (32 / 64)
   --target=PATH   Provide a path for installation (standard /usr/local/share).
   --manpath=PATH  Provide a path for man pages (standard 
                   /usr/local/share/man/man1).
+  --arch=ARCH     Select your systems architecture (32 / 64) or, if omitted,
+                  let the installer choose it.
+  --lib           If omitted shared libs will go into /usr/local/lib/tcl$tcl_version
+                  Otherwise into [tcl library]
   --pixmap=PATH   Provide a path for pixmaps. If omitted, TV-Viewer will
                   try to determine best location.
   --desktop=PATH  Provide a path for desktop files. If omitted, TV-Viewer
@@ -150,6 +156,12 @@ You are $::tcl_platform(user).
 				set manpath_target "$target/man"
 			}
 			catch {file delete -force "$manpath_target/man1/tv-viewer.1.gz"}
+			if {$::start_options(--lib)} {
+				set libtarget "[info library]/tktray1.2/"
+			} else {
+				set libtarget "/usr/local/lib/tcl$tcl_version/tktray1.2/"
+			}
+			catch {file delete -force -- pathname $libtarget}
 			puts $::printchan "
 TV-Viewer has been uninstalled successfully.
 
@@ -323,12 +335,14 @@ You are $::tcl_platform(user).
 	"
 			exit 1
 		} else {
-			file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"
+			catch {[file delete -force -- pathname /usr/local/lib/tcl$::tcl_version/tktray1.2/]}
+			catch {[file delete -force -- pathname [info library]/tktray1.2/]}
+			file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"
 			puts $::printchan "
 Creating folders..."
 		}
 	} else {
-		set status_file [catch {file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/extensions/tktray/32/" "$target/tv-viewer/extensions/tktray/64/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
+		set status_file [catch {file mkdir "$target/tv-viewer/" "$target/tv-viewer/data/" "$target/tv-viewer/extensions/" "$target/tv-viewer/extensions/autoscroll/" "$target/tv-viewer/extensions/callib/" "$target/tv-viewer/extensions/fsdialog/" "$target/tv-viewer/extensions/tktray/" "$target/tv-viewer/icons/" "$target/tv-viewer/icons/16x16/" "$target/tv-viewer/icons/22x22/" "$target/tv-viewer/icons/32x32/" "$target/tv-viewer/icons/extras/" "$target/tv-viewer/license/" "$target/tv-viewer/man/" "$target/tv-viewer/msgs/" "$target/tv-viewer/msgs/de/" "$target/tv-viewer/msgs/en/" "$target/tv-viewer/shortcuts" "$target/tv-viewer/themes/" "$target/tv-viewer/themes/plastik/" "$target/tv-viewer/themes/plastik/plastik/" "$target/tv-viewer/themes/keramik/" "$target/tv-viewer/themes/keramik/keramik/" "$target/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
 		if { $status_file != 0 } {
 			puts $::printchan "
 Can't create necessary folders.
@@ -447,14 +461,33 @@ on a x86_64 machine.
 			after 1800
 		}
 	} else {
-		set installLib(32) 1
-		set installLib(64) 1
+		if {"$::tcl_platform(machine)" == "x86_64"} {
+			set installLib(64) 1
+			set installLib(32) 0
+		} else {
+			set installLib(64) 0
+			set installLib(32) 1
+		}
+	}
+	
+	if {$::start_options(--lib)} {
+		# Please note, this must be in a directory listed in \$auto_path.
+		# Otherwise TV-Viewer does not know where to look for it!
+		set libtarget "[info library]"
+		if {[file isdirectory $libtarget/tktray1.2] == 0} {
+			file mkdir "$libtarget/tktray1.2"
+		}
+	} else {
+		set libtarget "/usr/local/lib/tcl$::tcl_version"
+		if {[file isdirectory $libtarget/tktray1.2] == 0} {
+			file mkdir "$libtarget/tktray1.2"
+		}
 	}
 	
 	if {$installLib(32)} {
 		set filelist [lsort [glob "$where_is/extensions/tktray/32/*"]]
 		foreach tfile32 [split [file normalize [join $filelist \n]] \n] {
-			set status_tfile32 [catch {file copy -force "$tfile32" "$target/tv-viewer/extensions/tktray/32/"} resultat_tfile32]
+			set status_tfile32 [catch {file copy -force "$tfile32" "$libtarget/tktray1.2/"} resultat_tfile32]
 			if { $status_tfile32 != 0 } {
 				puts $::printchan "
 Could not copy file: $tfile32
@@ -463,11 +496,11 @@ Error message: $resultat_tfile32
 		"
 				exit 1
 			} else {
-				puts $::printchan "$target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]"
-				set status_permissions_tfile32 [catch {file attributes "$target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
+				puts $::printchan "$libtarget/tktray1.2/[lindex [file split $tfile32] end]"
+				set status_permissions_tfile32 [catch {file attributes "$libtarget/tktray1.2/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
 				if {$status_permissions_tfile32 != 0} {
 					puts $::printchan "
-Could not change permissions for: $target/tv-viewer/extensions/tktray/32/[lindex [file split $tfile32] end]
+Could not change permissions for: $libtarget/tktray1.2/[lindex [file split $tfile32] end]
 	
 Error message: $resultat_permissions_tfile32"
 					exit 1
@@ -479,7 +512,7 @@ Error message: $resultat_permissions_tfile32"
 	if {$installLib(64)} {
 		set filelist [lsort [glob "$where_is/extensions/tktray/64/*"]]
 		foreach tfile64 [split [file normalize [join $filelist \n]] \n] {
-			set status_tfile64 [catch {file copy -force "$tfile64" "$target/tv-viewer/extensions/tktray/64/"} resultat_tfile64]
+			set status_tfile64 [catch {file copy -force "$tfile64" "$libtarget/tktray1.2/"} resultat_tfile64]
 			if { $status_tfile64 != 0 } {
 				puts $::printchan "
 Could not copy file: $tfile64
@@ -488,11 +521,11 @@ Error message: $resultat_tfile64
 		"
 				exit 1
 			} else {
-				puts $::printchan "$target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]"
-				set status_permissions_tfile64 [catch {file attributes "$target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
+				puts $::printchan "$libtarget/tktray1.2/[lindex [file split $tfile64] end]"
+				set status_permissions_tfile64 [catch {file attributes "$libtarget/tktray1.2/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
 				if {$status_permissions_tfile64 != 0} {
 					puts $::printchan "
-Could not change permissions for: $target/tv-viewer/extensions/tktray/64/[lindex [file split $tfile64] end]
+Could not change permissions for: $libtarget/tktray1.2/[lindex [file split $tfile64] end]
 
 Error message: $resultat_permissions_tfile64"
 					exit 1

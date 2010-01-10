@@ -66,7 +66,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.1.1 71 05.01.2010}
+set option(release_version) {0.8.1.1 72 10.01.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -223,34 +223,12 @@ unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_gre
 #~ package require ttk::theme::tileqt
 #~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-themes/tile-gtk/library"]
 #~ package require ttk::theme::tilegtk
-if {"$::tcl_platform(machine)" == "x86_64"} {
-	set auto_path [linsert $auto_path 0 "$::option(root)/extensions/tktray/64"]
-	if {[file exists "$::option(root)/extensions/tktray/64/libtktray1.2.so"]} {
-		set status_tray [catch {package require tktray} result_tkray]
-		puts "loading $::tcl_platform(machine) shared libraries"
-		if {$status_tray == 1} {
-			puts "ERROR:
+set auto_path [linsert $auto_path 0 "/usr/local/lib/tcl$tcl_version"]
+puts "loading shared libraries"
+set status_tray [catch {package require tktray} result_tktray]
+if {$status_tray == 1} {
+	puts "ERROR:
 $result_tktray"
-		}
-	} else {
-		puts "ERROR:
-Can not find shared library in
-$::option(root)/extensions/tktray/64"
-	}
-} else {
-	set auto_path [linsert $auto_path 0 "$::option(root)/extensions/tktray/32"]
-	if {[file exists "$::option(root)/extensions/tktray/32/libtktray1.2.so"]} {
-		set status_tray [catch {package require tktray} result_tkray]
-		puts "loading $::tcl_platform(machine) shared libraries"
-		if {$status_tray == 1} {
-			puts "ERROR:
-	$result_tktray"
-		}
-	} else {
-		puts "ERROR:
-Can not find shared library in
-$::option(root)/extensions/tktray/32"
-	}
 }
 #Source autoscroll function for scrollbars and load package autoscroll
 source $::option(root)/extensions/autoscroll/autoscroll.tcl

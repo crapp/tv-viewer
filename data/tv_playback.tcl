@@ -276,24 +276,29 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 							}
 						}
 					}
-					.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]
-					.top_buttons.button_timeshift state !disabled
-					bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-					bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-					bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-					bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-					bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-					bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-					bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-					bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-					bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-					bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-					bind .tv <<start>> {}
-					.tv.file_play_bar.b_pause state !disabled
-					.tv.file_play_bar.b_play state disabled
-					set ::data(mplayer) [open "|$::tv(mcommand)" r+]
-					fconfigure $::data(mplayer) -blocking 0 -buffering line
-					fileevent $::data(mplayer) readable [list tv_callbackVidData]
+					if {[winfo exists .tv.file_play_bar]} {
+						.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]
+						.top_buttons.button_timeshift state !disabled
+						bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
+						bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
+						bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+						bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+						bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+						bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+						bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+						bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+						bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+						bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+						bind .tv <<start>> {}
+						.tv.file_play_bar.b_pause state !disabled
+						.tv.file_play_bar.b_play state disabled
+						set ::data(mplayer) [open "|$::tv(mcommand)" r+]
+						fconfigure $::data(mplayer) -blocking 0 -buffering line
+						fileevent $::data(mplayer) readable [list tv_callbackVidData]
+					} else {
+						log_writeOutTv 2 "Failed to start file playback."
+						log_writeOutTv 2 "Fileplaybar does not exist. Report this incident!"
+					}
 				}
 			}
 		} else {
