@@ -28,16 +28,17 @@ might not point to the correct location.
 /usr/bin/tclsh is pointing to:
 [file readlink /usr/bin/tclsh]
 "
-}
+	}
 exit 1
 }
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set target /usr/local
+set prefix /usr/local
+set target $prefix
 set printchan stdout
-set option(release_version) {0.8.1.1 73 10.01.2010}
+set option(release_version) {0.8.1.1 74 14.01.2010}
 
-array set start_options {--uninstall 0 --target 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
+array set start_options {--uninstall 0 --target 0 --prefix 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -51,7 +52,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 10} {
+if {[array size start_options] != 11} {
 	puts "
 TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
@@ -62,20 +63,24 @@ Possible options are:
   --uninstall     Uninstalls TV-Viewer.
   --nodebug       Do not print messages of progress to stdout.
   --nodepcheck    Skip dependencies ckeck.
-  --target=PATH   Provide a path for installation (standard /usr/local).
-  --manpath=PATH  Provide a path for man pages (standard 
-                  /usr/local/share/man/man1).
+  --prefix=PATH   Provide a path for installation (Standard /usr/local).
+  --target=PATH   Use this if you want to use the installer in packages.
+                  The installer will use a directory like this 
+                  /Build_Dir/prefix/
+                  E.g: /home/user/buildroot/build/\"prefix\"
+  --manpath=PATH  Provide a path for man pages (Standard 
+                  /\"prefix\"/share/man/man1).
   --arch=ARCH     Select your systems architecture (32 / 64) or, if omitted,
-                  let the installer choose it.
+                  the installer will determine it.
   --lib           If omitted shared libs will go into /usr/local/lib/tcl$tcl_version
                   Otherwise into [tcl library]
-  --pixmap=PATH   Provide a path for pixmaps. If omitted, TV-Viewer will
-                  try to determine best location.
-  --desktop=PATH  Provide a path for desktop files. If omitted, TV-Viewer
-                  will try to determine best location.
+  --pixmap=PATH   Provide a path for pixmaps (Standard
+                  /\"prefix\"/share/pixmaps).
+  --desktop=PATH  Provide a path for *.desktop files. (Standard
+                  /\"prefix\"/share/applications).
   --help          Print help.
  "
-exit 0
+exit 1
 }
 
 if {$start_options(--help)} {
@@ -87,31 +92,37 @@ Possible options are:
   --uninstall     Uninstalls TV-Viewer.
   --nodebug       Do not print messages of progress to stdout.
   --nodepcheck    Skip dependencies ckeck.
-  --target=PATH   Provide a path for installation (standard /usr/local).
-  --manpath=PATH  Provide a path for man pages (standard 
-                  /usr/local/share/man/man1).
+  --prefix=PATH   Provide a path for installation (Standard /usr/local).
+  --target=PATH   Use this if you want to use the installer in packages.
+                  The installer will use a directory like this 
+                  /Build_Dir/prefix/
+                  E.g: /home/user/buildroot/build/\"prefix\"
+  --manpath=PATH  Provide a path for man pages (Standard 
+                  /\"prefix\"/share/man/man1).
   --arch=ARCH     Select your systems architecture (32 / 64) or, if omitted,
-                  let the installer choose it.
+                  the installer will determine it.
   --lib           If omitted shared libs will go into /usr/local/lib/tcl$tcl_version
                   Otherwise into [tcl library]
-  --pixmap=PATH   Provide a path for pixmaps. If omitted, TV-Viewer will
-                  try to determine best location.
-  --desktop=PATH  Provide a path for desktop files. If omitted, TV-Viewer
-                  will try to determine best location.
+  --pixmap=PATH   Provide a path for pixmaps (Standard
+                  /\"prefix\"/share/pixmaps).
+  --desktop=PATH  Provide a path for *.desktop files. (Standard
+                  /\"prefix\"/share/applications).
   --help          Show this help.
  "
 exit 0
 }
 
-if {$start_options(--nodebug)} {
-	set printchan [open /dev/null a]
-	fconfigure $::printchan -blocking no -buffering line
+if {$start_options(--prefix)} {
+	puts $::printchan "
+Prefix set to [file normalize $start_values(--prefix)]"
+	set prefix [file normalize $start_values(--prefix)]
+	set target "[file normalize $start_values(--prefix)]"
 }
 
 if {$start_options(--target)} {
 	puts $::printchan "
-Target set to [file normalize $start_values(--target)]"
-	set target [file normalize $start_values(--target)]
+Build target set to [file normalize $start_values(--target)]"
+	set target "[file normalize $start_values(--target)]$target"
 }
 
 if {$start_options(--uninstall)} {
@@ -180,11 +191,21 @@ TV-Viewer is not installed!
 	}
 }
 
+if {$start_options(--nodebug)} {
+	set printchan [open /dev/null a]
+}
+fconfigure $::printchan -blocking no -buffering line
+
 	puts $::printchan "\n \n #########################################################################"
 	puts $::printchan " ####                                                                 ####"
 	puts $::printchan " ####           Installation of TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]            ####"
 	puts $::printchan " ####                                                                 ####"
 	puts $::printchan " #########################################################################"
+
+if {$start_options(--nodebug)} {
+	set printchan stdout
+}
+fconfigure $::printchan -blocking no -buffering line
 
 after 200
 
@@ -214,7 +235,7 @@ proc agrep {switch input modifier} {
 	}
 }
 
-proc install_depCheck {where_is target} {
+proc install_depCheck {where_is target prefix} {
 	puts $::printchan "
 Checking dependencies...
 "
@@ -319,7 +340,7 @@ No support for high resolution PNG icons."
 	}
 }
 
-proc install_createFolders {where_is target} {
+proc install_createFolders {where_is target prefix} {
 	if {[file isdirectory "$target/share/tv-viewer"]} {
 		puts $::printchan "
 Found a previous installation of TV-Viewer.
@@ -335,7 +356,7 @@ You are $::tcl_platform(user).
 	"
 			exit 1
 		} else {
-			catch {[file delete -force -- pathname $target/lib/tcl$::tcl_version/tktray1.2/]}
+			catch {[file delete -force -- pathname $prefix/lib/tcl$::tcl_version/tktray1.2/]}
 			file mkdir "$target/share/tv-viewer/" "$target/share/tv-viewer/data/" "$target/share/tv-viewer/extensions/" "$target/share/tv-viewer/extensions/autoscroll/" "$target/share/tv-viewer/extensions/callib/" "$target/share/tv-viewer/extensions/fsdialog/" "$target/share/tv-viewer/extensions/tktray/" "$target/share/tv-viewer/icons/" "$target/share/tv-viewer/icons/16x16/" "$target/share/tv-viewer/icons/22x22/" "$target/share/tv-viewer/icons/32x32/" "$target/share/tv-viewer/icons/extras/" "$target/share/tv-viewer/license/" "$target/share/tv-viewer/msgs/" "$target/share/tv-viewer/msgs/de/" "$target/share/tv-viewer/msgs/en/" "$target/share/tv-viewer/shortcuts" "$target/share/tv-viewer/themes/" "$target/share/tv-viewer/themes/plastik/" "$target/share/tv-viewer/themes/plastik/plastik/" "$target/share/tv-viewer/themes/keramik/" "$target/share/tv-viewer/themes/keramik/keramik/" "$target/share/tv-viewer/themes/keramik/keramik_alt/"
 			puts $::printchan "
 Creating folders..."
@@ -357,7 +378,7 @@ Creating folders..."
 	}
 }
 
-proc install_checkScheduler {where_is target} {
+proc install_checkScheduler {where_is target prefix} {
 	set status_schedlinkread [catch {file readlink "$::env(HOME)/.tv-viewer/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
 	if {$status_schedlinkread == 0} {
 		catch {exec ps -eo "%p"} read_ps
@@ -372,7 +393,7 @@ Scheduler is running, will stop it."
 	}
 }
 
-proc install_copyData {where_is target} {
+proc install_copyData {where_is target prefix} {
 	set filelist [lsort [glob "$where_is/data/*"]]
 	foreach dfile [split [file normalize [join $filelist \n]] \n] {
 		set status_dfile [catch {file copy -force "$dfile" "$target/share/tv-viewer/data/"} resultat_dfile]
@@ -381,7 +402,7 @@ proc install_copyData {where_is target} {
 Could not copy file: $dfile
 
 Error message: $resultat_dfile
-	"
+"
 			exit 1
 		} else {
 			puts $::printchan "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"
@@ -432,7 +453,7 @@ Error message: $resultat_permissions_desktop"
 	}
 }
 
-proc install_copyExtensions {where_is target} {
+proc install_copyExtensions {where_is target prefix} {
 	if {$::start_options(--arch)} {
 		if {"$::start_values(--arch)" == "64"} {
 			set installLib(64) 1
@@ -601,7 +622,7 @@ Error message: $resultat_permissions_fsfile"
 	}
 }
 
-proc install_copyIcons {where_is target} {
+proc install_copyIcons {where_is target prefix} {
 	set filelist [lsort [glob "$where_is/icons/16x16/*"]]
 	foreach ifile [split [file normalize [join $filelist \n]] \n] {
 		set status_ifile [catch {file copy -force "$ifile" "$target/share/tv-viewer/icons/16x16/"} resultat_ifile]
@@ -727,7 +748,7 @@ Error message: $resultat_permissions_tvicon"
 	}
 }
 
-proc install_copyLicense {where_is target} {
+proc install_copyLicense {where_is target prefix} {
 	set filelist [glob "$where_is/license/*"]
 	foreach lfile $filelist {
 		set status_file_lic [catch {file copy -force "$lfile" "$target/share/tv-viewer/license/"} resultat_file_lic]
@@ -752,11 +773,11 @@ Error message: $resultat_permissions_lfile"
 	}
 }
 
-proc install_copyMan {where_is target} {
+proc install_copyMan {where_is target prefix} {
 	if {$::start_options(--manpath)} {
-		set manpath [file normalize $::start_values(--manpath)]
+		set manpath "[file normalize $::start_values(--manpath)]"
 	} else {
-		set manpath /usr/local/man
+		set manpath "$target/man"
 	}
 	if {[file isdirectory "$manpath"] == 0} {
 		file mkdir "$manpath"
@@ -776,7 +797,7 @@ Error message: $resultat_file_man
 	puts $::printchan "$manpath/man1/tv-viewer.1.gz"
 }
 
-proc install_copyMsgs {where_is target} {
+proc install_copyMsgs {where_is target prefix} {
 	set filelist [lsort [glob -directory "$where_is/msgs" *.msg]]
 	foreach mfile [split [file normalize [join $filelist \n]] \n] {
 		set status_mfile [catch {file copy -force "$mfile" "$target/share/tv-viewer/msgs/"} resultat_mfile]
@@ -847,7 +868,7 @@ Error message: $resultat_permissions_mfile"
 	}
 }
 
-proc install_copyShortcuts {where_is target} {
+proc install_copyShortcuts {where_is target prefix} {
 	set filelist [glob "$where_is/shortcuts/*"]
 	foreach sfile $filelist {
 		set status_file_cut [catch {file copy -force "$sfile" "$target/share/tv-viewer/shortcuts/"} resultat_file_cut]
@@ -872,7 +893,7 @@ Error message: $resultat_permissions_sfile"
 	}
 }
 
-proc install_copyThemes {where_is target} {
+proc install_copyThemes {where_is target prefix} {
 	set filelist [glob "$where_is/themes/plastik/*.tcl"]
 	foreach plastik [split [file normalize [join $filelist \n]] \n] {
 		set status_file_plastik [catch {file copy -force "$plastik" "$target/share/tv-viewer/themes/plastik/"} resultat_file_plastik]
@@ -989,10 +1010,10 @@ Error message: $resultat_permissions_keramik"
 	}
 }
 
-proc install_createSymbolic {where_is target} {
+proc install_createSymbolic {where_is target prefix} {
 	catch {file delete -force "$target/bin/tv-viewer" "$target/bin/tv-viewer_diag" "$target/bin/tv-viewer_lirc" "$target/bin/tv-viewer_scheduler"}
 	set binpath $target/bin
-	set bintarget $target/share
+	set bintarget $prefix/share
 	if {[file isdirectory "$binpath"] == 0} {
 		file mkdir "$binpath"
 	}
@@ -1051,59 +1072,59 @@ Error message: $resultat_symbolic
 }
 
 if {$start_options(--nodepcheck) == 0} {
-	install_depCheck "$where_is" "$target"
+	install_depCheck "$where_is" "$target" "$prefix"
 	after 1250
 }
 
-install_createFolders "$where_is" "$target"
+install_createFolders "$where_is" "$target" "$prefix"
 after 1250
 
-install_checkScheduler "$where_is" "$target"
+install_checkScheduler "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing data..."
 after 1250
-install_copyData "$where_is" "$target"
+install_copyData "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing extensions..."
 after 1250
-install_copyExtensions "$where_is" "$target"
+install_copyExtensions "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing icons..."
 after 1250
-install_copyIcons "$where_is" "$target"
+install_copyIcons "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing licenses..."
 after 1250
-install_copyLicense "$where_is" "$target"
+install_copyLicense "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing manual page..."
 after 1250
-install_copyMan "$where_is" "$target"
+install_copyMan "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing translations..."
 after 1250
-install_copyMsgs "$where_is" "$target"
+install_copyMsgs "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processing shortcuts..."
 after 1250
-install_copyShortcuts "$where_is" "$target"
+install_copyShortcuts "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Processings themes..."
 after 1250
-install_copyThemes "$where_is" "$target"
+install_copyThemes "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Creating symbolic links..."
 after 500
-install_createSymbolic "$where_is" "$target"
+install_createSymbolic "$where_is" "$target" "$prefix"
 
 puts $::printchan "
 Changed permissions for all files."

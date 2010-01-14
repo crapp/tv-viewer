@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.1.1 73 10.01.2010}
+set option(release_version) {0.8.1.1 74 14.01.2010}
 
 source $option(root)/main_read_config.tcl
 source $option(root)/log_viewer.tcl
@@ -47,7 +47,7 @@ if {[file exists "$::option(home)/log/tvviewer.log"]} {
 
 command_socket
 
-array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 volume_incr 0 volume_decr 0 mute 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
+array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 station_nr 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 volume_incr 0 volume_decr 0 mute 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -58,11 +58,11 @@ foreach command_argument $argv {
 		set key [string range $command_argument 0 [expr {$i-1}]]
 		set value [string range $command_argument [expr {$i+1}] end]
 		set start_options($key) 1
-		set values($key) $value
+		set start_values($key) $value
 	}
 }
 
-if {[array size ::start_options] != 45} {
+if {[array size ::start_options] != 46} {
 	log_writeOutTv 2 "Lirc emitter received unknown command $argv"
 	log_writeOutTv 2 "See the userguide for possible actions."
 	exit 1
@@ -137,6 +137,12 @@ if {$start_options(key_9)} {
 	log_writeOutTv 0 "Lirc emitter received Signal key_9"
 	exit 0
 }
+if {$start_options(station_nr)} {
+	command_WritePipe "tv-viewer_main event generate . <<station_key_ext>> -data $start_values(station_nr)"
+	log_writeOutTv 0 "Lirc emitter received Signal station_nr $start_values(station_nr)"
+	exit 0
+}
+
 if {$start_options(slist_osd)} {
 	command_WritePipe "tv-viewer_main tv_slistLirc"
 	log_writeOutTv 0 "Lirc emitter received Signal slist_osd"

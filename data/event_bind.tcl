@@ -80,11 +80,13 @@ proc event_constrArray {} {
 	event add <<station_jump>> <Key-j>
 	event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
 	event add <<station_key_lirc>> station_key_lirc
+	event add <<station_key_ext>> station_key_ext
 	bind . <<station_up>> [list main_stationChannelUp .label_stations]
 	bind . <<station_down>> [list main_stationChannelDown .label_stations]
 	bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
 	bind . <<station_key>> [list main_stationStationNrKeys %A]
 	bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
+	bind . <<station_key_ext>> [list main_stationStationNr .label_stations %d]
 	event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 	event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
 	bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
@@ -114,11 +116,13 @@ proc event_deleSedit {} {
 	event delete <<station_jump>>
 	event delete <<station_key>>
 	event delete <<station_key_lirc>>
+	event delete <<station_key_ext>>
 	bind . <<station_up>> {}
 	bind . <<station_down>> {}
 	bind . <<station_jump>> {}
 	bind . <<station_key>> {}
 	bind . <<station_key_lirc>> {}
+	bind . <<station_key_ext>> {}
 }
 
 proc event_recordStart {handler} {
@@ -134,6 +138,7 @@ proc event_recordStart {handler} {
 		bind . <<station_jump>> {}
 		bind . <<station_key>> {}
 		bind . <<station_key_lirc>> {}
+		bind . <<station_key_ext>> {}
 		bind . <<input_up>> {}
 		bind . <<input_down>> {}
 	}
@@ -174,6 +179,7 @@ proc event_recordStop {} {
 	bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
 	bind . <<station_key>> [list main_stationStationNrKeys %A]
 	bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
+	bind . <<station_key_ext>> [list main_stationStationNr .label_stations %d]
 	bind . <<input_up>> [list main_stationInput 1 1]
 	bind . <<input_down>> [list main_stationInput 1 -1]
 	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
