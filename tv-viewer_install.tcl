@@ -36,7 +36,7 @@ set where_is "[file dirname [file dirname [file normalize [file join [info scrip
 set prefix /usr/local
 set target $prefix
 set printchan stdout
-set option(release_version) {0.8.1.1 74 14.01.2010}
+set option(release_version) {0.8.1.1 75 14.01.2010}
 
 array set start_options {--uninstall 0 --target 0 --prefix 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
 foreach command_argument $argv {
@@ -1121,6 +1121,11 @@ Processings themes..."
 after 1250
 install_copyThemes "$where_is" "$target" "$prefix"
 
+if {$start_options(--nodebug)} {
+	set printchan [open /dev/null a]
+}
+fconfigure $::printchan -blocking no -buffering line
+
 puts $::printchan "
 Creating symbolic links..."
 after 500
@@ -1130,16 +1135,21 @@ puts $::printchan "
 Changed permissions for all files."
 after 250
 
-puts $::printchan "
-
-TV-Viewer successfully installed.
-
-Use \"tv-viewer\" to start the application.
-To see all possible command line options use
-\"tv-viewer --help\".
-To uninstall tv-viewer run as root
-\"tv-viewer_install.tcl --uninstall\".
-
-"
+if {$start_options(--nodebug)} {
+	puts stdout "
+build all done..."
+} else {
+	puts $::printchan "
+	
+	TV-Viewer successfully installed.
+	
+	Use \"tv-viewer\" to start the application.
+	To see all possible command line options use
+	\"tv-viewer --help\".
+	To uninstall tv-viewer run as root
+	\"tv-viewer_install.tcl --uninstall\".
+	
+	"
+}
 
 exit 0
