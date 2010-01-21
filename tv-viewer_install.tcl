@@ -36,7 +36,7 @@ set where_is "[file dirname [file dirname [file normalize [file join [info scrip
 set prefix /usr/local
 set target $prefix
 set printchan stdout
-set option(release_version) {0.8.1.1 75 14.01.2010}
+set option(release_version) {0.8.1.1 76 21.01.2010}
 
 array set start_options {--uninstall 0 --target 0 --prefix 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
 foreach command_argument $argv {
@@ -142,7 +142,7 @@ You are $::tcl_platform(user).
 "
 			exit 1
 		} else {
-			catch {file delete -force "$target/bin/tv-viewer" "$target/bin/tv-viewer_lirc" "$target/bin/tv-viewer_diag" "$target/bin/tv-viewer_scheduler"}
+			catch {file delete -force "$target/bin/tv-viewer" "$target/bin/tv-viewer_lirc" "$target/bin/tv-viewer_recext" "$target/bin/tv-viewer_diag" "$target/bin/tv-viewer_scheduler"}
 			if {$::start_options(--desktop)} {
 				set desk_target "[file normalize $::start_values(--desktop)]"
 			} else {
@@ -406,7 +406,7 @@ Error message: $resultat_dfile
 			exit 1
 		} else {
 			puts $::printchan "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"
-			if {[string match *diag_runtime* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *scheduler* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"]} {
+			if {[string match *diag_runtime* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *scheduler* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_external* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$target/share/tv-viewer/data/[lindex [file split $dfile] end]"]} {
 				set status_permissions_dfile [catch {file attributes "$target/share/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rwxr-xr-x} resultat_permissions_dfile]
 			} else {
 				set status_permissions_dfile [catch {file attributes "$target/share/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rw-r--r--} resultat_permissions_dfile]
@@ -1011,7 +1011,7 @@ Error message: $resultat_permissions_keramik"
 }
 
 proc install_createSymbolic {where_is target prefix} {
-	catch {file delete -force "$target/bin/tv-viewer" "$target/bin/tv-viewer_diag" "$target/bin/tv-viewer_lirc" "$target/bin/tv-viewer_scheduler"}
+	catch {file delete -force "$target/bin/tv-viewer" "$target/bin/tv-viewer_diag" "$target/bin/tv-viewer_lirc" "$target/bin/tv-viewer_recext" "$target/bin/tv-viewer_scheduler"}
 	set binpath $target/bin
 	set bintarget $prefix/share
 	if {[file isdirectory "$binpath"] == 0} {
@@ -1054,6 +1054,19 @@ Error message: $resultat_symbolic
 	exit 1
 	} else {
 		puts $::printchan "tv-viewer_lirc"
+	after 100
+	}
+	catch {exec ln -s "$bintarget/tv-viewer/data/record_external.tcl" "$binpath/tv-viewer_recext"}
+	set status_symbolic [catch {file link "$binpath/tv-viewer_recext"} resultat_symbolic]
+	if { $status_symbolic != 0 } {
+		puts $::printchan "
+Could not create symbolic link 'tv-viewer_recext'.
+
+Error message: $resultat_symbolic
+	"
+	exit 1
+	} else {
+		puts $::printchan "tv-viewer_recext"
 	after 100
 	}
 	catch {exec ln -s "$bintarget/tv-viewer/data/scheduler.tcl" "$binpath/tv-viewer_scheduler"}
@@ -1140,16 +1153,16 @@ if {$start_options(--nodebug)} {
 build all done..."
 } else {
 	puts $::printchan "
-	
-	TV-Viewer successfully installed.
-	
-	Use \"tv-viewer\" to start the application.
-	To see all possible command line options use
-	\"tv-viewer --help\".
-	To uninstall tv-viewer run as root
-	\"tv-viewer_install.tcl --uninstall\".
-	
-	"
+
+TV-Viewer successfully installed.
+
+Use \"tv-viewer\" to start the application.
+To see all possible command line options use
+\"tv-viewer --help\".
+To uninstall tv-viewer run as root
+\"tv-viewer_install.tcl --uninstall\".
+
+"
 }
 
 exit 0

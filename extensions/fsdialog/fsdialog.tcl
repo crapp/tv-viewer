@@ -1538,8 +1538,10 @@ proc ::ttk::dialog::file::treeClose {w path} {
     foreach n $list {
 	# Eliding sounds promising, but doesn't work correctly
 	# $txt tag configure $n -elide 1
-	eval [list $txt delete] [$txt tag ranges $n]
-	$txt tag delete $n
+	if {[llength [$txt tag ranges $n]] != 0} {
+		eval [list $txt delete] [$txt tag ranges $n]
+		$txt tag delete $n
+	}
     }
     $txt configure -state disabled
 }

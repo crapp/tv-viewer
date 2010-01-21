@@ -36,7 +36,7 @@ proc record_wizardExecScheduler {sbutton slable com} {
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
 				log_writeOutTv 1 "Scheduler is running, will stop it."
-				command_WritePipe "tv-viewer_scheduler scheduler_exit"
+				command_WritePipe 0 "tv-viewer_scheduler scheduler_exit"
 			}
 		}
 		after 2000 {catch {exec ""}}

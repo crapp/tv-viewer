@@ -304,6 +304,6 @@ puts $config_file_open "
 		puts $config_file_open "contrast \{$::option(contrast)\}"
 	}
 	close $config_file_open
-	command_WritePipe "tv-viewer_scheduler scheduler_Init 1"
+	command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 	config_wizardExit
 }

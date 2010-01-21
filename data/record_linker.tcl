@@ -237,7 +237,7 @@ proc record_linkerPreStop {handler} {
 				catch {exec kill $resultat_greppid_record}
 				catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
 				after 3000 {
-					command_WritePipe "tv-viewer_scheduler scheduler_zombie"
+					command_WritePipe 0 "tv-viewer_scheduler scheduler_zombie"
 				}
 			}
 		}

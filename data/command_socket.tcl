@@ -44,6 +44,15 @@ proc command_socket {} {
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
 		#~ fileevent $::data(comsocketRead) readable [list command_getData]
 	}
+	if {"$::option(appname)" == "tv-viewer_recext"} {
+		#~ set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketMain" r+]
+		set ::data(comsocketWrite) [open "$::option(home)/tmp/ComSocketSched" r+]
+		set ::data(comsocketWrite2) [open "$::option(home)/tmp/ComSocketMain" r+]
+		#~ fconfigure $::data(comsocketRead) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
+		#~ fileevent $::data(comsocketRead) readable [list command_getData log_writeOutTv]
+	}
 }
 
 proc command_getData {logw} {
@@ -75,21 +84,30 @@ proc command_getData {logw} {
 	}
 }
 
-proc command_WritePipe {com} {
+proc command_WritePipe {handler com} {
 	#Write commands to the named pipes.
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_WritePipe \033\[0m \{$com\}"}
-	if {[info exists ::data(comsocketWrite)] == 0} {return 1}
-	if {[string trim $::data(comsocketWrite)] != {}} {
-		puts -nonewline $::data(comsocketWrite) "$com \n"
-		flush $::data(comsocketWrite)
-		return 0
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_WritePipe \033\[0m \{$handler\} \{$com\}"}
+	if {$handler == 0} {
+		if {[info exists ::data(comsocketWrite)] == 0} {return 1}
+		if {[string trim $::data(comsocketWrite)] != {}} {
+			puts -nonewline $::data(comsocketWrite) "$com \n"
+			flush $::data(comsocketWrite)
+			return 0
+		} else {
+			if {"$::option(appname)" == "tv-viewer_main"} {
+				log_writeOutTv 2 "Can't access application command pipe."
+			}
+			if {"$::option(appname)" == "tv-viewer_scheduler"} {
+				scheduler_logWriteOut 2 "Can't access application command pipe."
+			}
+			return 1
+		}
 	} else {
-		if {"$::option(appname)" == "tv-viewer_main"} {
-			log_writeOutTv 2 "Can't access application command pipe."
+		if {[info exists ::data(comsocketWrite2)] == 0} {return 1}
+		if {[string trim $::data(comsocketWrite2)] != {}} {
+			puts -nonewline $::data(comsocketWrite2) "$com \n"
+			flush $::data(comsocketWrite2)
+			return 0
 		}
-		if {"$::option(appname)" == "tv-viewer_scheduler"} {
-			scheduler_logWriteOut 2 "Can't access application command pipe."
-		}
-		return 1
 	}
 }

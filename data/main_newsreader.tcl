@@ -77,6 +77,8 @@ proc main_newsreaderCheckUpdate {handler} {
 				if {[info exists hyperlinks] == 0} {
 					set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
 				} else {
+					puts "lindex 0 1 Von $line
+[lindex $line 0] [lindex $line 1]"
 					dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
 				}
 			}

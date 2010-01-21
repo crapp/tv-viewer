@@ -143,24 +143,56 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	} else {
 		set start 1
 	}
-	set lbindex [$lb curselection]
-	set lbcontent [$lb get $lbindex]
+	if {"$::option(appname)" == "tv-viewer_main"} {
+		set lbindex [$lb curselection]
+		set ::record(lbcontent) [$lb get $lbindex]
+	}
 	if {"$handler" == "add"} {
-		$tree insert {} end -values [list $jobid "$lbcontent" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+		if {"$::option(appname)" == "tv-viewer_main"} {
+			$tree insert {} end -values [list $jobid "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+		}
 		log_writeOutTv 0 "Adding new recording:"
-		log_writeOutTv 0 "$jobid $lbcontent $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 	} else {
-		$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$lbcontent" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+		if {"$::option(appname)" == "tv-viewer_main"} {
+			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+		}
 		log_writeOutTv 0 "Edit recording:"
-		log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $lbcontent $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 	}
-	catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
-	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
-	foreach ritem [split [$tree children {}]] {
-		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
+	if {"$::option(appname)" == "tv-viewer_main"} {
+		catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
+		set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
+		foreach ritem [split [$tree children {}]] {
+			puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
+		}
+		close $f_open
+	} else {
+		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
+			set fh [open "$::option(home)/config/scheduled_recordings.conf" r]
+			while {[gets $fh line]!=-1} {
+				if {[string trim $line] == {}} continue
+				lappend recordings $line
+			}
+			close $fh
+			set new_recording "$jobid \{$::record(lbcontent)\} $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
+			lappend recordings $new_recording
+			puts "recordings $recordings"
+			catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
+			set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
+			foreach rec $recordings {
+				puts $sched_rec $rec
+				puts "rec $rec"
+			}
+			close $sched_rec
+		} else {
+			set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
+			set new_recording "$jobid \{$::record(lbcontent)\} $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
+			puts $sched_rec $new_recording
+			close $sched_rec
+		}
 	}
-	close $f_open
-	unset -nocomplain ::record(time_hour) ::record(time_min) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
+	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
@@ -168,9 +200,11 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		command_WritePipe "tv-viewer_scheduler scheduler_Init 1"
+		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 	}
 	log_writeOutTv 0 "Exiting 'add/edit recording'."
-	grab release $w
-	destroy $w
+	if {[winfo exists $w]} {
+		grab release $w
+		destroy $w
+	}
 }
