@@ -26,12 +26,12 @@ proc main_newsreaderCheckUpdate {handler} {
 			de german
 		}
 		if {[string trim [array get locales $locale_split]] != {}} {
-			set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/newsreader_[string trim $locale_split].html"} get_news]
+			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_[string trim $locale_split].html"} get_news]
 		} else {
-			set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/newsreader_en.html"} get_news]
+			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_en.html"} get_news]
 		}
 	} else {
-		set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/newsreader_$::option(language_value).html"} get_news]
+		set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_$::option(language_value).html"} get_news]
 	}
 	if {$status_http == 0} {
 		if {[::http::ncode $get_news] != 404} {
@@ -42,7 +42,7 @@ proc main_newsreaderCheckUpdate {handler} {
 	} else {
 		set status 1
 	}
-	set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/underline_words.html"} get_tags]
+	set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/underline_words.html"} get_tags]
 	if {$status_http == 0} {
 		if {[::http::ncode $get_tags] != 404} {
 			set status [expr $status + $status_http]
@@ -52,7 +52,7 @@ proc main_newsreaderCheckUpdate {handler} {
 	} else {
 		set status 1
 	}
-	set status_http [catch {http::geturl "http://home.arcor.de/saedelaere/tv-viewerfiles/html_links.html"} get_links]
+	set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/html_links.html"} get_links]
 	if {$status_http == 0} {
 		if {[::http::ncode $get_links] != 404} {
 			set status [expr $status + $status_http]
@@ -77,8 +77,6 @@ proc main_newsreaderCheckUpdate {handler} {
 				if {[info exists hyperlinks] == 0} {
 					set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
 				} else {
-					puts "lindex 0 1 Von $line
-[lindex $line 0] [lindex $line 1]"
 					dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
 				}
 			}

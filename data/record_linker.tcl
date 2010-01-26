@@ -190,16 +190,7 @@ Started at %" [lindex $::station(last) 0] $stime]
 			.record_wizard configure -cursor arrow
 			.record_wizard.status_frame.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
 			.record_wizard.status_frame.b_rec_current state !disabled
-			foreach ritem [split [.record_wizard.tree_frame.tv_rec children {}]] {
-				.record_wizard.tree_frame.tv_rec delete $ritem
-			}
-			if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
-				set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
-				while {[gets $f_open line]!=-1} {
-					if {[string trim $line] == {} || [string match #* $line]} continue
-					.record_wizard.tree_frame.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6]]
-				}
-			}
+			record_linkerWizardReread
 		}
 		if {$::main(running_recording) == 1} {
 			set timed [clock format [clock scan $edate] -format "%Y%m%d"]
@@ -208,6 +199,21 @@ Started at %" [lindex $::station(last) 0] $stime]
 			set ::record(after_prestop_id) [after $dt {record_linkerPreStop record}]
 		} else {
 			set ::record(after_prestop_id) [after [expr {$duration * 1000}] {record_linkerPreStop record}]
+		}
+	}
+}
+
+proc record_linkerWizardReread {} {
+	if {[winfo exists .record_wizard]} {
+		foreach ritem [split [.record_wizard.tree_frame.tv_rec children {}]] {
+			.record_wizard.tree_frame.tv_rec delete $ritem
+		}
+		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
+			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
+			while {[gets $f_open line]!=-1} {
+				if {[string trim $line] == {} || [string match #* $line]} continue
+				.record_wizard.tree_frame.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6]]
+			}
 		}
 	}
 }

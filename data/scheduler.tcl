@@ -23,7 +23,7 @@ package require Tcl 8.5
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
-set option(release_version) {0.8.1.1 76 21.01.2010}
+set option(release_version) {0.8.1.1 77 26.01.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -69,8 +69,6 @@ source $option(root)/main_picqual_stream.tcl
 source $option(root)/main_newsreader.tcl
 source $option(root)/command_socket.tcl
 source $option(root)/agrep.tcl
-
-
 
 proc scheduler_log {} {
 	if {$::option(log_files) == 1} {
@@ -449,7 +447,7 @@ proc scheduler_Init {handler} {
 	} else {
 		main_readConfig
 		scheduler_stations
-		scheduler_logWriteOut 1 "Scheduler has been reinitiated by main application."
+		scheduler_logWriteOut 1 "Scheduler has been reinitiated."
 		set ::scheduler(loop_date) 0
 		scheduler_main_loop
 	}
