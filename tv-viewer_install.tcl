@@ -36,7 +36,7 @@ set where_is "[file dirname [file dirname [file normalize [file join [info scrip
 set prefix /usr/local
 set target $prefix
 set printchan stdout
-set option(release_version) {0.8.1.1 78 31.01.2010}
+set option(release_version) {0.8.1.1 79 31.01.2010}
 
 array set start_options {--uninstall 0 --target 0 --prefix 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
 foreach command_argument $argv {
@@ -149,12 +149,6 @@ You are $::tcl_platform(user).
 				set desk_target "$target/share/applications"
 			}
 			catch {file delete -force "$desk_target/tv-viewer.desktop"}
-			if {$::start_options(--pixmap)} {
-				set pixmap_target "[file normalize $::start_values(--pixmap)]"
-			} else {
-				set pixmap_target "$target/share/pixmaps"
-			}
-			catch {file delete -force "$pixmap_target/tv-viewer.png"}
 			if {$::start_options(--pixmap)} {
 				set pixmap_target "[file normalize $::start_values(--pixmap)]"
 			} else {
@@ -357,12 +351,12 @@ You are $::tcl_platform(user).
 			exit 1
 		} else {
 			catch {[file delete -force -- pathname $prefix/lib/tcl$::tcl_version/tktray1.2/]}
-			file mkdir "$target/share/tv-viewer/" "$target/share/tv-viewer/data/" "$target/share/tv-viewer/extensions/" "$target/share/tv-viewer/extensions/autoscroll/" "$target/share/tv-viewer/extensions/callib/" "$target/share/tv-viewer/extensions/fsdialog/" "$target/share/tv-viewer/extensions/tktray/" "$target/share/tv-viewer/icons/" "$target/share/tv-viewer/icons/16x16/" "$target/share/tv-viewer/icons/22x22/" "$target/share/tv-viewer/icons/32x32/" "$target/share/tv-viewer/icons/extras/" "$target/share/tv-viewer/license/" "$target/share/tv-viewer/msgs/" "$target/share/tv-viewer/msgs/de/" "$target/share/tv-viewer/msgs/en/" "$target/share/tv-viewer/shortcuts" "$target/share/tv-viewer/themes/" "$target/share/tv-viewer/themes/plastik/" "$target/share/tv-viewer/themes/plastik/plastik/" "$target/share/tv-viewer/themes/keramik/" "$target/share/tv-viewer/themes/keramik/keramik/" "$target/share/tv-viewer/themes/keramik/keramik_alt/"
+			file mkdir "$target/share/tv-viewer/" "$target/share/tv-viewer/data/" "$target/share/tv-viewer/extensions/" "$target/share/tv-viewer/extensions/autoscroll/" "$target/share/tv-viewer/extensions/callib/" "$target/share/tv-viewer/extensions/fsdialog/" "$target/share/tv-viewer/icons/" "$target/share/tv-viewer/icons/16x16/" "$target/share/tv-viewer/icons/22x22/" "$target/share/tv-viewer/icons/32x32/" "$target/share/tv-viewer/icons/extras/" "$target/share/tv-viewer/license/" "$target/share/tv-viewer/msgs/" "$target/share/tv-viewer/msgs/de/" "$target/share/tv-viewer/msgs/en/" "$target/share/tv-viewer/shortcuts" "$target/share/tv-viewer/themes/" "$target/share/tv-viewer/themes/plastik/" "$target/share/tv-viewer/themes/plastik/plastik/" "$target/share/tv-viewer/themes/keramik/" "$target/share/tv-viewer/themes/keramik/keramik/" "$target/share/tv-viewer/themes/keramik/keramik_alt/"
 			puts $::printchan "
 Creating folders..."
 		}
 	} else {
-		set status_file [catch {file mkdir "$target/share/tv-viewer/" "$target/share/tv-viewer/data/" "$target/share/tv-viewer/extensions/" "$target/share/tv-viewer/extensions/autoscroll/" "$target/share/tv-viewer/extensions/callib/" "$target/share/tv-viewer/extensions/fsdialog/" "$target/share/tv-viewer/extensions/tktray/" "$target/share/tv-viewer/icons/" "$target/share/tv-viewer/icons/16x16/" "$target/share/tv-viewer/icons/22x22/" "$target/share/tv-viewer/icons/32x32/" "$target/share/tv-viewer/icons/extras/" "$target/share/tv-viewer/license/" "$target/share/tv-viewer/msgs/" "$target/share/tv-viewer/msgs/de/" "$target/share/tv-viewer/msgs/en/" "$target/share/tv-viewer/shortcuts" "$target/share/tv-viewer/themes/" "$target/share/tv-viewer/themes/plastik/" "$target/share/tv-viewer/themes/plastik/plastik/" "$target/share/tv-viewer/themes/keramik/" "$target/share/tv-viewer/themes/keramik/keramik/" "$target/share/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
+		set status_file [catch {file mkdir "$target/share/tv-viewer/" "$target/share/tv-viewer/data/" "$target/share/tv-viewer/extensions/" "$target/share/tv-viewer/extensions/autoscroll/" "$target/share/tv-viewer/extensions/callib/" "$target/share/tv-viewer/extensions/fsdialog/" "$target/share/tv-viewer/icons/" "$target/share/tv-viewer/icons/16x16/" "$target/share/tv-viewer/icons/22x22/" "$target/share/tv-viewer/icons/32x32/" "$target/share/tv-viewer/icons/extras/" "$target/share/tv-viewer/license/" "$target/share/tv-viewer/msgs/" "$target/share/tv-viewer/msgs/de/" "$target/share/tv-viewer/msgs/en/" "$target/share/tv-viewer/shortcuts" "$target/share/tv-viewer/themes/" "$target/share/tv-viewer/themes/plastik/" "$target/share/tv-viewer/themes/plastik/plastik/" "$target/share/tv-viewer/themes/keramik/" "$target/share/tv-viewer/themes/keramik/keramik/" "$target/share/tv-viewer/themes/keramik/keramik_alt/"} resultat_file]
 		if { $status_file != 0 } {
 			puts $::printchan "
 Can't create necessary folders.
@@ -777,7 +771,7 @@ proc install_copyMan {where_is target prefix} {
 	if {$::start_options(--manpath)} {
 		set manpath "[file normalize $::start_values(--manpath)]"
 	} else {
-		set manpath "$prefix/man"
+		set manpath "$prefix/share/man"
 	}
 	if {[file isdirectory "$manpath"] == 0} {
 		file mkdir "$manpath"
