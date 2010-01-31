@@ -36,7 +36,7 @@ set where_is "[file dirname [file dirname [file normalize [file join [info scrip
 set prefix /usr/local
 set target $prefix
 set printchan stdout
-set option(release_version) {0.8.1.1 77 26.01.2010}
+set option(release_version) {0.8.1.1 78 31.01.2010}
 
 array set start_options {--uninstall 0 --target 0 --prefix 0 --nodebug 0 --manpath 0 --nodepcheck 0 --arch 0 --pixmap 0 --desktop 0 --lib 0 --help 0}
 foreach command_argument $argv {
@@ -777,7 +777,7 @@ proc install_copyMan {where_is target prefix} {
 	if {$::start_options(--manpath)} {
 		set manpath "[file normalize $::start_values(--manpath)]"
 	} else {
-		set manpath "$target/man"
+		set manpath "$prefix/man"
 	}
 	if {[file isdirectory "$manpath"] == 0} {
 		file mkdir "$manpath"
