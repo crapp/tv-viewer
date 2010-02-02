@@ -93,7 +93,7 @@ proc log_viewerSaveLog {handler parent} {
 	{{Logfiles}      {.log}       }
 	}
 	array set sofile {
-		type(tv) tv-viewer
+		type(tv) tvviewer
 		type(mpl) videoplayer
 		type(sched) scheduler
 	}
@@ -111,21 +111,42 @@ proc log_viewerSaveLog {handler parent} {
 	file copy -force "$::option(home)/log/$sofile(type\($handler\)).log" "$ofile"
 }
 
-proc log_viewerMplayer {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplayer \033\[0m"
-	if {[winfo exists .log_viewer_mplayer] == 0} {
+proc log_viewerUi {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerUi \033\[0m \{$handler\}"
+	# 1 = TV-Viewer 2 =  MPlayer 3 = Scheduler
+	
+	array set ident {
+		1 tv
+		2 mpl
+		3 sched
+	}
+	array set ident {
+		filen(1) tvviewer
+		filen(2) videoplayer
+		filen(3) scheduler
+		op(1) tv
+		op(2) mpl
+		op(3) sched
+		name(1) TV-Viewer
+		name(2) MPlayer
+		name(3) Scheduler
+		tailc(1) log_viewerTvTail
+		tailc(2) log_viewerMplTail
+		tailc(3) log_viewerSchedTail
+	}
+	
+	if {[winfo exists .log_viewer_$ident(op\($handler\))] == 0} {
+		log_writeOutTv 0 "Launching log viewer for $ident(name\($handler\))."
 		
-		log_writeOutTv 0 "Launching log viewer for MPlayer."
-		
-		set w [toplevel .log_viewer_mplayer -class "TV-Viewer Log Viewer"]
+		set w [toplevel .log_viewer_$ident(op\($handler\)) -class "TV-Viewer Log Viewer"]
 		
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 		
-		set mf [ttk::frame $w.f_log_mplayer]
+		set mf [ttk::frame $w.f_log_$ident(op\($handler\))]
 		
-		set wfbottom [ttk::frame $w.f_log_mplayer_buttons -style TLabelframe]
+		set wfbottom [ttk::frame $w.f_log_$ident(op\($handler\))_buttons -style TLabelframe]
 		
-		set ftop [ttk::frame $w.f_log_mplayer_top]
+		set ftop [ttk::frame $w.f_log_$ident(op\($handler\))_top]
 		
 		ttk::separator $w.sep_main \
 		-orient horizontal
@@ -133,50 +154,50 @@ proc log_viewerMplayer {} {
 		ttk::button $ftop.b_save \
 		-style Toolbutton \
 		-image $::icon_m(floppy) \
-		-command [list log_viewerSaveLog mpl $w]
+		-command [list log_viewerSaveLog $ident(op\($handler\)) $w]
 		
 		ttk::button $ftop.b_email \
 		-style Toolbutton \
 		-image $::icon_m(e-mail) \
-		-command {catch {exec xdg-email saedelaere@arcor.de --attach "$::option(home)/log/videoplayer.log" &}}
+		-command [list log_viewerEmail $handler]
 		
 		ttk::separator $ftop.sep_sep1 \
 		-orient vertical
 		
 		ttk::checkbutton $ftop.cb_verb_debug \
 		-text Debug \
-		-variable log(verboseMpl_debug) \
-		-command [list log_viewerMplReadFile $mf.t_log_mplayer $mf.lb_log_mplayer]
+		-variable log(verbose_$ident(op\($handler\))_debug) \
+		-command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
 		
 		ttk::checkbutton $ftop.cb_verb_warn \
 		-text Warning \
-		-variable log(verboseMpl_warn) \
-		-command [list log_viewerMplReadFile $mf.t_log_mplayer $mf.lb_log_mplayer]
+		-variable log(verbose_$ident(op\($handler\))_warn) \
+		-command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
 		
 		ttk::checkbutton $ftop.cb_verb_err \
 		-text Error \
-		-variable log(verboseMpl_err) \
-		-command [list log_viewerMplReadFile $mf.t_log_mplayer $mf.lb_log_mplayer]
+		-variable log(verbose_$ident(op\($handler\))_err) \
+		-command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
 		
-		listbox $mf.lb_log_mplayer \
-		-yscrollcommand [list $mf.scrollb_lb_log_mplayer set] \
+		listbox $mf.lb_log_$ident(op\($handler\)) \
+		-yscrollcommand [list $mf.scrollb_lb_log_$ident(op\($handler\)) set] \
 		-width 0
 		
-		ttk::scrollbar $mf.scrollb_lb_log_mplayer \
-		-command [list $mf.lb_log_mplayer yview]
+		ttk::scrollbar $mf.scrollb_lb_log_$ident(op\($handler\)) \
+		-command [list $mf.lb_log_$ident(op\($handler\)) yview]
 		
-		text $mf.t_log_mplayer \
-		-yscrollcommand [list $mf.scrollb_log_mplayer set] \
+		text $mf.t_log_$ident(op\($handler\)) \
+		-yscrollcommand [list $mf.scrollb_log_$ident(op\($handler\)) set] \
 		-wrap word
 		
-		ttk::scrollbar $mf.scrollb_log_mplayer \
-		-command [list $mf.t_log_mplayer yview]
+		ttk::scrollbar $mf.scrollb_log_$ident(op\($handler\)) \
+		-command [list $mf.t_log_$ident(op\($handler\)) yview]
 		
-		ttk::button $wfbottom.b_exit_log_mplayer \
+		ttk::button $wfbottom.b_exit_log_$ident(op\($handler\)) \
 		-text [mc "Exit"] \
 		-compound left \
 		-image $::icon_s(dialog-close) \
-		-command "destroy $w; set ::choice(cb_log_mpl_main) 0; log_viewerMplTail 0 cancel 0"
+		-command "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
 		
 		grid $ftop -in $w -row 0 -column 0 \
 		-sticky ew
@@ -206,40 +227,39 @@ proc log_viewerMplayer {} {
 		-padx 2
 		grid $ftop.cb_verb_err -in $ftop -row 0 -column 5
 		
-		grid $mf.lb_log_mplayer -in $mf -row 0 -column 0 \
+		grid $mf.lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 0 \
 		-sticky nesw \
 		-pady 3 \
 		-padx 3
-		grid $mf.scrollb_lb_log_mplayer -in $mf -row 0 -column 1 \
+		grid $mf.scrollb_lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 1 \
 		-sticky ns \
 		-pady 5
-		grid $mf.t_log_mplayer -in $mf -row 0 -column 2 \
+		grid $mf.t_log_$ident(op\($handler\)) -in $mf -row 0 -column 2 \
 		-sticky nesw \
 		-pady 3 \
 		-padx 3
-		grid $mf.scrollb_log_mplayer -in $mf -row 0 -column 3 \
+		grid $mf.scrollb_log_$ident(op\($handler\)) -in $mf -row 0 -column 3 \
 		-sticky ns \
 		-pady 5
-		grid $wfbottom.b_exit_log_mplayer -in $wfbottom -row 0 -column 0 \
+		grid $wfbottom.b_exit_log_$ident(op\($handler\)) -in $wfbottom -row 0 -column 0 \
 		-pady 7 \
 		-padx 3
 		
 		grid rowconfigure $mf 0 -weight 1 -minsize 350
 		grid columnconfigure $mf 2 -weight 1 -minsize 515
-		grid rowconfigure $w {0} -weight 1
+		grid rowconfigure $w {2} -weight 1
 		grid columnconfigure $w {0} -weight 1
 		
-		autoscroll $mf.scrollb_lb_log_mplayer
-		autoscroll $mf.scrollb_log_mplayer
-		
-		wm title $w [mc "MPlayer Log"]
-		wm protocol $w WM_DELETE_WINDOW "destroy $w; set ::choice(cb_log_mpl_main) 0; log_viewerMplTail 0 cancel 0"
+		autoscroll $mf.scrollb_lb_log_$ident(op\($handler\))
+		autoscroll $mf.scrollb_log_$ident(op\($handler\))
+		wm title $w [mc "$ident(name\($handler\)) Log"]
+		wm protocol $w WM_DELETE_WINDOW "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
 		wm iconphoto $w $::icon_e(tv-viewer_icon)
 		
 		foreach event {<KeyPress> <<PasteSelection>>} {
-			bind $mf.t_log_mplayer $event break
+			bind $mf.t_log_$ident(op\($handler\)) $event break
 		}
-		bind $mf.t_log_mplayer <Control-c> {event generate %W <<Copy>>}
+		bind $mf.t_log_$ident(op\($handler\)) <Control-c> {event generate %W <<Copy>>}
 		
 		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
 			settooltip $ftop.b_save [mc "Save logfile to disk"]
@@ -249,34 +269,49 @@ proc log_viewerMplayer {} {
 			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
 		}
 		
-		set ::log(verboseMpl_debug) 1
-		set ::log(verboseMpl_warn) 1
-		set ::log(verboseMpl_err) 1
-		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for MPlayer."
-		after 0 [list log_viewerMplReadFile $mf.t_log_mplayer $mf.lb_log_mplayer]
-		tkwait visibility .log_viewer_mplayer
-		log_viewerMplayerLb $mf.lb_log_mplayer
-		wm minsize .log_viewer_mplayer [winfo reqwidth .log_viewer_mplayer] [winfo reqheight .log_viewer_mplayer]
+		set ::log(verbose_$ident(op\($handler\))_debug) 1
+		set ::log(verbose_$ident(op\($handler\))_warn) 1
+		set ::log(verbose_$ident(op\($handler\))_err) 1
+		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for $ident(name\($handler\))."
+		after 0 [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
+		tkwait visibility .log_viewer_$ident(op\($handler\))
+		log_viewerLb $mf.lb_log_$ident(op\($handler\)) $mf.t_log_$ident(op\($handler\)) $handler
+		wm minsize .log_viewer_$ident(op\($handler\)) [winfo reqwidth .log_viewer_$ident(op\($handler\))] [winfo reqheight .log_viewer_$ident(op\($handler\))]
 	} else {
-		log_writeOutTv 0 "Closing log viewer for MPlayer."
-		log_viewerMplTail 0 cancel 0; destroy .log_viewer_mplayer
+		log_writeOutTv 0 "Closing log viewer for $ident(name\($handler\))."
+		$ident(tailc\($handler\)) 0 cancel 0; destroy .log_viewer_$ident(op\($handler\))
 	}
 }
 
-proc log_viewerMplReadFile {logw loglb} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplReadFile \033\[0m \{$logw\}"
-	if {[file exists "$::option(home)/log/videoplayer.log"]} {
-		log_viewerMplTail 0 cancel 0
+proc log_viewerReadFile {handler logw loglb} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerReadFile \033\[0m \{$handler\} \{$logw\} \{$loglb\}"
+	array set ident {
+		filen(1) tvviewer
+		filen(2) videoplayer
+		filen(3) scheduler
+		op(1) tv
+		op(2) mpl
+		op(3) sched
+		name(1) TV-Viewer
+		name(2) MPlayer
+		name(3) Scheduler
+		tailc(1) log_viewerTvTail
+		tailc(2) log_viewerMplTail
+		tailc(3) log_viewerSchedTail
+	}
+	
+	if {[file exists "$::option(home)/log/$ident(filen\($handler\)).log"]} {
+		$ident(tailc\($handler\)) 0 cancel 0
 		$logw delete 0.0 end
 		$loglb delete 0 end
-		set mlogfile_open [open "$::option(home)/log/videoplayer.log" r]
+		set logfile_open [open "$::option(home)/log/$ident(filen\($handler\)).log" r]
 		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
 		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
 		set i 0
 		set match_date ""
-		while {[gets $mlogfile_open line]!=-1} {
+		while {[gets $logfile_open line]!=-1} {
 			set match 0
-			if {$::log(verboseMpl_warn) == 1} {
+			if {$::log(verbose_$ident(op\($handler\))_warn) == 1} {
 				if {[string match "*WARNING:*" $line]} {
 					set match 1
 					$logw insert end $line\n fat_blue
@@ -284,7 +319,7 @@ proc log_viewerMplReadFile {logw loglb} {
 			} else {
 				if {[string match "*WARNING:*" $line]} continue
 			}
-			if {$::log(verboseMpl_err) == 1} {
+			if {$::log(verbose_$ident(op\($handler\))_err) == 1} {
 				if {[string match "*ERROR:*" $line]} {
 					set match 1
 					$logw insert end $line\n fat_red
@@ -292,7 +327,7 @@ proc log_viewerMplReadFile {logw loglb} {
 			} else {
 				if {[string match "*ERROR:*" $line]} continue
 			}
-			if {$::log(verboseMpl_debug) == 1} {
+			if {$::log(verbose_$ident(op\($handler\))_debug) == 1} {
 				if {[string match "*DEBUG:*" $line]} {
 					set match 1
 					$logw insert end $line\n
@@ -321,15 +356,59 @@ proc log_viewerMplReadFile {logw loglb} {
 			}
 			unset -nocomplain match
 		}
-		bind $loglb <<ListboxSelect>> [list log_viewerMplayerLb $loglb]
+		bind $loglb <<ListboxSelect>> [list log_viewerLb $loglb $logw $handler]
 		$loglb activate end
 		$loglb selection set end
 		$loglb see end
-		seek $mlogfile_open 0 end
-		set position [tell $mlogfile_open]
-		close $mlogfile_open
-		set ::data(log_mpl_id) [after 100 "log_viewerMplTail $::option(home)/log/videoplayer.log $position $logw"]
+		seek $logfile_open 0 end
+		set position [tell $logfile_open]
+		close $logfile_open
+		set ::data(log_$ident(op\($handler\))_id) [after 100 "$ident(tailc\($handler\)) $::option(home)/log/$ident(filen\($handler\)).log $position $logw"]
 	}
+}
+
+proc log_viewerLb {loglb logw handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerLb \033\[0m \{$loglb\} \{$logw\} \{$handler\}"
+	array set ident {
+		filen(1) tvviewer
+		filen(2) videoplayer
+		filen(3) scheduler
+		op(1) tv
+		op(2) mpl
+		op(3) sched
+		name(1) TV-Viewer
+		name(2) MPlayer
+		name(3) Scheduler
+		tailc(1) log_viewerTvTail
+		tailc(2) log_viewerMplTail
+		tailc(3) log_viewerSchedTail
+	}
+	
+	set get_lb_index [$loglb curselection]
+	set get_lb_content [$loglb get $get_lb_index]
+	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
+	$logw see $marking
+}
+
+proc log_viewerEmail {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerEmail \033\[0m \{$handler\}"
+	array set ident {
+		filen(1) tvviewer
+		filen(2) videoplayer
+		filen(3) scheduler
+		op(1) tv
+		op(2) mpl
+		op(3) sched
+		name(1) TV-Viewer
+		name(2) MPlayer
+		name(3) Scheduler
+		tailc(1) log_viewerTvTail
+		tailc(2) log_viewerMplTail
+		tailc(3) log_viewerSchedTail
+	}
+	
+	set logfile "$::option(home)/log/$ident(filen\($handler\)).log"
+	catch {exec xdg-email saedelaere@arcor.de --attach "$logfile" &}
 }
 
 proc log_viewerMplTail {filename position logw} {
@@ -339,7 +418,7 @@ proc log_viewerMplTail {filename position logw} {
 		unset -nocomplain ::data(log_mpl_id)
 		return
 	}
-	if {[winfo exists .log_viewer_mplayer]} {
+	if {[winfo exists .log_viewer_mpl]} {
 		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
 		
 		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
@@ -350,7 +429,7 @@ proc log_viewerMplTail {filename position logw} {
 		while {[eof $fh] == 0} {
 			gets $fh line
 			if {[string length $line] > 0} {
-				if {$::log(verboseMpl_warn) == 1} {
+				if {$::log(verbose_mpl_warn) == 1} {
 					if {[string match "*WARNING:*" $line]} {
 						$logw insert end $line\n fat_blue
 						$logw see end
@@ -358,7 +437,7 @@ proc log_viewerMplTail {filename position logw} {
 				} else {
 					if {[string match "*WARNING:*" $line]} continue
 				}
-				if {$::log(verboseMpl_err) == 1} {
+				if {$::log(verbose_mpl_err) == 1} {
 					if {[string match "*ERROR:*" $line]} {
 						$logw insert end $line\n fat_red
 						$logw see end
@@ -366,7 +445,7 @@ proc log_viewerMplTail {filename position logw} {
 				} else {
 					if {[string match "*ERROR:*" $line]} continue
 				}
-				if {$::log(verboseMpl_debug) == 1} {
+				if {$::log(verbose_mpl_debug) == 1} {
 					if {[string match "*DEBUG:*" $line]} {
 						$logw insert end $line\n
 						$logw see end
@@ -382,250 +461,6 @@ proc log_viewerMplTail {filename position logw} {
 	}
 }
 
-proc log_viewerMplayerLb {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerMplayerLb \033\[0m \{$w\}"
-	set get_lb_index [$w curselection]
-	set get_lb_content [$w get $get_lb_index]
-	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
-	.log_viewer_mplayer.f_log_mplayer.t_log_mplayer see $marking
-}
-
-proc log_writeOutMpl {handler text} {
-	set logformat "#"
-	if {$handler == 0} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] DEBUG: "
-	}
-	if {$handler == 1} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] WARNING: "
-	}
-	if {$handler == 2} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] ERROR: "
-	}
-	puts $::logf_mpl_open_append "$logformat $text"
-	flush $::logf_mpl_open_append
-}
-
-proc log_viewerScheduler {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerScheduler \033\[0m"
-	if {[winfo exists .log_viewer_scheduler] == 0} {
-		
-		log_writeOutTv 0 "Launching log viewer for Scheduler."
-		
-		set w [toplevel .log_viewer_scheduler -class "TV-Viewer Log Viewer"]
-		
-		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
-		set mf [ttk::frame $w.f_log_scheduler]
-		
-		set wfbottom [ttk::frame $w.f_log_scheduler_buttons -style TLabelframe]
-		
-		set ftop [ttk::frame $w.f_log_scheduler_top]
-		
-		ttk::separator $w.sep_main \
-		-orient horizontal
-		
-		ttk::button $ftop.b_save \
-		-style Toolbutton \
-		-image $::icon_m(floppy) \
-		-command [list log_viewerSaveLog sched $w]
-		
-		ttk::button $ftop.b_email \
-		-style Toolbutton \
-		-image $::icon_m(e-mail) \
-		-command {catch {exec xdg-email saedelaere@arcor.de --attach "$::option(home)/log/scheduler.log" &}}
-		
-		ttk::separator $ftop.sep_sep1 \
-		-orient vertical
-		
-		ttk::checkbutton $ftop.cb_verb_debug \
-		-text Debug \
-		-variable log(verboseSched_debug) \
-		-command [list log_viewerSchedReadFile $mf.t_log_scheduler $mf.lb_log_scheduler]
-		
-		ttk::checkbutton $ftop.cb_verb_warn \
-		-text Warning \
-		-variable log(verboseSched_warn) \
-		-command [list log_viewerSchedReadFile $mf.t_log_scheduler $mf.lb_log_scheduler]
-		
-		ttk::checkbutton $ftop.cb_verb_err \
-		-text Error \
-		-variable log(verboseSched_err) \
-		-command [list log_viewerSchedReadFile $mf.t_log_scheduler $mf.lb_log_scheduler]
-		
-		listbox $mf.lb_log_scheduler \
-		-yscrollcommand [list $mf.scrollb_lb_log_scheduler set] \
-		-width 0
-		
-		ttk::scrollbar $mf.scrollb_lb_log_scheduler \
-		-command [list $mf.lb_log_scheduler yview]
-		
-		text $mf.t_log_scheduler \
-		-yscrollcommand [list $mf.scrollb_log_scheduler set] \
-		-wrap word
-		
-		ttk::scrollbar $mf.scrollb_log_scheduler \
-		-command [list $mf.t_log_scheduler yview]
-		
-		ttk::button $wfbottom.b_exit_log_scheduler \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close) \
-		-command "destroy $w; set ::choice(cb_log_sched_main) 0; log_viewerSchedTail 0 cancel 0"
-		
-		grid $ftop -in $w -row 0 -column 0 \
-		-sticky ew
-		grid $w.sep_main -in $w -row 1 -column 0 \
-		-sticky ew \
-		-padx 4
-		grid $mf -in $w -row 2 -column 0 \
-		-sticky nesw
-		grid $wfbottom -in $w -row 3 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
-		
-		grid anchor $wfbottom e
-		
-		grid $ftop.b_save -in $ftop -row 0 -column 0 \
-		-padx 2 \
-		-pady 1
-		grid $ftop.b_email -in $ftop -row 0 -column 1 \
-		-pady 1
-		grid $ftop.sep_sep1 -in $ftop -row 0 -column 2 \
-		-sticky ns \
-		-padx 5
-		grid $ftop.cb_verb_debug -in $ftop -row 0 -column 3 \
-		-padx 2
-		grid $ftop.cb_verb_warn -in $ftop -row 0 -column 4 \
-		-padx 2
-		grid $ftop.cb_verb_err -in $ftop -row 0 -column 5
-		
-		grid $mf.lb_log_scheduler -in $mf -row 0 -column 0 \
-		-sticky nesw \
-		-pady 3 \
-		-padx 3
-		grid $mf.scrollb_lb_log_scheduler -in $mf -row 0 -column 1 \
-		-sticky ns \
-		-pady 5
-		grid $mf.t_log_scheduler -in $mf -row 0 -column 2 \
-		-sticky nesw \
-		-pady 3 \
-		-padx 3
-		grid $mf.scrollb_log_scheduler -in $mf -row 0 -column 3 \
-		-sticky ns \
-		-pady 5
-		grid $wfbottom.b_exit_log_scheduler -in $wfbottom -row 0 -column 0 \
-		-pady 7 \
-		-padx 3
-		
-		grid rowconfigure $mf 0 -weight 1 -minsize 350
-		grid columnconfigure $mf 2 -weight 1 -minsize 515
-		grid rowconfigure $w {0} -weight 1
-		grid columnconfigure $w {0} -weight 1
-		
-		autoscroll $mf.scrollb_lb_log_scheduler
-		autoscroll $mf.scrollb_log_scheduler
-		
-		wm title $w [mc "Scheduler Log"]
-		wm protocol $w WM_DELETE_WINDOW "destroy $w; set ::choice(cb_log_sched_main) 0; log_viewerSchedTail 0 cancel 0"
-		wm iconphoto $w $::icon_e(tv-viewer_icon)
-		
-		foreach event {<KeyPress> <<PasteSelection>>} {
-			bind $mf.t_log_scheduler $event break
-		}
-		bind $mf.t_log_scheduler <Control-c> {event generate %W <<Copy>>}
-		
-		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
-			settooltip $ftop.b_save [mc "Save logfile to disk"]
-			settooltip $ftop.b_email [mc "Send logfile by e-mail to the authors"]
-			settooltip $ftop.cb_verb_debug [mc "Show/hide Debug messages"]
-			settooltip $ftop.cb_verb_warn [mc "Show/hide Warning messages"]
-			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
-		}
-		
-		set ::log(verboseSched_debug) 1
-		set ::log(verboseSched_warn) 1
-		set ::log(verboseSched_err) 1
-		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for Scheduler."
-		after 0 [list log_viewerSchedReadFile $mf.t_log_scheduler $mf.lb_log_scheduler]
-		tkwait visibility .log_viewer_scheduler
-		log_viewerSchedLb $mf.lb_log_scheduler
-		wm minsize .log_viewer_scheduler [winfo reqwidth .log_viewer_scheduler] [winfo reqheight .log_viewer_scheduler]
-	} else {
-		log_writeOutTv 0 "Closing log viewer for Scheduler."
-		log_viewerSchedTail 0 cancel 0; destroy .log_viewer_scheduler
-	}
-}
-
-proc log_viewerSchedReadFile {logw loglb} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedReadFile \033\[0m \{$logw\}"
-	if {[file exists "$::option(home)/log/scheduler.log"]} {
-		log_viewerSchedTail 0 cancel 0
-		$logw delete 0.0 end
-		$loglb delete 0 end
-		set mlogfile_open [open "$::option(home)/log/scheduler.log" r]
-		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
-		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
-		set i 0
-		set match_date ""
-		while {[gets $mlogfile_open line]!=-1} {
-			set match 0
-			if {$::log(verboseSched_warn) == 1} {
-				if {[string match "*WARNING:*" $line]} {
-					set match 1
-					$logw insert end $line\n fat_blue
-				}
-			} else {
-				if {[string match "*WARNING:*" $line]} continue
-			}
-			if {$::log(verboseSched_err) == 1} {
-				if {[string match "*ERROR:*" $line]} {
-					set match 1
-					$logw insert end $line\n fat_red
-				}
-			} else {
-				if {[string match "*ERROR:*" $line]} continue
-			}
-			if {$::log(verboseSched_debug) == 1} {
-				if {[string match "*DEBUG:*" $line]} {
-					set match 1
-					$logw insert end $line\n
-				}
-			} else {
-				if {[string match "*DEBUG:*" $line]} continue
-			}
-			if {[string match "# Start new session*" $line]} {
-				set match 1
-				if {"[lindex $line 4]" == "$match_date"} {
-					incr i
-					$loglb insert end "Session [lindex $line 4] - $i"
-					set match_date [lindex $line 4]
-					$logw insert end $line\n
-					$logw mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$logw index "end -10 chars"]
-				} else {
-					$loglb insert end "Session [lindex $line 4] - 1"
-					set i 1
-					set match_date [lindex $line 4]
-					$logw insert end $line\n
-					$logw mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$logw index "end -10 chars"]
-				}
-			}
-			if {$match == 0} {
-				$logw insert end $line\n
-			}
-			unset -nocomplain match
-		}
-		bind $loglb <<ListboxSelect>> [list log_viewerSchedLb $loglb]
-		$loglb activate end
-		$loglb selection set end
-		$loglb see end
-		seek $mlogfile_open 0 end
-		set position [tell $mlogfile_open]
-		close $mlogfile_open
-		set ::data(log_sched_id) [after 100 "log_viewerSchedTail $::option(home)/log/scheduler.log $position $logw"]
-	}
-}
-
 proc log_viewerSchedTail {filename position logw} {
 	if {"$position" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedTail \033\[0;1;31m::cancel:: \033\[0m"
@@ -633,7 +468,7 @@ proc log_viewerSchedTail {filename position logw} {
 		unset -nocomplain ::data(log_sched_id)
 		return
 	}
-	if {[winfo exists .log_viewer_scheduler]} {
+	if {[winfo exists .log_viewer_sched]} {
 		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
 		
 		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
@@ -645,7 +480,7 @@ proc log_viewerSchedTail {filename position logw} {
 			gets $fh line
 			if {[string length $line] > 0} {
 				set match 0
-				if {$::log(verboseSched_warn) == 1} {
+				if {$::log(verbose_sched_warn) == 1} {
 					if {[string match "*WARNING:*" $line]} {
 						set match 1
 						$logw insert end $line\n fat_blue
@@ -654,7 +489,7 @@ proc log_viewerSchedTail {filename position logw} {
 				} else {
 					if {[string match "*WARNING:*" $line]} continue
 				}
-				if {$::log(verboseSched_err) == 1} {
+				if {$::log(verbose_sched_err) == 1} {
 					if {[string match "*ERROR:*" $line]} {
 						set match 1
 						$logw insert end $line\n fat_red
@@ -663,7 +498,7 @@ proc log_viewerSchedTail {filename position logw} {
 				} else {
 					if {[string match "*ERROR:*" $line]} continue
 				}
-				if {$::log(verboseSched_debug) == 1} {
+				if {$::log(verbose_sched_debug) == 1} {
 					if {[string match "*DEBUG:*" $line]} {
 						set match 1
 						$logw insert end $line\n
@@ -685,235 +520,6 @@ proc log_viewerSchedTail {filename position logw} {
 	}
 }
 
-proc log_viewerSchedLb {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerSchedLb \033\[0m \{$w\}"
-	set get_lb_index [$w curselection]
-	set get_lb_content [$w get $get_lb_index]
-	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
-	.log_viewer_scheduler.f_log_scheduler.t_log_scheduler see $marking
-}
-
-proc log_viewerTvViewer {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvViewer \033\[0m"
-	if {[winfo exists .log_viewer_tvviewer] == 0} {
-		
-		log_writeOutTv 0 "Launching log viewer for TV-Viewer."
-		
-		set w [toplevel .log_viewer_tvviewer -class "TV-Viewer Log Viewer"]
-		
-		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
-		set mf [ttk::frame $w.f_log_tvviewer]
-		
-		set wfbottom [ttk::frame $w.f_log_tvviewer_buttons -style TLabelframe]
-		
-		set ftop [ttk::frame $w.f_log_tvviewer_top]
-		
-		ttk::separator $w.sep_main \
-		-orient horizontal
-		
-		ttk::button $ftop.b_save \
-		-style Toolbutton \
-		-image $::icon_m(floppy) \
-		-command [list log_viewerSaveLog tv $w]
-		
-		ttk::button $ftop.b_email \
-		-style Toolbutton \
-		-image $::icon_m(e-mail) \
-		-command {catch {exec xdg-email saedelaere@arcor.de --attach "$::option(home)/log/tvviewer.log" &}}
-		
-		ttk::separator $ftop.sep_sep1 \
-		-orient vertical
-		
-		ttk::checkbutton $ftop.cb_verb_debug \
-		-text Debug \
-		-variable log(verboseTv_debug) \
-		-command [list log_viewerTvReadFile $mf.t_log_tvviewer $mf.lb_log_tvviewer]
-		
-		ttk::checkbutton $ftop.cb_verb_warn \
-		-text Warning \
-		-variable log(verboseTv_warn) \
-		-command [list log_viewerTvReadFile $mf.t_log_tvviewer $mf.lb_log_tvviewer]
-		
-		ttk::checkbutton $ftop.cb_verb_err \
-		-text Error \
-		-variable log(verboseTv_err) \
-		-command [list log_viewerTvReadFile $mf.t_log_tvviewer $mf.lb_log_tvviewer]
-		
-		listbox $mf.lb_log_tvviewer \
-		-yscrollcommand [list $mf.scrollb_lb_log_tvviewer set] \
-		-width 0
-		
-		ttk::scrollbar $mf.scrollb_lb_log_tvviewer \
-		-command [list $mf.lb_log_tvviewer yview]
-		
-		text $mf.t_log_tvviewer \
-		-yscrollcommand [list $mf.scrollb_log_tvviewer set] \
-		-wrap word
-		
-		ttk::scrollbar $mf.scrollb_log_tvviewer \
-		-command [list $mf.t_log_tvviewer yview]
-		
-		ttk::button $wfbottom.b_exit_log_tvviewer \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close) \
-		-command "destroy $w; set ::choice(cb_log_tv_main) 0; log_viewerTvTail 0 cancel 0"
-		
-		grid $ftop -in $w -row 0 -column 0 \
-		-sticky ew
-		grid $w.sep_main -in $w -row 1 -column 0 \
-		-sticky ew \
-		-padx 4
-		grid $mf -in $w -row 2 -column 0 \
-		-sticky nesw
-		grid $wfbottom -in $w -row 3 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
-		
-		grid anchor $wfbottom e
-		
-		grid $ftop.b_save -in $ftop -row 0 -column 0 \
-		-padx 2 \
-		-pady 1
-		grid $ftop.b_email -in $ftop -row 0 -column 1 \
-		-pady 1
-		grid $ftop.sep_sep1 -in $ftop -row 0 -column 2 \
-		-sticky ns \
-		-padx 5
-		grid $ftop.cb_verb_debug -in $ftop -row 0 -column 3 \
-		-padx 2
-		grid $ftop.cb_verb_warn -in $ftop -row 0 -column 4 \
-		-padx 2
-		grid $ftop.cb_verb_err -in $ftop -row 0 -column 5
-		
-		grid $mf.lb_log_tvviewer -in $mf -row 0 -column 0 \
-		-sticky nesw \
-		-pady 3 \
-		-padx 3
-		grid $mf.scrollb_lb_log_tvviewer -in $mf -row 0 -column 1 \
-		-sticky ns \
-		-pady 5
-		grid $mf.t_log_tvviewer -in $mf -row 0 -column 2 \
-		-sticky nesw \
-		-pady 3 \
-		-padx 3
-		grid $mf.scrollb_log_tvviewer -in $mf -row 0 -column 3 \
-		-sticky ns \
-		-pady 5
-		grid $wfbottom.b_exit_log_tvviewer -in $wfbottom -row 0 -column 0 \
-		-pady 7 \
-		-padx 3
-		
-		grid rowconfigure $mf 0 -weight 1 -minsize 350
-		grid columnconfigure $mf 2 -weight 1 -minsize 515
-		grid rowconfigure $w {0} -weight 1
-		grid columnconfigure $w {0} -weight 1
-		
-		autoscroll $mf.scrollb_lb_log_tvviewer
-		autoscroll $mf.scrollb_log_tvviewer
-		
-		wm title $w [mc "TV-Viewer Log"]
-		wm protocol $w WM_DELETE_WINDOW "destroy $w; set ::choice(cb_log_tv_main) 0; log_viewerTvTail 0 cancel 0"
-		wm iconphoto $w $::icon_e(tv-viewer_icon)
-		
-		foreach event {<KeyPress> <<PasteSelection>>} {
-			bind $mf.t_log_tvviewer $event break
-		}
-		bind $mf.t_log_tvviewer <Control-c> {event generate %W <<Copy>>}
-		
-		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
-			settooltip $ftop.b_save [mc "Save logfile to disk"]
-			settooltip $ftop.b_email [mc "Send logfile by e-mail to the authors"]
-			settooltip $ftop.cb_verb_debug [mc "Show/hide Debug messages"]
-			settooltip $ftop.cb_verb_warn [mc "Show/hide Warning messages"]
-			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
-		}
-		
-		set ::log(verboseTv_debug) 1
-		set ::log(verboseTv_warn) 1
-		set ::log(verboseTv_err) 1
-		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for TV-Viewer."
-		after 0 [list log_viewerTvReadFile $mf.t_log_tvviewer $mf.lb_log_tvviewer]
-		tkwait visibility .log_viewer_tvviewer
-		log_viewerTvLb $mf.lb_log_tvviewer
-		wm minsize .log_viewer_tvviewer [winfo reqwidth .log_viewer_tvviewer] [winfo reqheight .log_viewer_tvviewer]
-	} else {
-		log_writeOutTv 0 "Closing log viewer for TV-Viewer."
-		log_viewerTvTail 0 cancel 0; destroy .log_viewer_tvviewer
-	}
-}
-
-proc log_viewerTvReadFile {logw loglb} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvReadFile \033\[0m \{$logw\}"
-	if {[file exists "$::option(home)/log/tvviewer.log"]} {
-		log_viewerTvTail 0 cancel 0
-		$logw delete 0.0 end
-		$loglb delete 0 end
-		set mlogfile_open [open "$::option(home)/log/tvviewer.log" r]
-		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
-		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
-		set i 0
-		set match_date ""
-		while {[gets $mlogfile_open line]!=-1} {
-			set match 0
-			if {$::log(verboseTv_warn) == 1} {
-				if {[string match "*WARNING:*" $line]} {
-					set match 1
-					$logw insert end $line\n fat_blue
-				}
-			} else {
-				if {[string match "*WARNING:*" $line]} continue
-			}
-			if {$::log(verboseTv_err) == 1} {
-				if {[string match "*ERROR:*" $line]} {
-					set match 1
-					$logw insert end $line\n fat_red
-				}
-			} else {
-				if {[string match "*ERROR:*" $line]} continue
-			}
-			if {$::log(verboseTv_debug) == 1} {
-				if {[string match "*DEBUG:*" $line]} {
-					set match 1
-					$logw insert end $line\n
-				}
-			} else {
-				if {[string match "*DEBUG:*" $line]} continue
-			}
-			if {[string match "# Start new session*" $line]} {
-				set match 1
-				if {"[lindex $line 4]" == "$match_date"} {
-					incr i
-					$loglb insert end "Session [lindex $line 4] - $i"
-					set match_date [lindex $line 4]
-					$logw insert end $line\n
-					$logw mark set [string map {{ } {}} "[lindex $line 4] - $i"] [$logw index "end -10 chars"]
-				} else {
-					$loglb insert end "Session [lindex $line 4] - 1"
-					set i 1
-					set match_date [lindex $line 4]
-					$logw insert end $line\n
-					$logw mark set [string map {{ } {}} "[lindex $line 4] - 1"] [$logw index "end -10 chars"]
-				}
-			}
-			if {$match == 0} {
-				$logw insert end $line\n
-			}
-			unset -nocomplain match
-		}
-		bind $loglb <<ListboxSelect>> [list log_viewerTvLb $loglb]
-		$loglb activate end
-		$loglb selection set end
-		$loglb see end
-		seek $mlogfile_open 0 end
-		set position [tell $mlogfile_open]
-		close $mlogfile_open
-		set ::data(log_tv_id) [after 100 "log_viewerTvTail $::option(home)/log/tvviewer.log $position $logw"]
-	}
-}
-
 proc log_viewerTvTail {filename position logw} {
 	if {"$position" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvTail \033\[0;1;31m::cancel:: \033\[0m"
@@ -921,7 +527,7 @@ proc log_viewerTvTail {filename position logw} {
 		unset -nocomplain ::data(log_tv_id)
 		return
 	}
-	if {[winfo exists .log_viewer_tvviewer]} {
+	if {[winfo exists .log_viewer_tv]} {
 		$logw tag configure fat_blue -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #0030C4
 		
 		$logw tag configure fat_red -font "TkTextFont [font actual TkTextFont -displayof $logw -size] bold" -foreground #DF0F0F
@@ -932,44 +538,45 @@ proc log_viewerTvTail {filename position logw} {
 		while {[eof $fh] == 0} {
 			gets $fh line
 			if {[string length $line] > 0} {
-				if {$::log(verboseTv_warn) == 1} {
+				set match 0
+				if {$::log(verbose_tv_warn) == 1} {
 					if {[string match "*WARNING:*" $line]} {
+						set match 1
 						$logw insert end $line\n fat_blue
 						$logw see end
 					}
 				} else {
-					if {$::log(verboseTv_warn) == 1} continue
+					if {[string match "*WARNING:*" $line]} continue
 				}
-				if {$::log(verboseTv_err) == 1} {
+				if {$::log(verbose_tv_err) == 1} {
 					if {[string match "*ERROR:*" $line]} {
+						set match 1
 						$logw insert end $line\n fat_red
 						$logw see end
 					}
 				} else {
 					if {[string match "*ERROR:*" $line]} continue
 				}
-				if {$::log(verboseTv_debug) == 1} {
+				if {$::log(verbose_tv_debug) == 1} {
 					if {[string match "*DEBUG:*" $line]} {
+						set match 1
 						$logw insert end $line\n
 						$logw see end
 					}
 				} else {
-					if {$::log(verboseTv_debug) == 1} continue
+					if {[string match "*DEBUG:*" $line]} continue
 				}
+				if {$match == 0} {
+					$logw insert end $line\n
+					$logw see end
+				}
+				unset -nocomplain match
 			}
 		}
 		set position [tell $fh]
 		close $fh
 		set ::data(log_tv_id) [after 1000 [list log_viewerTvTail $filename $position $logw]]
 	}
-}
-
-proc log_viewerTvLb {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerTvLb \033\[0m \{$w\}"
-	set get_lb_index [$w curselection]
-	set get_lb_content [$w get $get_lb_index]
-	set marking [string map {{ } {}} [lrange $get_lb_content end-2 end]]
-	.log_viewer_tvviewer.f_log_tvviewer.t_log_tvviewer see $marking
 }
 
 proc log_writeOutTv {handler text} {
@@ -985,4 +592,19 @@ proc log_writeOutTv {handler text} {
 	}
 	puts $::logf_tv_open_append "$logformat $text"
 	flush $::logf_tv_open_append
+}
+
+proc log_writeOutMpl {handler text} {
+	set logformat "#"
+	if {$handler == 0} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] DEBUG: "
+	}
+	if {$handler == 1} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] WARNING: "
+	}
+	if {$handler == 2} {
+		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] ERROR: "
+	}
+	puts $::logf_mpl_open_append "$logformat $text"
+	flush $::logf_mpl_open_append
 }

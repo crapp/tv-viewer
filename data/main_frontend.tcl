@@ -431,15 +431,15 @@ proc main_frontendUiTvviewer {} {
 	-label [mc "Key Sequences"]
 	$wfbar.mHelp add separator
 	$wfbar.mHelp add checkbutton \
-	-command log_viewerMplayer \
+	-command [list log_viewerUi 2] \
 	-label [mc "MPlayer Log"] \
 	-variable choice(cb_log_mpl_main)
 	$wfbar.mHelp add checkbutton \
-	-command log_viewerScheduler \
+	-command [list log_viewerUi 3] \
 	-label [mc "Scheduler Log"] \
 	-variable choice(cb_log_sched_main)
 	$wfbar.mHelp add checkbutton \
-	-command log_viewerTvViewer \
+	-command [list log_viewerUi 1] \
 	-label [mc "TV-Viewer Log"] \
 	-variable choice(cb_log_tv_main)
 	$wfbar.mHelp add separator

@@ -21,8 +21,28 @@ proc tv_callbackVidData {} {
 		gets $::data(mplayer) line
 		if {[eof $::data(mplayer)]} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0;1;31mEnd of file\033\[0m"
-			log_writeOutTv 1 "MPlayer reported end of file. Playback is stopped."
+			log_writeOutTv 1 "MPlayer reported end of file. Playback has stopped."
+			fconfigure $::data(mplayer) -blocking 1
+			set mpid [pid $::data(mplayer)]
 			catch {close $::data(mplayer)}
+			set mplmatch 0
+			set mplcode 0
+			foreach str $::errorCode {
+				if {$str == $mpid} {
+					set mplmatch 1
+				}
+				if {$str == 1} {
+					set mplcode 1
+				}
+			}
+			if {$mplmatch == 1 && $mplcode == 1} {
+				log_writeOutTv 2 "MPlayer crashed, see videoplayer logfile for details."
+				log_writeOutMpl 2 "MPlayer crashed"
+				foreach line [split $::errorInfo \n] {
+					if {[string match "*while executing*" $line]} break
+					log_writeOutMpl 2 "$line"
+				}
+			}
 			unset -nocomplain ::data(mplayer)
 			place forget .tv.bg.w
 			bind .tv.bg.w <Configure> {}

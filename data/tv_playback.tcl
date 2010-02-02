@@ -227,10 +227,12 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
 		set img_list_length [llength $img_list]
 		after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
-
-		set ::data(mplayer) [open "|$mcommand 2>@stdout" r+]
+		
+		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
 		fileevent $::data(mplayer) readable [list tv_callbackVidData]
+		log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
+		log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
 	} else {
 		if {[file exists "$file"]} {
 			lappend mcommand -wid $winid "$file"
@@ -292,9 +294,12 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 						bind .tv <<start>> {}
 						.tv.file_play_bar.b_pause state !disabled
 						.tv.file_play_bar.b_play state disabled
-						set ::data(mplayer) [open "|$::tv(mcommand) 2>@stdout" r+]
+						
+						set ::data(mplayer) [open "|$::tv(mcommand)" r+]
 						fconfigure $::data(mplayer) -blocking 0 -buffering line
 						fileevent $::data(mplayer) readable [list tv_callbackVidData]
+						log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
+						log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
 					} else {
 						log_writeOutTv 2 "Failed to start file playback."
 						log_writeOutTv 2 "Fileplaybar does not exist. Report this incident!"
