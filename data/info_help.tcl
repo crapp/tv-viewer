@@ -22,7 +22,12 @@ proc info_helpHelp {} {
 		tv_wmFullscreen .tv .tv.bg.w .tv.bg
 	}
 	if {$::option(language_value) != 0} {
-		catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$::option(language_value).html" &}
+		#~ catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$::option(language_value).html" &}
+		if {[string match *en* $::option(language_value)]} {
+			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
+		} else {
+			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$::option(language_value)" &}
+		}
 		log_writeOutTv 0 "Trying to open userguide..."
 	} else {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
@@ -31,11 +36,15 @@ proc info_helpHelp {} {
 			de german
 		}
 		if {[string trim [array get locales $locale_split]] == {}} {
-			catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_en.html" &}
+			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
 			log_writeOutTv 1 "There is no translation of the userguide for $::env(LANG)"
 			log_writeOutTv 1 "Will open english userguide."
 		} else {
-			catch {exec sh -c "xdg-open http://home.arcor.de/saedelaere/doc/help/TV-Viewer_0.8.x_userguide_$locale_split.html" &}
+			if {[string match *en* $locale_split]} {
+				catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
+			} else {
+				catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$locale_split" &}
+			}
 			log_writeOutTv 0 "Trying to open userguide..."
 		}
 	}
@@ -103,7 +112,7 @@ proc info_helpAbout {} {
 		-style Toolbutton
 		ttk::label $nb1.l_version
 		ttk::label $nb1.l_copy \
-		-text [mc "© Copyright 2007 - 2009
+		-text [mc "© Copyright 2007 - 2010
 Christian Rapp"] \
 		-justify center
 		

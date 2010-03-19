@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.1.1 80 02.02.2010}
+set option(release_version) {0.8.1.1 81 19.03.2010}
 
 set main(debug_msg) [open /dev/null a]
 
@@ -176,7 +176,7 @@ proc record_externalTitle {} {
 	if {$::start_options(title)} {
 		if {[info exists ::start_values(title)]} {
 			set title [string map {{ } {_}} "$::start_values(title)"]
-			set ::record(file) "$::option(rec_default_path)/$title.mpeg"
+			set ::record(file) "$::option(rec_default_path)/$title\_[clock format [clock seconds] -format {%Y-%m-%d}]_[clock format [clock seconds] -format {%H-%M}].mpeg"
 			set exit_now 0
 		} else {
 			set exit_now 1
@@ -266,10 +266,12 @@ proc record_externalDelete {} {
 	}
 	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" r]
+		set recmatch 0
 		while {[gets $sched_rec line]!=-1} {
 			if {[string trim $line] == {} || [string match #* $line]} continue
 			if {"[lindex $line 1] [lindex $line 2] [lindex $line 3]" == "$::record(lbcontent) $::record(time_hour):$::record(time_min) $::record(date)"} {
 				log_writeOutTv 0 "Deleting recording $::record(lbcontent) $::record(time_hour):$::record(time_min) $::record(date)"
+				set recmatch 1
 				continue
 			}
 			lappend recordings $line
@@ -289,10 +291,12 @@ proc record_externalDelete {} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
 		catch {exec "$::option(root)/data/scheduler.tcl" &}
+		return $recmatch
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
 		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		return $recmatch
 	}
 }
 
@@ -317,10 +321,16 @@ if {$start_options(delete) == 0} {
 	record_externalTime
 	record_externalDate
 	record_externalStation
-	record_externalDelete
+	set recmatch [record_externalDelete]
 	command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
-	puts "Successfully deleted recording:
+	if {$recmatch} {
+		puts "Successfully deleted recording:
 $::kanalid($::start_values(station_ext)) $start_values(start_date) $start_values(start_time)"
+	} else {
+		puts "Can not delete recording:
+$::kanalid($::start_values(station_ext)) $start_values(start_date) $start_values(start_time)
+Not found in scheduled recordings file."
+	}
 	flush stdout
 	exit 0
 }
