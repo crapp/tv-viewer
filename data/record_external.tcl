@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.1.1 83 01.04.2010}
+set option(release_version) {0.8.1.1 84 02.04.2010}
 
 set main(debug_msg) [open /dev/null a]
 
@@ -176,7 +176,8 @@ proc record_externalTitle {} {
 	if {$::start_options(title)} {
 		if {[info exists ::start_values(title)]} {
 			set title [string map {{ } {_}} "$::start_values(title)"]
-			set ::record(file) "$::option(rec_default_path)/$title\_[clock format [clock seconds] -format {%Y-%m-%d}]_[clock format [clock seconds] -format {%H-%M}].mpeg"
+			set time [clock format [clock scan $::start_values(start_time)] -format {%H-%M}]
+			set ::record(file) "$::option(rec_default_path)/$title\_$::start_values(start_date)_${time}.mpeg"
 			set exit_now 0
 		} else {
 			set exit_now 1
@@ -205,7 +206,7 @@ proc record_externalAdd {} {
 		close $f_open
 	}
 	set status [command_ReceiverRunning 2]
-	if {$status} {
+	if {[lindex $status 0] == 1} {
 		set start 0
 	} else {
 		set start 1
@@ -242,7 +243,7 @@ proc record_externalAdd {} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
 		set status [command_ReceiverRunning 2]
-		if {$status} {
+		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
 	}
@@ -250,7 +251,7 @@ proc record_externalAdd {} {
 
 proc record_externalDelete {} {
 	set status [command_ReceiverRunning 2]
-	if {$status} {
+	if {[lindex $status 0] == 1} {
 		set start 1
 	} else {
 		set start 0
@@ -287,7 +288,7 @@ proc record_externalDelete {} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
 		set status [command_ReceiverRunning 2]
-		if {$status} {
+		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
 		return $recmatch

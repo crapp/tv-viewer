@@ -44,7 +44,7 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set printchan stdout
-set option(release_version) {0.8.1.1 83 01.04.2010}
+set option(release_version) {0.8.1.1 84 02.04.2010}
 
 array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --enable-64bit 0}
 foreach command_argument $argv {

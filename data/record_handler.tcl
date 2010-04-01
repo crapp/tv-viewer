@@ -132,7 +132,7 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 		close $f_open
 	}
 	set status [command_ReceiverRunning 2]
-	if {$status} {
+	if {[lindex $status 0] == 1} {
 		set start 0
 	} else {
 		set start 1
@@ -163,7 +163,7 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
 		set status [command_ReceiverRunning 2]
-		if {$status} {
+		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
 	}

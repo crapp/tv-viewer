@@ -305,7 +305,7 @@ puts $config_file_open "
 	}
 	close $config_file_open
 	set status [command_ReceiverRunning 2]
-	if {$status} {
+	if {[lindex $status 0] == 1} {
 		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 	}
 	config_wizardExit

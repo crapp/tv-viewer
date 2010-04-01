@@ -36,7 +36,7 @@ exit 1
 #necessary changes will be made by the configure tcl script.
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set option(release_version) {0.8.1.1 83 01.04.2010}
+set option(release_version) {0.8.1.1 84 02.04.2010}
 set prefix FOO
 set eprefix FOO
 set bindir FOO
@@ -198,7 +198,7 @@ creating folders"
 				puts "
 can't create necessary folder: $dir
 
-$resultat_dir
+$result_dir
 
 you probably have to be root
 "

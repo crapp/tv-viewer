@@ -135,7 +135,7 @@ proc command_ReceiverRunning {handler} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
-				return 1
+				return [list 1 $resultat_schedlinkread]
 			} else {
 				return 0
 			}

@@ -62,7 +62,7 @@ proc main_frontendExitViewer {} {
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
 	set status [command_ReceiverRunning 2]
-	if {$status == 0} {
+	if {[lindex $status 0] == 0} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
 		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
 	}
