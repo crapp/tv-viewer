@@ -36,7 +36,7 @@ exit 1
 #necessary changes will be made by the configure tcl script.
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set option(release_version) {0.8.1.1 82 21.03.2010}
+set option(release_version) {0.8.1.1 83 01.04.2010}
 set prefix FOO
 set eprefix FOO
 set bindir FOO
@@ -48,7 +48,7 @@ set docdir FOO
 set arch FOO
 set tktray FOO
 
-array set start_options {--uninstall 0 --help 0}
+array set start_options {--uninstall 0 --help 0 --quiet 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -62,7 +62,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 2} {
+if {[array size start_options] != 3} {
 	puts "
 TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 	
@@ -71,6 +71,7 @@ unkown option(s): $argv
 configuration:
   --uninstall     uninstall TV-Viewer
   --help          print this help and exit
+  --quiet         do not print all messages to stdout
  "
 exit 1
 }
@@ -82,6 +83,7 @@ TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_vers
 configuration:
   --uninstall     uninstall TV-Viewer
   --help          print this help and exit
+  --quiet         do not print all messages to stdout
  "
 exit 0
 }
@@ -149,8 +151,7 @@ config directory is still present in your home directory"
 
 proc install_welcomeMsg {} {
 	puts "
-
-     installation of TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
+installation of TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 "
 }
 
@@ -1021,15 +1022,17 @@ processing symbolic links \[00%\]"
 	install_createSymbolic $where_is $prefix $eprefix $bindir $bintarget $libdir $datadir $mandir $docdir $arch
 	
 	puts "
-build all done
-
+build all done"
+	
+	if {$::start_options(--quiet) == 0} {
+		puts "
 use \"tv-viewer\" to start the application.
 to see all possible command line options use
 \"tv-viewer --help\".
 uninstall tv-viewer as root with
 \"./install.tcl --uninstall\".
-
 "
+	}
 	exit 0
 }
 

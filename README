@@ -27,6 +27,24 @@ It is recommended to install,
 as well.
 
 
+Optional Features
+-----------------
+
+TV-Viewer comes with some optional features. You may choose if you want 
+them to be installed or not.
+
+* tktray - A Tk library to dock Tk to the system tray. (default: enabled)
+           Depends on glibc; libxdmcp; libxau; libxcb; libx11; libxext
+           These dependencies should be installed by default on every linux
+           distribution.
+
+If you do not want to install one of this features use the switch
+
+--enable-FEATURE=ARG (e.g. --enable-tktray=yes ; --enable-tktray=no)
+
+with the configure.tcl script.
+
+
 Installation
 ------------
 Installing TV-Viewer is done by 2 steps. First of all you need to 
@@ -64,21 +82,6 @@ delete all program files but your configuration will still be present
 ("~/.tv-viewer/").
 
 % ./install.tcl --uninstal
-
-
-Optional Features
------------------
-
-TV-Viewer comes with some optional features. You may choose if you want 
-them to be installed or not.
-
-* tktray - A Tk library to dock Tk to the system tray.
-
-If you do not want to install one of this features use the switch
-
---disable-FEATURE (e.g. --disable-tktray)
-
-with the configure.tcl script.
 
 
 Usage

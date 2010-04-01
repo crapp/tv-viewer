@@ -44,9 +44,9 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set printchan stdout
-set option(release_version) {0.8.1.1 82 21.03.2010}
+set option(release_version) {0.8.1.1 83 01.04.2010}
 
-array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --disable-tktray 0 --enable-64bit 0}
+array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --enable-64bit 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -77,7 +77,7 @@ Configuration:
   --help          print this help and exit
   --version       display version information and exit
   --nodepcheck    skip configure dependency check
-  --quiet         do not print messages of progress to stdout
+  --quiet         do not print all messages to stdout
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX 
@@ -101,7 +101,7 @@ Fine tuning of the installation directories:
   --docdir=DIR            documentation root \[PREFIX/doc/tv-viewer\]
 
 Optional Features:
-  --disable-FEATURE       do not include FEATURE
+  --enable-FEATURE=ARG    include FEATURE \[ARG=yes||no\]
   --enable-64bit          enable 64bit support (default: determine automatically)
 
 Use these variables to override the choices made by `configure'.
@@ -124,7 +124,7 @@ Configuration:
   --help          print this help and exit
   --version       display version information and exit
   --nodepcheck    skip configure dependency check
-  --quiet         do not print messages of progress to stdout
+  --quiet         do not print all messages to stdout
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX 
@@ -148,7 +148,7 @@ Fine tuning of the installation directories:
   --docdir=DIR            documentation root \[PREFIX/doc/tv-viewer\]
 
 Optional Features:
-  --disable-FEATURE       do not include FEATURE
+  --enable-FEATURE=ARG    include FEATURE \[ARG=yes||no\]
   --enable-64bit          enable 64bit support (default: determine automatically)
 
 Use these variables to override the choices made by `configure'.
@@ -211,8 +211,13 @@ if {$start_options(--mandir)} {
 if {$start_options(--docdir)} {
 	set docdir [file normalize "$start_values(--docdir)"]
 }
-if {$start_options(--disable-tktray)} {
-	set tktray 0
+if {$start_options(--enable-tktray)} {
+	if {"$start_values(--enable-tktray)" == "yes"} {
+		set tktray 1
+	}
+	if {"$start_values(--enable-tktray)" == "no"} {
+		set tktray 0
+	}
 }
 if {$start_options(--enable-64bit)} {
 	set arch 64
@@ -252,8 +257,7 @@ proc agrep {switch input modifier} {
 
 proc configure_welcomeMsg {} {
 	puts $::printchan "
-
-     Configuring build environment for TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
+Configuring build environment for TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 "
 }
 
@@ -463,12 +467,15 @@ configure.tcl done
 exit 0"
 	puts $::printchan "
 configure: creating ./config.log
-configure: creating ./install.tcl
+configure: creating ./install.tcl"
 
-run 
+if {$::start_options(--quiet) == 0} {
+	puts $::printchan "
+run
 % ./install.tcl 
 as root to install TV-Viewer
 "
+	}
 	exit 0
 }
 
