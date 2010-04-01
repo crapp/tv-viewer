@@ -179,7 +179,10 @@ proc station_editExit {} {
 			destroy .tv.slist_lirc
 		}
 		event_deleSedit
-		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		}
 	} else {
 		log_writeOutTv 0 "Inserting all stations into station list."
 		set status_tv_playback [tv_callbackMplayerRemote alive]
@@ -229,7 +232,10 @@ proc station_editExit {} {
 			}
 		}
 		event_constrArray
-		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		}
 	}
 	log_writeOutTv 0 "Exiting station editor."
 	grab release .station

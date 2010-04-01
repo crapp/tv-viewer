@@ -61,15 +61,8 @@ proc main_frontendExitViewer {} {
 	close $::logf_mpl_open_append
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
-	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-	if { $status_schedlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-		if { $status_greppid_sched != 0 } {
-			catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
-			catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
-		}
-	} else {
+	set status [command_ReceiverRunning 2]
+	if {$status == 0} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
 		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
 	}

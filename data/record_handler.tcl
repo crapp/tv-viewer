@@ -131,15 +131,9 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 		puts -nonewline $f_open "$jobid"
 		close $f_open
 	}
-	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-	if { $status_schedlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-		if { $status_greppid_sched == 0 } {
-			set start 0
-		} else {
-			set start 1
-		}
+	set status [command_ReceiverRunning 2]
+	if {$status} {
+		set start 0
 	} else {
 		set start 1
 	}
@@ -168,7 +162,10 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		}
 	}
 	log_writeOutTv 0 "Exiting 'add/edit recording'."
 	grab release $w

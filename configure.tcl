@@ -36,14 +36,17 @@ set where_is "[file dirname [file dirname [file normalize [file join [info scrip
 set prefix /usr/local
 set eprefix $prefix
 set bindir $eprefix/bin
+set bintarget $prefix/share/tv-viewer
 set libdir $eprefix/lib
 set datadir $prefix/share
-set mandir $prefix/man
+set mandir $prefix/share/man
 set docdir $prefix/doc/tv-viewer
+set arch 32
+set tktray 1
 set printchan stdout
-set option(release_version) {0.8.1.1 81 19.03.2010}
+set option(release_version) {0.8.1.1 82 21.03.2010}
 
-array set start_options {--help 0 --version 0 --quiet 0 --prefix 0 --exec-prefix 0 --nodebug 0 --bindir 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --arch 0}
+array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --disable-tktray 0 --enable-64bit 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -57,13 +60,13 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 12} {
+if {[array size start_options] != 14} {
 	puts "
 `configure' configures TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] to adapt to many kinds of systems.
 	
 Unkown option(s): $argv
 
-Usage: ./configure [OPTION]... [VAR=VALUE]...
+Usage: ./configure \[OPTION\]... \[VAR=VALUE\]...
 
 To assign environment variables (e.g., CC, CFLAGS...), specify them as
 VAR=VALUE.  See below for descriptions of some of the useful variables.
@@ -73,33 +76,33 @@ Defaults for the options are specified in brackets.
 Configuration:
   --help          print this help and exit
   --version       display version information and exit
+  --nodepcheck    skip configure dependency check
   --quiet         do not print messages of progress to stdout
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX 
-                          [/usr/local]
+                          \[/usr/local\]
   --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX 
-                          [PREFIX]
+                          \[PREFIX\]
 
 By default, `./install' will install all the files in
 `/usr/local/bin', `/usr/local/lib' etc.  You can specify
 an installation prefix other than `/usr/local' using `--prefix',
-for instance `--prefix=$HOME'.
+for instance `--prefix=\$HOME'.
 
 For better control, use the options below.
 
 Fine tuning of the installation directories:
-  --bindir=DIR            user executables [EPREFIX/bin]
-  --libdir=DIR            object code libraries [EPREFIX/lib]
-  --datadir=DIR           read-only architecture-independent data [PREFIX/share]
-  --mandir=DIR            man documentation [PREFIX/man]
-  --docdir=DIR            documentation root [PREFIX/doc/tv-viewer]
+  --bindir=DIR            user executables \[EPREFIX/bin\]
+  --bintarget=DIR         symbolic links point to \[PREFIX/share/tv-viewer\]
+  --libdir=DIR            object code libraries \[EPREFIX/lib\]
+  --datadir=DIR           read-only architecture-independent data \[PREFIX/share\]
+  --mandir=DIR            man documentation \[PREFIX/share/man\]
+  --docdir=DIR            documentation root \[PREFIX/doc/tv-viewer\]
 
 Optional Features:
-  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
-  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --arch=ARCH             Select your systems architecture (32 / 64) or, if omitted,
-                          the installer will determine it.
+  --disable-FEATURE       do not include FEATURE
+  --enable-64bit          enable 64bit support (default: determine automatically)
 
 Use these variables to override the choices made by `configure'.
 "
@@ -110,7 +113,7 @@ if {$start_options(--help)} {
 	puts "
 `configure' configures TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] to adapt to many kinds of systems.
 
-Usage: ./configure [OPTION]... [VAR=VALUE]...
+Usage: ./configure \[OPTION\]... \[VAR=VALUE\]...
 
 To assign environment variables (e.g., CC, CFLAGS...), specify them as
 VAR=VALUE.  See below for descriptions of some of the useful variables.
@@ -120,50 +123,105 @@ Defaults for the options are specified in brackets.
 Configuration:
   --help          print this help and exit
   --version       display version information and exit
+  --nodepcheck    skip configure dependency check
   --quiet         do not print messages of progress to stdout
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX 
-                          [/usr/local]
+                          \[/usr/local\]
   --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX 
-                          [PREFIX]
+                          \[PREFIX\]
 
 By default, `./install' will install all the files in
 `/usr/local/bin', `/usr/local/lib' etc.  You can specify
 an installation prefix other than `/usr/local' using `--prefix',
-for instance `--prefix=$HOME'.
+for instance `--prefix=\$HOME'.
 
 For better control, use the options below.
 
 Fine tuning of the installation directories:
-  --bindir=DIR            user executables [EPREFIX/bin]
-  --libdir=DIR            object code libraries [EPREFIX/lib]
-  --datadir=DIR           read-only architecture-independent data [PREFIX/share]
-  --mandir=DIR            man documentation [PREFIX/man]
-  --docdir=DIR            documentation root [PREFIX/doc/tv-viewer]
+  --bindir=DIR            user executables \[EPREFIX/bin\]
+  --bintarget=DIR         symbolic links point to \[PREFIX/share/tv-viewer\]
+  --libdir=DIR            object code libraries \[EPREFIX/lib\]
+  --datadir=DIR           read-only architecture-independent data \[PREFIX/share\]
+  --mandir=DIR            man documentation \[PREFIX/share/man\]
+  --docdir=DIR            documentation root \[PREFIX/doc/tv-viewer\]
 
 Optional Features:
-  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
-  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --arch=ARCH             Select your systems architecture (32 / 64) or, if omitted,
-                          the installer will determine it.
+  --disable-FEATURE       do not include FEATURE
+  --enable-64bit          enable 64bit support (default: determine automatically)
 
 Use these variables to override the choices made by `configure'.
  "
 exit 0
 }
+if {$start_options(--version)} {
+	puts "
+tv-viewer configure tcl script version [lindex $option(release_version) 0]"
+	puts "
+© Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
 
-if {$start_options(--prefix)} {
-	puts $::printchan "
-Prefix set to [file normalize $start_values(--prefix)]"
-	set prefix "[file normalize $start_values(--prefix)]"
-	set target "[file normalize $start_values(--prefix)]"
+This script is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+       
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301, USA."
+	exit 0
 }
 
-if {$start_options(--target)} {
-	puts $::printchan "
-Build target set to [file normalize $start_values(--target)]"
-	set target "[file normalize $start_values(--target)]$target"
+if {$start_options(--prefix)} {
+	set prefix [file normalize "$start_values(--prefix)"]
+	set eprefix $prefix
+	set bindir $eprefix/bin
+	set bintarget $prefix/share/tv-viewer
+	set libdir $eprefix/lib
+	set datadir $prefix/share
+	set mandir $prefix/share/man
+	set docdir $prefix/doc/tv-viewer
+}
+if {$start_options(--exec-prefix)} {
+	set eprefix [file normalize "$start_values(--eprefix)"]
+	set bindir $eprefix/bin
+	set libdir $eprefix/lib
+}
+if {$start_options(--bindir)} {
+	set bindir [file normalize "$start_values(--bindir)"]
+}
+if {$start_options(--bintarget)} {
+	set bintarget [file normalize "$start_values(--bintarget)"]
+}
+if {$start_options(--libdir)} {
+	set libdir [file normalize "$start_values(--libdir)"]
+}
+if {$start_options(--datadir)} {
+	set datadir [file normalize "$start_values(--datadir)"]
+}
+if {$start_options(--mandir)} {
+	set mandir [file normalize "$start_values(--mandir)"]
+}
+if {$start_options(--docdir)} {
+	set docdir [file normalize "$start_values(--docdir)"]
+}
+if {$start_options(--disable-tktray)} {
+	set tktray 0
+}
+if {$start_options(--enable-64bit)} {
+	set arch 64
+} else {
+	if {"$::tcl_platform(machine)" == "x86_64"} {
+		set arch 64
+	} else {
+		set arch 32
+	}
 }
 
 proc agrep {switch input modifier} {
@@ -193,53 +251,52 @@ proc agrep {switch input modifier} {
 }
 
 proc configure_welcomeMsg {} {
-	if {$::start_options(--nodebug)} {
-		set ::printchan [open /dev/null a]
-	}
-	fconfigure $::printchan -blocking no -buffering line
-	
 	puts $::printchan "
 
-           Configuring build environment for TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
+     Configuring build environment for TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
 "
-	
-	if {$::start_options(--nodebug)} {
-		set ::printchan stdout
-	}
-	fconfigure $::printchan -blocking no -buffering line
 }
 
-proc configure_depCheck {where_is target prefix} {
+proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray log} {
 	puts $::printchan "
-Checking dependencies...
+checking dependencies
 "
-	after 100
+	puts $log "
+## ---------- ##
+## Core tests ##
+## ---------- ##
+"
+	
+	after 50
 	puts -nonewline $::printchan "Tk "
 	set status_tk [catch {package require Tk} version_tk]
 	set i 0
 	while { $i != 3 } {
 		puts -nonewline $::printchan "*"
 		flush stdout
-		after 100
+		after 50
 		incr i
 	}
 	if {$status_tk == 0} {
 		if {[package vsatisfies $version_tk 8.5]} {
 			puts $::printchan "\033\[0;1;32m OK\033\[0m"
+			puts $log "Tk $version_tk"
 		} else {
+			puts $log "Tk $version_tk FAILED "
 			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 			puts $::printchan "
-TV-Viewer needs Tk >= 8.5 found $version_tk.
-See the README for system requirements.
-Installer EXIT 1"
+TV-Viewer needs Tk >= 8.5 found $version_tk
+see the README for system requirements
+EXIT 1"
 			exit 1
 		}
 	} else {
+		puts $log "Tk FAILED " 
 		puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 		puts $::printchan "
 TV-Viewer needs Tk >= 8.5
-See the README for system requirements.
-Installer EXIT 1"
+see the README for system requirements
+EXIT 1"
 		exit 1
 	}
 	
@@ -251,23 +308,25 @@ Installer EXIT 1"
 		while { $i != 3 } {
 			puts -nonewline $::printchan "*"
 			flush stdout
-			after 100
+			after 50
 			incr i
 		}
 		if {[string trim [auto_execok $key]] != {}} {
+			puts $log "[auto_execok $key]"
 			puts $::printchan "\033\[0;1;32m OK\033\[0m"
 		} else {
 			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
+			puts $log "$key FAILED"
 			puts $::printchan "
 TV-Viewer needs $elem
-See the README for system requirements.
-Installer EXIT 1"
+see the README for system requirements
+EXIT 1"
 			exit 1
 		}
 	}
 	
 	puts $::printchan "
-Checking for optional dependencies...
+checking for optional dependencies
 "
 	set opt_dependencies [dict create irexec lirc]
 	
@@ -277,16 +336,18 @@ Checking for optional dependencies...
 		while { $i != 3 } {
 			puts -nonewline $::printchan "*"
 			flush stdout
-			after 100
+			after 50
 			incr i
 		}
 		if {[string trim [auto_execok $key]] != {}} {
+			puts $log "[auto_execok $key]"
 			puts $::printchan "\033\[0;1;32m OK\033\[0m"
 		} else {
 			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
+			puts $log "$key FAILED"
 			puts $::printchan "
-Could not detect lirc.
-You won't be able to use a remote control.
+could not detect lirc
+you won't be able to use a remote control
 "
 			after 1250
 		}
@@ -298,26 +359,168 @@ You won't be able to use a remote control.
 		while { $i != 3 } {
 			puts -nonewline $::printchan "*"
 			flush stdout
-			after 100
+			after 50
 			incr i
 		}
 		set status_tkimg [catch {package require Img} tkimg_ver]
 		if {$status_tkimg == 0} {
+			puts $log "tkimg $tkimg_ver OK"
 			puts $::printchan "\033\[0;1;32m OK\033\[0m"
 		} else {
 			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
+			puts $log "tkimg FAILED"
 			puts $::printchan "
-Could not detect tkimg (libtk-img).
-No support for high resolution PNG icons."
+could not detect tkimg (libtk-img)
+no support for high resolution PNG icons"
 			after 1250
 		}
 	}
+}
+
+proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray log} {
+	puts $::printchan "
+configuring TV-Viewer:
+prefix        $prefix
+eprefix       $eprefix
+bindir        $bindir
+bintarget     $bintarget
+libdir        $libdir
+datadir       $datadir
+mandir        $mandir
+docdir        $docdir
+
+tktray        $tktray
+architecture  ${arch}bit
+"
+	puts $log "
+## ------------------- ##
+## Writing install.tcl ##
+## ------------------- ##
+
+prefix        $prefix
+eprefix       $eprefix
+bindir        $bindir
+bintarget     $bintarget
+libdir        $libdir
+datadir       $datadir
+mandir        $mandir
+docdir        $docdir
+
+tktray        $tktray
+architecture  ${arch}bit"
+	after 250
+	if {[file exists $where_is/installer.tcl]} {
+		puts $::printchan "
+deleting old installer"
+		file delete -force $where_is/installer.tcl
+	}
+	set stat_in [catch {set inst_in [open "$where_is/install.tcl.in" r]} result_in]
+	if {$stat_in != 0} {
+		puts $log "
+fatal, can not open install.tcl.in
+$result_in
+EXIT 1"
+		puts "
+fatal error, can not open install.tcl.in
+$result_in"
+		exit 1
+	}
+	set stat_out [catch {set inst_out [open "$where_is/install.tcl" w+]} result_out]
+	if {$stat_out != 0} {
+		puts $log "
+fatal, can not write install.tcl
+$result_out
+EXIT 1"
+		puts "
+fatal error, can not write install.tcl
+$result_out"
+		exit 1
+	}
+	
+	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray}
+		while {[gets $inst_in line]!=-1} {
+		foreach var $conf_vars {
+			set line [string map [list "$var FOO" "$var \{[set $var]\}"] "$line"]
+			if {[string match "*set $var [set $var]*" "$line"]} {
+				break
+			}
+		}
+		if {[string match *##@@install_steps* "$line"]} {
+			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray" 
+		}
+		if {[string match *##@@install_uninstall* "$line"]} {
+			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray"
+		}
+		if {[string match "*#install.tcl.in @@*" "$line"]} {
+			set line "#!/usr/bin/env tclsh" 
+		}
+		puts $inst_out "$line"
+		flush $inst_out
+	}
+	file attributes "$where_is/install.tcl" -permissions a+x
+	puts $log "
+configure.tcl done
+exit 0"
+	puts $::printchan "
+configure: creating ./config.log
+configure: creating ./install.tcl
+
+run 
+% ./install.tcl 
+as root to install TV-Viewer
+"
+	exit 0
+}
+
+set status_log [catch {set log [open "$where_is/config.log" w+]} result_log]
+if {$status_log != 0} {
+	puts "
+fatal, can not write log file
+
+$result_log"
+
+	exit 1
+}
+
+puts $log "
+This file contains any messages produced while running configure.tcl,
+to aid debugging if configure.tcl makes a mistake.
+
+It was created by tv-viewer configure [lindex $option(release_version) 0]
+Invocation command line was
+
+$ ./configure.tcl $argv"
+
+puts $log "
+## -------- ##
+## Platform ##
+## -------- ##
+
+user     = $::tcl_platform(user)
+uname -m = $::tcl_platform(machine)
+uname -r = $::tcl_platform(osVersion)
+uname -s = $::tcl_platform(os)"
+
+puts $log "
+auto_path:"
+foreach pa $auto_path {
+	puts $log "$pa"
+}
+
+puts $log "
+PATH:"
+foreach pa [split $::env(PATH) :] {
+	puts $log "$pa"
 }
 
 configure_welcomeMsg
 after 500
 
 if {$start_options(--nodepcheck) == 0} {
-	configure_depCheck "$where_is" "$target" "$prefix"
+	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$log"
 	after 1250
 }
+
+configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$log"
+
+exit 0

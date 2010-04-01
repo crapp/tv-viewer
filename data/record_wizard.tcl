@@ -30,14 +30,10 @@ proc record_wizardExecScheduler {sbutton slable com} {
 		if {[winfo exists $sbutton]} {
 			$sbutton configure -command {}
 		}
-		set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-		if { $status_schedlinkread == 0 } {
-			catch {exec ps -eo "%p"} read_ps
-			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-			if { $status_greppid_sched == 0 } {
-				log_writeOutTv 1 "Scheduler is running, will stop it."
-				command_WritePipe 0 "tv-viewer_scheduler scheduler_exit"
-			}
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			log_writeOutTv 1 "Scheduler is running, will stop it."
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_exit"
 		}
 		after 2000 {catch {exec ""}}
 	}
@@ -262,17 +258,10 @@ proc record_wizardUi {} {
 			$statf.b_rec_current state disabled
 		}
 		catch {exec ""}
-		set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-		if { $status_schedlinkread == 0 } {
-			catch {exec ps -eo "%p"} read_ps
-			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-			if { $status_greppid_sched == 0 } {
-				log_writeOutTv 0 "Scheduler is running (PID $resultat_schedlinkread)."
-				record_wizardExecSchedulerCback 0
-			} else {
-				log_writeOutTv 0 "Scheduler is not running."
-				record_wizardExecSchedulerCback 1
-			}
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			log_writeOutTv 0 "Scheduler is running (PID $resultat_schedlinkread)."
+			record_wizardExecSchedulerCback 0
 		} else {
 			log_writeOutTv 0 "Scheduler is not running."
 			record_wizardExecSchedulerCback 1

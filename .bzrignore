@@ -2,3 +2,5 @@ grundlagen/*
 org_icons/*
 grundlagen
 org_icons
+./config.log
+./install.tcl

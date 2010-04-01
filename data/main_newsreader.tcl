@@ -200,10 +200,10 @@ proc main_newsreaderExit {w} {
 proc main_newsreaderHomepage {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
 	log_writeOutTv 0 "Executing your favorite web browser."
-	if {[string match de* $::env(LANG)] != 1} {
-		catch {exec xdg-open "http://home.arcor.de/saedelaere/index_eng.html" &}
+	if {[string match *en* $::option(language_value)]} {
+		catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
 	} else {
-		catch {exec xdg-open "http://home.arcor.de/saedelaere/index.html" &}
+		catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$::option(language_value)" &}
 	}
 }
 

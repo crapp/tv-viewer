@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.1.1 81 19.03.2010}
+set option(release_version) {0.8.1.1 82 21.03.2010}
 
 set main(debug_msg) [open /dev/null a]
 
@@ -204,15 +204,9 @@ proc record_externalAdd {} {
 		puts -nonewline $f_open "$jobid"
 		close $f_open
 	}
-	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-	if { $status_schedlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-		if { $status_greppid_sched == 0 } {
-			set start 0
-		} else {
-			set start 1
-		}
+	set status [command_ReceiverRunning 2]
+	if {$status} {
+		set start 0
 	} else {
 		set start 1
 	}
@@ -247,22 +241,19 @@ proc record_externalAdd {} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		}
 	}
 }
 
 proc record_externalDelete {} {
-	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-	if { $status_schedlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-		if { $status_greppid_sched == 0 } {
-			set start 0
-		} else {
-			set start 1
-		}
-	} else {
+	set status [command_ReceiverRunning 2]
+	if {$status} {
 		set start 1
+	} else {
+		set start 0
 	}
 	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" r]
@@ -295,7 +286,10 @@ proc record_externalDelete {} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		}
 		return $recmatch
 	}
 }
@@ -312,7 +306,10 @@ if {$start_options(delete) == 0} {
 	set w .record_wizard.add_edit
 	set handler add
 	record_externalAdd
-	command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
+	set status_main [command_ReceiverRunning 1]
+	if {$status_main} {
+		command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
+	}
 	puts "Successfully scheduled recording:
 [string map {{ } {_}} $::start_values(title)] $start_values(start_date) $start_values(start_time)"
 	flush stdout
@@ -322,7 +319,10 @@ if {$start_options(delete) == 0} {
 	record_externalDate
 	record_externalStation
 	set recmatch [record_externalDelete]
-	command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
+	set status_main [command_ReceiverRunning 1]
+	if {$status_main} {
+		command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
+	}
 	if {$recmatch} {
 		puts "Successfully deleted recording:
 $::kanalid($::start_values(station_ext)) $start_values(start_date) $start_values(start_time)"

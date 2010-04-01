@@ -580,15 +580,9 @@ proc record_add_editOfile {w} {
 proc record_add_editDelete {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\}"
 	if {[string trim [$tree selection]] == {}} return
-	set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-	if { $status_schedlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-		if { $status_greppid_sched == 0 } {
-			set start 0
-		} else {
-			set start 1
-		}
+	set status [command_ReceiverRunning 2]
+	if {$status} {
+		set start 0
 	} else {
 		set start 1
 	}
@@ -613,7 +607,10 @@ proc record_add_editDelete {tree} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		set status [command_ReceiverRunning 2]
+		if {$status} {
+			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+		}
 	}
 }
 

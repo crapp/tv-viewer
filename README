@@ -4,7 +4,7 @@
   | |   \ V /_____\ V / | |  __/\ V  V /  __/ |   
   |_|    \_/       \_/  |_|\___| \_/\_/ \___|_|   
   
-----------------------------------
+--------------------------------------------------
 
 
 About
@@ -29,39 +29,68 @@ as well.
 
 Installation
 ------------
-Installing TV-Viewer is done by the following commands:
+Installing TV-Viewer is done by 2 steps. First of all you need to 
+configure your build environment. Therefore you have to run the 
+configure.tcl script. Standard values should be ok for most users.
+Otherwise use "--help" to see all command line options.
 
-% chmod a+x ./tv-viewer_install.tcl
-(and as root)
-% ./tv-viewer_install.tcl
+% chmod a+x ./configure.tcl
+% ./configure.tcl
 
-Don't try to use "sh tv-viewer_install.tcl" this won't work because this is a
-Tcl and not a Shell script.
-If there are any errors during installation, check your build environment
-and try to find the error, otherwise contact the author, or use sourceforge.net.
+If all goes well you will get an install script "./install.tcl", else check
+your build environment. You might find the answers in the file 
+"./config.log"
 Many people encounter problems if they have more than one version of Tcl/Tk
-installed. Please make sure the Symlinks /usr/bin/wish and /usr/bin/tclsh
-point at least on version 8.5. Debian / *buntu users may use
-update alternatives to solve this problem
+installed. Please make sure, the Symlinks /usr/bin/wish and /usr/bin/tclsh
+point at least on version 8.5. Debian / *buntu users may use update
+alternatives to solve this problem
 ("sudo update-alternatives --config wish" and/or "--config tclsh").
 
-Read the user guide for details and run 
+Now make the file "./install.tcl" executable
 
-% ./tv-viewer_install.tcl --help
+% chmod a+x ./install.tcl
+and run it as root
+% sudo ./install.tcl
 
-to see all configuration options.
+TV-Viewer is now installed, for more details visit the TV-Viewer Wiki
+(http://tv-viewer.sourceforge.net)
+
+
+Uninstall
+---------
+
+You can uninstall TV-Viewer with the installation script. This will
+delete all program files but your configuration will still be present
+("~/.tv-viewer/").
+
+% ./install.tcl --uninstal
+
+
+Optional Features
+-----------------
+
+TV-Viewer comes with some optional features. You may choose if you want 
+them to be installed or not.
+
+* tktray - A Tk library to dock Tk to the system tray.
+
+If you do not want to install one of this features use the switch
+
+--disable-FEATURE (e.g. --disable-tktray)
+
+with the configure.tcl script.
 
 
 Usage
 -----
 To run TV-Viewer just type
-$ tv-viewer
+% tv-viewer
 on a console.
 There are several command line options. Run
-$ tv-viewer --help
+% tv-viewer --help
 for details.
 For basic usage informations have a look at the man page.
-$ man tv-viewer
+% man tv-viewer
 
 
 License
@@ -99,8 +128,8 @@ http://wiki.tcl.tk/15897
 
 Ideas, questions, patches and bug reports
 -----------------------------------------
-See http://sourceforge.net/projects/tv-viewer/
-
+Project site http://sourceforge.net/projects/tv-viewer/
+Wiki http://tv-viewer.sourceforge.net
 
 --
 2007-2010 by Christian Rapp

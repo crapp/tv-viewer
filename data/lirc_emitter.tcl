@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.1.1 81 19.03.2010}
+set option(release_version) {0.8.1.1 82 21.03.2010}
 
 source $option(root)/main_read_config.tcl
 source $option(root)/log_viewer.tcl
@@ -65,6 +65,11 @@ foreach command_argument $argv {
 if {[array size ::start_options] != 46} {
 	log_writeOutTv 2 "Lirc emitter received unknown command $argv"
 	log_writeOutTv 2 "See the userguide for possible actions."
+	exit 1
+}
+set status [command_ReceiverRunning 1]
+if {$status == 0} {
+	log_writeOutTv 1 "Lirc emitter received signal while TV-Viewer is not running"
 	exit 1
 }
 if {$start_options(teleview)} {
