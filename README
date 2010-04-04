@@ -47,31 +47,19 @@ with the configure.tcl script.
 
 Installation
 ------------
-Installing TV-Viewer is done by 2 steps. First of all you need to 
-configure your build environment. Therefore you have to run the 
-configure.tcl script. Standard values should be ok for most users.
-Otherwise use "--help" to see all command line options.
+Installing TV-Viewer is done by the following 2 commands:
 
-% chmod a+x ./configure.tcl
-% ./configure.tcl
+$ ./configure.tcl
 
-If all goes well you will get an install script "./install.tcl", else check
-your build environment. You might find the answers in the file 
-"./config.log"
-Many people encounter problems if they have more than one version of Tcl/Tk
-installed. Please make sure, the Symlinks /usr/bin/wish and /usr/bin/tclsh
-point at least on version 8.5. Debian / *buntu users may use update
-alternatives to solve this problem
-("sudo update-alternatives --config wish" and/or "--config tclsh").
+% ./install.tcl (You may need root privileges)
 
-Now make the file "./install.tcl" executable
 
-% chmod a+x ./install.tcl
-and run it as root
-% sudo ./install.tcl
+For more configuration details run 
+$ ./configure.tcl --help
 
-TV-Viewer is now installed, for more details visit the TV-Viewer Wiki
-(http://tv-viewer.sourceforge.net)
+If there are any errors during installation, check your build environment and 
+the file "./config.log". Otherwise contact us and/or have a look at the manual.
+http://tv-viewer.sourceforge.net
 
 
 Uninstall
@@ -81,7 +69,7 @@ You can uninstall TV-Viewer with the installation script. This will
 delete all program files but your configuration will still be present
 ("~/.tv-viewer/").
 
-% ./install.tcl --uninstal
+% ./install.tcl --uninstal (You may need root privileges)
 
 
 Usage

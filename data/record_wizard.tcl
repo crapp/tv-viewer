@@ -260,7 +260,7 @@ proc record_wizardUi {} {
 		catch {exec ""}
 		set status [command_ReceiverRunning 2]
 		if {[lindex $status 0] == 1} {
-			log_writeOutTv 0 "Scheduler is running (PID [lindex $status 1]."
+			log_writeOutTv 0 "Scheduler is running (PID [lindex $status 1])."
 			record_wizardExecSchedulerCback 0
 		} else {
 			log_writeOutTv 0 "Scheduler is not running."

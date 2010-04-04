@@ -44,9 +44,9 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set printchan stdout
-set option(release_version) {0.8.1.1 84 02.04.2010}
+set option(release_version) {0.8.1.1 85 04.04.2010}
 
-array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --enable-64bit 0}
+array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --host 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -102,7 +102,8 @@ Fine tuning of the installation directories:
 
 Optional Features:
   --enable-FEATURE=ARG    include FEATURE \[ARG=yes||no\]
-  --enable-64bit          enable 64bit support (default: determine automatically)
+  --host=HOST             build program to run on HOST (i686, x86_64) 
+                         \[autodetect\]
 
 Use these variables to override the choices made by `configure'.
 "
@@ -149,7 +150,8 @@ Fine tuning of the installation directories:
 
 Optional Features:
   --enable-FEATURE=ARG    include FEATURE \[ARG=yes||no\]
-  --enable-64bit          enable 64bit support (default: determine automatically)
+  --host=HOST             build program to run on HOST (i686, x86_64) 
+                         \[autodetect\]
 
 Use these variables to override the choices made by `configure'.
  "
@@ -219,8 +221,13 @@ if {$start_options(--enable-tktray)} {
 		set tktray 0
 	}
 }
-if {$start_options(--enable-64bit)} {
-	set arch 64
+if {$start_options(--host)} {
+	if {"$start_values(--host)" == "i686"} {
+		set arch 32
+	}
+	if {"$start_values(--host)" == "x86_64"} {
+		set arch 64
+	}
 } else {
 	if {"$::tcl_platform(machine)" == "x86_64"} {
 		set arch 64
