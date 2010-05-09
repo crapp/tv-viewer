@@ -30,7 +30,7 @@ proc record_wizardExecScheduler {sbutton slable com} {
 		if {[winfo exists $sbutton]} {
 			$sbutton configure -command {}
 		}
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			log_writeOutTv 1 "Scheduler is running, will stop it."
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_exit"
@@ -229,28 +229,20 @@ proc record_wizardUi {} {
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <Key-F1> [list info_helpHelp]
 		
-		set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-		if { $status_recordlinkread == 0 } {
-			catch {exec ps -eo "%p"} read_ps
-			set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-			if { $status_greppid_record == 0 } {
-				if {[file exists "$::option(home)/config/current_rec.conf"]} {
-					set f_open [open "$::option(home)/config/current_rec.conf" r]
-					while {[gets $f_open line]!=-1} {
-						if {[string trim $line] == {}} continue
-						lassign $line station sdate stime edate etime duration recfile
-						$statf.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
-						$statf.b_rec_current state !disabled
-						log_writeOutTv 0 "Found an active recording (PID $resultat_recordlinkread)."
-					}
-					close $f_open
-				} else {
-					log_writeOutTv 2 "Although there is an active recording, no current_rec.conf in config path."
+		set status_record [monitor_partRunning 3]
+		if {[lindex $status_record 0] == 1} {
+			if {[file exists "$::option(home)/config/current_rec.conf"]} {
+				set f_open [open "$::option(home)/config/current_rec.conf" r]
+				while {[gets $f_open line]!=-1} {
+					if {[string trim $line] == {}} continue
+					lassign $line station sdate stime edate etime duration recfile
+					$statf.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
+					$statf.b_rec_current state !disabled
+					log_writeOutTv 0 "Found an active recording (PID [lindex $status_record 1])."
 				}
+				close $f_open
 			} else {
-				log_writeOutTv 0 "No active recording."
-				$statf.l_rec_current_info configure -text "Idle"
-				$statf.b_rec_current state disabled
+				log_writeOutTv 2 "Although there is an active recording, no current_rec.conf in config path."
 			}
 		} else {
 			log_writeOutTv 0 "No active recording."
@@ -258,7 +250,7 @@ proc record_wizardUi {} {
 			$statf.b_rec_current state disabled
 		}
 		catch {exec ""}
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			log_writeOutTv 0 "Scheduler is running (PID [lindex $status 1])."
 			record_wizardExecSchedulerCback 0

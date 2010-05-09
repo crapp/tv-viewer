@@ -44,7 +44,7 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set printchan stdout
-set option(release_version) {0.8.1.1 85 04.04.2010}
+set option(release_version) {0.8.1.1 86 09.05.2010}
 
 array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --host 0}
 foreach command_argument $argv {
@@ -85,7 +85,7 @@ Installation directories:
   --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX 
                           \[PREFIX\]
 
-By default, `./install' will install all the files in
+By default, `./install.tcl' will install all the files in
 `/usr/local/bin', `/usr/local/lib' etc.  You can specify
 an installation prefix other than `/usr/local' using `--prefix',
 for instance `--prefix=\$HOME'.
@@ -133,7 +133,7 @@ Installation directories:
   --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX 
                           \[PREFIX\]
 
-By default, `./install' will install all the files in
+By default, `./install.tcl' will install all the files in
 `/usr/local/bin', `/usr/local/lib' etc.  You can specify
 an installation prefix other than `/usr/local' using `--prefix',
 for instance `--prefix=\$HOME'.

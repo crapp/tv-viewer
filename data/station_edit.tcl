@@ -179,7 +179,7 @@ proc station_editExit {} {
 			destroy .tv.slist_lirc
 		}
 		event_deleSedit
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
@@ -232,7 +232,7 @@ proc station_editExit {} {
 			}
 		}
 		event_constrArray
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}

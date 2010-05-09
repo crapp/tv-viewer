@@ -133,17 +133,12 @@ proc config_wizardMainUi {} {
 	settooltip $wfbtn.button_quit [mc "Discard changes and close preferences dialog."]
 	
 	set ::config(rec_running) 0
-	set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-	set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-	if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-		if { $status_greppid_record == 1 || $status_greppid_times == 1 } {
-			log_writeOutTv 1 "There is a running recording/timeshift."
-			log_writeOutTv 1 "Disabling analog settings."
-			set ::config(rec_running) 1
-		}
+	set status_time [monitor_partRunning 4]
+	set status_record [monitor_partRunning 3]
+	if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
+		log_writeOutTv 1 "There is a running recording/timeshift."
+		log_writeOutTv 1 "Disabling analog settings."
+		set ::config(rec_running) 1
 	}
 	
 	option_screen_1
@@ -304,7 +299,7 @@ puts $config_file_open "
 		puts $config_file_open "contrast \{$::option(contrast)\}"
 	}
 	close $config_file_open
-	set status [command_ReceiverRunning 2]
+	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 	}

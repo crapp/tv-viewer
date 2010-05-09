@@ -18,15 +18,11 @@
 
 proc main_frontendExitViewer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendExitViewer \033\[0m"
-	set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-	if { $status_timeslinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-		if { $status_greppid_times == 0 } {
-			log_writeOutTv 0 "Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
-			catch {exec kill $resultat_timeslinkread}
-			catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
-		}
+	set status_time [monitor_partRunning 4]
+	if {[lindex $status_time 0] == 1} {
+		log_writeOutTv 0 "Timeshift (PID: [lindex $status_time 1]) is running, will stop it."
+		catch {exec kill [lindex $status_time 1]}
+		catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
 	}
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
@@ -61,7 +57,7 @@ proc main_frontendExitViewer {} {
 	close $::logf_mpl_open_append
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
-	set status [command_ReceiverRunning 2]
+	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 0} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
 		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
@@ -142,17 +138,12 @@ proc main_frontendShowslist {w} {
 				}
 			}
 			$wflbox.listbox_slist see [$wflbox.listbox_slist curselection]
-			set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-			set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-			if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
-				catch {exec ps -eo "%p"} read_ps
-				set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-				set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-				if { $status_greppid_record == 0 || $status_greppid_times == 0 } {
-					if {$::option(rec_allow_sta_change) == 0} {
-						log_writeOutTv 1 "Disabling station list due to an active recording."
-						$wflbox.listbox_slist configure -state disabled
-					}
+			set status_time [monitor_partRunning 4]
+			set status_record [monitor_partRunning 3]
+			if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
+				if {$::option(rec_allow_sta_change) == 0} {
+					log_writeOutTv 1 "Disabling station list due to an active recording."
+					$wflbox.listbox_slist configure -state disabled
 				}
 			}
 		}

@@ -26,31 +26,23 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 
 source "$option(root)/agrep.tcl"
+source "$option(root)/monitor.tcl"
 
 proc recorderCheckMain {com fdin fdout} {
 	if {"$com" == "cancel"} {
 		
 		return
 	}
-	set status [catch {file readlink "$::option(home)/tmp/lockfile.tmp"} result]
-	if {$status == 0} {
-		catch {exec ps -eo "%p"} read_pid
-		set status_greppid [catch {agrep -w "$read_pid" $result} result_greppid]
-		if { $status_greppid != 0 } {
-			catch { chan close $fdin }
-			catch { chan close $fdout }
-			puts "Recorder error: Main app died while running timeshift."
-			exit 1
-		} else {
-			after 1000 [list recorderCheckMain 0 $fdin $fdout]
-		}
-	} else {
+	set status_main [monitor_partRunning 1]
+	if {[lindex $status_main 0] == 0} {
 		# Main is dead but recorder is doing timeshift. This is not
 		# possible.
 		catch { chan close $fdin }
 		catch { chan close $fdout }
 		puts "Recorder error: Main app died while running timeshift."
 		exit 1
+	} else {
+		after 1000 [list recorderCheckMain 0 $fdin $fdout]
 	}
 }
 

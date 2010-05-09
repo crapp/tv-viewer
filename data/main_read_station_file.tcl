@@ -46,16 +46,10 @@ proc main_readStationFile {} {
 			set ::main(running_recording) 0
 		} else {
 			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
-			set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-			if { $status_recordlinkread == 0 } {
-				catch {exec ps -eo "%p"} read_ps
-				set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-				if { $status_greppid_record == 0 } {
-					set ::main(running_recording) 1
-					log_writeOutTv 1 "Found an active recording, won't change station."
-				} else {
-					set ::main(running_recording) 0
-				}
+			set status_record [monitor_partRunning 3]
+			if {[lindex $status_record 0] == 1} {
+				set ::main(running_recording) 1
+				log_writeOutTv 1 "Found an active recording, won't change station."
 			} else {
 				set ::main(running_recording) 0
 			}

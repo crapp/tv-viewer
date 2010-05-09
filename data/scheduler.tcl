@@ -23,7 +23,7 @@ package require Tcl 8.5
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
-set option(release_version) {0.8.1.1 85 04.04.2010}
+set option(release_version) {0.8.1.1 86 09.05.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -57,18 +57,26 @@ if { $status_lock != 0 } {
 		catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
 		catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"}
 	} else {
-		puts "
+		catch {exec ps -p $linkread -o args} readarg
+		set status_greparg [catch {agrep -m "$readarg" "scheduler.tcl"} resultat_greparg]
+		if {$status_greparg != 0} {
+			catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
+			catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"}
+		} else {
+			puts "
 An instance of the TV-Viewer Scheduler is already running."
-		exit 1
+			exit 1
+		}
 	}
 }
 unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
 
+source $option(root)/agrep.tcl
+source $option(root)/monitor.tcl
 source $option(root)/main_read_config.tcl
 source $option(root)/main_picqual_stream.tcl
 source $option(root)/main_newsreader.tcl
 source $option(root)/command_socket.tcl
-source $option(root)/agrep.tcl
 
 # Save the original one so we can chain to it
 rename unknown scheduler_unknown
@@ -182,14 +190,14 @@ proc scheduler_exit {} {
 ########################################################################
 "
 	close $::logf_sched_open_append
-	set status [command_ReceiverRunning 1]
-	if {$status} {
+	set status [monitor_partRunning 1]
+	if {[lindex $status 0]} {
 		command_WritePipe 0 "tv-viewer_main record_wizardExecSchedulerCback 1"
 	}
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
-	set status [command_ReceiverRunning 1]
-	if {$status == 0} {
+	set status [monitor_partRunning 1]
+	if {[lindex $status 0] == 0} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
 		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
 	}
@@ -276,37 +284,30 @@ proc scheduler_delete {args} {
 
 proc scheduler_rec_prestart {jobid} {
 	scheduler_logWriteOut 0 "Attempting to record job number [lindex $::recjob($jobid) 0]."
-	set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-	if { $status_recordlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-		if { $status_greppid_record == 0 } {
-			scheduler_logWriteOut 2 "There is an active recording."
-			scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
-			set status [command_ReceiverRunning 1]
-			if {$status} {
-				command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
-			}
-			return
+	set status_record [monitor_partRunning 3]
+	if {[lindex $status_record 0] == 1} {
+		scheduler_logWriteOut 2 "There is an active recording."
+		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
+			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
+		return
 	}
-	set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-	if { $status_timeslinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-		if { $status_greppid_times == 0 } {
-			scheduler_logWriteOut 1 "Scheduler detected timeshift process."
-			scheduler_logWriteOut 1 "Will stop timeshift!"
-			command_WritePipe 0 "tv-viewer_main timeshift .top_buttons.button_timeshift"
-		}
+	set status_time [monitor_partRunning 4]
+	if {[lindex $status_time 0] == 1} {
+		scheduler_logWriteOut 1 "Scheduler detected timeshift process."
+		scheduler_logWriteOut 1 "Will stop timeshift!"
+		command_WritePipe 0 "tv-viewer_main timeshift .top_buttons.button_timeshift"
 	}
+	
 	if {[file exists $::option(video_device)] == 0} {
 		scheduler_logWriteOut 2 "Can not detect Video Device $::option(video_device)"
 		scheduler_logWriteOut 2 "Have a look into the preferences and change it."
 		return
 	}
-	set status_main [command_ReceiverRunning 1]
-	if {$status_main} {
+	set status_main [monitor_partRunning 1]
+	if {[lindex $status_main 0]} {
 		scheduler_logWriteOut 0 "Scheduler detected TV-Viewer is running, sending commands via socket."
 		command_WritePipe 0 "tv-viewer_main record_linkerPrestart record"
 	}
@@ -335,8 +336,8 @@ proc scheduler_rec_prestart {jobid} {
 		}
 	}
 	if {$match == 0} {
-		set status [command_ReceiverRunning 1]
-		if {$status} {
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
 		scheduler_logWriteOut 2 "Station \{[lindex $::recjob($jobid) 1]\} does not exist."
@@ -357,8 +358,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$secs == 3000} {
 		scheduler_logWriteOut 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "This didn't work, BAD."
-		set status [command_ReceiverRunning 1]
-		if {$status} {
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
 		return
@@ -368,8 +369,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	if {$status_grep_input == 0} {
 		if {$::kanalinput($snumber) == [lindex $resultat_grep_input 3]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
-			set status [command_ReceiverRunning 1]
-			if {$status} {
+			set status [monitor_partRunning 1]
+			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerStationMain {$::kanalid($snumber)} $snumber"
 			}
 			set last_channel_conf "$::option(home)/config/lastchannel.conf"
@@ -390,8 +391,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	} else {
 		scheduler_logWriteOut 2 "Can not change video input to $::kanalinput($snumber)."
 		scheduler_logWriteOut 2 "$resultat_grep_input."
-		set status [command_ReceiverRunning 1]
-		if {$status} {
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
 		return
@@ -402,8 +403,8 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {$counter == 10} {
 		scheduler_logWriteOut 2 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
 		scheduler_logWriteOut 2 "This was unsuccessful."
-		set status [command_ReceiverRunning 1]
-		if {$status} {
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
 		return
@@ -418,8 +419,8 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			puts -nonewline $f_open "\{[lindex $::recjob($jobid) 1]\} [clock format [clock scan now] -format {%Y-%m-%d}] [clock format [clock scan now] -format {%H:%M:%S}] [clock format $endtime -format {%Y-%m-%d}] [clock format $endtime -format {%H:%M:%S}] $duration_calc \{[lindex $::recjob($jobid) end]\}"
 			close $f_open
 			after [expr $duration_calc * 1000] {catch {exec ""}}
-			set status [command_ReceiverRunning 1]
-			if {$status} {
+			set status [monitor_partRunning 1]
+			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
 			}
 			scheduler_delete [list $jobid]
@@ -435,8 +436,8 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 		catch {exec ""}
 		scheduler_logWriteOut 2 "File [lindex $::recjob($jobid) end] doesn't exist."
 		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
-		set status [command_ReceiverRunning 1]
-		if {$status} {
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
 		return
@@ -471,8 +472,8 @@ proc scheduler_Init {handler} {
 		main_readConfig
 		scheduler_log
 		command_socket
-		set status [command_ReceiverRunning 1]
-		if {$status} {
+		set status [monitor_partRunning 1]
+		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_wizardExecSchedulerCback 0"
 		}
 		scheduler_stations

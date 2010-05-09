@@ -36,7 +36,7 @@ exit 1
 #necessary changes will be made by the configure tcl script.
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set option(release_version) {0.8.1.1 85 04.04.2010}
+set option(release_version) {0.8.1.1 86 09.05.2010}
 set prefix FOO
 set eprefix FOO
 set bindir FOO

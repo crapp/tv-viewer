@@ -194,6 +194,7 @@ proc tv_wmPanscanAuto {} {
 		if {$::data(panscanAuto) == 0} {
 			set relativeX [dict get [place info .tv.bg.w] -relx]
 			set relativeY [dict get [place info .tv.bg.w] -rely]
+			set relheight [dict get [place info .tv.bg.w] -relheight]
 			place .tv.bg.w -relheight 1 -relx $relativeX -rely $relativeY
 			if {[winfo exists .tv.file_play_bar] == 0} {
 				wm geometry .tv [winfo width .tv]x[expr int(ceil([winfo width .tv].0 / 1.777777778))]
@@ -212,8 +213,16 @@ proc tv_wmPanscanAuto {} {
 			set ::data(panscanAuto) 1
 			place .tv.bg.w -relheight [expr [winfo reqwidth .tv.bg].0 / [winfo reqheight .tv.bg].0]
 		} else {
+			#FIXME needs more testing!!
+			if {[winfo exists .tv.file_play_bar] == 0} {
+				set height [expr int(ceil([winfo width .tv].0 / 1.33333333333))]
+				wm geometry .tv [winfo width .tv]x$height
+			} else {
+				set height [expr int(ceil([winfo width .tv].0 / 1.33333333333))]
+				set heightwp [expr $height + [winfo height .tv.file_play_bar]]
+				wm geometry .tv [winfo width .tv]x$heightwp
+			}
 			tv_wmPanscan .tv.bg.w 0
-			tv_wmGivenSize .tv.bg 1.0
 		}
 	} else {
 		if {$::data(panscanAuto) == 0} {
@@ -237,7 +246,6 @@ proc tv_wmPanscanAuto {} {
 				set ::data(panscanAuto) 1
 				place .tv.bg.w -relheight $relheight
 				}]
-
 			} else {
 				set width_diff [expr [winfo width .tv.bg] - [winfo width .tv.bg.w]]
 				set relheight [expr [dict get [place info .tv.bg.w] -relheight] + ($width_diff.0 / [winfo width .tv.bg.w].0)]
@@ -341,6 +349,7 @@ proc tv_wmMoveVideo {dir} {
 }
 
 proc tv_wmStayonTop {com} {
+	#Here we use the topmost attribute for toplevels so the video window may stay on top
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmStayonTop \033\[0m \{$com\}"
 	if {$com == 0} {
 		wm attributes .tv -topmost 0
@@ -414,6 +423,7 @@ proc tv_wmCursorPlaybar {ypos} {
 }
 
 proc tv_wmHeartbeatCmd {com} {
+	#Additional function to suppress screensaver
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmHeartbeatCmd \033\[0m \{$com\}"
 	if {"$com" == "cancel"} {
 		catch {after cancel $::data(heartbeat_id)}

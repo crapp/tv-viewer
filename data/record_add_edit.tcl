@@ -580,7 +580,7 @@ proc record_add_editOfile {w} {
 proc record_add_editDelete {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\}"
 	if {[string trim [$tree selection]] == {}} return
-	set status [command_ReceiverRunning 2]
+	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		set start 0
 	} else {
@@ -607,7 +607,7 @@ proc record_add_editDelete {tree} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}

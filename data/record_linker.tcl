@@ -234,17 +234,13 @@ proc record_linkerPreStop {handler} {
 		log_writeOutTv 0 "Prestop sequence for recording initiated."
 		catch {after cancel $::record(after_prestop_id)}
 		unset -nocomplain ::record(after_prestop_id)
-		set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-		if { $status_recordlinkread == 0 } {
-			catch {exec ps -eo "%p"} read_ps
-			set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-			if { $status_greppid_record == 0 } {
-				log_writeOutTv 0 "There is an active recording (PID $resultat_recordlinkread)."
-				catch {exec kill $resultat_greppid_record}
-				catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
-				after 3000 {
-					command_WritePipe 0 "tv-viewer_scheduler scheduler_zombie"
-				}
+		set status_record [monitor_partRunning 3]
+		if {[lindex $status_record 0] == 1} {
+			log_writeOutTv 0 "There is an active recording (PID [lindex $status_record 1])."
+			catch {exec kill [lindex $status_record 1]}
+			catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
+			after 3000 {
+				command_WritePipe 0 "tv-viewer_scheduler scheduler_zombie"
 			}
 		}
 	} else {

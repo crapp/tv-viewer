@@ -111,36 +111,3 @@ proc command_WritePipe {handler com} {
 		}
 	}
 }
-
-proc command_ReceiverRunning {handler} {
-	# check if main is running
-	if {$handler == 1} {
-		set status_mainlinkread [catch {file readlink "$::option(home)/tmp/lockfile.tmp"} resultat_mainlinkread]
-		if {$status_mainlinkread == 0} {
-			catch {exec ps -eo "%p"} read_ps
-			set status_greppid_main [catch {agrep -w "$read_ps" $resultat_mainlinkread} resultat_greppid_main]
-			if {$status_greppid_main == 0} {
-				return 1
-			} else {
-				return 0
-			}
-		} else {
-			return 0
-		}
-	}
-	# check if scheduler is running
-	if {$handler == 2} {
-		set status_schedlinkread [catch {file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_schedlinkread]
-		if { $status_schedlinkread == 0 } {
-			catch {exec ps -eo "%p"} read_ps
-			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
-			if { $status_greppid_sched == 0 } {
-				return [list 1 $resultat_schedlinkread]
-			} else {
-				return 0
-			}
-		} else {
-			return 0
-		}
-	}
-}

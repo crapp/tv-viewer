@@ -18,31 +18,23 @@
 
 proc timeshift {tbutton} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift \033\[0m \{$tbutton\}"
-	set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-	if { $status_recordlinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-		if { $status_greppid_record == 0 } {
-			log_writeOutTv 2 "There is a running recording (PID $resultat_recordlinkread)"
-			log_writeOutTv 2 "Can't start timeshift."
-			return
-		}
+	set status_record [monitor_partRunning 3]
+	if {[lindex $status_record 0] == 1} {
+		log_writeOutTv 2 "There is a running recording (PID [lindex $status_record 1])"
+		log_writeOutTv 2 "Can't start timeshift."
+		return
 	}
 	catch {exec""}
-	set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-	if { $status_timeslinkread == 0 } {
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-		if { $status_greppid_times == 0 } {
-			log_writeOutTv 0 "Timeshift (PID: $resultat_timeslinkread) is running, will stop it."
-			$tbutton state !pressed
-			catch {exec kill $resultat_timeslinkread}
-			after 2000 {catch {exec""}}
-			catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
-			catch {timeshift_calcDF cancel}
-			record_linkerPreStop timeshift
-			return
-		}
+	set status_time [monitor_partRunning 4]
+	if {[lindex $status_time 0] == 1} {
+		log_writeOutTv 0 "Timeshift (PID: [lindex $status_time 1]) is running, will stop it."
+		$tbutton state !pressed
+		catch {exec kill [lindex $status_time 1]}
+		after 2000 {catch {exec""}}
+		catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
+		catch {timeshift_calcDF cancel}
+		record_linkerPreStop timeshift
+		return
 	}
 	log_writeOutTv 0 "Starting timeshift..."
 	if {[file exists $::option(video_device)] == 0} {

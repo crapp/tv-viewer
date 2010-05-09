@@ -44,19 +44,31 @@ proc tv_seek {secs direct} {
 		8192 12
 		16384 18
 	}
-	if {$direct == 1} {
-		if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
-			log_writeOutTv 0 "Seeking +$secs\s"
-			set seekpos [expr ($::data(file_pos) + $secs)]
-			if {$seekpos < $::data(file_size)} {
+	if {[winfo exists .tv.file_play_bar]} {
+		if {$direct == 1} {
+			if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
+				log_writeOutTv 0 "Seeking +$secs\s"
+				set seekpos [expr ($::data(file_pos) + $secs)]
+				if {$seekpos < $::data(file_size)} {
+					tv_callbackMplayerRemote "seek $seekpos 2"
+					after 650 {
+						set ::tv(getvid_seek) 0
+						tv_callbackMplayerRemote get_time_pos
+					}
+				}
+				return
+			} else {
+				set seekpos [expr ($::data(file_size) - $endpos($::option(player_cache)))]
 				tv_callbackMplayerRemote "seek $seekpos 2"
 				after 650 {
 					set ::tv(getvid_seek) 0
 					tv_callbackMplayerRemote get_time_pos
 				}
+				return
 			}
-			return
-		} else {
+		}
+		if {$direct == 2} {
+			log_writeOutTv 0 "Seeking to the end of actual recording."
 			set seekpos [expr ($::data(file_size) - $endpos($::option(player_cache)))]
 			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
@@ -65,20 +77,29 @@ proc tv_seek {secs direct} {
 			}
 			return
 		}
-	}
-	if {$direct == 2} {
-		log_writeOutTv 0 "Seeking to the end of actual recording."
-		set seekpos [expr ($::data(file_size) - $endpos($::option(player_cache)))]
-		tv_callbackMplayerRemote "seek $seekpos 2"
-		after 650 {
-			set ::tv(getvid_seek) 0
-			tv_callbackMplayerRemote get_time_pos
+		if {$direct == -1} {
+			if {[expr ($::data(file_pos) - $secs)] < 0} {
+				log_writeOutTv 0 "Seeking -$secs\s"
+				set seekpos 0
+				tv_callbackMplayerRemote "seek $seekpos 2"
+				after 650 {
+					set ::tv(getvid_seek) 0
+					tv_callbackMplayerRemote get_time_pos
+				}
+				return
+			} else {
+				log_writeOutTv 0 "Seeking -$secs\s"
+				set seekpos [expr ($::data(file_pos) - $secs)]
+				tv_callbackMplayerRemote "seek $seekpos 2"
+				after 650 {
+					set ::tv(getvid_seek) 0
+					tv_callbackMplayerRemote get_time_pos
+				}
+				return
+			}
 		}
-		return
-	}
-	if {$direct == -1} {
-		if {[expr ($::data(file_pos) - $secs)] < 0} {
-			log_writeOutTv 0 "Seeking -$secs\s"
+		if {$direct == -2} {
+			log_writeOutTv 0 "Seeking to the beginning of actual recording."
 			set seekpos 0
 			tv_callbackMplayerRemote "seek $seekpos 2"
 			after 650 {
@@ -86,58 +107,43 @@ proc tv_seek {secs direct} {
 				tv_callbackMplayerRemote get_time_pos
 			}
 			return
-		} else {
-			log_writeOutTv 0 "Seeking -$secs\s"
-			set seekpos [expr ($::data(file_pos) - $secs)]
-			tv_callbackMplayerRemote "seek $seekpos 2"
-			after 650 {
-				set ::tv(getvid_seek) 0
-				tv_callbackMplayerRemote get_time_pos
+		}
+		if {$direct == 0} {
+			if {[winfo exists .tv.file_play_bar.b_pause]} {
+				if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
+					.tv.file_play_bar.b_pause state disabled
+					.tv.file_play_bar.b_play state !disabled
+					log_writeOutTv 0 "Pause playback."
+					bind .tv <<forward_10s>> {}
+					bind .tv <<forward_1m>> {}
+					bind .tv <<forward_10m>> {}
+					bind .tv <<rewind_10s>> {}
+					bind .tv <<rewind_1m>> {}
+					bind .tv <<rewind_10m>> {}
+					bind .tv <<forward_end>> {}
+					bind .tv <<rewind_start>> {}
+					tv_callbackMplayerRemote pause
+					return
+				} else {
+					.tv.file_play_bar.b_play state disabled
+					.tv.file_play_bar.b_pause state !disabled
+					set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
+					log_writeOutTv 0 "Start playback."
+					bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+					bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+					bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+					bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+					bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+					bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+					bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+					bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+					tv_callbackMplayerRemote pause
+					return
+				}
 			}
-			return
 		}
-	}
-	if {$direct == -2} {
-		log_writeOutTv 0 "Seeking to the beginning of actual recording."
-		set seekpos 0
-		tv_callbackMplayerRemote "seek $seekpos 2"
-		after 650 {
-			set ::tv(getvid_seek) 0
-			tv_callbackMplayerRemote get_time_pos
-		}
-		return
-	}
-	if {$direct == 0} {
-		if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
-			.tv.file_play_bar.b_pause state disabled
-			.tv.file_play_bar.b_play state !disabled
-			log_writeOutTv 0 "Pause playback."
-			bind .tv <<forward_10s>> {}
-			bind .tv <<forward_1m>> {}
-			bind .tv <<forward_10m>> {}
-			bind .tv <<rewind_10s>> {}
-			bind .tv <<rewind_1m>> {}
-			bind .tv <<rewind_10m>> {}
-			bind .tv <<forward_end>> {}
-			bind .tv <<rewind_start>> {}
-			tv_callbackMplayerRemote pause
-			return
-		} else {
-			.tv.file_play_bar.b_play state disabled
-			.tv.file_play_bar.b_pause state !disabled
-			set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
-			log_writeOutTv 0 "Start playback."
-			bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-			bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-			bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-			bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-			bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-			bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-			bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-			bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-			tv_callbackMplayerRemote pause
-			return
-		}
+	} else {
+		log_writeOutTv 2 "Function tv_seek was invoked while playbar does not exist."
 	}
 }
 

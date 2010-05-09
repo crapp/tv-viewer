@@ -69,14 +69,8 @@ proc tv_callbackVidData {} {
 				bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
-				set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-				if { $status_recordlinkread == 0 } {
-					catch {exec ps -eo "%p"} read_ps
-					set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-					if { $status_greppid_record != 0 } {
-						settooltip .tray [mc "TV-Viewer idle"]
-					}
-				} else {
+				set status_record [monitor_partRunning 3]
+				if {[lindex $status_record 0] == 0} {
 					settooltip .tray [mc "TV-Viewer idle"]
 				}
 			}
@@ -104,26 +98,14 @@ proc tv_callbackVidData {} {
 			}
 			if {[string match -nocase "ID_LENGTH=*" $line]} {
 				log_writeOutTv 0 "This is a recording, starting to calculate file size and position."
-				set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-				set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-				if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
-					catch {exec ps -eo "%p"} read_ps
-					set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-					set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-					if { $status_greppid_record == 0 || $status_greppid_times == 0 } {
-						tv_fileComputeSize cancel
-						set length [lindex [split $line "="] end]
-						set length_int [expr int($length)]
-						set seconds [expr [clock seconds] - $length_int]
-						after 0 [list tv_fileComputeSize $seconds]
-					} else {
-						tv_fileComputeSize cancel_rec
-						if {[info exists ::data(file_size)] == 0} {
-							set length [lindex [split $line "="] end]
-							set length_int [expr int($length)]
-							set ::data(file_size) $length_int
-						}
-					}
+				set status_time [monitor_partRunning 4]
+				set status_record [monitor_partRunning 3]
+				if {[lindex $status_record 0] == 1 || [lindex $status_time 0] == 1} {
+					tv_fileComputeSize cancel
+					set length [lindex [split $line "="] end]
+					set length_int [expr int($length)]
+					set seconds [expr [clock seconds] - $length_int]
+					after 0 [list tv_fileComputeSize $seconds]
 				} else {
 					tv_fileComputeSize cancel_rec
 					if {[info exists ::data(file_size)] == 0} {
@@ -168,21 +150,9 @@ proc tv_callbackVidData {} {
 					}
 				}
 				tv_playerVolumeControl .bottom_buttons $::main(volume_scale)
-				set status_timeslinkread [catch {file readlink "$::option(home)/tmp/timeshift_lockfile.tmp"} resultat_timeslinkread]
-				set status_recordlinkread [catch {file readlink "$::option(home)/tmp/record_lockfile.tmp"} resultat_recordlinkread]
-				if { $status_recordlinkread == 0 || $status_timeslinkread == 0 } {
-					catch {exec ps -eo "%p"} read_ps
-					set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
-					set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
-					if { $status_greppid_record != 0 && $status_greppid_times != 0 } {
-						bind . <<input_up>> "main_stationInput 1 1"
-						bind . <<input_down>> "main_stationInput 1 -1"
-						bind . <<teleview>> {tv_playerRendering}
-						bind .tv <<input_up>> "main_stationInput 1 1"
-						bind .tv <<input_down>> "main_stationInput 1 -1"
-						bind .tv <<teleview>> {tv_playerRendering}
-					}
-				} else {
+				set status_time [monitor_partRunning 4]
+				set status_record [monitor_partRunning 3]
+				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
 					bind . <<input_up>> "main_stationInput 1 1"
 					bind . <<input_down>> "main_stationInput 1 -1"
 					bind . <<teleview>> {tv_playerRendering}

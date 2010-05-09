@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.1.1 85 04.04.2010}
+set option(release_version) {0.8.1.1 86 09.05.2010}
 
 set main(debug_msg) [open /dev/null a]
 
@@ -103,6 +103,7 @@ proc record_externalDuration {} {
 proc record_externalTime {} {
 	if {$::start_options(start_time)} {
 		if {[info exists ::start_values(start_time)]} {
+			#FIXME - This check is not very robust have to integrate timevalidate
 			set status [catch {clock scan $::start_values(start_time) -format {%H:%M}} result]
 			if {$status == 0} {
 				set ::record(time_hour) [scan [clock format [clock scan $::start_values(start_time)] -format %H] %d]
@@ -125,6 +126,7 @@ proc record_externalTime {} {
 proc record_externalDate {} {
 	if {$::start_options(start_date)} {
 		if {[info exists ::start_values(start_date)]} {
+			#FIXME - This check is not very robust have to integrate timevalidate
 			set status [catch {clock scan $::start_values(start_date) -format {%Y-%m-%d}} result]
 			if {$status == 0} {
 				set ::record(date) $::start_values(start_date)
@@ -142,6 +144,41 @@ proc record_externalDate {} {
 		record_externalExit "External record scheduler: Specify a start date" 2 "Specify a start date" 1
 	}
 }
+
+#~ proc timevalidate {format str} {
+     #~ # Start with a simple check: If the string cannot be parsed against
+     #~ # the specified format at all it's definitely wrong
+     #~ if {[catch {clock scan $str -format $format} time]} {return 0}
+#~ 
+     #~ # Create a table for translating the supported clock format specifiers
+     #~ # to scan format specifications
+     #~ set map {%a %3s %A %s %b %3s %B %s %d %2d %D %2d/%2d/%4d
+        #~ %e %2d %g %2d %G %4d %h %s %H %2d %I %2d %j %3d
+        #~ %J %d %k %2d %l %2d %m %2d %M %2d %N %2d %p %2s
+        #~ %P %2s %s %d %S %2d %t \t %T %2d:%2d:%2d %u %1d
+        #~ %V %2d %w %1d %W %2d %y %2d %Y %2d %z %4d %Z %s
+     #~ }
+#~ 
+     #~ # Build the scan format string out of the clock format string
+     #~ set scanfmt [string map $map $format]
+#~ 
+     #~ # Recreate the time string from the seconds value
+     #~ set tmp [clock format $time -format $format]
+#~ 
+     #~ # Scan both versions of the string representation
+     #~ set list1 [scan $str $scanfmt]
+     #~ set list2 [scan $tmp $scanfmt]
+#~ 
+     #~ # Compare all elements as numbers and strings
+     #~ foreach n1 $list1 n2 $list2 {
+        #~ if {$n1 != $n2 && ![string equal -nocase $n1 $n2]} {return 0}
+     #~ }
+#~ 
+     #~ # Declare the time string valid since all elements matched
+     #~ return 1
+ #~ }
+ #~ 
+ #~ puts [timevalidate "%Y-%m-%d" $date]
 
 proc record_externalResolution {} {
 	set ::record(resolution_width) 720
@@ -205,7 +242,7 @@ proc record_externalAdd {} {
 		puts -nonewline $f_open "$jobid"
 		close $f_open
 	}
-	set status [command_ReceiverRunning 2]
+	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		set start 0
 	} else {
@@ -242,7 +279,7 @@ proc record_externalAdd {} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
@@ -250,7 +287,7 @@ proc record_externalAdd {} {
 }
 
 proc record_externalDelete {} {
-	set status [command_ReceiverRunning 2]
+	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		set start 1
 	} else {
@@ -287,7 +324,7 @@ proc record_externalDelete {} {
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"
-		set status [command_ReceiverRunning 2]
+		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
@@ -307,8 +344,8 @@ if {$start_options(delete) == 0} {
 	set w .record_wizard.add_edit
 	set handler add
 	record_externalAdd
-	set status_main [command_ReceiverRunning 1]
-	if {$status_main} {
+	set status_main [monitor_partRunning 1]
+	if {[lindex $status_main 0]} {
 		command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
 	}
 	puts "Successfully scheduled recording:
@@ -320,8 +357,8 @@ if {$start_options(delete) == 0} {
 	record_externalDate
 	record_externalStation
 	set recmatch [record_externalDelete]
-	set status_main [command_ReceiverRunning 1]
-	if {$status_main} {
+	set status_main [monitor_partRunning 1]
+	if {[lindex $status_main 0]} {
 		command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
 	}
 	if {$recmatch} {

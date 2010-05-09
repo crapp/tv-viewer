@@ -60,7 +60,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.1.1 85 04.04.2010}
+set option(release_version) {0.8.1.1 86 09.05.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -202,12 +202,23 @@ if { $status_lock != 0 } {
 		catch {file delete "$::option(home)/tmp/lockfile.tmp"}
 		catch {exec ln -s "[pid]" "$::option(home)/tmp/lockfile.tmp"}
 	} else {
-		puts "
+		catch {exec ps -p $linkread -o args} readarg
+		set status_greparg [catch {agrep -m "$readarg" "tv-viewer_main.tcl"} resultat_greparg]
+		if {$status_greparg != 0} {
+			catch {file delete "$::option(home)/tmp/lockfile.tmp"}
+			catch {exec ln -s "[pid]" "$::option(home)/tmp/lockfile.tmp"}
+		} else {
+			puts "
 An instance of TV-Viewer is already running."
-		exit 0
+			#FIXME - This messageBox is really ugly - Will be changed in the future
+			tk_messageBox -icon warning -title "Instance already running" -message "An instance of TV-Viewer is already running.
+Otherwise you have to delete the file
+$option(home)/.tv-viewer/tmp/lockfile.tmp"
+			exit 0
+		}
 	}
 }
-unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid readpid read_build
+unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid readpid status_greparg resultat_greparg readarg read_build
 
 #~ Experimental support for QT and GTK theme.
 #~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library/libtileqt0.6.so"]} {
@@ -257,6 +268,8 @@ if {[msgcat::mcload $option(root)/msgs] != 1} {
 	msgcat::mcload $option(root)/msgs
 	puts "$::env(LANG) no translation found"
 }
+#Source monitor procs
+source $::option(root)/data/monitor.tcl
 #Sourcing logfile and launching log process
 source $::option(root)/data/log_viewer.tcl
 log_viewerCheck
