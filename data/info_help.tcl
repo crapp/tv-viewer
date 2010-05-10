@@ -214,7 +214,7 @@ Christian Rapp"] \
 		proc info_helpHomepage {} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHomepage \033\[0m"
 			log_writeOutTv 0 "Executing your favorite internet browser."
-			catch {exec xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page &}
+			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page" &}
 		}
 		
 		# Additional Code

@@ -27,9 +27,10 @@ proc monitor_partRunning {handler} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_main [catch {agrep -w "$read_ps" $resultat_mainlinkread} resultat_greppid_main]
 			if {$status_greppid_main == 0} {
-				catch {exec ps -p $resultat_mainlinkread -o args} readarg
-				set status_greparg [catch {agrep -m "$readarg" "tv-viewer_main.tcl"} resultat_greparg]
-				if {$status_greparg == 0} {
+				catch {exec ps -p $resultat_mainlinkread -o args=} readarg
+				set status_grepargDirect [catch {agrep -m "$readarg" "tv-viewer_main.tcl"} resultat_greparg]
+				set status_grepargLink [catch {agrep -m "$readarg" "tv-viewer"} resultat_greparg]
+				if {$status_grepargDirect == 0 || $status_grepargLink == 0} {
 					# running
 					return [list 1 $resultat_mainlinkread]
 				} else {
@@ -50,9 +51,10 @@ proc monitor_partRunning {handler} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_sched [catch {agrep -w "$read_ps" $resultat_schedlinkread} resultat_greppid_sched]
 			if { $status_greppid_sched == 0 } {
-				catch {exec ps -p $resultat_schedlinkread -o args} readarg
-				set status_greparg [catch {agrep -m "$readarg" "scheduler.tcl"} resultat_greparg]
-				if {$status_greparg == 0} {
+				catch {exec ps -p $resultat_schedlinkread -o args=} readarg
+				set status_grepargLink [catch {agrep -m "$readarg" "tv-viewer_scheduler"} resultat_greparg]
+				set status_grepargDirect [catch {agrep -m "$readarg" "scheduler.tcl"} resultat_greparg]
+				if {$status_grepargLink == 0 || $status_grepargDirect == 0} {
 					# running
 					return [list 1 $resultat_schedlinkread]
 				} else {
@@ -73,7 +75,7 @@ proc monitor_partRunning {handler} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_record [catch {agrep -w "$read_ps" $resultat_recordlinkread} resultat_greppid_record]
 			if { $status_greppid_record == 0 } {
-				catch {exec ps -p $resultat_recordlinkread -o args} readarg
+				catch {exec ps -p $resultat_recordlinkread -o args=} readarg
 				set status_greparg [catch {agrep -m "$readarg" "recorder.tcl"} resultat_greparg]
 				if {$status_greparg == 0} {
 					# running
@@ -96,7 +98,7 @@ proc monitor_partRunning {handler} {
 			catch {exec ps -eo "%p"} read_ps
 			set status_greppid_times [catch {agrep -w "$read_ps" $resultat_timeslinkread} resultat_greppid_times]
 			if { $status_greppid_times == 0 } {
-				catch {exec ps -p $resultat_timeslinkread -o args} readarg
+				catch {exec ps -p $resultat_timeslinkread -o args=} readarg
 				set status_greparg [catch {agrep -m "$readarg" "recorder.tcl"} resultat_greparg]
 				if {$status_greparg == 0} {
 					# running

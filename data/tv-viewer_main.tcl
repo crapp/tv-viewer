@@ -60,7 +60,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.1.1 86 09.05.2010}
+set option(release_version) {0.8.1.1 87 10.05.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -202,9 +202,10 @@ if { $status_lock != 0 } {
 		catch {file delete "$::option(home)/tmp/lockfile.tmp"}
 		catch {exec ln -s "[pid]" "$::option(home)/tmp/lockfile.tmp"}
 	} else {
-		catch {exec ps -p $linkread -o args} readarg
-		set status_greparg [catch {agrep -m "$readarg" "tv-viewer_main.tcl"} resultat_greparg]
-		if {$status_greparg != 0} {
+		catch {exec ps -p $linkread -o args=} readarg
+		set status_grepargDirect [catch {agrep -m "$readarg" "tv-viewer_main.tcl"} resultat_greparg]
+		set status_grepargLink [catch {agrep -m "$readarg" "tv-viewer"} resultat_greparg]
+		if {$status_grepargDirect != 0 && $status_grepargLink != 0} {
 			catch {file delete "$::option(home)/tmp/lockfile.tmp"}
 			catch {exec ln -s "[pid]" "$::option(home)/tmp/lockfile.tmp"}
 		} else {

@@ -23,7 +23,7 @@ package require Tcl 8.5
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
-set option(release_version) {0.8.1.1 86 09.05.2010}
+set option(release_version) {0.8.1.1 87 10.05.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -48,6 +48,13 @@ EXIT 1"
 	exit 1
 }
 
+source $option(root)/agrep.tcl
+source $option(root)/monitor.tcl
+source $option(root)/main_read_config.tcl
+source $option(root)/main_picqual_stream.tcl
+source $option(root)/main_newsreader.tcl
+source $option(root)/command_socket.tcl
+
 set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
 	set linkread [file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"]
@@ -57,9 +64,10 @@ if { $status_lock != 0 } {
 		catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
 		catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"}
 	} else {
-		catch {exec ps -p $linkread -o args} readarg
-		set status_greparg [catch {agrep -m "$readarg" "scheduler.tcl"} resultat_greparg]
-		if {$status_greparg != 0} {
+		catch {exec ps -p $linkread -o args=} readarg
+		set status_grepargLink [catch {agrep -m "$readarg" "tv-viewer_scheduler"} resultat_greparg]
+		set status_grepargDirect [catch {agrep -m "$readarg" "scheduler.tcl"} resultat_greparg]
+		if {$status_grepargLink != 0 && $status_grepargDirect != 0} {
 			catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
 			catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"}
 		} else {
@@ -70,13 +78,6 @@ An instance of the TV-Viewer Scheduler is already running."
 	}
 }
 unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
-
-source $option(root)/agrep.tcl
-source $option(root)/monitor.tcl
-source $option(root)/main_read_config.tcl
-source $option(root)/main_picqual_stream.tcl
-source $option(root)/main_newsreader.tcl
-source $option(root)/command_socket.tcl
 
 # Save the original one so we can chain to it
 rename unknown scheduler_unknown

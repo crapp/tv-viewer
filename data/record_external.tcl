@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.1.1 86 09.05.2010}
+set option(release_version) {0.8.1.1 87 10.05.2010}
 
 set main(debug_msg) [open /dev/null a]
 
@@ -275,7 +275,7 @@ proc record_externalAdd {} {
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/scheduler.tcl" TEST &}
+		catch {exec "$::option(root)/data/scheduler.tcl" &}
 	} else {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
 		log_writeOutTv 0 "Reinitiating scheduler"

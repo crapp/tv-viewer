@@ -200,11 +200,7 @@ proc main_newsreaderExit {w} {
 proc main_newsreaderHomepage {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
 	log_writeOutTv 0 "Executing your favorite web browser."
-	if {[string match *en* $::option(language_value)]} {
-		catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-	} else {
-		catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$::option(language_value)" &}
-	}
+	catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page" &}
 }
 
 proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
