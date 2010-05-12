@@ -34,7 +34,7 @@ TV-Viewer comes with some optional features. You may choose if you want
 them to be installed or not.
 
 * tktray - A Tk library to dock Tk to the system tray. (default: enabled)
-           Depends on glibc; libxdmcp; libxau; libxcb; libx11; libxext
+           Depends on glibc; libxdmcp; libxau; libxcb; libx11
            These dependencies should be installed by default on every linux
            distribution.
 
