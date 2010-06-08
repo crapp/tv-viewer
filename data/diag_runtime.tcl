@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       diag_runtime.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.1.1 89 12.05.2010}
+set option(release_version) {0.8.2a1 90 08.06.2010}
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}

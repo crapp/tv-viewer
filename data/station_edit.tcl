@@ -1,5 +1,5 @@
 #       station_edit.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -231,7 +231,7 @@ proc station_editExit {} {
 				.tv.slist_lirc.lb_station insert end "$::kanalid($i)"
 			}
 		}
-		event_constrArray
+		event_constr 1
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"

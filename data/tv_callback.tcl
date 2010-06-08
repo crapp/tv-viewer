@@ -1,5 +1,5 @@
 #       tv_callback.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -150,6 +150,7 @@ proc tv_callbackVidData {} {
 					}
 				}
 				tv_playerVolumeControl .bottom_buttons $::main(volume_scale)
+				tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {

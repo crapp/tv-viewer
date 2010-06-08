@@ -1,5 +1,5 @@
 #       main_frontend.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -448,10 +448,10 @@ proc main_frontendUiTvviewer {} {
 			if {[string match *scale_volume $widget] || [string match *button_mute $widget]} continue
 			$widget state disabled
 		}
-		event_constrNoArray
+		event_constr 0
 	} else {
 		.label_stations configure -text [lindex $::station(last) 0]
-		event_constrArray
+		event_constr 1
 	}
 	
 	# Hier alles einfügen was noch ausgeführt werden muss. picqual ...

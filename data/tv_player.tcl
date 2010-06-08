@@ -1,5 +1,5 @@
 #       tv_player.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -65,6 +65,42 @@ proc tv_playerVolumeControl {wfbottom value} {
 				}
 				tv_callbackMplayerRemote "volume [expr int($::main(volume_scale))] 1"
 			}
+		}
+	}
+}
+
+proc tv_playerAudioDelay {handler} {
+	#~ Manage audio delay for MPlayer
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerAudioDelay \033\[0m \{$handler\}"
+	set status_tv_playback [tv_callbackMplayerRemote alive]
+	if {$status_tv_playback != 1} {
+		if {"$handler" == "incr"} {
+			if {$::option(player_audio_delay) == 2} {
+				log_writeOutTv 1 "Audio delay reached maximum of +2 seconds"
+				return
+			}
+			set ::option(player_audio_delay) [format %.1f [expr $::option(player_audio_delay) + 0.1]]
+			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+				after 0 [list tv_osd osd_group_w 1000 "Delay $::option(player_audio_delay)"]
+			}
+			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+				after 0 [list tv_osd osd_group_f 1000 "Delay $::option(player_audio_delay)"]
+			}
+			tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
+		}
+		if {"$handler" == "decr"} {
+			if {$::option(player_audio_delay) == -2} {
+				log_writeOutTv 1 "Audio delay reached minimum of -2 seconds"
+				return
+			}
+			set ::option(player_audio_delay) [format %.1f [expr $::option(player_audio_delay) - 0.1]]
+			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+				after 0 [list tv_osd osd_group_w 1000 "Delay $::option(player_audio_delay)"]
+			}
+			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+				after 0 [list tv_osd osd_group_f 1000 "Delay $::option(player_audio_delay)"]
+			}
+			tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
 		}
 	}
 }
@@ -284,6 +320,8 @@ proc tv_playerUi {} {
 		bind $mw <<input_down>> [list main_stationInput 1 -1]
 		bind $mw <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
 		bind $mw <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
+		bind $mw <<delay_incr>> {tv_playerAudioDelay incr}
+		bind $mw <<delay_decr>> {tv_playerAudioDelay decr}
 		bind $mw <Key-m> [list tv_playerVolumeControl .bottom_buttons mute]
 		bind $mw <Control-Key-1> [list tv_wmGivenSize $tv_bg 1]
 		bind $mw <Control-Key-2> [list tv_wmGivenSize $tv_bg 2]

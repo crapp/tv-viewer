@@ -1,4 +1,4 @@
-#       agrep.tcl
+#       radio.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,30 +16,14 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc agrep {switch input modifier} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: agrep \033\[0m \{$switch\} \{$modifier\}"}
-	# This a simple implementation of the unix grep command.
-	foreach line [split "$input" \n] {
-		if {"$switch" == "-m"} {
-			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase $modifier* "$line"]} {
-				lappend return_value "$line"
-			}
-		}
-		if {"$switch" == "-w"} {
-			if {[lsearch "$line" "$modifier"] != -1} {
-				lappend return_value "$line"
-			}
-		}
+proc radio_ui {} {
+	# The main ui for the radio interface
+	if {[winfo exists .radio]} {
+		#FIXME - Return here or destroy radio interface
+		log_writeOutTv 1 "Radio interface already running"
+		return
 	}
-	if {[info exists return_value]} {
-		if {[llength $return_value] > 1} {
-			set return_value [join $return_value \n]
-			return -code 0 "$return_value"
-		} else {
-			set return_value [join $return_value]
-			return -code 0 "$return_value"
-		}
-	} else {
-		return -code 1 "agrep could not find $modifier in $input"
-	}
+	set rd [toplevel .radio -class "TV-Viewer"]
+	place [ttk::frame $rd.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+	
 }

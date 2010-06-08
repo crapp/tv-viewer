@@ -49,9 +49,9 @@ Installation
 ------------
 Installing TV-Viewer is done by the following 2 commands:
 
-$ ./configure.tcl
+$ ./configure.tcl (configures build environment and creates install.tcl)
 
-% ./install.tcl (You may need root privileges)
+% ./install.tcl (you may need root privileges)
 
 
 For more configuration details run 

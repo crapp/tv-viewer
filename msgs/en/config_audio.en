@@ -20,6 +20,18 @@ mcset $lang \
 	{Use software mixer}
 
 mcset $lang \
+	{Audio synchronization} \
+	{Audio synchronization}
+
+mcset $lang \
+	{Auto synchronization} \
+	{Auto synchronization}
+
+mcset $lang \
+	{Audio/Video sync correction} \
+	{Audio/Video sync correction}
+
+mcset $lang \
 	{Choose an audio output driver, alsa is recommended.} \
 	{Choose an audio output driver, alsa is recommended.}
 
@@ -28,3 +40,11 @@ mcset $lang \
 instead of the hardware mixer.} \
 	{Check this option to use the software mixer,
 instead of the hardware mixer.}
+
+mcset $lang \
+	{Gradually adjusts the A/V sync based on audio delay measurements.} \
+	{Gradually adjusts the A/V sync based on audio delay measurements.}
+
+mcset $lang \
+	{Audio/Video sync correction per frame in seconds.} \
+	{Audio/Video sync correction per frame in seconds.}

@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       record_external.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.1.1 89 12.05.2010}
+set option(release_version) {0.8.2a1 90 08.06.2010}
 
 set main(debug_msg) [open /dev/null a]
 

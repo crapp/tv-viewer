@@ -1,5 +1,5 @@
 #       main_read_config.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ proc main_readConfig {} {
 		player_audio alsa
 		player_audio_channels {2 (Stereo)}
 		player_aud_softvol 1
+		player_audio_autosync 0
+		player_audio_delay 0.0
 		player_dr 0
 		player_double 1
 		player_slice 0

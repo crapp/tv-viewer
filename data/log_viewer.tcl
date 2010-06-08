@@ -1,5 +1,5 @@
 #       log_viewer.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -408,7 +408,7 @@ proc log_viewerEmail {handler} {
 	}
 	
 	set logfile "$::option(home)/log/$ident(filen\($handler\)).log"
-	catch {exec xdg-email saedelaere@arcor.de --attach "$logfile" &}
+	catch {exec xdg-email christianrapp@users.sourceforge.net --attach "$logfile" &}
 }
 
 proc log_viewerMplTail {filename position logw} {

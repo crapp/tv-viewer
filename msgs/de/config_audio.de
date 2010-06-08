@@ -20,6 +20,18 @@ mcset $lang \
 	{Software Mixer verwenden}
 
 mcset $lang \
+	{Audio synchronization} \
+	{Audio Synchronisation}
+
+mcset $lang \
+	{Auto synchronization} \
+	{Automatische Synchronisation}
+
+mcset $lang \
+	{Audio/Video sync correction} \
+	{Audio/Video Sync-Korrektur}
+
+mcset $lang \
 	{Choose an audio output driver, alsa is recommended.} \
 	{Wähle einen Audio Ausgabetreiber, alsa wird empfohlen.}
 
@@ -34,3 +46,12 @@ mcset $lang \
 to the chosen value.} \
 	{Diese Einstellung verwendet MPlayer und versucht
 den Ton in die angegebenen Kanäle zu decodieren.}
+
+mcset $lang \
+	{Gradually adjusts the A/V sync based on audio delay measurements.} \
+	{Justiert stufenweise die A/V Synchronisation, basierend auf der
+Messung der Audioverzögerung.}
+
+mcset $lang \
+	{Audio/Video sync correction per frame in seconds.} \
+	{Audio/Video Synchronisation pro Bild in Sekunden.}

@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       configure.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set printchan stdout
-set option(release_version) {0.8.1.1 89 12.05.2010}
+set option(release_version) {0.8.2a1 90 08.06.2010}
 
 array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --host 0}
 foreach command_argument $argv {
@@ -161,7 +161,7 @@ if {$start_options(--version)} {
 	puts "
 tv-viewer configure tcl script version [lindex $option(release_version) 0]"
 	puts "
-© Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+© Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 
 This script is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

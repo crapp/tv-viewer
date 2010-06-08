@@ -1,5 +1,5 @@
 #       info_help.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -255,13 +255,13 @@ Backend: MPlayer SVN rUNKNOWN"
 		$nb2.t_credits insert end "Developers:" big
 		$nb2.t_credits insert end "\n
 Christian Rapp - Main developer"
-		$nb2.t_credits insert end "\n<saedelaere@arcor.de>" saed
+		$nb2.t_credits insert end "\n<christianrapp@users.sourceforge.net>" saed
 		$nb2.t_credits insert end "\n\n"
 		$nb2.t_credits insert end "Translators:" big
 		$nb2.t_credits insert end "\n
-de_DE Christian Rapp <saedelaere@arcor.de>"
+de_DE Christian Rapp <christianrapp@users.sourceforge.net>"
 		$nb2.t_credits insert end "\n
-en_GB Christian Rapp <saedelaere@arcor.de>
+en_GB Christian Rapp <christianrapp@users.sourceforge.net>
       Matthias Klostermair"
 		$nb2.t_credits insert end "\n\n"
 		$nb2.t_credits insert end "Participants:" big
@@ -278,7 +278,7 @@ Thank you for your help!"
 		$nb2.t_credits tag configure saed -foreground #0064FF -underline on
 		$nb2.t_credits tag bind saed <Any-Enter> "$nb2.t_credits tag configure saed $hylink_enter; $nb2.t_credits configure -cursor hand1"
 		$nb2.t_credits tag bind saed <Any-Leave> "$nb2.t_credits tag configure saed $hylink_leave; $nb2.t_credits configure -cursor {}"
-		$nb2.t_credits tag bind saed <Button-1> {catch {exec sh -c "xdg-email saedelaere@arcor.de" &}}
+		$nb2.t_credits tag bind saed <Button-1> {catch {exec sh -c "xdg-email christianrapp@users.sourceforge.net" &}}
 		$nb2.t_credits configure -state disabled
 		
 		$nb3.t_license insert end "TV-Viewer is distributed under the terms of the " 

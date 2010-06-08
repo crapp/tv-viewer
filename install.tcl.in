@@ -1,7 +1,7 @@
 #install.tcl.in @@
 
 #       install.tcl.in
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ exit 1
 #necessary changes will be made by the configure tcl script.
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set option(release_version) {0.8.1.1 89 12.05.2010}
+set option(release_version) {0.8.2a1 90 08.06.2010}
 set prefix FOO
 set eprefix FOO
 set bindir FOO

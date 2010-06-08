@@ -1,5 +1,5 @@
 #       config_wizard_read_settings.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ proc config_wizardReadSettings {} {
 		#player_audio alsa
 		#player_audio_channels {2 (Stereo)}
 		#player_aud_softvol 1
+		#player_audio_autosync 0
+		#player_audio_delay 0.0
 		#player_dr 0
 		#player_double 1
 		#player_slice 0
@@ -71,6 +73,7 @@ proc config_wizardReadSettings {} {
 		audio_v4l2 0
 		#audio_v4l2_value 90
 		#audio_v4l2_mult 655
+		audio_delay 0
 		use_theme "default"
 		theme_default #d9d9d9
 		theme_alt #d9d9d9
@@ -141,6 +144,8 @@ proc config_wizardReadSettings {} {
 		player_audio alsa
 		player_audio_channels {2 (Stereo)}
 		player_aud_softvol 1
+		player_audio_autosync 0
+		player_audio_delay 0.0
 		player_dr 0
 		player_double 1
 		player_slice 0
@@ -261,6 +266,8 @@ proc config_wizardReadSettings {} {
 		entry_mplayer_add_coms player_additional_commands
 		entry_vf_mplayer player_add_vf_commands
 		entry_af_mplayer player_add_af_commands
+		cb_audautosync player_audio_autosync
+		sb_auddelay player_audio_delay
 	}
 	array set ::opt_choiceInterface {
 		mbTheme use_theme

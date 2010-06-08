@@ -1,5 +1,5 @@
 #       tv_playback.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -70,6 +70,8 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		autoq(6) {,pp -autoq 6}
 		softvol(0) {}
 		softvol(1) {-softvol}
+		autosync(0) {}
+		autosync(1) {-autosync 100}
 		monpixaspect(0) {-monitoraspect}
 		monpixaspect(1) {-monitorpixelaspect}
 		mplayconf(0) {}
@@ -121,6 +123,10 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	
 	if {[string trim $cbopt(softvol\($::option(player_aud_softvol)\))] != {}} {
 		lappend mcommand {*}$cbopt(softvol\($::option(player_aud_softvol)\))
+	}
+	
+	if {[string trim $cbopt(autosync\($::option(player_audio_autosync)\))] != {}} {
+		lappend mcommand {*}$cbopt(autosync\($::option(player_audio_autosync)\))
 	}
 	
 	lappend mcommand {*}$cbopt(threads\($::option(player_threads)\))

@@ -1,5 +1,5 @@
 #       config_audio.tcl
-#       © Copyright 2007-2010 Christian Rapp <saedelaere@arcor.de>
+#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -55,6 +55,20 @@ proc option_screen_4 {} {
 		ttk::checkbutton $::window(audio_nb1).cb_lf_softvol \
 		-text [mc "Use software mixer"] \
 		-variable choice(cb_softvol)
+		set lf_audioSync $::window(audio_nb1).lf_audio_sync
+		ttk::labelframe $::window(audio_nb1).lf_audio_sync \
+		-text [mc "Audio synchronization"]
+		ttk::checkbutton $lf_audioSync.cb_audautosync \
+		-text [mc "Auto synchronization"] \
+		-variable choice(cb_audautosync)
+		ttk::label $lf_audioSync.l_auddelay \
+		-text [mc "Audio/Video sync correction"]
+		spinbox $lf_audioSync.sb_auddelay \
+		-from -2 \
+		-to 2 \
+		-increment 0.1 \
+		-state readonly \
+		-textvariable choice(sb_auddelay)
 		
 		grid columnconfigure $::window(audio_nb1) 0 -weight 1
 		grid columnconfigure $::window(audio_nb1).lf_audio_stnd 1 -minsize 120
@@ -80,6 +94,20 @@ proc option_screen_4 {} {
 		grid $::window(audio_nb1).cb_lf_softvol -in $::window(audio_nb1).lf_audio_stnd -row 2 -column 0 \
 		-padx 7 \
 		-pady "0 3"
+		grid $lf_audioSync -in $::window(audio_nb1) -row 1 -column 0 \
+		-sticky ew \
+		-padx 5 \
+		-pady "5 0"
+		grid $lf_audioSync.cb_audautosync -in $lf_audioSync -row 0 -column 0 \
+		-sticky w \
+		-padx 7 \
+		-pady 3
+		grid $lf_audioSync.l_auddelay -in $lf_audioSync -row 1 -column 0 \
+		-sticky w \
+		-padx 7 \
+		-pady "0 3"
+		grid $lf_audioSync.sb_auddelay -in $lf_audioSync -row 1 -column 1 \
+		-pady "0 3"
 		
 		#Additional Code
 		
@@ -91,6 +119,7 @@ proc option_screen_4 {} {
 			#Find and set values for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
 			log_writeOutTv 0 "Starting to collect data for audio section."
+			set lf_audioSync $::window(audio_nb1).lf_audio_sync
 			catch {exec [auto_execok mplayer] -ao help} audio_out
 			if {[string trim $audio_out] != {}} {
 				foreach line [split $audio_out \n] {
@@ -150,7 +179,7 @@ proc option_screen_4 {} {
 					}
 				}
 				if {$alsa_found == 0} {
-					log_writeOutTv 2 "MPlayer did not report back alsa as audio output driver."
+					log_writeOutTv 1 "MPlayer did not report back alsa as audio output driver."
 				}
 			} else {
 				$::window(audio_nb1).mb_lf_audio state disabled
@@ -181,6 +210,19 @@ proc option_screen_4 {} {
 			} else {
 				set ::choice(cb_softvol) $::stnd_opt(player_aud_softvol)
 			}
+			
+			if {[info exists ::option(player_audio_autosync)]} {
+				set ::choice(cb_audautosync) $::option(player_audio_autosync)
+			} else {
+				set ::choice(cb_audautosync) $::stnd_opt(player_audio_autosync)
+			}
+			
+			if {[info exists ::option(player_audio_delay)]} {
+				set ::choice(sb_auddelay) $::option(player_audio_delay)
+			} else {
+				set ::choice(sb_auddelay) $::stnd_opt(player_audio_delay)
+			}
+			
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
 					settooltip $::window(audio_nb1).mb_lf_audio [mc "Choose an audio output driver, alsa is recommended."]
@@ -188,10 +230,14 @@ proc option_screen_4 {} {
 instead of the hardware mixer."]
 					settooltip $::window(audio_nb1).mb_lf_channels [mc "This option is used by MPlayer so the audio is decoded
 to the chosen value."]
+					settooltip $lf_audioSync.cb_audautosync [mc "Gradually adjusts the A/V sync based on audio delay measurements."]
+					settooltip $lf_audioSync.sb_auddelay [mc "Audio/Video sync correction per frame in seconds."]
 				} else {
 					settooltip $::window(audio_nb1).mb_lf_audio {}
 					settooltip $::window(audio_nb1).cb_lf_softvol {}
 					settooltip $::window(audio_nb1).mb_lf_channels {}
+					settooltip $lf_audioSync.cb_audautosync {}
+					settooltip $lf_audioSync.sb_auddelay {}
 				}
 			}
 		}
@@ -199,9 +245,12 @@ to the chosen value."]
 			#Setting defaults for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
 			log_writeOutTv 1 "Setting audio options to default."
+			set lf_audioSync $::window(audio_nb1).lf_audio_sync
 			set ::choice(mbAudio) $::stnd_opt(player_audio)
 			set ::choice(cb_softvol) $::stnd_opt(player_aud_softvol)
 			set ::choice(mbAudio_channels) $::stnd_opt(player_audio_channels)
+			set ::choice(cb_audautosync) $::stnd_opt(player_audio_autosync)
+			set ::choice(sb_auddelay) $::stnd_opt(player_audio_delay)
 		}
 		default_opt4 $::window(audio_nb1)
 	}
