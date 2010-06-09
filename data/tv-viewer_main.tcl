@@ -274,6 +274,7 @@ main_readConfig
 #Source additional ttk themes, plastik and keramik
 source "$option(root)/themes/plastik/plastik.tcl"
 source "$option(root)/themes/keramik/keramik.tcl"
+
 ttk::style theme use $::option(use_theme)
 if {"$::option(use_theme)" == "clam"} {
 	ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}

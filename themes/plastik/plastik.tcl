@@ -5,7 +5,7 @@
 #  Copyright (c) 2004 Googie
 #  Copyright (c) 2005 Pat Thoyts <patthoyts@users.sourceforge.net>
 #
-# $Id: plastik.tcl,v 1.10 2009/01/24 13:26:16 sbron Exp $
+# $Id: plastik.tcl,v 1.11 2010/02/16 21:14:55 sbron Exp $
 
 package require Tk 8.4
 package require tile 0.8.0
@@ -204,6 +204,9 @@ ttk::style theme create plastik -parent default -settings {
     ttk::style element create Treeheading.cell \
 	image [list $I(tree-n) pressed $I(tree-p)] \
 	-border {4 10} -padding 4 -sticky ewns
+
+    # Use the treeview item indicator from the alt theme, as that looks better
+    ttk::style element create Treeitem.indicator from alt
 
     #
     # Settings:

@@ -19,10 +19,11 @@
 proc radio_ui {} {
 	# The main ui for the radio interface
 	if {[winfo exists .radio]} {
-		#FIXME - Return here or destroy radio interface
+		#FIXME - Only "return" here or destroy radio interface
 		log_writeOutTv 1 "Radio interface already running"
 		return
 	}
+	#FIXME Fill with content, integrate with new interface. Make it a mode of the new interface.
 	set rd [toplevel .radio -class "TV-Viewer"]
 	place [ttk::frame $rd.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	

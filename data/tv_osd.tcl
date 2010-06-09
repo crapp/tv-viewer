@@ -25,6 +25,7 @@ proc tv_osd {ident atime osd_text} {
 		unset -nocomplain ::data(after_id_osd)
 		destroy .tv.osd
 	}
+	#FIXME Reduce font size interactively when window is to small to display.
 	array set alignment {
 		0 {-anchor nw -x 10 -y 10}
 		1 {-anchor n -relx 0.5 -y 10}

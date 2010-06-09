@@ -19,6 +19,7 @@
 proc main_readConfig {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readConfig \033\[0m"}
 	array set ::option {
+		#FIXME Remove theme black if it does not work properly.
 		language Autodetect
 		language_value 0
 		starttv_startup 0
@@ -77,6 +78,7 @@ proc main_readConfig {} {
 		theme_default #d9d9d9
 		theme_alt #d9d9d9
 		theme_clam #dcdad5
+		theme_black #626262
 		theme_classic #d9d9d9
 		theme_plastik #efefef
 		theme_keramik #cccccc

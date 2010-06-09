@@ -89,8 +89,9 @@ proc main_systemTrayToggle {} {
 }
 
 #FIXME - Minimize to tray, problems when moving window from one desktop to another.
-#Therefor deactivated this feature. Now we only have close to tray. Idea look if 
-#window is still maped when app receives <Map> <Unmap> events.
+#FIXME Therefor deactivated this feature. Now we only have close to tray. Idea look if 
+#FIXME window is still maped when app receives <Map> <Unmap> events.
+#FIXME On the other hand it might be the feature becomes obsolete with the new interface.
 #~ proc main_systemTrayClose {com} {
 	#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayClose \033\[0m \{$com\}"
 	#~ if {"$com" == "tray"} {
