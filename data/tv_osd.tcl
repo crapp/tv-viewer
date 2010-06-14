@@ -25,7 +25,6 @@ proc tv_osd {ident atime osd_text} {
 		unset -nocomplain ::data(after_id_osd)
 		destroy .tv.osd
 	}
-	#FIXME Reduce font size interactively when window is to small to display.
 	array set alignment {
 		0 {-anchor nw -x 10 -y 10}
 		1 {-anchor n -relx 0.5 -y 10}
@@ -48,8 +47,10 @@ proc tv_osd {ident atime osd_text} {
 	
 	if {"$style" == "regular"} {
 		$osd.label configure -font "{$font} $size"
+		set fmeasure [font measure "{$font} $size" "$osd_text"]
 	} else {
 		$osd.label configure -font "{$font} $size {$style}"
+		set fmeasure [font measure "{$font} $size {$style}" "$osd_text"]
 	}
 	place $osd -in .tv {*}$alignment($bias)
 	if {[string match -nocase "#ffffff" [$osd.label cget -fg]]} {
@@ -57,6 +58,31 @@ proc tv_osd {ident atime osd_text} {
 		log_writeOutTv 1 "Changing font color to black"
 		$osd.label configure -foreground #000000
 	}
+	bind $osd <Map> [list tv_osdCheckDimensions $osd $osd.label "$font" $size "$style" "$osd_text"]
+	
 	set ::data(after_id_osd) [after $atime "destroy .tv.osd"]
 	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
+}
+
+proc tv_osdCheckDimensions {osdf osdw font size style text} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_osdCheckDimensions \033\[0m \{$osdf\} \{$osdw\} \{$font\} \{$size\} \{$style\} \{$text\}"
+	if {"$style" == "regular"} {
+		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .tv]} {
+			for {set f $size} {$f>0} {set f [expr $f - 1 ]} {
+				if {[expr [font measure "{$font} $f" "$text"] + 30] < [winfo width .tv]} {
+					$osdw configure -font "{$font} $f"
+					break
+				}
+			}
+		}
+	} else {
+		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .tv]} {
+			for {set f $size} {$f>0} {set f [expr $f - 1 ]} {
+				if {[expr [font measure "{$font} $f" "$text"] + 30] < [winfo width .tv]} {
+					$osdw configure -font "{$font} $f {$style}"
+					break
+				}
+			}
+		}
+	}
 }

@@ -50,6 +50,7 @@ proc config_wizardMainUi {} {
 	set wfcopt [ttk::frame $w.frame_configoptions]
 	set wfbtn [ttk::frame $w.frame_buttons -style TLabelframe]
 	
+	#FIXME Strange way of setting some font, why?
 	listbox $wfbox.listbox_clist \
 	-font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* \
 	-width 0 \

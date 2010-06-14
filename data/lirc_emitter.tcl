@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.2a1 90 08.06.2010}
+set option(release_version) {0.8.2a1 92 14.06.2010}
 
 source $option(root)/agrep.tcl
 source $option(root)/main_read_config.tcl

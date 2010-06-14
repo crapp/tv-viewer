@@ -324,6 +324,7 @@ proc main_stationInputQuery {secs input restart} {
 
 proc main_stationInputStart {slist lasts} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_stationInputStart \033\[0m \{$slist\}"
+	#FIXME Reduce font size of station label if displayed name to wide
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 	if {$status_get_input == 0} {

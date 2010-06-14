@@ -192,6 +192,226 @@ proc msgcat::mcunknown {locale src args} {
 	return $src
 }
 
+proc main_frontendNewUi {} {
+	place [ttk::frame .bg] -x 0 -y 0 -relwidth 1 -relheight 1
+
+	set menubar [ttk::frame .foptions_bar] ; place [ttk::label $menubar.bg -style Toolbutton] -relwidth 1 -relheight 1
+	
+	ttk::separator .seperatMenu -orient horizontal
+		
+	set toolbTop [ttk::frame .ftoolb_Top] ; place [ttk::label $toolbTop.bg -style Toolbutton] -relwidth 1 -relheight 1
+	
+	set stations [ttk::frame .fstations] ; place [ttk::label $stations.bg -style Toolbutton] -relwidth 1 -relheight 1
+	
+	set toolbStation [ttk::frame .ftoolb_Station] ; place [ttk::label $toolbStation.bg -style Toolbutton] -relwidth 1 -relheight 1
+	
+	set toolbBot [ttk::frame .ftoolb_Bot] ; place [ttk::label $toolbBot.bg -style Toolbutton] -relwidth 1 -relheight 1
+	
+	set tvBg [frame .ftvBg -background black -width 720 -height 576]
+	set tvCont [frame .ftvCont -background "" -container yes]
+	
+	ttk::menubutton $menubar.mbTvviewer \
+	-text TV-Viewer \
+	-style Toolbutton
+	ttk::menubutton $menubar.mbView \
+	-text View \
+	-style Toolbutton
+	ttk::menubutton $menubar.mbHelp \
+	-text Help \
+	-style Toolbutton
+	
+	ttk::button $toolbTop.bTimeshift \
+	-image $::icon_m(timeshift) \
+	-style Toolbutton
+	ttk::button $toolbTop.bRecord \
+	-image $::icon_m(record) \
+	-style Toolbutton
+	ttk::button $toolbTop.bEpg \
+	-text EPG \
+	-style Toolbutton
+	ttk::button $toolbTop.bTv \
+	-image $::icon_m(starttv) \
+	-style Toolbutton
+	
+	ttk::treeview $stations.treeSlist \
+	-yscrollcommand [list $stations.scrbSlist set] \
+	-columns {name number} \
+	-show headings
+	ttk::scrollbar $stations.scrbSlist \
+	-command [list $stations.treeSlist yview]
+	
+	ttk::button $toolbStation.bChanDown \
+	-image $::icon_m(channel-down) \
+	-style Toolbutton
+	ttk::button $toolbStation.bChanUp \
+	-image $::icon_m(channel-up) \
+	-style Toolbutton
+	ttk::button $toolbStation.bChanJump \
+	-image $::icon_m(channel-jump) \
+	-style Toolbutton
+	
+	ttk::button $toolbBot.bPlay \
+	-image $::icon_m(playback-start) \
+	-style Toolbutton
+	ttk::button $toolbBot.bPause \
+	-image $::icon_m(playback-pause) \
+	-style Toolbutton
+	ttk::button $toolbBot.bStop \
+	-image $::icon_m(playback-stop) \
+	-style Toolbutton
+	
+	ttk::separator $toolbBot.seperat1 \
+	-orient vertical
+	
+	ttk::button $toolbBot.bRewStart \
+	-style Toolbutton \
+	-image $::icon_m(rewind-first)
+	ttk::button $toolbBot.bRewSmall \
+	-style Toolbutton \
+	-image $::icon_m(rewind-small)
+	ttk::menubutton $toolbBot.mbRewChoose \
+	-style Toolbutton \
+	-image $::icon_e(arrow-d)
+	ttk::button $toolbBot.bForwSmall \
+	-style Toolbutton \
+	-image $::icon_m(forward-small)
+	ttk::menubutton $toolbBot.mbForwChoose \
+	-style Toolbutton \
+	-image $::icon_e(arrow-d)
+	ttk::button $toolbBot.bForwEnd \
+	-style Toolbutton \
+	-image $::icon_m(forward-last)
+	
+	ttk::separator $toolbBot.seperat2 \
+	-orient vertical
+	
+	ttk::button $toolbBot.bVolMute \
+	-style Toolbutton \
+	-image $::icon_m(volume)
+	ttk::scale $toolbBot.scVolume \
+	-orient horizontal \
+	-from 0 \
+	-to 100
+	
+	label $toolbBot.lTime \
+	-width 20 \
+	-background black \
+	-foreground white \
+	-anchor center \
+	-relief sunken \
+	-borderwidth 2
+	
+	
+	grid $menubar -in . -row 0 -column 0 \
+	-sticky new \
+	-columnspan 2
+	grid .seperatMenu -in . -row 1 -column 0 \
+	-sticky ew \
+	-padx 2 \
+	-columnspan 2
+	grid $toolbTop -in . -row 2 -column 0 \
+	-columnspan 2 \
+	-sticky ew
+	grid $stations -in . -row 3 -column 0 \
+	-sticky nesw
+	grid $tvBg -in . -row 3 -column 1 \
+	-sticky nesw
+	grid $toolbStation -in . -row 4 -column 0 \
+	-sticky ew
+	grid $toolbBot -in . -row 4 -column 1 \
+	-sticky ew
+	
+	grid $menubar.mbTvviewer -in $menubar -row 0 -column 0
+	grid $menubar.mbView -in $menubar -row 0 -column 1
+	grid $menubar.mbHelp -in $menubar -row 0 -column 2
+	
+	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0
+	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1
+	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2
+	grid $toolbTop.bTv -in $toolbTop -row 0 -column 3
+	
+	grid $stations.treeSlist -in $stations -row 0 -column 0 \
+	-sticky nesw
+	grid $stations.scrbSlist -in $stations -row 0 -column 1 \
+	-sticky ns
+	
+	grid $toolbStation.bChanDown -in $toolbStation -row 0 -column 0
+	grid $toolbStation.bChanUp -in $toolbStation -row 0 -column 1
+	grid $toolbStation.bChanJump -in $toolbStation -row 0 -column 2
+	
+	grid $toolbBot.bPlay -in $toolbBot -row 0 -column 0 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbBot.bPause -in $toolbBot -row 0 -column 1 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbBot.bStop -in $toolbBot -row 0 -column 2 \
+	-pady 2 \
+	-padx "2 0"
+	
+	grid $toolbBot.seperat1 -in $toolbBot -row 0 -column 3 \
+	-sticky ns \
+	-pady 6 \
+	-padx "2 0"
+	
+	grid $toolbBot.bRewStart -in $toolbBot -row 0 -column 4 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbBot.mbRewChoose -in $toolbBot -row 0 -column 5 \
+	-sticky ns \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbBot.bRewSmall -in $toolbBot -row 0 -column 6 \
+	-pady 2
+	grid $toolbBot.bForwSmall -in $toolbBot -row 0 -column 7 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbBot.mbForwChoose -in $toolbBot -row 0 -column 8 \
+	-sticky ns \
+	-pady 2
+	grid $toolbBot.bForwEnd -in $toolbBot -row 0 -column 9 \
+	-pady 2 \
+	-padx "2 0"
+	
+	grid $toolbBot.seperat2 -in $toolbBot -row 0 -column 10 \
+	-sticky ns \
+	-pady 6 \
+	-padx "2 0"
+	
+	grid $toolbBot.bVolMute -in $toolbBot -row 0 -column 11 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbBot.scVolume -in $toolbBot -row 0 -column 12 \
+	-pady 2 \
+	-padx "2 0"
+	
+	grid $toolbBot.lTime -in $toolbBot -row 0 -column 13  \
+	-sticky nse \
+	-padx "0 2" \
+	-pady 2
+	
+	
+	grid rowconfigure . 3 -weight 1
+	grid rowconfigure $stations 0 -weight 1
+	grid columnconfigure . 1 -weight 1
+	grid columnconfigure $toolbBot 13 -weight 1 
+	
+	set font [ttk::style lookup [$stations.treeSlist cget -style] -font]
+	if {[string trim $font] == {}} {
+		set font TkDefaultFont
+	}
+	
+	foreach col {name number} name {"Name" "Number"} {
+		$stations.treeSlist heading $col -text $name
+		if {"$col" == "number"} {
+			puts [font measure $font $name]
+			$stations.treeSlist column $col -width [expr [font measure $font $name] + 20]
+			continue
+		}
+		$stations.treeSlist column $col -width [expr [font measure $font $name] + 100]
+	}
+}
+
 proc main_frontendUiTvviewer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendUiTvviewer \033\[0m"
 	# Setting up main Interface
