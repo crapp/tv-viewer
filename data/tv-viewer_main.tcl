@@ -60,7 +60,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.2a1 92 14.06.2010}
+set option(release_version) {0.8.2a1 93 15.06.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -395,4 +395,5 @@ source $::option(root)/data/font_chooser.tcl
 
 cd "$::env(HOME)"
 
-main_frontendUiTvviewer
+#main_frontendUiTvviewer
+main_frontendNewUi

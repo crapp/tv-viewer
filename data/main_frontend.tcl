@@ -193,6 +193,8 @@ proc msgcat::mcunknown {locale src args} {
 }
 
 proc main_frontendNewUi {} {
+	
+	#FIXME Think about a new name for main
 	place [ttk::frame .bg] -x 0 -y 0 -relwidth 1 -relheight 1
 
 	set menubar [ttk::frame .foptions_bar] ; place [ttk::label $menubar.bg -style Toolbutton] -relwidth 1 -relheight 1
@@ -207,7 +209,7 @@ proc main_frontendNewUi {} {
 	
 	set toolbBot [ttk::frame .ftoolb_Bot] ; place [ttk::label $toolbBot.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
-	set tvBg [frame .ftvBg -background black -width 720 -height 576]
+	set tvBg [frame .ftvBg -background black -width 640 -height 480]
 	set tvCont [frame .ftvCont -background "" -container yes]
 	
 	ttk::menubutton $menubar.mbTvviewer \
@@ -229,9 +231,28 @@ proc main_frontendNewUi {} {
 	ttk::button $toolbTop.bEpg \
 	-text EPG \
 	-style Toolbutton
+	ttk::button $toolbTop.bRadio \
+	-text Radio \
+	-style Toolbutton
+	#-image $::icon_m(starttv)
 	ttk::button $toolbTop.bTv \
 	-image $::icon_m(starttv) \
 	-style Toolbutton
+	#FIXME Which foreground color in label
+	label $toolbTop.lInput \
+	-width 10 \
+	-background black \
+	-foreground #EB3939 \
+	-anchor center \
+	-relief sunken \
+	-borderwidth 2
+	label $toolbTop.lDevice \
+	-width 10 \
+	-background black \
+	-foreground #FF5757 \
+	-anchor center \
+	-relief sunken \
+	-borderwidth 2
 	
 	ttk::treeview $stations.treeSlist \
 	-yscrollcommand [list $stations.scrbSlist set] \
@@ -328,7 +349,13 @@ proc main_frontendNewUi {} {
 	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0
 	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1
 	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2
-	grid $toolbTop.bTv -in $toolbTop -row 0 -column 3
+	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3
+	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4
+	grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 \
+	-sticky e \
+	-padx 2
+	grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 \
+	-padx "0 2"
 	
 	grid $stations.treeSlist -in $stations -row 0 -column 0 \
 	-sticky nesw
@@ -394,7 +421,9 @@ proc main_frontendNewUi {} {
 	grid rowconfigure . 3 -weight 1
 	grid rowconfigure $stations 0 -weight 1
 	grid columnconfigure . 1 -weight 1
-	grid columnconfigure $toolbBot 13 -weight 1 
+	grid columnconfigure $toolbTop 5 -weight 1
+	grid columnconfigure $toolbBot 13 -weight 1
+	
 	
 	set font [ttk::style lookup [$stations.treeSlist cget -style] -font]
 	if {[string trim $font] == {}} {
@@ -410,6 +439,11 @@ proc main_frontendNewUi {} {
 		}
 		$stations.treeSlist column $col -width [expr [font measure $font $name] + 100]
 	}
+	
+	$toolbTop.lInput configure -text Television
+	$toolbTop.lDevice configure -text /dev/video0
+	
+	wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash
 }
 
 proc main_frontendUiTvviewer {} {
