@@ -16,12 +16,12 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc tv_playerVolumeControl {wfbottom value} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerVolumeControl \033\[0m \{$wfbottom\} \{$value\}"
+proc tv_playerVolumeControl {vscale vbutton value} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerVolumeControl \033\[0m \{$vscale\} \{$vbutton\} \{$value\}"
 	set status_tv_playback [tv_callbackMplayerRemote alive]
 	if {$status_tv_playback != 1} {
 		if {"$value" != "mute"} {
-			if {[$wfbottom.scale_volume instate disabled] == 1} {return}
+			if {[$vscale instate disabled] == 1} {return}
 			set value [expr int($value)]
 			if {$value > 100} {
 				set value 100
@@ -31,36 +31,36 @@ proc tv_playerVolumeControl {wfbottom value} {
 				set value 0
 				#return
 			}
-			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 "Volume $value"]
 			}
-			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+			if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 				after 0 [list tv_osd osd_group_f 1000 "Volume $value"]
 			}
 			
 			set ::main(volume_scale) $value
 			tv_callbackMplayerRemote "volume [expr int($value)] 1"
 		} else {
-			if {[$wfbottom.scale_volume instate disabled] == 0} {
+			if {[$vscale instate disabled] == 0} {
 				set ::volume(mute_old_value) "$::main(volume_scale)"
 				set ::main(volume_scale) 0
-				$wfbottom.scale_volume state disabled
-				$wfbottom.button_mute configure -image $::icon_m(volume-error)
-				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+				$vscale state disabled
+				$vbutton configure -image $::icon_m(volume-error)
+				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [list tv_osd osd_group_w 1000 [mc "Mute"]]
 				}
-				if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 					after 0 [list tv_osd osd_group_f 1000 [mc "Mute"]]
 				}
 				tv_callbackMplayerRemote "volume 0 1"
 			} else {
 				set ::main(volume_scale) "$::volume(mute_old_value)"
-				$wfbottom.scale_volume state !disabled
-				$wfbottom.button_mute configure -image $::icon_m(volume)
-				if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+				$vscale state !disabled
+				$vbutton configure -image $::icon_m(volume)
+				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [list tv_osd osd_group_w 1000 "Volume $::volume(mute_old_value)"]
 				}
-				if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 					after 0 [list tv_osd osd_group_f 1000 "Volume $::volume(mute_old_value)"]
 				}
 				tv_callbackMplayerRemote "volume [expr int($::main(volume_scale))] 1"
@@ -318,11 +318,11 @@ proc tv_playerUi {} {
 		bind $mw <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 		bind $mw <<input_up>> [list main_stationInput 1 1]
 		bind $mw <<input_down>> [list main_stationInput 1 -1]
-		bind $mw <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
-		bind $mw <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
+		bind $mw <<volume_decr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) - 3]}
+		bind $mw <<volume_incr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) + 3]}
 		bind $mw <<delay_incr>> {tv_playerAudioDelay incr}
 		bind $mw <<delay_decr>> {tv_playerAudioDelay decr}
-		bind $mw <Key-m> [list tv_playerVolumeControl .bottom_buttons mute]
+		bind $mw <Key-m> [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
 		bind $mw <Control-Key-1> [list tv_wmGivenSize $tv_bg 1]
 		bind $mw <Control-Key-2> [list tv_wmGivenSize $tv_bg 2]
 		bind $mw <Key-e> [list tv_wmPanscan $tv_cont 1]
@@ -500,7 +500,7 @@ proc tv_playerRendering {} {
 			wm iconphoto .tv $::icon_b(starttv)
 		}
 		main_pic_streamDimensions
-		tv_Playback .tv.bg .tv.bg.w 0 0
+		tv_Playback .ftvBg .ftvBg.cont 0 0
 	}
 }
 

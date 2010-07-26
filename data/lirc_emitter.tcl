@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.2a1 93 15.06.2010}
+set option(release_version) {0.8.2a1 94 27.07.2010}
 
 source $option(root)/agrep.tcl
 source $option(root)/main_read_config.tcl
@@ -246,7 +246,7 @@ if {$start_options(volume_decr)} {
 	exit 0
 }
 if {$start_options(mute)} {
-	command_WritePipe 0 "tv-viewer_main tv_playerVolumeControl .bottom_buttons mute"
+	command_WritePipe 0 "tv-viewer_main tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute"
 	log_writeOutTv 0 "Lirc emitter received Signal mute"
 	exit 0
 }

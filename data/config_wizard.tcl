@@ -27,8 +27,8 @@ proc config_wizardMainUi {} {
 		}
 	}
 	
-	if {[wm attributes .tv -fullscreen] == 1} {
-		tv_wmFullscreen .tv .tv.bg.w .tv.bg
+	if {[wm attributes . -fullscreen] == 1} {
+		tv_wmFullscreen . .ftvBg.cont .ftvBg
 	}
 	tv_playbackStop 1 pic
 	log_writeOutTv 0 "Starting preferences..."
@@ -198,13 +198,15 @@ proc config_wizardExit {} {
 		}
 	}
 	
-	tooltips .bottom_buttons .top_buttons main
+	tooltips .ftoolb_Top .ftoolb_Station .ftoolb_Bot main
 	
+	#FIXME No longer close to tray, this needs to be reworked probably.
 	if {$::option(systray_close) == 1} {
-		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
 	} else {
-		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
+		#~ 
 	}
+	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	
 	grab release .config_wizard
 	destroy .config_wizard

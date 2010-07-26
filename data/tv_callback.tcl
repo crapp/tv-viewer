@@ -44,19 +44,20 @@ proc tv_callbackVidData {} {
 				}
 			}
 			unset -nocomplain ::data(mplayer)
-			place forget .tv.bg.w
-			bind .tv.bg.w <Configure> {}
-			if {[.top_buttons.button_timeshift instate disabled] == 0} {
-				if {[winfo exists .tv.l_anigif]} {
+			place forget .ftvBg.cont
+			bind .ftvBg.cont <Configure> {}
+			if {[.ftoolb_Top.bTimeshift instate disabled] == 0} {
+				if {[winfo exists .ftvBg.l_anigif]} {
 					launch_splashPlay cancel 0 0 0
-					place forget .tv.l_anigif
-					destroy .tv.l_anigif
+					place forget .ftvBg.l_anigif
+					destroy .ftvBg.l_anigif
 				}
 			}
 			if {[winfo exists .station]} {
 				.station.top_buttons.b_station_preview state !pressed
+				.ftoolb_Top.bTv state !pressed
 			} else {
-				.top_buttons.button_starttv state !pressed
+				.ftoolb_Top.bTv state !pressed
 			}
 			tv_fileComputePos cancel
 			if {$::option(player_screens_value) == 1} {
@@ -75,7 +76,7 @@ proc tv_callbackVidData {} {
 				}
 			}
 			if {$::tv(stayontop) == 2} {
-				wm attributes .tv -topmost 0
+				wm attributes . -topmost 0
 			}
 		} else {
 			if {[string match "A:*V:*A-V:*" $line] != 1} {
@@ -89,10 +90,10 @@ proc tv_callbackVidData {} {
 						set ::option(resolx) $resolx
 						set ::option(resoly) $resoly
 					}
-					.tv.bg configure -width $::option(resolx) -height $::option(resoly)
-					bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+					.ftvBg configure -width $::option(resolx) -height $::option(resoly)
+					bind .ftvBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
-					bind .tv.bg.w <Configure> {}
+					bind .ftvBg.cont <Configure> {}
 					log_writeOutTv 1 "Video aspect not managed by TV-Viewer."
 				}
 			}
@@ -119,24 +120,24 @@ proc tv_callbackVidData {} {
 			}
 			if {[string match -nocase "Starting playback*" $line]} {
 				catch {launch_splashPlay cancel 0 0 0}
-				catch {place forget .tv.l_anigif}
-				catch {destroy .tv.l_anigif}
+				catch {place forget .ftvBg.l_anigif}
+				catch {destroy .ftvBg.l_anigif}
 				if {$::option(player_aspect) == 1} {
 					if {$::option(player_keepaspect) == 1} {
-						place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1
-						bind .tv.bg.w <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+						place .ftvBg.cont -in .ftvBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
+						bind .ftvBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 					} else {
-						place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
+						place .ftvBg.cont -in .ftvBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
 					}
 				} else {
-					place .tv.bg.w -in .tv.bg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
-					bind .tv.bg.w <Configure> {}
+					place .ftvBg.cont -in .ftvBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
+					bind .ftvBg.cont <Configure> {}
 				}
 				if {$::data(movevidX) != 0} {
-					place .tv.bg.w -relx [expr ([dict get [place info .tv.bg.w] -relx] + [expr $::data(movevidX) * 0.005])]
+					place .ftvBg.cont -relx [expr ([dict get [place info .ftvBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
 				}
 				if {$::data(movevidY) != 0} {
-					place .tv.bg.w -rely [expr ([dict get [place info .tv.bg.w] -rely] + [expr $::data(movevidY) * 0.005])]
+					place .ftvBg.cont -rely [expr ([dict get [place info .ftvBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
 				}
 				if {$::data(panscanAuto) == 1} {
 					set ::tv(id_panscanAuto) [after 500 {
@@ -146,20 +147,17 @@ proc tv_callbackVidData {} {
 					}]
 				} else {
 					if {$::data(panscan) != 0} {
-						place .tv.bg.w -relheight [expr ([dict get [place info .tv.bg.w] -relheight] + [expr $::data(panscan).0 / 100])]
+						place .ftvBg.cont -relheight [expr ([dict get [place info .ftvBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
 					}
 				}
-				tv_playerVolumeControl .bottom_buttons $::main(volume_scale)
+				tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute $::main(volume_scale)
 				tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
-					bind . <<input_up>> "main_stationInput 1 1"
-					bind . <<input_down>> "main_stationInput 1 -1"
+					bind . <<input_up>> "chan_zapperInput 1 1"
+					bind . <<input_down>> "chan_zapperInput 1 -1"
 					bind . <<teleview>> {tv_playerRendering}
-					bind .tv <<input_up>> "main_stationInput 1 1"
-					bind .tv <<input_down>> "main_stationInput 1 -1"
-					bind .tv <<teleview>> {tv_playerRendering}
 				}
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {

@@ -60,7 +60,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.2a1 93 15.06.2010}
+set option(release_version) {0.8.2a1 94 27.07.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -251,7 +251,7 @@ if {$insertGlob} {
 }
 unset -nocomplain insertLocal insertGlob pa
 puts "loading shared libraries"
-set status_tray [catch {package require tktray 1.3.3} result_tktray]
+set status_tray [catch {package require tktray 1.3.8} result_tktray]
 if {$status_tray == 1} {
 	puts "ERROR:
 $result_tktray"
@@ -313,7 +313,8 @@ if {$::option(show_splash) == 1} {
 #Source station after message.
 source $::option(root)/data/station_after_msg.tcl
 #Source alle related functions for station changing.
-source $::option(root)/data/main_station_zap.tcl
+#~ source $::option(root)/data/main_station_zap.tcl
+source $::option(root)/data/chan_zapper.tcl
 #Source reading station list
 source $::option(root)/data/main_read_station_file.tcl
 #Execute reading of station list

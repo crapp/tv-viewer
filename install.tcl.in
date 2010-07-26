@@ -36,7 +36,7 @@ exit 1
 #necessary changes will be made by the configure tcl script.
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set option(release_version) {0.8.2a1 93 15.06.2010}
+set option(release_version) {0.8.2a1 94 27.07.2010}
 set prefix FOO
 set eprefix FOO
 set bindir FOO
@@ -273,11 +273,11 @@ $resultat_permissions_desktop"
 
 proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray} {
 	if {$tktray} {
-		if {[file isdirectory $libdir/tktray1.3.3] == 0} {
-			file mkdir "$libdir/tktray1.3.3/"
+		if {[file isdirectory $libdir/tktray1.3.8] == 0} {
+			file mkdir "$libdir/tktray1.3.8/"
 		} else {
-			file delete -force -- pathname "$libdir/tktray1.3.3/"
-			file mkdir "$libdir/tktray1.3.3/"
+			file delete -force -- pathname "$libdir/tktray1.3.8/"
+			file mkdir "$libdir/tktray1.3.8/"
 		}
 		
 		if {$arch == 32} {
@@ -289,7 +289,7 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 			set pincr [format %.2f [expr 100.0 / $elements.0]]
 			set percentage 0
 			foreach tfile32 [file normalize $filelist_tray] {
-				set status_tfile32 [catch {file copy -force "$tfile32" "$libdir/tktray1.3.3/"} resultat_tfile32]
+				set status_tfile32 [catch {file copy -force "$tfile32" "$libdir/tktray1.3.8/"} resultat_tfile32]
 				if { $status_tfile32 != 0 } {
 					puts "
 	could not copy file: $tfile32
@@ -301,10 +301,10 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 					set percentage [format %.2f [expr $percentage + $pincr]]
 					puts -nonewline "\rprocessing extensions \[${percentage}%\]\033\[K"
 					flush stdout
-					set status_permissions_tfile32 [catch {file attributes "$libdir/tktray1.3.3/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
+					set status_permissions_tfile32 [catch {file attributes "$libdir/tktray1.3.8/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
 					if {$status_permissions_tfile32 != 0} {
 						puts "
-	could not change permissions for: $libdir/tktray1.3.3/[lindex [file split $tfile32] end]
+	could not change permissions for: $libdir/tktray1.3.8/[lindex [file split $tfile32] end]
 		
 	$resultat_permissions_tfile32"
 						exit 1
@@ -323,7 +323,7 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 			set pincr [format %.2f [expr 100.0 / $elements.0]]
 			set percentage 0
 			foreach tfile64 [file normalize $filelist_tray] {
-				set status_tfile64 [catch {file copy -force "$tfile64" "$libdir/tktray1.3.3/"} resultat_tfile64]
+				set status_tfile64 [catch {file copy -force "$tfile64" "$libdir/tktray1.3.8/"} resultat_tfile64]
 				if { $status_tfile64 != 0 } {
 					puts "
 	could not copy file: $tfile64
@@ -335,10 +335,10 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 					set percentage [format %.2f [expr $percentage + $pincr]]
 					puts -nonewline "\rprocessing extensions \[${percentage}%\]\033\[K"
 					flush stdout
-					set status_permissions_tfile64 [catch {file attributes "$libdir/tktray1.3.3/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
+					set status_permissions_tfile64 [catch {file attributes "$libdir/tktray1.3.8/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
 					if {$status_permissions_tfile64 != 0} {
 						puts "
-	could not change permissions for: $libdir/tktray1.3.3/[lindex [file split $tfile64] end]
+	could not change permissions for: $libdir/tktray1.3.8/[lindex [file split $tfile64] end]
 	
 	$resultat_permissions_tfile64"
 						exit 1

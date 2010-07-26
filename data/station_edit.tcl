@@ -33,8 +33,8 @@ proc station_editPreview {w} {
 				tv_Playback .tv.bg .tv.bg.w 0 0
 			} else {
 				tv_playbackStop 0 nopic
-				main_stationInputLoop cancel 0 0 0 0 0
-				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
+				chan_zapperInputLoop cancel 0 0 0 0 0
+				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
 				wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
 			}
 		} else {
@@ -57,8 +57,8 @@ proc station_editZap {w} {
 				return
 			} else {
 				tv_playbackStop 0 nopic
-				main_stationInputLoop cancel 0 0 0 0 0
-				set ::main(change_inputLoop_id) [after 200 [list main_stationInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
+				chan_zapperInputLoop cancel 0 0 0 0 0
+				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
 				wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
 			}
 		} else {

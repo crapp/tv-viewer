@@ -30,8 +30,8 @@ proc main_frontendExitViewer {} {
 	catch {file delete "$::option(home)/tmp/lockfile.tmp"}
 	destroy .top_newsreader
 	destroy .top_about
-	if {[winfo exists .tv]} {
-		if {[winfo exists .tv.file_play_bar]} {
+	if {[info exists ::tv(pbMode)]} {
+		if {$::tv(pbMode) == 1} {
 			set status_tv [tv_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
 				tv_playbackStop 0 nopic
@@ -62,7 +62,6 @@ proc main_frontendExitViewer {} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
 		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
 	}
-	destroy .tv
 	exit 0
 }
 
@@ -209,18 +208,31 @@ proc main_frontendNewUi {} {
 	
 	set toolbBot [ttk::frame .ftoolb_Bot] ; place [ttk::label $toolbBot.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
-	set tvBg [frame .ftvBg -background black -width 640 -height 480]
-	set tvCont [frame .ftvCont -background "" -container yes]
+	set tvBg [frame .ftvBg -background black -width $::option(resolx) -height $::option(resoly)]
+	set tvCont [frame .ftvBg.cont -background "" -container yes]
 	
 	ttk::menubutton $menubar.mbTvviewer \
 	-text TV-Viewer \
-	-style Toolbutton
+	-style Toolbutton \
+	-menu $menubar.mbTvviewer.mTvviewer
 	ttk::menubutton $menubar.mbView \
 	-text View \
-	-style Toolbutton
+	-style Toolbutton \
+	-menu $menubar.mbView.mView
 	ttk::menubutton $menubar.mbHelp \
 	-text Help \
-	-style Toolbutton
+	-style Toolbutton \
+	-menu $menubar.mbHelp.mHelp
+	
+	set mTv [menu $menubar.mbTvviewer.mTvviewer \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mView [menu $menubar.mbView.mView \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mHelp [menu $menubar.mbHelp.mHelp \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
 	
 	ttk::button $toolbTop.bTimeshift \
 	-image $::icon_m(timeshift) \
@@ -230,14 +242,16 @@ proc main_frontendNewUi {} {
 	-style Toolbutton
 	ttk::button $toolbTop.bEpg \
 	-text EPG \
-	-style Toolbutton
+	-style Toolbutton\
+	-command main_frontendEpg
 	ttk::button $toolbTop.bRadio \
 	-text Radio \
 	-style Toolbutton
-	#-image $::icon_m(starttv)
+	#FIXME Find icon for Radio Button
 	ttk::button $toolbTop.bTv \
 	-image $::icon_m(starttv) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command tv_playerRendering
 	#FIXME Which foreground color in label
 	label $toolbTop.lInput \
 	-width 10 \
@@ -257,19 +271,23 @@ proc main_frontendNewUi {} {
 	ttk::treeview $stations.treeSlist \
 	-yscrollcommand [list $stations.scrbSlist set] \
 	-columns {name number} \
-	-show headings
+	-show headings \
+	-selectmode browse
 	ttk::scrollbar $stations.scrbSlist \
 	-command [list $stations.treeSlist yview]
 	
 	ttk::button $toolbStation.bChanDown \
 	-image $::icon_m(channel-down) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command [list chan_zapperDown $stations.treeSlist]
 	ttk::button $toolbStation.bChanUp \
 	-image $::icon_m(channel-up) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command [list chan_zapperUp $stations.treeSlist]
 	ttk::button $toolbStation.bChanJump \
 	-image $::icon_m(channel-jump) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command [list chan_zapperJump $stations.treeSlist]
 	
 	ttk::button $toolbBot.bPlay \
 	-image $::icon_m(playback-start) \
@@ -308,11 +326,14 @@ proc main_frontendNewUi {} {
 	
 	ttk::button $toolbBot.bVolMute \
 	-style Toolbutton \
-	-image $::icon_m(volume)
+	-image $::icon_m(volume) \
+	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
 	ttk::scale $toolbBot.scVolume \
 	-orient horizontal \
 	-from 0 \
-	-to 100
+	-to 100 \
+	-variable main(volume_scale) \
+	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute] \
 	
 	label $toolbBot.lTime \
 	-width 20 \
@@ -320,7 +341,18 @@ proc main_frontendNewUi {} {
 	-foreground white \
 	-anchor center \
 	-relief sunken \
-	-borderwidth 2
+	-borderwidth 2 \
+	-text --:--:--
+	
+	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
+		ttk::label $tvBg.l_bgImage \
+		-image $::icon_e(logo-tv-viewer08x-noload_xmas) \
+		-background #414141
+	} else {
+		ttk::label $tvBg.l_bgImage \
+		-image $::icon_e(logo-tv-viewer08x-noload) \
+		-background #414141
+	}
 	
 	
 	grid $menubar -in . -row 0 -column 0 \
@@ -424,6 +456,102 @@ proc main_frontendNewUi {} {
 	grid columnconfigure $toolbTop 5 -weight 1
 	grid columnconfigure $toolbBot 13 -weight 1
 	
+	place $tvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
+	
+	
+	bind . <Key-x> {wm attributes . -fullscreen 1}
+	
+	set ::tv(stayontop) 0
+	set ::option(cursor_old) [$tvCont cget -cursor]
+	set ::data(panscan) 0
+	set ::data(panscanAuto) 0
+	set ::data(movevidX) 0
+	set ::data(movevidY) 0
+	set ::main(volume_scale) 100
+	set ::chan(old_channel) 0
+	
+	$mTv add separator
+	$mTv add command \
+	-label [mc "Color Management"] \
+	-compound left \
+	-image $::icon_s(color-management) \
+	-command colorm_mainUi \
+	-accelerator [mc "Ctrl+M"]
+	$mTv add command \
+	-label [mc "Preferences"] \
+	-compound left \
+	-image $::icon_s(settings) \
+	-accelerator [mc "Ctrl+P"] \
+	-command {config_wizardMainUi}
+	$mTv add command \
+	-label [mc "Station Editor"] \
+	-compound left \
+	-image $::icon_s(seditor) \
+	-command {station_editUi} \
+	-accelerator [mc "Ctrl+E"]
+	$mTv add command \
+	-label [mc "Record Wizard"] \
+	-compound left \
+	-image $::icon_s(record) \
+	-command {event generate . <<record>>} \
+	-accelerator "R"
+	$mTv add separator
+	$mTv add command \
+	-label [mc "Newsreader"] \
+	-compound left \
+	-image $::icon_s(newsreader) \
+	-command [list main_newsreaderCheckUpdate 0]
+	$mTv add checkbutton \
+	-label [mc "System Tray"] \
+	-command {main_systemTrayActivate 0} \
+	-variable choice(cb_systray_main)
+	$mTv add separator
+	$mTv add command \
+	-label [mc "Exit"] \
+	-compound left \
+	-image $::icon_s(dialog-close) \
+	-command [list event generate . <<exit>>] \
+	-accelerator [mc "Ctrl+X"]
+	
+	#FIXME Fill View menu with content. 
+	
+	$mHelp add separator
+	$mHelp add command \
+	-command info_helpHelp \
+	-compound left \
+	-image $::icon_s(help) \
+	-label [mc "User Guide"] \
+	-accelerator F1
+	$mHelp add command \
+	-command key_sequences \
+	-compound left \
+	-image $::icon_s(key-bindings) \
+	-label [mc "Key Sequences"]
+	$mHelp add separator
+	$mHelp add checkbutton \
+	-command [list log_viewerUi 2] \
+	-label [mc "MPlayer Log"] \
+	-variable choice(cb_log_mpl_main)
+	$mHelp add checkbutton \
+	-command [list log_viewerUi 3] \
+	-label [mc "Scheduler Log"] \
+	-variable choice(cb_log_sched_main)
+	$mHelp add checkbutton \
+	-command [list log_viewerUi 1] \
+	-label [mc "TV-Viewer Log"] \
+	-variable choice(cb_log_tv_main)
+	$mHelp add separator
+	$mHelp add command \
+	-label [mc "Diagnostic Routine"] \
+	-compound left \
+	-image $::icon_s(diag) \
+	-command diag_Ui
+	$mHelp add separator
+	$mHelp add command \
+	-command info_helpAbout \
+	-compound left \
+	-image $::icon_s(help-about) \
+	-label [mc "Info"]
 	
 	set font [ttk::style lookup [$stations.treeSlist cget -style] -font]
 	if {[string trim $font] == {}} {
@@ -433,17 +561,211 @@ proc main_frontendNewUi {} {
 	foreach col {name number} name {"Name" "Number"} {
 		$stations.treeSlist heading $col -text $name
 		if {"$col" == "number"} {
-			puts [font measure $font $name]
 			$stations.treeSlist column $col -width [expr [font measure $font $name] + 20]
 			continue
 		}
 		$stations.treeSlist column $col -width [expr [font measure $font $name] + 100]
 	}
 	
-	$toolbTop.lInput configure -text Television
-	$toolbTop.lDevice configure -text /dev/video0
+	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	
-	wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash
+	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+		$toolbTop.lInput configure -text [mc unknown]
+		foreach widget [split [winfo children $wftop]] {
+			$widget state disabled
+		}
+		foreach widget [split [winfo children $wfbottom]] {
+			if {[string match *scale_volume $widget] || [string match *button_mute $widget]} continue
+			$widget state disabled
+		}
+		event_constr 0
+	} else {
+		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
+		set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
+		if {$status_grep_input == 0} {
+			$toolbTop.lInput configure -text [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]
+		} else {
+			log_writeOutTv 2 "Can not read video input."
+			log_writeOutTv 2 "$resultat_grep_input."
+		}
+		$toolbTop.lDevice configure -text $::option(video_device)
+		event_constr 1
+	}
+	
+	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+		log_writeOutTv 2 "There are no stations to insert into station list."
+		$stations.treeSlist state disabled
+	} else {
+		for {set i 1} {$i <= $::station(max)} {incr i} {
+			$stations.treeSlist insert {} end -values [list $::kanalid($i) $i]
+			set ::kanalitemID($i) [lindex [$stations.treeSlist children {}] end]
+		}
+		bindtags $stations.treeSlist {. .fstations.treeSlist Treeview all}
+		$stations.treeSlist selection set $::kanalitemID([lindex $::station(last) 2])
+		$stations.treeSlist see [$stations.treeSlist selection]
+		bind $stations.treeSlist <<TreeviewSelect>> [list chan_zapperTree $stations.treeSlist]
+		bind $stations.treeSlist <Key-Prior> {break}
+		bind $stations.treeSlist <Key-Next> {break}
+		set status_time [monitor_partRunning 4]
+		set status_record [monitor_partRunning 3]
+		if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
+			if {$::option(rec_allow_sta_change) == 0} {
+				log_writeOutTv 1 "Disabling station list due to an active recording."
+				$stations.treeSlist configure -state disabled
+			}
+		}
+	}
+	
+	if {$::main(running_recording) == 0} {
+		
+		if {$::option(forcevideo_standard) == 1} {
+			main_pic_streamForceVideoStandard
+		}
+		
+		if {$::option(streambitrate) == 1} {
+			main_pic_streamVbitrate
+		}
+		
+		if {$::option(temporal_filter) == 1} {
+			main_pic_streamPicqualTemporal
+		}
+		
+		main_pic_streamColormControls
+		
+		catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
+		
+		if {$::option(audio_v4l2) == 1} {
+			main_pic_streamAudioV4l2
+		}
+	}
+	
+	tooltips $toolbTop $toolbStation $toolbBot main
+	
+	if {$::option(newsreader) == 1} {
+		after 5000 main_newsreaderAutomaticUpdate
+	}
+	
+	wm title . [mc "TV-Viewer %" [lindex $::option(release_version) 0]]
+	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
+	wm iconphoto . $::icon_e(tv-viewer_icon)
+	
+	command_socket
+	
+	if {$::option(show_splash) == 1} {
+		if {$::option(starttv_startup) == 1} {
+			if {[string trim [auto_execok mplayer]] != {}} {
+				if {$::main(running_recording) == 1} {
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; record_linkerPrestart record ; record_linkerRec record}
+				} else {
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; event generate . <<teleview>>}
+				}
+			} else {
+				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash}
+				$toolbTop.bRecord state disabled
+				$toolbTop.bEpg state disabled
+				$toolbTop.bRadio state disabled
+				$toolbTop.bTv state disabled
+				#$wfbar.mOptions entryconfigure 4 -state disabled
+				event delete <<record>>
+				event delete <<teleview>>
+				event delete <<timeshift>>
+				bind . <<record>> {}
+				bind . <<timeshift>> {}
+				bind . <<teleview>> {}
+			}
+		} else {
+			if {[string trim [auto_execok mplayer]] != {}} {
+				if {$::main(running_recording) == 1} {
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; record_linkerPrestart record ; record_linkerRec record}
+				} else {
+					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash}
+				}
+			} else {
+				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
+				$toolbTop.bRecord state disabled
+				$toolbTop.bEpg state disabled
+				$toolbTop.bRadio state disabled
+				$toolbTop.bTv state disabled
+				#$wfbar.mOptions entryconfigure 4 -state disabled
+				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
+				event delete <<record>>
+				event delete <<teleview>>
+				event delete <<timeshift>>
+				bind . <<record>> {}
+				bind . <<timeshift>> {}
+				bind . <<teleview>> {}
+			}
+		}
+	} else {
+		if {$::option(starttv_startup) == 1} {
+			if {[string trim [auto_execok mplayer]] != {}} {
+				if {$::main(running_recording) == 1} {
+					after 1500 {wm deiconify . ; record_linkerPrestart record ; record_linkerRec record}
+				} else {
+					after 1500 {wm deiconify . ; event generate . <<teleview>>}
+				}
+			} else {
+				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				after 1500 {wm deiconify .}
+				$toolbTop.bRecord state disabled
+				$toolbTop.bEpg state disabled
+				$toolbTop.bRadio state disabled
+				$toolbTop.bTv state disabled
+				#$wfbar.mOptions entryconfigure 4 -state disabled
+				event delete <<record>>
+				event delete <<teleview>>
+				event delete <<timeshift>>
+				bind . <<record>> {}
+				bind . <<timeshift>> {}
+				bind . <<teleview>> {}
+			}
+		} else {
+			if {[string trim [auto_execok mplayer]] == {}} {
+				$toolbTop.bRecord state disabled
+				$toolbTop.bEpg state disabled
+				$toolbTop.bRadio state disabled
+				$toolbTop.bTv state disabled
+				#$wfbar.mOptions entryconfigure 4 -state disabled
+				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
+				event delete <<record>>
+				event delete <<teleview>>
+				event delete <<timeshift>>
+				bind . <<record>> {}
+				bind . <<timeshift>> {}
+				bind . <<teleview>> {}
+				after 1500 {wm deiconify .}
+			} else {
+				if {$::main(running_recording) == 1} {
+					after 1500 {wm deiconify . ; record_linkerPrestart record ; record_linkerRec record}
+				} else {
+					after 1500 {wm deiconify .}
+				}
+			}
+		}
+	}
+	
+	if {$::option(systray_start) == 1} {
+		set ::choice(cb_systray_main) 1
+		main_systemTrayActivate 1
+		if {[winfo exists .tray]} {
+			settooltip .tray [mc "TV-Viewer idle"]
+		}
+		tkwait visibility .
+		#FIXME Does root window need a minsize?
+		#~ wm minsize . [winfo reqwidth .] [winfo reqheight .]
+		main_systemTrayToggle
+	} else {
+		tkwait visibility .
+		#~ wm minsize . [winfo reqwidth .] [winfo reqheight .]
+	}
+	
+	#FIXME No longer close to tray, this needs to be reworked probably.
+	#~ if {$::option(systray_close) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ } else {
+		#~ wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
+	#~ }
 }
 
 proc main_frontendUiTvviewer {} {
@@ -508,7 +830,7 @@ proc main_frontendUiTvviewer {} {
 	ttk::scale $wfbottom.scale_volume \
 	-orient horizontal \
 	-variable main(volume_scale) \
-	-command [list tv_playerVolumeControl $wfbottom] \
+	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute] \
 	-from 0 \
 	-to 100
 	set ::main(volume_scale) 100
@@ -517,7 +839,7 @@ proc main_frontendUiTvviewer {} {
 	-image $::icon_m(volume) \
 	-style Toolbutton \
 	-takefocus 0 \
-	-command [list tv_playerVolumeControl $wfbottom mute]
+	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
 	
 	ttk::button $wftop.button_timeshift \
 	-image $::icon_m(timeshift) \

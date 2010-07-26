@@ -23,7 +23,7 @@ proc tv_osd {ident atime osd_text} {
 			after cancel $id
 		}
 		unset -nocomplain ::data(after_id_osd)
-		destroy .tv.osd
+		destroy .ftvBg.osd
 	}
 	array set alignment {
 		0 {-anchor nw -x 10 -y 10}
@@ -42,7 +42,7 @@ proc tv_osd {ident atime osd_text} {
 	set bias [lindex $::option($ident) 4]
 	set color [lindex $::option($ident) 5]
 	
-	set osd [frame .tv.osd -bg #004AFF -padx 5 -pady 5]
+	set osd [frame .ftvBg.osd -bg #004AFF -padx 5 -pady 5]
 	pack [label $osd.label -bg white -fg "$color" -text "$osd_text" -justify left]
 	
 	if {"$style" == "regular"} {
@@ -52,7 +52,7 @@ proc tv_osd {ident atime osd_text} {
 		$osd.label configure -font "{$font} $size {$style}"
 		set fmeasure [font measure "{$font} $size {$style}" "$osd_text"]
 	}
-	place $osd -in .tv {*}$alignment($bias)
+	place $osd -in .ftvBg {*}$alignment($bias)
 	if {[string match -nocase "#ffffff" [$osd.label cget -fg]]} {
 		log_writeOutTv 1 "OSD with white foreground not possible"
 		log_writeOutTv 1 "Changing font color to black"
@@ -60,25 +60,25 @@ proc tv_osd {ident atime osd_text} {
 	}
 	bind $osd <Map> [list tv_osdCheckDimensions $osd $osd.label "$font" $size "$style" "$osd_text"]
 	
-	set ::data(after_id_osd) [after $atime "destroy .tv.osd"]
+	set ::data(after_id_osd) [after $atime "destroy .ftvBg.osd"]
 	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
 }
 
 proc tv_osdCheckDimensions {osdf osdw font size style text} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_osdCheckDimensions \033\[0m \{$osdf\} \{$osdw\} \{$font\} \{$size\} \{$style\} \{$text\}"
 	if {"$style" == "regular"} {
-		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .tv]} {
+		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .ftvBg]} {
 			for {set f $size} {$f>0} {set f [expr $f - 1 ]} {
-				if {[expr [font measure "{$font} $f" "$text"] + 30] < [winfo width .tv]} {
+				if {[expr [font measure "{$font} $f" "$text"] + 30] < [winfo width .ftvBg]} {
 					$osdw configure -font "{$font} $f"
 					break
 				}
 			}
 		}
 	} else {
-		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .tv]} {
+		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .ftvBg]} {
 			for {set f $size} {$f>0} {set f [expr $f - 1 ]} {
-				if {[expr [font measure "{$font} $f" "$text"] + 30] < [winfo width .tv]} {
+				if {[expr [font measure "{$font} $f" "$text"] + 30] < [winfo width .ftvBg]} {
 					$osdw configure -font "{$font} $f {$style}"
 					break
 				}

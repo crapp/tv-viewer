@@ -21,7 +21,7 @@ proc event_constr {handler} {
 	set wftop .top_buttons
 	set wfbottom .bottom_buttons
 	
-	bind . <Key-m> [list tv_playerVolumeControl $wfbottom mute]
+	bind . <Key-m> [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
 	bind . <Key-F1> [list info_helpHelp]
 	bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
 	bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
@@ -32,12 +32,12 @@ proc event_constr {handler} {
 	bind . <<exit>> {main_frontendExitViewer}
 	event add <<input_up>> <Control-Key-i>
 	event add <<input_down>> <Control-Alt-Key-i>
-	bind . <<input_up>> [list main_stationInput 1 1]
-	bind . <<input_down>> [list main_stationInput 1 -1]
+	bind . <<input_up>> [list chan_zapperInput 1 1]
+	bind . <<input_down>> [list chan_zapperInput 1 -1]
 	event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 	event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-	bind . <<volume_decr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) - 3]}
-	bind . <<volume_incr>> {tv_playerVolumeControl .bottom_buttons [expr $::main(volume_scale) + 3]}
+	bind . <<volume_decr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) - 3]}
+	bind . <<volume_incr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) + 3]}
 	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
 	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
 	event add <<forward_end>> <Key-End>
@@ -64,12 +64,12 @@ proc event_constr {handler} {
 		event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
 		event add <<station_key_lirc>> station_key_lirc
 		event add <<station_key_ext>> station_key_ext
-		bind . <<station_up>> [list main_stationChannelUp .label_stations]
-		bind . <<station_down>> [list main_stationChannelDown .label_stations]
-		bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
-		bind . <<station_key>> [list main_stationStationNrKeys %A]
-		bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
-		bind . <<station_key_ext>> [list main_stationStationNr .label_stations %d]
+		bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
+		bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
+		bind . <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
+		bind . <<station_key>> [list chan_zapperStationNrKeys %A]
+		bind . <<station_key_lirc>> [list chan_zapperStationNrKeys %d]
+		bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]
 	}
 }
 
@@ -127,7 +127,7 @@ proc event_recordStart {handler} {
 	bind .tv <Control-Key-m> {}
 	bind .tv <Control-Key-e> {}
 	if {"$handler" != "timeshift"} {
-		.top_buttons.button_timeshift state disabled
+		.ftoolb_Top.bTimeshift state disabled
 		bind . <<timeshift>> {}
 		bind .tv <<timeshift>> {}
 	}
@@ -135,22 +135,22 @@ proc event_recordStart {handler} {
 
 proc event_recordStop {} {
 	bind .tv <<teleview>> {tv_playerRendering}
-	bind .tv <<station_down>> [list main_stationChannelDown .label_stations]
-	bind .tv <<station_up>> [list main_stationChannelUp .label_stations]
-	bind .tv <<station_jump>> [list main_stationChannelJumper .label_stations]
-	bind .tv <<station_key>> [list main_stationStationNrKeys %A]
-	bind .tv <<input_up>> [list main_stationInput 1 1]
-	bind .tv <<input_down>> [list main_stationInput 1 -1]
+	bind .tv <<station_down>> [list chan_zapperDown .fstations.treeSlist]
+	bind .tv <<station_up>> [list chan_zapperUp .fstations.treeSlist]
+	bind .tv <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
+	bind .tv <<station_key>> [list chan_zapperStationNrKeys %A]
+	bind .tv <<input_up>> [list chan_zapperInput 1 1]
+	bind .tv <<input_down>> [list chan_zapperInput 1 -1]
 	bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 	bind . <<teleview>> {tv_playerRendering}
-	bind . <<station_up>> [list main_stationChannelUp .label_stations]
-	bind . <<station_down>> [list main_stationChannelDown .label_stations]
-	bind . <<station_jump>> [list main_stationChannelJumper .label_stations]
-	bind . <<station_key>> [list main_stationStationNrKeys %A]
-	bind . <<station_key_lirc>> [list main_stationStationNrKeys %d]
-	bind . <<station_key_ext>> [list main_stationStationNr .label_stations %d]
-	bind . <<input_up>> [list main_stationInput 1 1]
-	bind . <<input_down>> [list main_stationInput 1 -1]
+	bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
+	bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
+	bind . <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
+	bind . <<station_key>> [list chan_zapperStationNrKeys %A]
+	bind . <<station_key_lirc>> [list chan_zapperStationNrKeys %d]
+	bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]
+	bind . <<input_up>> [list chan_zapperInput 1 1]
+	bind . <<input_down>> [list chan_zapperInput 1 -1]
 	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 	bind .tv <Control-Key-m> {colorm_mainUi}
 	bind .tv <Control-Key-e> {station_editUi}

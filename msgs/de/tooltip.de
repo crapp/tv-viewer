@@ -40,5 +40,5 @@ mcset $lang \
 	{Die ausgewählte EPG Applikation starten.}
 
 mcset $lang \
-	{Start/Stop tv playback.} \
+	{Start/Stop TV playback.} \
 	{Fernsehwiedergabe starten/stoppen.}

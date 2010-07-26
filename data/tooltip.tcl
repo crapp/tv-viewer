@@ -31,44 +31,44 @@ proc settooltip {tool_tip_widget tool_tip_text} {
 	}
 }
 
-proc tooltips {w1 w2 section} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tooltips \033\[0m \{$w1\} \{$w2\} \{$section\}"
+proc tooltips {toolbTop toolbStation toolbBot section} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tooltips \033\[0m \{$toolbTop\} \{$toolbStation\} \{$toolbBot\} \{$section\}"
 	if {"$section" == "main"} {
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_main) == 1} {
-				settooltip $w1.button_channelup [mc "Tune up."]
-				settooltip $w1.button_channeldown [mc "Tune down."]
-				settooltip $w1.button_channeljumpback [mc "Zap among the last two stations."]
-				settooltip $w1.button_showslist [mc "Show/hide station list."]
-				settooltip $w1.scale_volume [mc "Alter volume."]
-				settooltip $w1.button_mute [mc "Toggle mute."]
-				settooltip $w2.button_timeshift [mc "Start/Stop timeshift."]
-				settooltip $w2.button_record [mc "Start/Stop record."]
-				settooltip $w2.button_epg [mc "Execute the selected epg application."]
-				settooltip $w2.button_starttv [mc "Start/Stop tv playback."]
+				settooltip $toolbStation.bChanUp [mc "Tune up."]
+				settooltip $toolbStation.bChanDown [mc "Tune down."]
+				settooltip $toolbStation.bChanJump [mc "Zap among the last two stations."]
+				settooltip $toolbBot.scVolume [mc "Alter volume."]
+				settooltip $toolbBot.bVolMute [mc "Toggle mute."]
+				settooltip $toolbTop.bTimeshift [mc "Start/Stop timeshift."]
+				settooltip $toolbTop.bRecord [mc "Start/Stop record."]
+				settooltip $toolbTop.bEpg [mc "Execute the selected epg application."]
+				settooltip $toolbTop.bRadio [mc "Switch to radio mode"]
+				settooltip $toolbTop.bTv [mc "Start/Stop TV playback."]
 			} else {
-				settooltip $w1.button_channelup {}
-				settooltip $w1.button_channeldown {}
-				settooltip $w1.button_channeljumpback {}
-				settooltip $w1.button_showslist {}
-				settooltip $w1.scale_volume {}
-				settooltip $w1.button_mute {}
-				settooltip $w2.button_timeshift {}
-				settooltip $w2.button_record {}
-				settooltip $w2.button_epg {}
-				settooltip $w2.button_starttv {}
+				settooltip $toolbStation.bChanUp {}
+				settooltip $toolbStation.bChanDown {}
+				settooltip $toolbStation.bChanJump {}
+				settooltip $toolbBot.scVolume {}
+				settooltip $toolbBot.bVolMute {}
+				settooltip $toolbTop.bTimeshift {}
+				settooltip $toolbTop.bRecord {}
+				settooltip $toolbTop.bEpg {}
+				settooltip $toolbTop.bRadio {}
+				settooltip $toolbTop.bTv {}
 			}
 		} else {
-			settooltip $w1.button_channelup {}
-			settooltip $w1.button_channeldown {}
-			settooltip $w1.button_channeljumpback {}
-			settooltip $w1.button_showslist {}
-			settooltip $w1.scale_volume {}
-			settooltip $w1.button_mute {}
-			settooltip $w2.button_timeshift {}
-			settooltip $w2.button_record {}
-			settooltip $w2.button_epg {}
-			settooltip $w2.button_starttv {}
+			settooltip $toolbStation.bChanUp {}
+			settooltip $toolbStation.bChanDown {}
+			settooltip $toolbStation.bChanJump {}
+			settooltip $toolbBot.scVolume {}
+			settooltip $toolbBot.bVolMute {}
+			settooltip $toolbTop.bTimeshift {}
+			settooltip $toolbTop.bRecord {}
+			settooltip $toolbTop.bEpg {}
+			settooltip $toolbTop.bRadio {}
+			settooltip $toolbTop.bTv {}
 		}
 		return
 	}

@@ -147,14 +147,14 @@ proc tv_slistLirc {} {
 			if {"[.tv.slist_lirc.lb_station cget -state]" == "disabled"} {
 				if {$::option(rec_allow_sta_change) == 1} {
 					set get_lb_index [expr [.tv.slist_lirc.lb_station curselection] + 1]
-					main_stationStationNr .label_stations $get_lb_index
+					chan_zapperStationNr .fstations.treeSlist $get_lb_index
 					.tv.slist_lirc.lb_station selection clear 0 end
 				} else {
 					.tv.slist_lirc.lb_station selection clear 0 end
 				}
 			} else {
 				set get_lb_index [expr [.tv.slist_lirc.lb_station curselection] + 1]
-				main_stationStationNr .label_stations $get_lb_index
+				chan_zapperStationNr .fstations.treeSlist $get_lb_index
 				.tv.slist_lirc.lb_station selection clear 0 end
 			}
 			focus .tv

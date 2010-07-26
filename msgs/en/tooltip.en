@@ -40,5 +40,5 @@ mcset $lang \
 	{Execute the selected epg application.}
 
 mcset $lang \
-	{Start/Stop tv playback.} \
-	{Start/stop tv playback.}
+	{Start/Stop TV playback.} \
+	{Start/stop TV playback.}

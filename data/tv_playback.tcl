@@ -99,7 +99,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	}
 	
 	bind . <<teleview>> {}
-	bind .tv <<teleview>> {}
+	#bind .tv <<teleview>> {}
 	
 	if {$file == 0} {
 		lappend mcommand {*}[auto_execok mplayer] -quiet -slave
@@ -215,24 +215,26 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		log_writeOutMpl 1 "$mcommand"
 		if {[winfo exists .station]} {
 			.station.top_buttons.b_station_preview state pressed
-			.top_buttons.button_starttv state pressed
+			.ftoolb_Top.bTv state pressed
 		} else {
-			.top_buttons.button_starttv state pressed
+			.ftoolb_Top.bTv state pressed
 		}
-		catch {place forget .tv.l_image}
+		catch {place forget .ftvBg.l_bgImage}
 		if {[winfo exists .tray] == 1} {
 		catch {settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]}
 		}
-		if {[winfo exists .tv.l_anigif]} {
+		if {[winfo exists .ftvBg.l_anigif]} {
 			launch_splashPlay cancel 0 0 0
-			place forget .tv.l_anigif
-			destroy .tv.l_anigif
+			place forget .ftvBg.l_anigif
+			destroy .ftvBg.l_anigif
 		}
 		set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
-		label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-		place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
+		label .ftvBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+		place .ftvBg.l_anigif -in .ftvBg -anchor center -relx 0.5 -rely 0.5
 		set img_list_length [llength $img_list]
-		after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+		after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
+		
+		set ::tv(pbMode) 0
 		
 		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
@@ -255,16 +257,16 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
 				log_writeOutMpl 1 "MPlayer command line:"
 				log_writeOutMpl 1 "$mcommand"
-				if {[winfo exists .tv.l_anigif]} {
+				if {[winfo exists .ftvBg.l_anigif]} {
 					launch_splashPlay cancel 0 0 0
-					place forget .tv.l_anigif
-					destroy .tv.l_anigif
+					place forget .ftvBg.l_anigif
+					destroy .ftvBg.l_anigif
 				}
 				set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
-				label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-				place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
+				label .ftvBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+				place .ftvBg.l_anigif -in .ftvBg -anchor center -relx 0.5 -rely 0.5
 				set img_list_length [llength $img_list]
-				after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+				after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
 				set ::tv(mcommand) $mcommand
 				if {[info exists ::data(file_size)] == 0} {
 					set delay $playdelay($::option(player_cache))
@@ -286,7 +288,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					}
 					if {[winfo exists .tv.file_play_bar]} {
 						.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]
-						.top_buttons.button_timeshift state !disabled
+						.ftoolb_Top.bTimeshift state !disabled
 						bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 						bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 						bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
@@ -312,6 +314,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					}
 				}
 			}
+			set ::tv(pbMode) 1
 		} else {
 			log_writeOutTv 2 "Could not locate file for file playback."
 			log_writeOutTv 2 "$file"
@@ -319,7 +322,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		}
 	}
 	if {$::tv(stayontop) == 2} {
-		wm attributes .tv -topmost 1
+		wm attributes . -topmost 1
 	}
 }
 
@@ -482,8 +485,8 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	
 	if {"$handler" != "timeshift"} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .tv.l_anigif}
-		catch {destroy .tv.l_anigif}
+		catch {place forget .ftvBg.l_anigif}
+		catch {destroy .ftvBg.l_anigif}
 	}
 	
 	$tv_bar.l_time configure -background black -foreground white -relief sunken -borderwidth 2
@@ -577,23 +580,24 @@ proc tv_playbackStop {com handler} {
 		}
 		unset -nocomplain ::option(cursor_id\(.tv.bg.w\))
 	}
-	if {[winfo exists .tv.l_anigif]} {
+	if {[winfo exists .ftvBg.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .tv.l_anigif}
-		catch {destroy .tv.l_anigif}
+		catch {place forget .ftvBg.l_anigif}
+		catch {destroy .ftvBg.l_anigif}
 	}
 	if {"$handler" == "pic"} {
-		place forget .tv.bg.w
-		place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
-		bind .tv.bg.w <Configure> {}
+		place forget .ftvBg.cont
+		place .ftvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
+		bind .ftvBg.cont <Configure> {}
 	} else {
-		place forget .tv.bg.w
-		bind .tv.bg.w <Configure> {}
+		place forget .ftvBg.cont
+		bind .ftvBg.cont <Configure> {}
 	}
 	if {[winfo exists .station]} {
 		.station.top_buttons.b_station_preview state !pressed
+		.ftoolb_Top.bTv state !pressed
 	} else {
-		.top_buttons.button_starttv state !pressed
+		.ftoolb_Top.bTv state !pressed
 	}
 	if {$::option(player_screens_value) == 1} {
 		tv_wmHeartbeatCmd cancel

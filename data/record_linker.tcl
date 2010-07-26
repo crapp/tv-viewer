@@ -62,12 +62,12 @@ proc record_linkerPrestart {handler} {
 		colorm_exit .cm.f_vscale
 	}
 	if {$::main(running_recording) != 1} {
-		if {[winfo exists .tv.l_anigif] == 0} {
+		if {[winfo exists .ftvBg.l_anigif] == 0} {
 			set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
-			label .tv.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-			place .tv.l_anigif -in .tv.bg -anchor center -relx 0.5 -rely 0.5
+			label .ftvBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+			place .ftvBg.l_anigif -in .ftvBg -anchor center -relx 0.5 -rely 0.5
 			set img_list_length [llength $img_list]
-			after 0 [list launch_splashPlay $img_list $img_list_length 1 .tv.l_anigif]
+			after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
 		} else {
 			log_writeOutTv 1 "Animated gif already exists in parent."
 			log_writeOutTv 1 "This should not happen!"
@@ -109,8 +109,8 @@ proc record_linkerPrestartCancel {handler} {
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor arrow
 	}
-	.top_buttons.button_timeshift state !disabled
-	.top_buttons.button_timeshift state !pressed
+	.ftoolb_Top.bTimeshift state !disabled
+	.ftoolb_Top.bTimeshift state !pressed
 	.top_buttons.button_epg state !disabled
 	.top_buttons.button_starttv state !disabled
 	.bottom_buttons.button_channelup state !disabled
@@ -129,10 +129,10 @@ proc record_linkerPrestartCancel {handler} {
 		.tv.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
-	if {[winfo exists .tv.l_anigif]} {
+	if {[winfo exists .ftvBg.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .tv.l_anigif}
-		catch {destroy .tv.l_anigif}
+		catch {place forget .ftvBg.l_anigif}
+		catch {destroy .ftvBg.l_anigif}
 		place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
 	}
 }
@@ -246,7 +246,7 @@ proc record_linkerPreStop {handler} {
 	} else {
 		log_writeOutTv 0 "Prestop sequence for timeshift initiated."
 	}
-	.top_buttons.button_timeshift state !disabled
+	.ftoolb_Top.bTimeshift state !disabled
 	.top_buttons.button_epg state !disabled
 	.top_buttons.button_starttv state !disabled
 	.bottom_buttons.button_channelup state !disabled
@@ -295,10 +295,10 @@ proc record_linkerPreStop {handler} {
 			}
 		}
 	}
-	if {[winfo exists .tv.l_anigif]} {
+	if {[winfo exists .ftvBg.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .tv.l_anigif}
-		catch {destroy .tv.l_anigif}
+		catch {place forget .ftvBg.l_anigif}
+		catch {destroy .ftvBg.l_anigif}
 	}
 	tv_fileComputeSize cancel_rec
 }
