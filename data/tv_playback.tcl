@@ -99,7 +99,6 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	}
 	
 	bind . <<teleview>> {}
-	#bind .tv <<teleview>> {}
 	
 	if {$file == 0} {
 		lappend mcommand {*}[auto_execok mplayer] -quiet -slave
@@ -244,15 +243,16 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 	} else {
 		if {[file exists "$file"]} {
 			lappend mcommand -wid $winid "$file"
-			catch {place forget .tv.l_image}
-			if {[winfo exists .tv.file_play_bar] == 0} {
-				tv_PlaybackFileplaybar $tv_bg $tv_cont $handler "$file"
-				if {"$handler" == "timeshift"} {
-					bind .tv <<start>> {}
-					tv_Playback $tv_bg $tv_cont $handler "$file"
-					return
-				}
-			} else {
+			catch {place forget .ftvBg.l_bgImage}
+			#~ if {[winfo exists .tv.file_play_bar] == 0} {
+				#FIXME Why restart this proc when old fileplaybar does not exist
+				#~ tv_PlaybackFileplaybar $tv_bg $tv_cont $handler "$file"
+				#~ if {"$handler" == "timeshift"} {
+					#~ bind . <<start>> {}
+					#~ tv_Playback $tv_bg $tv_cont $handler "$file"
+					#~ return
+				#~ }
+			#~ } else {
 				log_writeOutTv 0 "Starting playback of $file."
 				log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
 				log_writeOutMpl 1 "MPlayer command line:"
@@ -279,41 +279,28 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				}
 				log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
 				after $delay {
-					if {[wm attributes .tv -fullscreen] == 0} {
-						if {[winfo exists .tv.file_play_bar]} {
-							if {[string trim [grid info .tv.file_play_bar]] == {}} {
-								grid .tv.file_play_bar -in .tv -row 1 -column 0 -sticky ew
-							}
-						}
-					}
-					if {[winfo exists .tv.file_play_bar]} {
-						.tv.file_play_bar.b_play configure -command [list tv_seek 0 0]
-						.ftoolb_Top.bTimeshift state !disabled
-						bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-						bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-						bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-						bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-						bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-						bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-						bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-						bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-						bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-						bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-						bind .tv <<start>> {}
-						.tv.file_play_bar.b_pause state !disabled
-						.tv.file_play_bar.b_play state disabled
-						
-						set ::data(mplayer) [open "|$::tv(mcommand)" r+]
-						fconfigure $::data(mplayer) -blocking 0 -buffering line
-						fileevent $::data(mplayer) readable [list tv_callbackVidData]
-						log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
-						log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
-					} else {
-						log_writeOutTv 2 "Failed to start file playback."
-						log_writeOutTv 2 "Fileplaybar does not exist. Report this incident!"
-					}
+					.ftoolb_Bot.bPlay configure -command [list tv_seek 0 0]
+					.ftoolb_Top.bTimeshift state !disabled
+					bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
+					bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+					bind . <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+					bind . <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+					bind . <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+					bind . <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+					bind . <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+					bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+					bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+					bind . <<start>> {}
+					.ftoolb_Bot.bPause state !disabled
+					.ftoolb_Bot.bPlay state disabled
+					
+					set ::data(mplayer) [open "|$::tv(mcommand)" r+]
+					fconfigure $::data(mplayer) -blocking 0 -buffering line
+					fileevent $::data(mplayer) readable [list tv_callbackVidData]
+					log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
+					log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
 				}
-			}
+			#~ }
 			set ::tv(pbMode) 1
 		} else {
 			log_writeOutTv 2 "Could not locate file for file playback."
@@ -388,7 +375,7 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	-image $::icon_m(floppy) \
 	-takefocus 0 \
 	-state disabled \
-	-command [list timeshift_Save .tv]
+	-command [list timeshift_Save .]
 	label $tv_bar.l_time \
 	-width 20 \
 	-background black \
@@ -490,7 +477,6 @@ proc tv_PlaybackFileplaybar {tv_bg tv_cont handler file} {
 	}
 	
 	$tv_bar.l_time configure -background black -foreground white -relief sunken -borderwidth 2
-	set ::choice(label_file_time) "00:00:00"
 	if {$::tv(check_fow_1m) == 0 && $::tv(check_fow_10m) == 0} {
 		set ::tv(check_fow_10s) 1
 		$tv_bar.b_forward_small configure -command {event generate .tv <<forward_10s>>}
@@ -604,16 +590,13 @@ proc tv_playbackStop {com handler} {
 	}
 	tv_fileComputePos cancel
 	if {$com == 0} {
-		if {[winfo exists .tv.file_play_bar]} {
-			destroy .tv.file_play_bar
-		}
 		tv_fileComputeSize cancel
 	} else {
-		if {[winfo exists .tv.file_play_bar]} {
-			.tv.file_play_bar.b_play state !disabled
-			.tv.file_play_bar.b_pause state disabled
-			.tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
-			bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+		if {$::tv(pbMode) == 1} {
+			.ftoolb_Bot.bPlay state !disabled
+			.ftoolb_Bot.bPause state disabled
+			.ftoolb_Bot.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
+			bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
 		}
 	}
 	log_writeOutTv 0 "Stopping playback"

@@ -19,14 +19,14 @@
 
 proc tv_seekInitiate {seek_com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_seekInitiate \033\[0m \{$seek_com\}"
-	bind .tv <<forward_10s>> {}
-	bind .tv <<forward_1m>> {}
-	bind .tv <<forward_10m>> {}
-	bind .tv <<rewind_10s>> {}
-	bind .tv <<rewind_1m>> {}
-	bind .tv <<rewind_10m>> {}
-	bind .tv <<forward_end>> {}
-	bind .tv <<rewind_start>> {}
+	bind . <<forward_10s>> {}
+	bind . <<forward_1m>> {}
+	bind . <<forward_10m>> {}
+	bind . <<rewind_10s>> {}
+	bind . <<rewind_1m>> {}
+	bind . <<rewind_10m>> {}
+	bind . <<forward_end>> {}
+	bind . <<rewind_start>> {}
 	set ::tv(seek_secs) [lindex $seek_com 1]
 	set ::tv(seek_dir) [lindex $seek_com 2]
 	set ::tv(getvid_seek) 1
@@ -44,7 +44,7 @@ proc tv_seek {secs direct} {
 		8192 12
 		16384 18
 	}
-	if {[winfo exists .tv.file_play_bar]} {
+	if {$::tv(pbMode) == 1} {
 		if {$direct == 1} {
 			if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
 				log_writeOutTv 0 "Seeking +$secs\s"
@@ -109,41 +109,39 @@ proc tv_seek {secs direct} {
 			return
 		}
 		if {$direct == 0} {
-			if {[winfo exists .tv.file_play_bar.b_pause]} {
-				if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
-					.tv.file_play_bar.b_pause state disabled
-					.tv.file_play_bar.b_play state !disabled
-					log_writeOutTv 0 "Pause playback."
-					bind .tv <<forward_10s>> {}
-					bind .tv <<forward_1m>> {}
-					bind .tv <<forward_10m>> {}
-					bind .tv <<rewind_10s>> {}
-					bind .tv <<rewind_1m>> {}
-					bind .tv <<rewind_10m>> {}
-					bind .tv <<forward_end>> {}
-					bind .tv <<rewind_start>> {}
-					tv_callbackMplayerRemote pause
-					return
-				} else {
-					.tv.file_play_bar.b_play state disabled
-					.tv.file_play_bar.b_pause state !disabled
-					set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
-					log_writeOutTv 0 "Start playback."
-					bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-					bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-					bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-					bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-					bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-					bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-					bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-					bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
-					tv_callbackMplayerRemote pause
-					return
-				}
+			if {[.ftoolb_Bot.bPause instate disabled] == 0} {
+				.ftoolb_Bot.bPause state disabled
+				.ftoolb_Bot.bPlay state !disabled
+				log_writeOutTv 0 "Pause playback."
+				bind . <<forward_10s>> {}
+				bind . <<forward_1m>> {}
+				bind . <<forward_10m>> {}
+				bind . <<rewind_10s>> {}
+				bind . <<rewind_1m>> {}
+				bind . <<rewind_10m>> {}
+				bind . <<forward_end>> {}
+				bind . <<rewind_start>> {}
+				tv_callbackMplayerRemote pause
+				return
+			} else {
+				.ftoolb_Bot.bPlay state disabled
+				.ftoolb_Bot.bPause state !disabled
+				set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
+				log_writeOutTv 0 "Start playback."
+				bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+				bind . <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+				bind . <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+				bind . <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+				bind . <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+				bind . <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+				bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+				bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+				tv_callbackMplayerRemote pause
+				return
 			}
 		}
 	} else {
-		log_writeOutTv 2 "Function tv_seek was invoked while playbar does not exist."
+		log_writeOutTv 2 "Function tv_seek was invoked while not in file playback mode."
 	}
 }
 

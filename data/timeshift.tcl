@@ -45,7 +45,6 @@ proc timeshift {tbutton} {
 	record_linkerPrestart timeshift
 	$tbutton state pressed
 	$tbutton state disabled
-	bind .tv <<timeshift>> {}
 	bind . <<timeshift>> {}
 	timeshift_start_preRec $tbutton
 }
@@ -114,20 +113,18 @@ proc timeshift_calcDF {cancel} {
 		unset -nocomplain ::timeshif(df_id)
 		return
 	}
-	if {[winfo exists .tv.file_play_bar.b_pause]} {
-		catch {exec df "$::option(timeshift_path)/"} df_values
-		foreach line [split $df_values "\n"] {
-			if {[string is digit [lindex $line 3]]} {
-				set remaining_space [expr int([lindex $line 3].0 / 1024)]
-				if {$remaining_space <= $::option(timeshift_df)} {
-					log_writeOutTv 2 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
-					timeshift .top_buttons.button_timeshift
-					return
-				}
+	catch {exec df "$::option(timeshift_path)/"} df_values
+	foreach line [split $df_values "\n"] {
+		if {[string is digit [lindex $line 3]]} {
+			set remaining_space [expr int([lindex $line 3].0 / 1024)]
+			if {$remaining_space <= $::option(timeshift_df)} {
+				log_writeOutTv 2 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
+				timeshift .top_buttons.button_timeshift
+				return
 			}
 		}
-		after 60000 [list timeshift_calcDF 0]
 	}
+	after 60000 [list timeshift_calcDF 0]
 }
 
 proc timeshift_Save {tvw} {
@@ -245,12 +242,12 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		catch {after cancel $::timeshift(cp_id)}
 		unset -nocomplain ::timeshift(cp_id)
 		catch {exec kill $ofile}
-		if {$::option(systray_close) == 1} {
-			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-		} else {
+		#~ if {$::option(systray_close) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		#~ } else {
 			wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
-		}
-		wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
+		#~ }
+		#~ wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 		grab release .tv.top_cp_progress
 		destroy .tv.top_cp_progress
 		return
@@ -281,12 +278,12 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		log_writeOutTv 0 "Timesift video file copied. Output file:
 $ofile"
 		after 2000 {
-			if {$::option(systray_close) == 1} {
-				wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-			} else {
-				wm protocol . WM_DELETE_WINDOW {main_frontendExitViewer}
-			}
-			wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
+			#~ if {$::option(systray_close) == 1} {
+				#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+			#~ } else {
+				wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
+			#~ }
+			#~ wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 			grab release .tv.top_cp_progress
 			destroy .tv.top_cp_progress
 		}

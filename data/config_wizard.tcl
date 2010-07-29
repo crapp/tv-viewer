@@ -152,9 +152,9 @@ proc config_wizardMainUi {} {
 	option_screen_8
 	option_screen_0
 	
-	if {$::option(systray_close) == 1} {
-		wm protocol . WM_DELETE_WINDOW {  }
-	}
+	#~ if {$::option(systray_close) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {  }
+	#~ }
 	
 	tkwait visibility $w
 	grab $w
@@ -201,11 +201,11 @@ proc config_wizardExit {} {
 	tooltips .ftoolb_Top .ftoolb_Station .ftoolb_Bot main
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.
-	if {$::option(systray_close) == 1} {
+	#~ if {$::option(systray_close) == 1} {
 		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-	} else {
+	#~ } else {
 		#~ 
-	}
+	#~ }
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	
 	grab release .config_wizard

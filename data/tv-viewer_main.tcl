@@ -60,7 +60,7 @@ wm withdraw .
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_main
-set option(release_version) {0.8.2a1 94 27.07.2010}
+set option(release_version) {0.8.2a1 95 30.07.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -253,8 +253,9 @@ unset -nocomplain insertLocal insertGlob pa
 puts "loading shared libraries"
 set status_tray [catch {package require tktray 1.3.8} result_tktray]
 if {$status_tray == 1} {
-	puts "ERROR:
-$result_tktray"
+	puts "
+ERROR:  $result_tktray
+"
 }
 #Source autoscroll function for scrollbars and load package autoscroll
 source $::option(root)/extensions/autoscroll/autoscroll.tcl

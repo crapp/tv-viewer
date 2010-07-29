@@ -63,11 +63,11 @@ proc tv_callbackVidData {} {
 			if {$::option(player_screens_value) == 1} {
 				tv_wmHeartbeatCmd cancel 
 			}
-			if {[winfo exists .tv.file_play_bar] == 1} {
-				.tv.file_play_bar.b_play state !disabled
-				.tv.file_play_bar.b_pause state disabled
-				.tv.file_play_bar.b_play configure -command {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
-				bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w 0 "$::tv(current_rec_file)"}
+			if {$::tv(pbMode) == 1} {
+				.ftoolb_Bot.bPlay state !disabled
+				.ftoolb_Bot.bPause state disabled
+				.ftoolb_Bot.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
+				bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
 				set status_record [monitor_partRunning 3]
@@ -167,14 +167,14 @@ proc tv_callbackVidData {} {
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
 					after 10 [list tv_fileComputePos 0]
-					bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-					bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-					bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-					bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-					bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-					bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-					bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-					bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+					bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+					bind . <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+					bind . <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+					bind . <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+					bind . <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+					bind . <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+					bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+					bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
 				} else {
 					tv_fileComputePos cancel
 					set pos [lindex [split $line \=] end]

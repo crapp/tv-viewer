@@ -40,6 +40,8 @@ proc event_constr {handler} {
 	bind . <<volume_incr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) + 3]}
 	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
 	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
+	bind . <<delay_incr>> {tv_playerAudioDelay incr}
+	bind . <<delay_decr>> {tv_playerAudioDelay decr}
 	event add <<forward_end>> <Key-End>
 	event add <<forward_10s>> <Key-Right>
 	event add <<forward_1m>> <Shift-Key-Right>
@@ -51,6 +53,21 @@ proc event_constr {handler} {
 	event add <<pause>> <Key-p>
 	event add <<start>> <Shift-Key-P>
 	event add <<stop>> <Shift-Key-S>
+	bind . <Key-f> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind .ftvBg.cont <Double-ButtonPress-1> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind .ftvBg <Double-ButtonPress-1> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind . <Control-Key-1> [list tv_wmGivenSize .ftvBg 1]
+	bind . <Control-Key-2> [list tv_wmGivenSize .ftvBg 2]
+	bind . <Key-e> [list tv_wmPanscan .ftvBg.cont 1]
+	bind . <Key-w> [list tv_wmPanscan .ftvBg.cont -1]
+	bind . <Shift-Key-W> {tv_wmPanscanAuto}
+	bind . <Alt-Key-Right> [list tv_wmMoveVideo 0]
+	bind . <Alt-Key-Down> [list tv_wmMoveVideo 1]
+	bind . <Alt-Key-Left> [list tv_wmMoveVideo 2]
+	bind . <Alt-Key-Up> [list tv_wmMoveVideo 3]
+	bind . <Alt-Key-c> [list tv_wmMoveVideo 4]
+	bind . <ButtonPress-3> [list tk_popup .mRightclickViewer %X %Y]
+	bind . <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
 	if {$handler} {
 		event add <<record>> <Key-r>
 		bind . <<record>> [list record_wizardUi]
@@ -70,6 +87,7 @@ proc event_constr {handler} {
 		bind . <<station_key>> [list chan_zapperStationNrKeys %A]
 		bind . <<station_key_lirc>> [list chan_zapperStationNrKeys %d]
 		bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]
+		bind . <<record>> [list record_wizardUi]
 	}
 }
 
@@ -96,12 +114,6 @@ proc event_deleSedit {} {
 
 proc event_recordStart {handler} {
 	if {$::option(rec_allow_sta_change) == 0} {
-		bind .tv <<station_up>> {}
-		bind .tv <<station_down>> {}
-		bind .tv <<station_jump>> {}
-		bind .tv <<station_key>> {}
-		bind .tv <<input_up>> {}
-		bind .tv <<input_down>> {}
 		bind . <<station_up>> {}
 		bind . <<station_down>> {}
 		bind . <<station_jump>> {}
@@ -111,37 +123,25 @@ proc event_recordStart {handler} {
 		bind . <<input_up>> {}
 		bind . <<input_down>> {}
 	}
-	bind .tv <<stop>> {tv_playbackStop 1 pic}
-	bind .tv <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-	bind .tv <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-	bind .tv <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-	bind .tv <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-	bind .tv <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-	bind .tv <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-	bind .tv <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-	bind .tv <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+	bind . <<stop>> {tv_playbackStop 1 pic}
+	bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
+	bind . <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
+	bind . <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
+	bind . <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
+	bind . <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
+	bind . <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
+	bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
+	bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
 	bind . <<teleview>> {}
 	bind . <Control-Key-m> {}
 	bind . <Control-Key-e> {}
-	bind .tv <<teleview>> {}
-	bind .tv <Control-Key-m> {}
-	bind .tv <Control-Key-e> {}
 	if {"$handler" != "timeshift"} {
 		.ftoolb_Top.bTimeshift state disabled
 		bind . <<timeshift>> {}
-		bind .tv <<timeshift>> {}
 	}
 }
 
 proc event_recordStop {} {
-	bind .tv <<teleview>> {tv_playerRendering}
-	bind .tv <<station_down>> [list chan_zapperDown .fstations.treeSlist]
-	bind .tv <<station_up>> [list chan_zapperUp .fstations.treeSlist]
-	bind .tv <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
-	bind .tv <<station_key>> [list chan_zapperStationNrKeys %A]
-	bind .tv <<input_up>> [list chan_zapperInput 1 1]
-	bind .tv <<input_down>> [list chan_zapperInput 1 -1]
-	bind .tv <<timeshift>> [list timeshift .top_buttons.button_timeshift]
 	bind . <<teleview>> {tv_playerRendering}
 	bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
 	bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
@@ -152,8 +152,6 @@ proc event_recordStop {} {
 	bind . <<input_up>> [list chan_zapperInput 1 1]
 	bind . <<input_down>> [list chan_zapperInput 1 -1]
 	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-	bind .tv <Control-Key-m> {colorm_mainUi}
-	bind .tv <Control-Key-e> {station_editUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
 }

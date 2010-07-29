@@ -80,10 +80,10 @@ proc tv_playerAudioDelay {handler} {
 				return
 			}
 			set ::option(player_audio_delay) [format %.1f [expr $::option(player_audio_delay) + 0.1]]
-			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 "Delay $::option(player_audio_delay)"]
 			}
-			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+			if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 				after 0 [list tv_osd osd_group_f 1000 "Delay $::option(player_audio_delay)"]
 			}
 			tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
@@ -94,10 +94,10 @@ proc tv_playerAudioDelay {handler} {
 				return
 			}
 			set ::option(player_audio_delay) [format %.1f [expr $::option(player_audio_delay) - 0.1]]
-			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 "Delay $::option(player_audio_delay)"]
 			}
-			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+			if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 				after 0 [list tv_osd osd_group_f 1000 "Delay $::option(player_audio_delay)"]
 			}
 			tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
@@ -306,40 +306,7 @@ proc tv_playerUi {} {
 		set ::data(movevidX) 0
 		set ::data(movevidY) 0
 		
-		bind $mw <Key-f> [list tv_wmFullscreen $mw $tv_cont $tv_bg]
-		bind $tv_cont <Double-ButtonPress-1> [list tv_wmFullscreen $mw $tv_cont $tv_bg]
-		bind $tv_bg <Double-ButtonPress-1> [list tv_wmFullscreen $mw $tv_cont $tv_bg]
-		bind $mw <<teleview>> {tv_playerRendering}
-		bind $mw <<station_down>> [list main_stationChannelDown .label_stations]
-		bind $mw <<station_up>> [list main_stationChannelUp .label_stations]
-		bind $mw <<station_jump>> [list main_stationChannelJumper .label_stations]
-		bind $mw <<station_key>> [list main_stationStationNrKeys %A]
-		bind $mw <<record>> [list record_wizardUi]
-		bind $mw <<timeshift>> [list timeshift .top_buttons.button_timeshift]
-		bind $mw <<input_up>> [list main_stationInput 1 1]
-		bind $mw <<input_down>> [list main_stationInput 1 -1]
-		bind $mw <<volume_decr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) - 3]}
-		bind $mw <<volume_incr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) + 3]}
-		bind $mw <<delay_incr>> {tv_playerAudioDelay incr}
-		bind $mw <<delay_decr>> {tv_playerAudioDelay decr}
-		bind $mw <Key-m> [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
-		bind $mw <Control-Key-1> [list tv_wmGivenSize $tv_bg 1]
-		bind $mw <Control-Key-2> [list tv_wmGivenSize $tv_bg 2]
-		bind $mw <Key-e> [list tv_wmPanscan $tv_cont 1]
-		bind $mw <Key-w> [list tv_wmPanscan $tv_cont -1]
-		bind $mw <Shift-Key-W> {tv_wmPanscanAuto}
-		bind $mw <Alt-Key-Right> [list tv_wmMoveVideo 0]
-		bind $mw <Alt-Key-Down> [list tv_wmMoveVideo 1]
-		bind $mw <Alt-Key-Left> [list tv_wmMoveVideo 2]
-		bind $mw <Alt-Key-Up> [list tv_wmMoveVideo 3]
-		bind $mw <Alt-Key-c> [list tv_wmMoveVideo 4]
-		bind $mw <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
-		bind $mw <Control-Key-p> {config_wizardMainUi}
-		bind $mw <Control-Key-m> {colorm_mainUi}
-		bind $mw <Control-Key-e> {station_editUi}
-		bind $mw <Key-F1> [list info_helpHelp]
-		bind $mw <<exit>> {main_frontendExitViewer}
-		bind $mw <ButtonPress-3> [list tk_popup $mw.rightclickViewer %X %Y]
+		
 		
 		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 			log_writeOutTv 1 "No valid stations list, will not activate station selector for video window."
@@ -411,22 +378,21 @@ proc tv_playerRendering {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerRendering \033\[0m"
 	set status [tv_callbackMplayerRemote alive]
 	if {$status != 1} {
-		if {[winfo exists .tv.file_play_bar] == 1} {
+		if {$::tv(pbMode) == 1} {
 			tv_playbackStop 0 nopic
 			tv_fileComputePos cancel
 			tv_fileComputeSize cancel
-			destroy .tv.file_play_bar
-			bind .tv <<pause>> {}
-			bind .tv <<start>> {}
-			bind .tv <<stop>> {}
-			bind .tv <<forward_10s>> {}
-			bind .tv <<forward_1m>> {}
-			bind .tv <<forward_10m>> {}
-			bind .tv <<rewind_10s>> {}
-			bind .tv <<rewind_1m>> {}
-			bind .tv <<rewind_10m>> {}
-			bind .tv <<forward_end>> {}
-			bind .tv <<rewind_start>> {}
+			bind . <<pause>> {}
+			bind . <<start>> {}
+			bind . <<stop>> {}
+			bind . <<forward_10s>> {}
+			bind . <<forward_1m>> {}
+			bind . <<forward_10m>> {}
+			bind . <<rewind_10s>> {}
+			bind . <<rewind_1m>> {}
+			bind . <<rewind_10m>> {}
+			bind . <<forward_end>> {}
+			bind . <<rewind_start>> {}
 			if {$::main(running_recording) == 1} {
 				if {$::option(forcevideo_standard) == 1} {
 					main_pic_streamForceVideoStandard
@@ -445,8 +411,8 @@ proc tv_playerRendering {} {
 				}
 				set ::main(running_recording) 0
 			}
-			wm title .tv "TV - [lindex $::station(last) 0]"
-			wm iconphoto .tv $::icon_b(starttv)
+			wm title . "TV - [lindex $::station(last) 0]"
+			wm iconphoto . $::icon_b(starttv)
 			set status [tv_callbackMplayerRemote alive]
 			if {$status != 1} {
 				after 100 {tv_playerLoop}
@@ -454,27 +420,26 @@ proc tv_playerRendering {} {
 				if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 					catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 				}
-				tv_playback .tv.bg .tv.bg.w
+				tv_playback .ftvBg .ftvBg.cont
 			}
 		} else {
 			tv_playbackStop 0 pic
 		}
 	} else {
-		if {[winfo exists .tv.file_play_bar] == 1} {
+		if {[info exists ::tv(pbMode)] && $::tv(pbMode) == 1} {
 			tv_fileComputePos cancel
 			tv_fileComputeSize cancel
-			destroy .tv.file_play_bar
-			bind .tv <<pause>> {}
-			bind .tv <<start>> {}
-			bind .tv <<stop>> {}
-			bind .tv <<forward_10s>> {}
-			bind .tv <<forward_1m>> {}
-			bind .tv <<forward_10m>> {}
-			bind .tv <<rewind_10s>> {}
-			bind .tv <<rewind_1m>> {}
-			bind .tv <<rewind_10m>> {}
-			bind .tv <<forward_end>> {}
-			bind .tv <<rewind_start>> {}
+			bind . <<pause>> {}
+			bind . <<start>> {}
+			bind . <<stop>> {}
+			bind . <<forward_10s>> {}
+			bind . <<forward_1m>> {}
+			bind . <<forward_10m>> {}
+			bind . <<rewind_10s>> {}
+			bind . <<rewind_1m>> {}
+			bind . <<rewind_10m>> {}
+			bind . <<forward_end>> {}
+			bind . <<rewind_start>> {}
 			if {$::main(running_recording) == 1} {
 				if {$::option(forcevideo_standard) == 1} {
 					main_pic_streamForceVideoStandard
@@ -496,8 +461,8 @@ proc tv_playerRendering {} {
 			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 				catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 			}
-			wm title .tv "TV - [lindex $::station(last) 0]"
-			wm iconphoto .tv $::icon_b(starttv)
+			wm title . "TV - [lindex $::station(last) 0]"
+			wm iconphoto . $::icon_b(starttv)
 		}
 		main_pic_streamDimensions
 		tv_Playback .ftvBg .ftvBg.cont 0 0
@@ -513,7 +478,7 @@ proc tv_playerLoop {} {
 			catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 		}
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_playerLoop \033\[0;1;31m::complete:: \033\[0m"
-		tv_Playback .tv.bg .tv.bg.w 0 0
+		tv_Playback .ftvBg .ftvBg.cont 0 0
 	}
 }
 

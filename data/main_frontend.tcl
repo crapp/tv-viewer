@@ -71,124 +71,250 @@ proc main_frontendEpg {} {
 	catch {exec sh -c "[subst $::option(epg_command)] >/dev/null 2>&1" &}
 }
 
-proc main_frontendShowslist {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendShowslist \033\[0m \{$w\}"
-	if {[winfo exists .frame_slistbox] == 0} {
-		
-		log_writeOutTv 0 "Building station list..."
-		
-		$w.button_showslist state pressed
-		
-		set wflbox [ttk::frame .frame_slistbox]
-		
-		listbox $wflbox.listbox_slist \
-		-yscrollcommand [list $wflbox.scrollbar_slist set] \
-		-exportselection false \
-		-takefocus 0
-		
-		ttk::scrollbar $wflbox.scrollbar_slist \
-		-orient vertical \
-		-command [list $wflbox.listbox_slist yview]
-		
-		grid $wflbox -in . -row 4 -column 0 \
-		-columnspan 3 \
-		-sticky news
-		grid $wflbox.listbox_slist -in $wflbox -row 0 -column 0 \
-		-sticky nesw \
-		-pady "2 0"
-		grid $wflbox.scrollbar_slist -in $wflbox -row 0 -column 1 \
-		-sticky nws  \
-		-pady "2 0"
-		
-		grid rowconfigure $wflbox 0 -weight 1
-		grid columnconfigure $wflbox 0  -weight 1
-		
-		autoscroll $wflbox.scrollbar_slist
-		
-		wm resizable . 1 1
-		
-		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			log_writeOutTv 2 "There are no stations to insert into station list."
-			$wflbox.listbox_slist configure -state disabled
-		} else {
-			for {set i 1} {$i <= $::station(max)} {incr i} {
-				if {$i < 10} {
-					$wflbox.listbox_slist insert end " $i     $::kanalid($i)"
-				} else {
-					if {$i < 100} {
-						$wflbox.listbox_slist insert end " $i   $::kanalid($i)"
-					} else {
-						$wflbox.listbox_slist insert end " $i $::kanalid($i)"
-					}
-				}
-			}
-			bindtags $wflbox.listbox_slist {. .frame_slistbox.listbox_slist Listbox all}
-			bind $wflbox.listbox_slist <<ListboxSelect>> [list main_stationListboxStations $wflbox.listbox_slist]
-			bind $wflbox.listbox_slist <Key-Prior> {break}
-			bind $wflbox.listbox_slist <Key-Next> {break}
-			$wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
-			bind . <Configure> {
-				if {[winfo ismapped .frame_slistbox]} {
-					if {[winfo height .frame_slistbox] < 36} {
-						bind . <Configure> {}
-						main_frontendShowslist .bottom_buttons
-						.bottom_buttons.button_showslist state !pressed
-					}
-				}
-			}
-			$wflbox.listbox_slist see [$wflbox.listbox_slist curselection]
-			set status_time [monitor_partRunning 4]
-			set status_record [monitor_partRunning 3]
-			if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
-				if {$::option(rec_allow_sta_change) == 0} {
-					log_writeOutTv 1 "Disabling station list due to an active recording."
-					$wflbox.listbox_slist configure -state disabled
-				}
-			}
-		}
-	} else {
-		log_writeOutTv 0 "Station list already exists, using grid to manage window again."
-		set wflbox .frame_slistbox
-		if {[string trim [grid info $wflbox]] == {}} {
-			grid $wflbox -in . -row 4 -column 0
-			$w.button_showslist state pressed
-			$wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
-			$wflbox.listbox_slist see [expr [lindex $::station(last) 2] - 1]
-			if {[info exists ::main(slist_height)]} {
-				set newheight [expr [winfo height .] + $::main(slist_height)]
-				wm geometry . [winfo width .]x$newheight
-				wm resizable . 1 1
-			}
-			bind . <Configure> {
-				if {[winfo ismapped .frame_slistbox]} {
-					if {[winfo height .frame_slistbox] < 36} {
-						bind . <Configure> {}
-						main_frontendShowslist .bottom_buttons
-						.bottom_buttons.button_showslist state !pressed
-					}
-				}
-			}
-		} else {
-			log_writeOutTv 0 "Removing station list from grid manager."
-			set ::main(slist_height) [winfo height $wflbox]
-			if {$::main(slist_height) < 36} {
-				set ::main(slist_height) 37
-			}
-			set newheight [expr [winfo height .] - $::main(slist_height)]
-			grid remove $wflbox
-			wm geometry . [lindex [wm minsize .] 0]x$newheight
-			wm resizable . 0 0
-			if {$::option(systray_close) == 1} {
-				wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-			}
-		}
-	}
-}
+#~ proc main_frontendShowslist {w} {
+	#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendShowslist \033\[0m \{$w\}"
+	#~ if {[winfo exists .frame_slistbox] == 0} {
+		#~ 
+		#~ log_writeOutTv 0 "Building station list..."
+		#~ 
+		#~ $w.button_showslist state pressed
+		#~ 
+		#~ set wflbox [ttk::frame .frame_slistbox]
+		#~ 
+		#~ listbox $wflbox.listbox_slist \
+		#~ -yscrollcommand [list $wflbox.scrollbar_slist set] \
+		#~ -exportselection false \
+		#~ -takefocus 0
+		#~ 
+		#~ ttk::scrollbar $wflbox.scrollbar_slist \
+		#~ -orient vertical \
+		#~ -command [list $wflbox.listbox_slist yview]
+		#~ 
+		#~ grid $wflbox -in . -row 4 -column 0 \
+		#~ -columnspan 3 \
+		#~ -sticky news
+		#~ grid $wflbox.listbox_slist -in $wflbox -row 0 -column 0 \
+		#~ -sticky nesw \
+		#~ -pady "2 0"
+		#~ grid $wflbox.scrollbar_slist -in $wflbox -row 0 -column 1 \
+		#~ -sticky nws  \
+		#~ -pady "2 0"
+		#~ 
+		#~ grid rowconfigure $wflbox 0 -weight 1
+		#~ grid columnconfigure $wflbox 0  -weight 1
+		#~ 
+		#~ autoscroll $wflbox.scrollbar_slist
+		#~ 
+		#~ wm resizable . 1 1
+		#~ 
+		#~ if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+			#~ log_writeOutTv 2 "There are no stations to insert into station list."
+			#~ $wflbox.listbox_slist configure -state disabled
+		#~ } else {
+			#~ for {set i 1} {$i <= $::station(max)} {incr i} {
+				#~ if {$i < 10} {
+					#~ $wflbox.listbox_slist insert end " $i     $::kanalid($i)"
+				#~ } else {
+					#~ if {$i < 100} {
+						#~ $wflbox.listbox_slist insert end " $i   $::kanalid($i)"
+					#~ } else {
+						#~ $wflbox.listbox_slist insert end " $i $::kanalid($i)"
+					#~ }
+				#~ }
+			#~ }
+			#~ bindtags $wflbox.listbox_slist {. .frame_slistbox.listbox_slist Listbox all}
+			#~ bind $wflbox.listbox_slist <<ListboxSelect>> [list main_stationListboxStations $wflbox.listbox_slist]
+			#~ bind $wflbox.listbox_slist <Key-Prior> {break}
+			#~ bind $wflbox.listbox_slist <Key-Next> {break}
+			#~ $wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
+			#~ bind . <Configure> {
+				#~ if {[winfo ismapped .frame_slistbox]} {
+					#~ if {[winfo height .frame_slistbox] < 36} {
+						#~ bind . <Configure> {}
+						#~ main_frontendShowslist .bottom_buttons
+						#~ .bottom_buttons.button_showslist state !pressed
+					#~ }
+				#~ }
+			#~ }
+			#~ $wflbox.listbox_slist see [$wflbox.listbox_slist curselection]
+			#~ set status_time [monitor_partRunning 4]
+			#~ set status_record [monitor_partRunning 3]
+			#~ if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
+				#~ if {$::option(rec_allow_sta_change) == 0} {
+					#~ log_writeOutTv 1 "Disabling station list due to an active recording."
+					#~ $wflbox.listbox_slist configure -state disabled
+				#~ }
+			#~ }
+		#~ }
+	#~ } else {
+		#~ log_writeOutTv 0 "Station list already exists, using grid to manage window again."
+		#~ set wflbox .frame_slistbox
+		#~ if {[string trim [grid info $wflbox]] == {}} {
+			#~ grid $wflbox -in . -row 4 -column 0
+			#~ $w.button_showslist state pressed
+			#~ $wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
+			#~ $wflbox.listbox_slist see [expr [lindex $::station(last) 2] - 1]
+			#~ if {[info exists ::main(slist_height)]} {
+				#~ set newheight [expr [winfo height .] + $::main(slist_height)]
+				#~ wm geometry . [winfo width .]x$newheight
+				#~ wm resizable . 1 1
+			#~ }
+			#~ bind . <Configure> {
+				#~ if {[winfo ismapped .frame_slistbox]} {
+					#~ if {[winfo height .frame_slistbox] < 36} {
+						#~ bind . <Configure> {}
+						#~ main_frontendShowslist .bottom_buttons
+						#~ .bottom_buttons.button_showslist state !pressed
+					#~ }
+				#~ }
+			#~ }
+		#~ } else {
+			#~ log_writeOutTv 0 "Removing station list from grid manager."
+			#~ set ::main(slist_height) [winfo height $wflbox]
+			#~ if {$::main(slist_height) < 36} {
+				#~ set ::main(slist_height) 37
+			#~ }
+			#~ set newheight [expr [winfo height .] - $::main(slist_height)]
+			#~ grid remove $wflbox
+			#~ wm geometry . [lindex [wm minsize .] 0]x$newheight
+			#~ wm resizable . 0 0
+			#~ if {$::option(systray_close) == 1} {
+				#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+			#~ }
+		#~ }
+	#~ }
+#~ }
 
 proc msgcat::mcunknown {locale src args} {
 	log_writeOutTv 1 "-=Unknown string for locale $locale"
 	log_writeOutTv 1 "$src $args"
 	return $src
+}
+
+proc main_frontendDisableTree {tree com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendDisableTree \033\[0m \{$tree\} \{$com\}"
+	#Hack because treeview widgets do not respond to disable state
+	if {$com} {
+		bind $tree <ButtonPress-1> break
+		$tree tag configure disabled -foreground #A0A0A0
+		if {[array exists ::kanalitemID]} {
+			foreach elem [$tree children {}] {
+				$tree item $elem -tag disabled
+			}
+		}
+	}
+	if {$com == 0} {
+		bind $tree <ButtonPress-1> [list event generate $tree <<Treeview>>]
+		if {[array exists ::kanalitemID]} {
+			foreach elem [$tree children {}] {
+				$tree item $elem -tag {}
+			}
+		}
+	}
+}
+
+
+proc main_frontendChannelHandler {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendChannelHandler \033\[0m \{$handler\}"
+	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+		log_writeOutTv 2 "There are no stations to insert into station list."
+		set status_tv_playback [tv_callbackMplayerRemote alive]
+		if {$status_tv_playback != 1} {
+			tv_playbackStop 0 pic
+		}
+		main_frontendDisableTree .fstations.treeSlist 1
+		bind .fstations.treeSlist <<TreeviewSelect>> {}
+		.ftoolb_Top.lInput configure -text [mc "unknown"]
+		foreach widget [split [winfo children .ftoolb_Top]] {
+			$widget state disabled
+		}
+		foreach widget [split [winfo children .ftoolb_Station]] {
+			$widget state disabled
+		}
+		foreach widget [split [winfo children .ftoolb_Bot]] {
+			if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
+			$widget state disabled
+		}
+		if {"$handler" == "main"} {
+			event_constr 0
+		} else {
+			if {[array exists ::kanalitemID]} {
+				foreach {key elem} [array get ::kanalitemID] {
+					.fstations.treeSlist delete $elem
+				}
+			}
+			catch {array unset ::kanalitemID}
+			event_deleSedit
+			set status [monitor_partRunning 2]
+			if {[lindex $status 0] == 1} {
+				command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+			}
+		}
+	} else {
+		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
+		set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
+		if {$status_grep_input == 0} {
+			.ftoolb_Top.lInput configure -text [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]
+		} else {
+			log_writeOutTv 2 "Can not read video input."
+			log_writeOutTv 2 "$resultat_grep_input."
+		}
+		.ftoolb_Top.lDevice configure -text $::option(video_device)
+		event_constr 1
+		
+		if {[array exists ::kanalitemID]} {
+			foreach {key elem} [array get ::kanalitemID] {
+				.fstations.treeSlist delete $elem
+			}
+		}
+		catch {array unset ::kanalitemID}
+		set font [ttk::style lookup [.fstations.treeSlist cget -style] -font]
+		if {[string trim $font] == {}} {
+			set font TkDefaultFont
+		}
+		set minwidth 0
+		for {set i 1} {$i <= $::station(max)} {incr i} {
+			.fstations.treeSlist insert {} end -values [list $::kanalid($i) $i]
+			if {[expr [font measure $font $::kanalid($i)] + 20] > $minwidth} {
+				set minwidth [expr [font measure $font $::kanalid($i)] + 20]
+			}
+			set ::kanalitemID($i) [lindex [.fstations.treeSlist children {}] end]
+		}
+		.fstations.treeSlist column name -width $minwidth -stretch 0
+		bindtags .fstations.treeSlist {. .fstations.treeSlist Treeview all}
+		.fstations.treeSlist selection set $::kanalitemID([lindex $::station(last) 2])
+		.fstations.treeSlist see [.fstations.treeSlist selection]
+		bind .fstations.treeSlist <<TreeviewSelect>> [list chan_zapperTree .fstations.treeSlist]
+		bind .fstations.treeSlist <Key-Prior> {break}
+		bind .fstations.treeSlist <Key-Next> {break}
+		#FIXME Not very nice to break usage of Key Up and Down. Conflict with move video frame.
+		bind .fstations.treeSlist <Key-Up> {break}
+		bind .fstations.treeSlist <Key-Down> {break}
+		set status_time [monitor_partRunning 4]
+		set status_record [monitor_partRunning 3]
+		if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
+			if {$::option(rec_allow_sta_change) == 0} {
+				log_writeOutTv 1 "Disabling station list due to an active recording."
+				main_frontendDisableTree .fstations.treeSlist 1
+			}
+		}
+		if {"$handler" == "sedit"} {
+			foreach widget [split [winfo children .ftoolb_Top]] {
+				catch {$widget state !disabled}
+			}
+			foreach widget [split [winfo children .ftoolb_Station]] {
+				catch {$widget state !disabled}
+			}
+			foreach widget [split [winfo children .ftoolb_Bot]] {
+				if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
+				catch {$widget state !disabled}
+			}
+			set status [monitor_partRunning 2]
+			if {[lindex $status 0] == 1} {
+				command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+			}
+		}
+	}
 }
 
 proc main_frontendNewUi {} {
@@ -207,6 +333,8 @@ proc main_frontendNewUi {} {
 	set toolbStation [ttk::frame .ftoolb_Station] ; place [ttk::label $toolbStation.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
 	set toolbBot [ttk::frame .ftoolb_Bot] ; place [ttk::label $toolbBot.bg -style Toolbutton] -relwidth 1 -relheight 1
+	
+	set toolbDisp [frame .ftoolb_Disp -background black]
 	
 	set tvBg [frame .ftvBg -background black -width $::option(resolx) -height $::option(resoly)]
 	set tvCont [frame .ftvBg.cont -background "" -container yes]
@@ -236,10 +364,12 @@ proc main_frontendNewUi {} {
 	
 	ttk::button $toolbTop.bTimeshift \
 	-image $::icon_m(timeshift) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command {event generate . <<timeshift>>}
 	ttk::button $toolbTop.bRecord \
 	-image $::icon_m(record) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command {event generate . <<record>>}
 	ttk::button $toolbTop.bEpg \
 	-text EPG \
 	-style Toolbutton\
@@ -272,9 +402,13 @@ proc main_frontendNewUi {} {
 	-yscrollcommand [list $stations.scrbSlist set] \
 	-columns {name number} \
 	-show headings \
-	-selectmode browse
+	-selectmode browse \
+	-takefocus 0
 	ttk::scrollbar $stations.scrbSlist \
 	-command [list $stations.treeSlist yview]
+	#~ ttk::scrollbar $stations.scrbSlistX \
+	#~ -command [list $stations.treeSlist xview] \
+	#~ -orient horizontal
 	
 	ttk::button $toolbStation.bChanDown \
 	-image $::icon_m(channel-down) \
@@ -291,38 +425,51 @@ proc main_frontendNewUi {} {
 	
 	ttk::button $toolbBot.bPlay \
 	-image $::icon_m(playback-start) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command {event generate . <<start>>}
 	ttk::button $toolbBot.bPause \
 	-image $::icon_m(playback-pause) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command {event generate . <<pause>>}
 	ttk::button $toolbBot.bStop \
 	-image $::icon_m(playback-stop) \
-	-style Toolbutton
+	-style Toolbutton \
+	-command {event generate . <<stop>>}
 	
 	ttk::separator $toolbBot.seperat1 \
 	-orient vertical
 	
 	ttk::button $toolbBot.bRewStart \
 	-style Toolbutton \
-	-image $::icon_m(rewind-first)
+	-image $::icon_m(rewind-first) \
+	-command {event generate . <<rewind_start>>}
 	ttk::button $toolbBot.bRewSmall \
 	-style Toolbutton \
-	-image $::icon_m(rewind-small)
+	-image $::icon_m(rewind-small) \
+	-command {event generate . <<rewind_10s>>}
 	ttk::menubutton $toolbBot.mbRewChoose \
 	-style Toolbutton \
 	-image $::icon_e(arrow-d)
 	ttk::button $toolbBot.bForwSmall \
 	-style Toolbutton \
-	-image $::icon_m(forward-small)
+	-image $::icon_m(forward-small) \
+	-command {event generate . <<forward_10s>>}
 	ttk::menubutton $toolbBot.mbForwChoose \
 	-style Toolbutton \
 	-image $::icon_e(arrow-d)
 	ttk::button $toolbBot.bForwEnd \
 	-style Toolbutton \
-	-image $::icon_m(forward-last)
+	-image $::icon_m(forward-last) \
+	-command {event generate . <<forward_end>>}
 	
 	ttk::separator $toolbBot.seperat2 \
 	-orient vertical
+	
+	ttk::button $toolbBot.bSave \
+	-style Toolbutton \
+	-image $::icon_m(floppy) \
+	-state disabled \
+	-command [list timeshift_Save .]
 	
 	ttk::button $toolbBot.bVolMute \
 	-style Toolbutton \
@@ -335,14 +482,12 @@ proc main_frontendNewUi {} {
 	-variable main(volume_scale) \
 	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute] \
 	
-	label $toolbBot.lTime \
+	label $toolbDisp.lTime \
 	-width 20 \
 	-background black \
 	-foreground white \
 	-anchor center \
-	-relief sunken \
-	-borderwidth 2 \
-	-text --:--:--
+	-textvariable main(label_file_time)
 	
 	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
 		ttk::label $tvBg.l_bgImage \
@@ -372,6 +517,9 @@ proc main_frontendNewUi {} {
 	grid $toolbStation -in . -row 4 -column 0 \
 	-sticky ew
 	grid $toolbBot -in . -row 4 -column 1 \
+	-sticky ew
+	grid $toolbDisp -in . -row 5 -column 0 \
+	-columnspan 2 \
 	-sticky ew
 	
 	grid $menubar.mbTvviewer -in $menubar -row 0 -column 0
@@ -437,29 +585,34 @@ proc main_frontendNewUi {} {
 	-pady 6 \
 	-padx "2 0"
 	
-	grid $toolbBot.bVolMute -in $toolbBot -row 0 -column 11 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbBot.scVolume -in $toolbBot -row 0 -column 12 \
+	grid $toolbBot.bSave -in $toolbBot -row 0 -column 11 \
 	-pady 2 \
 	-padx "2 0"
 	
-	grid $toolbBot.lTime -in $toolbBot -row 0 -column 13  \
+	grid $toolbBot.bVolMute -in $toolbBot -row 0 -column 12 \
+	-pady 2 \
+	-padx "2 0" \
+	-sticky e
+	grid $toolbBot.scVolume -in $toolbBot -row 0 -column 13 \
+	-pady 2 \
+	-padx "2"
+	
+	grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 0  \
 	-sticky nse \
-	-padx "0 2" \
-	-pady 2
+	-padx "2" \
+	-pady 1
 	
 	
 	grid rowconfigure . 3 -weight 1
 	grid rowconfigure $stations 0 -weight 1
-	grid columnconfigure . 1 -weight 1
+	grid columnconfigure . 0 -weight 1
+	grid columnconfigure . 1 -weight 10000 -minsize 250
+	grid columnconfigure $stations 0 -weight 1
 	grid columnconfigure $toolbTop 5 -weight 1
-	grid columnconfigure $toolbBot 13 -weight 1
+	grid columnconfigure $toolbBot 12 -weight 1
+	grid columnconfigure $toolbDisp 0 -weight 1
 	
 	place $tvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
-	
-	
-	bind . <Key-x> {wm attributes . -fullscreen 1}
 	
 	set ::tv(stayontop) 0
 	set ::option(cursor_old) [$tvCont cget -cursor]
@@ -468,6 +621,7 @@ proc main_frontendNewUi {} {
 	set ::data(movevidX) 0
 	set ::data(movevidY) 0
 	set ::main(volume_scale) 100
+	set ::main(label_file_time) " --:-- / --:--"
 	set ::chan(old_channel) 0
 	
 	$mTv add separator
@@ -558,63 +712,17 @@ proc main_frontendNewUi {} {
 		set font TkDefaultFont
 	}
 	
-	foreach col {name number} name {"Name" "Number"} {
+	foreach col {name number} name {"Name" "No"} {
 		$stations.treeSlist heading $col -text $name
 		if {"$col" == "number"} {
 			$stations.treeSlist column $col -width [expr [font measure $font $name] + 20]
 			continue
 		}
-		$stations.treeSlist column $col -width [expr [font measure $font $name] + 100]
 	}
 	
 	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	
-	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-		$toolbTop.lInput configure -text [mc unknown]
-		foreach widget [split [winfo children $wftop]] {
-			$widget state disabled
-		}
-		foreach widget [split [winfo children $wfbottom]] {
-			if {[string match *scale_volume $widget] || [string match *button_mute $widget]} continue
-			$widget state disabled
-		}
-		event_constr 0
-	} else {
-		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
-		set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
-		if {$status_grep_input == 0} {
-			$toolbTop.lInput configure -text [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]
-		} else {
-			log_writeOutTv 2 "Can not read video input."
-			log_writeOutTv 2 "$resultat_grep_input."
-		}
-		$toolbTop.lDevice configure -text $::option(video_device)
-		event_constr 1
-	}
-	
-	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-		log_writeOutTv 2 "There are no stations to insert into station list."
-		$stations.treeSlist state disabled
-	} else {
-		for {set i 1} {$i <= $::station(max)} {incr i} {
-			$stations.treeSlist insert {} end -values [list $::kanalid($i) $i]
-			set ::kanalitemID($i) [lindex [$stations.treeSlist children {}] end]
-		}
-		bindtags $stations.treeSlist {. .fstations.treeSlist Treeview all}
-		$stations.treeSlist selection set $::kanalitemID([lindex $::station(last) 2])
-		$stations.treeSlist see [$stations.treeSlist selection]
-		bind $stations.treeSlist <<TreeviewSelect>> [list chan_zapperTree $stations.treeSlist]
-		bind $stations.treeSlist <Key-Prior> {break}
-		bind $stations.treeSlist <Key-Next> {break}
-		set status_time [monitor_partRunning 4]
-		set status_record [monitor_partRunning 3]
-		if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
-			if {$::option(rec_allow_sta_change) == 0} {
-				log_writeOutTv 1 "Disabling station list due to an active recording."
-				$stations.treeSlist configure -state disabled
-			}
-		}
-	}
+	main_frontendChannelHandler main
 	
 	if {$::main(running_recording) == 0} {
 		
@@ -648,6 +756,10 @@ proc main_frontendNewUi {} {
 	wm title . [mc "TV-Viewer %" [lindex $::option(release_version) 0]]
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
+	
+	bind . <Key-x> {puts "widt tree [winfo width .fstations.treeSlist]"; puts "width frame [winfo width .fstations]"; puts "widt tree [winfo width .fstations.scrbSlist]"}
+	bind $stations.treeSlist <B1-Motion> break
+	bind $stations.treeSlist <Motion> break
 	
 	command_socket
 	
@@ -745,19 +857,43 @@ proc main_frontendNewUi {} {
 		}
 	}
 	
+	#FIXME Hide cursor in windowed mode?
+	
+	bind $tvCont <Motion> {
+		tv_wmCursorHide .ftvBg.cont 0
+		#~ tv_wmCursorPlaybar %Y
+		#~ tv_slistCursor %X %Y
+	}
+	bind $tvBg <Motion> {
+		tv_wmCursorHide .ftvBg 0
+		#~ tv_wmCursorPlaybar %Y
+		#~ tv_slistCursor %X %Y
+	}
+	bind . <ButtonPress-1> {.ftvBg.cont configure -cursor arrow
+							.ftvBg configure -cursor arrow}
+	set ::cursor($tvCont) ""
+	set ::cursor($tvBg) ""
+	tv_wmCursorHide $tvCont 0
+	tv_wmCursorHide $tvBg 0
+	
 	if {$::option(systray_start) == 1} {
 		set ::choice(cb_systray_main) 1
 		main_systemTrayActivate 1
 		if {[winfo exists .tray]} {
 			settooltip .tray [mc "TV-Viewer idle"]
 		}
+		main_systemTrayToggle
 		tkwait visibility .
+		autoscroll $stations.scrbSlist
 		#FIXME Does root window need a minsize?
 		#~ wm minsize . [winfo reqwidth .] [winfo reqheight .]
-		main_systemTrayToggle
+		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + 141]
+		wm minsize . 250 $height
 	} else {
 		tkwait visibility .
-		#~ wm minsize . [winfo reqwidth .] [winfo reqheight .]
+		autoscroll $stations.scrbSlist
+		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + 141]
+		wm minsize . 250 $height
 	}
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.

@@ -57,13 +57,13 @@ proc station_searchUi {tree} {
 	-text [mc "Start"] \
 	-compound left \
 	-image $::icon_s(dialog-ok-apply) \
-	-command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1; station_searchRequires $tree"
+	-command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1; station_searchRequires $tree"
 	
 	ttk::button $bf.b_cancel \
 	-text [mc "Cancel"] \
 	-compound left \
 	-image $::icon_s(dialog-cancel) \
-	-command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1"
+	-command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
 	
 	grid columnconfigure $wtop 0 -weight 1
 	grid columnconfigure $mf 0 -weight 1
@@ -111,7 +111,7 @@ proc station_searchUi {tree} {
 	
 	wm resizable $wtop 0 0
 	wm title $wtop [mc "Station search options"]
-	wm protocol $wtop WM_DELETE_WINDOW "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1"
+	wm protocol $wtop WM_DELETE_WINDOW "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
 	wm protocol .station WM_DELETE_WINDOW " "
 	wm resizable .station 0 0
 	wm iconphoto $wtop $::icon_b(seditor)
@@ -239,7 +239,7 @@ Please wait..."] \
 	-text [mc "Cancel"] \
 	-compound left \
 	-image $::icon_s(dialog-cancel) \
-	-command "station_search 0 cancel 0 0 0 0; grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW station_editExit; wm resizable .station 1 1"
+	-command "station_search 0 cancel 0 0 0 0; grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
 	
 	grid columnconfigure $wtop 0 -minsize 280
 	grid columnconfigure $mf 0 -weight 1
@@ -383,7 +383,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			after 3000 {grab release .station.top_search
 			destroy .station.top_search
 			grab .station
-			wm protocol .station WM_DELETE_WINDOW station_editExit
+			wm protocol .station WM_DELETE_WINDOW "station_editExit cancel"
 			wm resizable .station 1 1}
 		}
 	} else {
@@ -416,7 +416,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			after 3000 {grab release .station.top_search
 			destroy .station.top_search
 			grab .station
-			wm protocol .station WM_DELETE_WINDOW station_editExit
+			wm protocol .station WM_DELETE_WINDOW "station_editExit cancel"
 			wm resizable .station 1 1}
 		}
 	}

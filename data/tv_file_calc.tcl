@@ -28,10 +28,8 @@ proc tv_fileComputeSize {seconds} {
 		catch {after cancel $::data(file_sizeid)}
 		return
 	}
-	if {[winfo exists .tv.file_play_bar.b_pause]} {
-		set ::data(file_size) [expr [clock seconds] - $seconds]
-		set ::data(file_sizeid) [after 50 [list tv_fileComputeSize $seconds]]
-	}
+	set ::data(file_size) [expr [clock seconds] - $seconds]
+	set ::data(file_sizeid) [after 50 [list tv_fileComputeSize $seconds]]
 }
 
 proc tv_fileComputePos {stop} {
@@ -40,78 +38,76 @@ proc tv_fileComputePos {stop} {
 		catch {after cancel $::data(file_posid)}
 		return
 	}
-	if {[winfo exists .tv.file_play_bar.b_pause]} {
-		if {[.tv.file_play_bar.b_pause instate disabled] == 0} {
-			set ::data(file_pos) [expr [clock seconds] - $::data(file_pos_calc)]
-			set lhours [expr ($::data(file_pos)%86400)/3600]
-			if {[string length $lhours] < 2} {
-				set lhours "0$lhours"
-			}
-			set lmins [expr ($::data(file_pos)%3600)/60]
-			if {[string length $lmins] < 2} {
-				set lmins "0$lmins"
-			}
-			set lsecs [expr $::data(file_pos)%60]
-			if {[string length $lsecs] < 2} {
-				set lsecs "0$lsecs"
-			}
-			if {[info exists ::data(file_size)]} {
-				set shours [expr ($::data(file_size)%86400)/3600]
-				if {[string length $shours] < 2} {
-					set shours "0$shours"
-				}
-				set smins [expr ($::data(file_size)%3600)/60]
-				if {[string length $smins] < 2} {
-					set smins "0$smins"
-				}
-				set ssecs [expr $::data(file_size)%60]
-				if {[string length $ssecs] < 2} {
-					set ssecs "0$ssecs"
-				}
-				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"} {
-					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
-				}
-			}  else {
-				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / 00:00:00"} {
-					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
-				}
-			}
-			set ::data(file_posid) [after 10 [list tv_fileComputePos 0]]
-		} else {
-			set lhours [expr ($::data(file_pos)%86400)/3600]
-			if {[string length $lhours] < 2} {
-				set lhours "0$lhours"
-			}
-			set lmins [expr ($::data(file_pos)%3600)/60]
-			if {[string length $lmins] < 2} {
-				set lmins "0$lmins"
-			}
-			set lsecs [expr $::data(file_pos)%60]
-			if {[string length $lsecs] < 2} {
-				set lsecs "0$lsecs"
-			}
-			if {[info exists ::data(file_size)]} {
-				set shours [expr ($::data(file_size)%86400)/3600]
-				if {[string length $shours] < 2} {
-					set shours "0$shours"
-				}
-				set smins [expr ($::data(file_size)%3600)/60]
-				if {[string length $smins] < 2} {
-					set smins "0$smins"
-				}
-				set ssecs [expr $::data(file_size)%60]
-				if {[string length $ssecs] < 2} {
-					set ssecs "0$ssecs"
-				}
-				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"} {
-					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
-				}
-			} else {
-				if {"$::choice(label_file_time)" != "$lhours:$lmins:$lsecs / 00:00:00"} {
-					set ::choice(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
-				}
-			}
-			set ::data(file_posid) [after 50 [list tv_fileComputePos 0]]
+	if {[.ftoolb_Bot.bPause instate disabled] == 0} {
+		set ::data(file_pos) [expr [clock seconds] - $::data(file_pos_calc)]
+		set lhours [expr ($::data(file_pos)%86400)/3600]
+		if {[string length $lhours] < 2} {
+			set lhours "0$lhours"
 		}
+		set lmins [expr ($::data(file_pos)%3600)/60]
+		if {[string length $lmins] < 2} {
+			set lmins "0$lmins"
+		}
+		set lsecs [expr $::data(file_pos)%60]
+		if {[string length $lsecs] < 2} {
+			set lsecs "0$lsecs"
+		}
+		if {[info exists ::data(file_size)]} {
+			set shours [expr ($::data(file_size)%86400)/3600]
+			if {[string length $shours] < 2} {
+				set shours "0$shours"
+			}
+			set smins [expr ($::data(file_size)%3600)/60]
+			if {[string length $smins] < 2} {
+				set smins "0$smins"
+			}
+			set ssecs [expr $::data(file_size)%60]
+			if {[string length $ssecs] < 2} {
+				set ssecs "0$ssecs"
+			}
+			if {"$::main(label_file_time)" != "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"} {
+				set ::main(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
+			}
+		}  else {
+			if {"$::main(label_file_time)" != "$lhours:$lmins:$lsecs / 00:00:00"} {
+				set ::main(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
+			}
+		}
+		set ::data(file_posid) [after 10 [list tv_fileComputePos 0]]
+	} else {
+		set lhours [expr ($::data(file_pos)%86400)/3600]
+		if {[string length $lhours] < 2} {
+			set lhours "0$lhours"
+		}
+		set lmins [expr ($::data(file_pos)%3600)/60]
+		if {[string length $lmins] < 2} {
+			set lmins "0$lmins"
+		}
+		set lsecs [expr $::data(file_pos)%60]
+		if {[string length $lsecs] < 2} {
+			set lsecs "0$lsecs"
+		}
+		if {[info exists ::data(file_size)]} {
+			set shours [expr ($::data(file_size)%86400)/3600]
+			if {[string length $shours] < 2} {
+				set shours "0$shours"
+			}
+			set smins [expr ($::data(file_size)%3600)/60]
+			if {[string length $smins] < 2} {
+				set smins "0$smins"
+			}
+			set ssecs [expr $::data(file_size)%60]
+			if {[string length $ssecs] < 2} {
+				set ssecs "0$ssecs"
+			}
+			if {"$::main(label_file_time)" != "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"} {
+				set ::main(label_file_time) "$lhours:$lmins:$lsecs / $shours:$smins:$ssecs"
+			}
+		} else {
+			if {"$::main(label_file_time)" != "$lhours:$lmins:$lsecs / 00:00:00"} {
+				set ::main(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
+			}
+		}
+		set ::data(file_posid) [after 50 [list tv_fileComputePos 0]]
 	}
 }

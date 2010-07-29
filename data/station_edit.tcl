@@ -23,19 +23,23 @@ proc station_editPreview {w} {
 	if {$status_tv_playback != 1} {
 		tv_playbackStop 0 pic
 	} else {
+		if {"[string trim [$w selection]]" == {}} {
+			log_writeOutTv 1 "You need to select a channel to be previewed."
+			return
+		}
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$status_get_input == 0} {
 			if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
 				set freq [lindex [$w item [lindex [$w selection] end] -values] 1]
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
-				wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
-				tv_Playback .tv.bg .tv.bg.w 0 0
+				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				tv_Playback .ftvBg .ftvBg.cont 0 0
 			} else {
 				tv_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
-				wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
 			}
 		} else {
 			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
@@ -53,13 +57,13 @@ proc station_editZap {w} {
 		if {$status_get_input == 0} {
 			if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 1]}
-				wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
 				return
 			} else {
 				tv_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
-				wm title .tv "TV - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
 			}
 		} else {
 			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
@@ -94,154 +98,119 @@ proc station_editSave {w} {
 			close $open_sfile_append
 		}
 	}
-	station_editExit
+	station_editExit save
 }
 
-proc station_editExit {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editExit \033\[0m"
-	catch {array unset ::kanalid}
-	catch {array unset ::kanalcall}
-	catch {array unset ::kanalinput}
-	log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
-	if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
-		set status_tv_playback [tv_callbackMplayerRemote alive]
-		if {$status_tv_playback != 1} {
-			tv_playbackStop 0 nopic
-		}
-		log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
-		log_writeOutTv 2 "Please create one using the Station Editor."
-		log_writeOutTv 2 "Make sure you checked the configuration first!"
-	} else {
-		set file "$::option(home)/config/stations_$::option(frequency_table).conf"
-		set open_channel_file [open $file r]
-		set i 1
-		while {[gets $open_channel_file line]!=-1} {
-			if {[string match #* $line] || [string trim $line] == {} } continue
-			if {[llength $line] < 3} {
-				lassign $line ::kanalid($i) ::kanalcall($i)
-				set ::kanalinput($i) $::option(video_input)
-			} else {
-				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+proc station_editExit {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editExit \033\[0m \{$handler\}"
+	if {"$handler" == "save"} {
+		catch {array unset ::kanalid}
+		catch {array unset ::kanalcall}
+		catch {array unset ::kanalinput}
+		log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
+		if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
+			set status_tv_playback [tv_callbackMplayerRemote alive]
+			if {$status_tv_playback != 1} {
+				tv_playbackStop 0 nopic
 			}
-			set ::station(max) $i
-			incr i
-		}
-		close $open_channel_file
-		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 			log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
 			log_writeOutTv 2 "Please create one using the Station Editor."
 			log_writeOutTv 2 "Make sure you checked the configuration first!"
 		} else {
-			log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
-			if {[file exists "$::option(home)/config/lastchannel.conf"]} {
-				set last_channel_conf "$::option(home)/config/lastchannel.conf"
-				set open_lastchannel [open $last_channel_conf r]
-				set open_lastchannel_read [read $open_lastchannel]
-				lassign $open_lastchannel_read kanal channel sendernummer
-				set ::station(last) "\{$kanal\} $channel $sendernummer"
-				set ::station(old) "\{$kanal\} $channel $sendernummer"
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-				close $open_lastchannel
-				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+			set file "$::option(home)/config/stations_$::option(frequency_table).conf"
+			set open_channel_file [open $file r]
+			set i 1
+			while {[gets $open_channel_file line]!=-1} {
+				if {[string match #* $line] || [string trim $line] == {} } continue
+				if {[llength $line] < 3} {
+					lassign $line ::kanalid($i) ::kanalcall($i)
+					set ::kanalinput($i) $::option(video_input)
+				} else {
+					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+				}
+				set ::station(max) $i
+				incr i
+			}
+			close $open_channel_file
+			if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+				log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
+				log_writeOutTv 2 "Please create one using the Station Editor."
+				log_writeOutTv 2 "Make sure you checked the configuration first!"
 			} else {
-				set last_channel_conf "$::option(home)/config/lastchannel.conf"
-				set fileId [open $last_channel_conf "w"]
-				puts -nonewline $fileId "\{$::kanalid(1)\} $::kanalcall(1) 1"
-				close $fileId
-				set ::station(last) "\{$::kanalid(1)\} $::kanalcall(1) 1"
-				set ::station(old) "\{$::kanalid(1)\} $::kanalcall(1) 1"
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+				log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
+				if {[file exists "$::option(home)/config/lastchannel.conf"]} {
+					set last_channel_conf "$::option(home)/config/lastchannel.conf"
+					set open_lastchannel [open $last_channel_conf r]
+					set open_lastchannel_read [read $open_lastchannel]
+					lassign $open_lastchannel_read kanal channel sendernummer
+					set ::station(last) "\{$kanal\} $channel $sendernummer"
+					set ::station(old) "\{$kanal\} $channel $sendernummer"
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					close $open_lastchannel
+					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+				} else {
+					set last_channel_conf "$::option(home)/config/lastchannel.conf"
+					set fileId [open $last_channel_conf "w"]
+					puts -nonewline $fileId "\{$::kanalid(1)\} $::kanalcall(1) 1"
+					close $fileId
+					set ::station(last) "\{$::kanalid(1)\} $::kanalcall(1) 1"
+					set ::station(old) "\{$::kanalid(1)\} $::kanalcall(1) 1"
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
+				}
 			}
 		}
+		
+		main_frontendChannelHandler sedit
+		
+		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+			#~ log_writeOutTv 2 "Disabling widgets due to no valid stations file."
+			#FIXME What to do with OSD Stationlists if no stations
+			#~ if {[winfo exists .tv.slist]} {
+				#~ log_writeOutTv 2 "No valid stations list, disabling station selector for video window."
+				#~ destroy .tv.slist
+			#~ }
+			#~ if {[winfo exists .tv.slist_lirc]} {
+				#~ log_writeOutTv 2 "No valid stations list, disabling lirc station selector for video window."
+				#~ destroy .tv.slist_lirc
+			#~ }
+			
+		} else {
+			#~ set status_tv_playback [tv_callbackMplayerRemote alive]
+			#~ if {$status_tv_playback != 1} {
+				#~ .station.top_buttons.b_station_preview state pressed
+			#~ }
+			#FIXME What to do with OSD Stationlists if no stations
+			#~ if {[winfo exists .tv.slist.lb_station] == 1 && [winfo exists .tv.slist_lirc.lb_station] == 1} {
+				#~ .tv.slist.lb_station delete 0 end
+				#~ .tv.slist_lirc.lb_station delete 0 end
+				#~ for {set i 1} {$i <= $::station(max)} {incr i} {
+					#~ if {$i < 10} {
+						#~ .tv.slist.lb_station insert end " $i     $::kanalid($i)"
+					#~ } else {
+						#~ if {$i < 100} {
+							#~ .tv.slist.lb_station insert end " $i   $::kanalid($i)"
+						#~ } else {
+							#~ .tv.slist.lb_station insert end " $i $::kanalid($i)"
+						#~ }
+					#~ }
+					#~ .tv.slist_lirc.lb_station insert end "$::kanalid($i)"
+				#~ }
+			#~ }
+		}
+		log_writeOutTv 0 "Exiting station editor."
+	} else {
+		log_writeOutTv 0 "Exiting station editor without any changes."
 	}
 	
-	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-		set status_tv_playback [tv_callbackMplayerRemote alive]
-		if {$status_tv_playback != 1} {
-			tv_playbackStop 0 pic
-		}
-		log_writeOutTv 2 "Disabling widgets due to no valid stations file."
-		.label_stations configure -text ...
-		foreach widget [split [winfo children .top_buttons]] {
-			$widget state disabled
-		}
-		foreach widget [split [winfo children .bottom_buttons]] {
-			if {[string match *scale_volume $widget] || [string match *button_mute $widget]} continue
-			$widget state disabled
-		}
-		if {[winfo exists .tv.slist]} {
-			log_writeOutTv 2 "No valid stations list, disabling station selector for video window."
-			destroy .tv.slist
-		}
-		if {[winfo exists .tv.slist_lirc]} {
-			log_writeOutTv 2 "No valid stations list, disabling lirc station selector for video window."
-			destroy .tv.slist_lirc
-		}
-		event_deleSedit
-		set status [monitor_partRunning 2]
-		if {[lindex $status 0] == 1} {
-			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
-		}
-	} else {
-		log_writeOutTv 0 "Inserting all stations into station list."
-		set status_tv_playback [tv_callbackMplayerRemote alive]
-		if {$status_tv_playback != 1} {
-			.station.top_buttons.b_station_preview state pressed
-		}
-		.label_stations configure -text [lindex $::station(last) 0]
-		foreach widget [split [winfo children .top_buttons]] {
-			$widget state !disabled
-		}
-		foreach widget [split [winfo children .bottom_buttons]] {
-			if {[string match *scale_volume $widget] || [string match *button_mute $widget] || [string match *button_starttv $widget]} continue
-			$widget state !disabled
-		}
-		if {[winfo exists .frame_slistbox.listbox_slist]} {
-			.frame_slistbox.listbox_slist configure -state normal
-			.frame_slistbox.listbox_slist delete 0 end
-			for {set i 1} {$i <= $::station(max)} {incr i} {
-				if {$i < 10} {
-					.frame_slistbox.listbox_slist insert end " $i     $::kanalid($i)"
-				} else {
-					if {$i < 100} {
-						.frame_slistbox.listbox_slist insert end " $i   $::kanalid($i)"
-					} else {
-						.frame_slistbox.listbox_slist insert end " $i $::kanalid($i)"
-					}
-				}
-			}
-			.frame_slistbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
-			.frame_slistbox.listbox_slist activate [expr [lindex $::station(last) 2] - 1]
-			catch {.frame_slistbox.listbox_slist see [.frame_slistbox.listbox_slist curselection]}
-		}
-		if {[winfo exists .tv.slist.lb_station] == 1 && [winfo exists .tv.slist_lirc.lb_station] == 1} {
-			.tv.slist.lb_station delete 0 end
-			.tv.slist_lirc.lb_station delete 0 end
-			for {set i 1} {$i <= $::station(max)} {incr i} {
-				if {$i < 10} {
-					.tv.slist.lb_station insert end " $i     $::kanalid($i)"
-				} else {
-					if {$i < 100} {
-						.tv.slist.lb_station insert end " $i   $::kanalid($i)"
-					} else {
-						.tv.slist.lb_station insert end " $i $::kanalid($i)"
-					}
-				}
-				.tv.slist_lirc.lb_station insert end "$::kanalid($i)"
-			}
-		}
-		event_constr 1
-		set status [monitor_partRunning 2]
-		if {[lindex $status 0] == 1} {
-			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
-		}
-	}
-	log_writeOutTv 0 "Exiting station editor."
 	grab release .station
-	if {$::option(systray_close) == 1} {
-		wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-	}
+	#FIXME Close to tray deactivated
+	#~ if {$::option(systray_close) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ } else {
+		#~ 
+	#~ }
+	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	destroy .station
 }
 
@@ -255,8 +224,8 @@ proc station_editUi {} {
 		}
 	}
 	
-	if {[wm attributes .tv -fullscreen] == 1} {
-		tv_wmFullscreen .tv .tv.bg.w .tv.bg
+	if {[wm attributes . -fullscreen] == 1} {
+		tv_wmFullscreen . .ftvBg.cont .ftvBg
 	}
 	
 	# Setting up main Interface
@@ -340,7 +309,7 @@ proc station_editUi {} {
 		
 		ttk::button $wfbottom.b_exit \
 		-text [mc "Cancel"] \
-		-command station_editExit \
+		-command [list station_editExit cancel]\
 		-compound left \
 		-image $::icon_s(dialog-cancel)
 		
@@ -469,11 +438,11 @@ proc station_editUi {} {
 		bind $wfstation.tv_station <Motion> break
 		bind $wfstation.tv_station <Double-ButtonPress-1> [list station_itemEdit $wfstation.tv_station]
 		bind $wfstation.tv_station <<TreeviewSelect>> [list station_editZap $wfstation.tv_station]
-		bind $w <Control-Key-x> {station_editExit}
+		bind $w <Control-Key-x> [list station_editExit cancel]
 		bind $w <Key-F1> [list info_helpHelp]
 		
 		wm title $w [mc "Station Editor"]
-		wm protocol $w WM_DELETE_WINDOW station_editExit
+		wm protocol $w WM_DELETE_WINDOW [list station_editExit cancel]
 		wm iconphoto $w $::icon_b(seditor)
 		wm transient $w .
 		if {$::option(tooltips) == 1} {
@@ -496,9 +465,9 @@ Deactivated stations will be marked red."]
 		if {$status_tv_playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
 		}
-		if {$::option(systray_close) == 1} {
-			wm protocol . WM_DELETE_WINDOW {  }
-		}
+		#~ if {$::option(systray_close) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {  }
+		#~ }
 		tkwait visibility $w
 		grab $w
 		wm minsize .station [winfo width .station] [winfo height .station]

@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file normalize [file join [info s
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_lirc"
 
-set option(release_version) {0.8.2a1 94 27.07.2010}
+set option(release_version) {0.8.2a1 95 30.07.2010}
 
 source $option(root)/agrep.tcl
 source $option(root)/main_read_config.tcl
@@ -166,7 +166,7 @@ if {$start_options(slist_osd_down)} {
 	exit 0
 }
 if {$start_options(fullscreen)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmFullscreen .tv .tv.bg.w .tv.bg"
+	command_WritePipe 0 "tv-viewer_main tv_wmFullscreen . .ftvBg .ftvBg.cont"
 	log_writeOutTv 0 "Lirc emitter received Signal fullscreen"
 	exit 0
 }
@@ -176,12 +176,12 @@ if {$start_options(quit)} {
 	exit 0
 }
 if {$start_options(zoom_incr)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmPanscan .tv.bg.w 1"
+	command_WritePipe 0 "tv-viewer_main tv_wmPanscan .ftvBg.cont 1"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr"
 	exit 0
 }
 if {$start_options(zoom_decr)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmPanscan .tv.bg.w -1"
+	command_WritePipe 0 "tv-viewer_main tv_wmPanscan .ftvBg.cont -1"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr"
 	exit 0
 }
@@ -191,12 +191,12 @@ if {$start_options(zoom_auto)} {
 	exit 0
 }
 if {$start_options(size_stnd)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmGivenSize .tv.bg 1"
+	command_WritePipe 0 "tv-viewer_main tv_wmGivenSize .ftvBg 1"
 	log_writeOutTv 0 "Lirc emitter received Signal size_stnd"
 	exit 0
 }
 if {$start_options(size_double)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmGivenSize .tv.bg 2"
+	command_WritePipe 0 "tv-viewer_main tv_wmGivenSize .ftvBg 2"
 	log_writeOutTv 0 "Lirc emitter received Signal size_double"
 	exit 0
 }
@@ -251,57 +251,57 @@ if {$start_options(mute)} {
 	exit 0
 }
 if {$start_options(forward_10s)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<forward_10s>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<forward_10s>>"
 	log_writeOutTv 0 "Lirc emitter received Signal forward_10s"
 	exit 0
 }
 if {$start_options(forward_1m)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<forward_1m>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<forward_1m>>"
 	log_writeOutTv 0 "Lirc emitter received Signal forward_1m"
 	exit 0
 }
 if {$start_options(forward_10m)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<forward_10m>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<forward_10m>>"
 	log_writeOutTv 0 "Lirc emitter received Signal forward_10m"
 	exit 0
 }
 if {$start_options(forward_end)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<forward_end>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<forward_end>>"
 	log_writeOutTv 0 "Lirc emitter received Signal forward_end"
 	exit 0
 }
 if {$start_options(rewind_10s)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<rewind_10s>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<rewind_10s>>"
 	log_writeOutTv 0 "Lirc emitter received Signal rewind_10s"
 	exit 0
 }
 if {$start_options(rewind_1m)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<rewind_1m>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<rewind_1m>>"
 	log_writeOutTv 0 "Lirc emitter received Signal rewind_1m"
 	exit 0
 }
 if {$start_options(rewind_10m)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<rewind_10m>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<rewind_10m>>"
 	log_writeOutTv 0 "Lirc emitter received Signal rewind_10m"
 	exit 0
 }
 if {$start_options(rewind_start)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<rewind_start>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<rewind_start>>"
 	log_writeOutTv 0 "Lirc emitter received Signal rewind_start"
 	exit 0
 }
 if {$start_options(pause)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<pause>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<pause>>"
 	log_writeOutTv 0 "Lirc emitter received Signal pause"
 	exit 0
 }
 if {$start_options(start)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<start>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<start>>"
 	log_writeOutTv 0 "Lirc emitter received Signal start"
 	exit 0
 }
 if {$start_options(stop)} {
-	command_WritePipe 0 "tv-viewer_main event generate .tv <<stop>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<stop>>"
 	log_writeOutTv 0 "Lirc emitter received Signal stop"
 	exit 0
 }

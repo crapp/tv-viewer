@@ -60,11 +60,9 @@ proc chan_zapperTree {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperTree \033\[0m \{$tree\}"
 	if {"[$tree state]" != "disabled"} {
 		set get_tree_item [$tree item [$tree selection] -values]
-		puts "get_tree_item $get_tree_item"
 		set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 		set ::station(last) "\{[lindex $get_tree_item 0]\} $::kanalcall([lindex $get_tree_item 1]) [lindex $get_tree_item 1]"
 		log_writeOutTv 0 "Station treeview has been used to tune $::kanalid([lindex $::station(last) 2])."
-		puts "station(last) $::station(last)"
 		chan_zapperInputStart $tree last
 	}
 }

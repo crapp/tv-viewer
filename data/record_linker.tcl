@@ -27,11 +27,8 @@ proc record_linkerPrestart {handler} {
 	tv_fileComputePos cancel 
 	tv_fileComputeSize cancel
 	catch {tv_playbackStop 0 nopic}
-	if {[winfo exists .tv.file_play_bar]} {
-		destroy .tv.file_play_bar
-	}
-	if {[winfo exists .tv.l_image]} {
-		place forget .tv.l_image
+	if {[winfo exists .ftvBg.l_bgImage]} {
+		place forget .ftvBg.l_bgImage
 	}
 	if {[winfo exists .station]} {
 		log_writeOutTv 1 "A recording or timeshift was started while the station editor is open."
@@ -40,21 +37,22 @@ proc record_linkerPrestart {handler} {
 			log_writeOutTv 2 "You are running a station search while a recording fired."
 			log_writeOutTv 2 "The recording might be screwed up."
 			station_search 0 cancel 0 0 0 0
+			#FIXME Does station editor make a grab?
 			grab release .station.top_search
 			destroy .station.top_search
 		}
-		if {$::option(systray_close) == 1} {
-			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-		}
+		#~ if {$::option(systray_close) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		#~ }
 		grab release .station
 		destroy .station
 	}
 	if {[winfo exists .config_wizard]} {
 		log_writeOutTv 1 "A recording or timeshift was started while the configuration dialog is open."
 		log_writeOutTv 1 "Will close it now, you will loose all your changes."
-		if {$::option(systray_close) == 1} {
-			wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-		}
+		#~ if {$::option(systray_close) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		#~ }
 		grab release .config_wizard
 		destroy .config_wizard
 	}
@@ -78,11 +76,11 @@ proc record_linkerPrestart {handler} {
 	}
 	if {$::option(rec_allow_sta_change) == 0} {
 		log_writeOutTv 1 "Station change not allowed during recording."
-		.bottom_buttons.button_channelup state disabled
-		.bottom_buttons.button_channeldown state disabled
-		.bottom_buttons.button_channeljumpback state disabled
-		if {[winfo exists .frame_slistbox] == 1} {
-			.frame_slistbox.listbox_slist configure -state disabled
+		.ftoolb_Station.bChanDown state disabled
+		.ftoolb_Station.bChanUp state disabled
+		.ftoolb_Station.bChanJump state disabled
+		if {[winfo exists .fstations] == 1} {
+			main_frontendDisableTree .fstations.treeSlist 1
 		}
 		if {[winfo exists .tv.slist.lb_station] == 1} {
 			.tv.slist.lb_station configure -state disabled
@@ -92,10 +90,10 @@ proc record_linkerPrestart {handler} {
 		}
 	}
 	event_recordStart $handler
-	.top_buttons.button_starttv state disabled
-	.options_bar.mOptions entryconfigure 1 -state disabled
-	.options_bar.mOptions entryconfigure 3 -state disabled
-	.options_bar.mHelp entryconfigure 8 -state disabled
+	.ftoolb_Top.bTv state disabled
+	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state disabled
+	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state disabled
+	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state disabled
 }
 
 proc record_linkerPrestartCancel {handler} {
@@ -111,16 +109,15 @@ proc record_linkerPrestartCancel {handler} {
 	}
 	.ftoolb_Top.bTimeshift state !disabled
 	.ftoolb_Top.bTimeshift state !pressed
-	.top_buttons.button_epg state !disabled
-	.top_buttons.button_starttv state !disabled
-	.bottom_buttons.button_channelup state !disabled
-	.bottom_buttons.button_channeldown state !disabled
-	.bottom_buttons.button_channeljumpback state !disabled
-	.options_bar.mOptions entryconfigure 1 -state normal
-	.options_bar.mOptions entryconfigure 3 -state normal
-	.options_bar.mHelp entryconfigure 8 -state normal
-	if {[winfo exists .frame_slistbox] == 1} {
-		.frame_slistbox.listbox_slist configure -state normal
+	.ftoolb_Top.bTv state !disabled
+	.ftoolb_Station.bChanDown state !disabled
+	.ftoolb_Station.bChanUp state !disabled
+	.ftoolb_Station.bChanJump state !disabled
+	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
+	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
+	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
+	if {[winfo exists .fstations] == 1} {
+		main_frontendDisableTree .fstations.treeSlist 0
 	}
 	if {[winfo exists .tv.slist.lb_station] == 1} {
 		.tv.slist.lb_station configure -state normal
@@ -133,7 +130,7 @@ proc record_linkerPrestartCancel {handler} {
 		catch {launch_splashPlay cancel 0 0 0}
 		catch {place forget .ftvBg.l_anigif}
 		catch {destroy .ftvBg.l_anigif}
-		place .tv.l_image -relx 0.5 -rely 0.5 -anchor center
+		place .ftvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	}
 }
 
@@ -145,11 +142,11 @@ proc record_linkerRec {handler} {
 	} else {
 		log_writeOutTv 0 "Initiated timeshift sequence for main application."
 	}
-	bind .tv <<pause>> {tv_seek 0 0}
+	bind . <<pause>> {tv_seek 0 0}
 	if {"$handler" != "timeshift"} {
-		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
+		bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont record "$::tv(current_rec_file)"}
 	} else {
-		bind .tv <<start>> {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
+		bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont timeshift "$::tv(current_rec_file)"}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[file exists "$::option(home)/config/current_rec.conf"]} {
@@ -171,16 +168,16 @@ Started at %" [lindex $::station(last) 0] $stime]
 		}
 	}
 	if {"$handler" != "timeshift"} {
-		wm title .tv [mc "Recording % - Started at %" [lindex $::station(last) 0] $stime]
-		wm iconphoto .tv $::icon_b(record)
+		wm title . [mc "Recording % - Started at %" [lindex $::station(last) 0] $stime]
+		wm iconphoto . $::icon_b(record)
 	} else {
-		wm title .tv [mc "Timeshift %" [lindex $::station(last) 0]]
-		wm iconphoto .tv $::icon_b(timeshift)
+		wm title . [mc "Timeshift %" [lindex $::station(last) 0]]
+		wm iconphoto . $::icon_b(timeshift)
 	}
 	if {"$handler" != "timeshift"} {
-		catch {tv_Playback .tv.bg .tv.bg.w record "$::tv(current_rec_file)"}
+		catch {tv_Playback .ftvBg .ftvBg.cont record "$::tv(current_rec_file)"}
 	} else {
-		catch {tv_Playback .tv.bg .tv.bg.w timeshift "$::tv(current_rec_file)"}
+		catch {tv_Playback .ftvBg .ftvBg.cont timeshift "$::tv(current_rec_file)"}
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor arrow
@@ -224,7 +221,6 @@ proc record_linkerStationMain {station number} {
 	log_writeOutTv 0 "Scheduler initiated station sequence for main application."
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 	set ::station(last) "\{$station\} $::kanalcall($number) $number"
-	.label_stations configure -text "[lindex $::station(last) 0]"
 }
 
 proc record_linkerPreStop {handler} {
@@ -247,16 +243,15 @@ proc record_linkerPreStop {handler} {
 		log_writeOutTv 0 "Prestop sequence for timeshift initiated."
 	}
 	.ftoolb_Top.bTimeshift state !disabled
-	.top_buttons.button_epg state !disabled
-	.top_buttons.button_starttv state !disabled
-	.bottom_buttons.button_channelup state !disabled
-	.bottom_buttons.button_channeldown state !disabled
-	.bottom_buttons.button_channeljumpback state !disabled
-	.options_bar.mOptions entryconfigure 1 -state normal
-	.options_bar.mOptions entryconfigure 3 -state normal
-	.options_bar.mHelp entryconfigure 8 -state normal
-	if {[winfo exists .frame_slistbox] == 1} {
-		.frame_slistbox.listbox_slist configure -state normal
+	.ftoolb_Top.bTv state !disabled
+	.ftoolb_Station.bChanDown state !disabled
+	.ftoolb_Station.bChanUp state !disabled
+	.ftoolb_Station.bChanJump state !disabled
+	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
+	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
+	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
+	if {[winfo exists .fstations] == 1} {
+		main_frontendDisableTree .fstations.treeSlist 0
 	}
 	if {[winfo exists .tv.slist.lb_station] == 1} {
 		.tv.slist.lb_station configure -state normal
@@ -265,9 +260,9 @@ proc record_linkerPreStop {handler} {
 		.tv.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
-	if {[wm attributes .tv -fullscreen] == 1} {
-		bind .tv.bg.w <Motion> {tv_wmCursorHide .tv.bg.w 0}
-		bind .tv.bg <Motion> {tv_wmCursorHide .tv.bg 0}
+	if {[wm attributes . -fullscreen] == 1} {
+		bind .ftvBg.cont <Motion> {tv_wmCursorHide .ftvBg.cont 0}
+		bind .ftvBg <Motion> {tv_wmCursorHide .ftvBg 0}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
@@ -275,24 +270,22 @@ proc record_linkerPreStop {handler} {
 			.record_wizard.status_frame.b_rec_current state disabled
 		}
 	} else {
-		if {[winfo exists .tv.file_play_bar.b_save]} {
-			if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
-				.tv.file_play_bar.b_save state !disabled
-				if {$::option(tooltips_player) == 1} {
-					set file_size [expr round((([file size "$::option(timeshift_path)/timeshift.mpeg"] / 1024.0) / 1024.0))]
-					if {$file_size > 1000} {
-						set file_size [expr round($file_size / 1024)]
-						set file_size "$file_size GB"
-					} else {
-						set file_size "$file_size MB"
-					}
-					settooltip .tv.file_play_bar.b_save "Save timeshift video file
-	File size $file_size"
+		if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
+			.ftoolb_Bot.bSave state !disabled
+			if {$::option(tooltips_player) == 1} {
+				set file_size [expr round((([file size "$::option(timeshift_path)/timeshift.mpeg"] / 1024.0) / 1024.0))]
+				if {$file_size > 1000} {
+					set file_size [expr round($file_size / 1024)]
+					set file_size "$file_size GB"
+				} else {
+					set file_size "$file_size MB"
 				}
-			} else {
-				log_writeOutTv 2 "Can not detect timeshift video file."
-				log_writeOutTv 2 "Saving timeshift video file not possible"
+				settooltip .ftoolb_Bot.bSave "Save timeshift video file
+File size $file_size"
 			}
+		} else {
+			log_writeOutTv 2 "Can not detect timeshift video file."
+			log_writeOutTv 2 "Saving timeshift video file not possible"
 		}
 	}
 	if {[winfo exists .ftvBg.l_anigif]} {
