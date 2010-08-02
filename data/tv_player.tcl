@@ -335,7 +335,7 @@ proc tv_playerUi {} {
 		}
 		
 		wm protocol $mw WM_DELETE_WINDOW [list event generate . <<exit>>]
-		wm iconphoto $mw $::icon_b(starttv)
+		wm iconphoto $mw $::icon_s(starttv)
 		if {[info exists ::station(last)]} {
 			wm title $mw "TV - [lindex $::station(last) 0]"
 		} else {
@@ -411,8 +411,8 @@ proc tv_playerRendering {} {
 				}
 				set ::main(running_recording) 0
 			}
-			wm title . "TV - [lindex $::station(last) 0]"
-			wm iconphoto . $::icon_b(starttv)
+			.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
+			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
 			set status [tv_callbackMplayerRemote alive]
 			if {$status != 1} {
 				after 100 {tv_playerLoop}
@@ -461,8 +461,8 @@ proc tv_playerRendering {} {
 			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 				catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 			}
-			wm title . "TV - [lindex $::station(last) 0]"
-			wm iconphoto . $::icon_b(starttv)
+			.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
+			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
 		}
 		main_pic_streamDimensions
 		tv_Playback .ftvBg .ftvBg.cont 0 0

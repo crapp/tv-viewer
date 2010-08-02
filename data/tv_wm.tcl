@@ -25,6 +25,7 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 		grid remove .fstations
 		grid remove .ftoolb_Station
 		grid remove .ftoolb_Bot
+		grid remove .ftoolb_Disp
 		bind $tv_cont <Motion> {
 			tv_wmCursorHide .ftvBg.cont 0
 			tv_wmCursorPlaybar %Y
@@ -101,6 +102,9 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 		grid .ftoolb_Station -in . -row 4 -column 0 \
 		-sticky ew
 		grid .ftoolb_Bot -in . -row 4 -column 1 \
+		-sticky ew
+		grid .ftoolb_Disp -in . -row 5 -column 0 \
+		-columnspan 2 \
 		-sticky ew
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
@@ -180,38 +184,21 @@ proc tv_wmPanscanAuto {} {
 			set relativeX [dict get [place info .ftvBg.cont] -relx]
 			set relativeY [dict get [place info .ftvBg.cont] -rely]
 			set relheight [dict get [place info .ftvBg.cont] -relheight]
-			puts "relheight $relheight"
 			place .ftvBg.cont -relheight 1 -relx $relativeX -rely $relativeY
-			#.ftvBg configure -height [expr int(ceil([winfo width .ftvBg].0 / 1.777777778))]
 			set width [expr [winfo width .] - [winfo width .fstations]]
 			set height [expr int(ceil($width.0 / 1.777777778))]
-			puts "height $height"
-			puts "winfo height . [winfo height .]"
-			set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot]]
-			puts "heightwp $heightwp"
+			set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + [winfo height .ftoolb_Disp]]
 			wm geometry . [winfo width .]x$heightwp
 			set relheight [lindex [split [expr ([winfo reqwidth .ftvBg].0 / [winfo reqheight .ftvBg].0)] .] end]
-			puts "relheight $relheight"
 			set relheight 3333333333333333
 			set panscan_multi [expr int(ceil(0.$relheight / 0.05))]
-			puts "panscan_multi $panscan_multi"
 			set ::data(panscan) [expr ($panscan_multi * 5)]
 			log_writeOutTv 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
 			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
 			}
 			set ::data(panscanAuto) 1
-			puts "expression [expr [winfo reqwidth .ftvBg].0 / [winfo reqheight .ftvBg].0]"
-			puts "reqwidth before [winfo reqwidth .ftvBg]"
-			puts "reqheight before [winfo reqheight .ftvBg]"
-			puts "width before [winfo width .ftvBg]"
-			puts "height before [winfo height .ftvBg]"
-			#~ place .ftvBg.cont -relheight [expr [winfo reqwidth .ftvBg].0 / [winfo reqheight .ftvBg].0]
 			place .ftvBg.cont -relheight 1.3333333333333333
-			puts "reqwidth after [winfo reqwidth .ftvBg]"
-			puts "reqheight after [winfo reqheight .ftvBg]"
-			puts "width after [winfo width .ftvBg]"
-			puts "height after [winfo height .ftvBg]"
 		} else {
 			#FIXME needs more testing!! Deprecated??
 			.ftvBg configure -height [expr int(ceil([winfo width .ftvBg].0 / 1.33333333333))]
@@ -401,18 +388,22 @@ proc tv_wmCursorPlaybar {ypos} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
 				grid .ftoolb_Bot -in . -row 4 -column 1 \
 				-sticky ew
+				grid .ftoolb_Disp -in . -row 5 -column 0 \
+				-columnspan 2 \
+				-sticky ew
 				log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
 			}
 			return
 		}
 		if {[string trim [grid info .ftoolb_Bot]] != {}} {
-			if {$ypos < [expr [winfo screenheight .] - 60]} {
+			if {$ypos < [expr [winfo screenheight .] - 80]} {
 				grid remove .ftoolb_Bot
+				grid remove .ftoolb_Disp
 				log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
 				.ftvBg configure -cursor arrow
 				.ftvBg.cont configure -cursor arrow
-				tv_wmCursorHide .tv.bg 1
-				tv_wmCursorHide .tv.bg.w 1
+				tv_wmCursorHide .ftvBg 1
+				tv_wmCursorHide .ftvBg.cont 1
 			}
 			return
 		}

@@ -26,7 +26,8 @@ proc station_after_msg {var0 var1} {
 			after 0 [list tv_osd osd_station_f 2000 "$::kanalid($var0)"]
 		}
 }
-	wm title . "TV-Viewer [lindex $::option(release_version) 0] - $::kanalid($var0)"
+	.ftoolb_Disp.lDispText configure -text [mc "Now playing %" $::kanalid($var0)]
+	#~ wm title . "TV-Viewer [lindex $::option(release_version) 0] - "
 	if {[winfo exists .tray]} {
 		set status_tv [tv_callbackMplayerRemote alive]
 		if {$status_tv != 1} {

@@ -168,11 +168,11 @@ Started at %" [lindex $::station(last) 0] $stime]
 		}
 	}
 	if {"$handler" != "timeshift"} {
-		wm title . [mc "Recording % - Started at %" [lindex $::station(last) 0] $stime]
-		wm iconphoto . $::icon_b(record)
+		.ftoolb_Disp.lDispIcon configure -image $::icon_s(record)
+		.ftoolb_Disp.lDispText configure -text [mc "Recording % - Started at %" [lindex $::station(last) 0] $stime]
 	} else {
-		wm title . [mc "Timeshift %" [lindex $::station(last) 0]]
-		wm iconphoto . $::icon_b(timeshift)
+		.ftoolb_Disp.lDispIcon configure -image $::icon_s(record)
+		.ftoolb_Disp.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
 		catch {tv_Playback .ftvBg .ftvBg.cont record "$::tv(current_rec_file)"}

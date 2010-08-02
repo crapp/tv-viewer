@@ -554,6 +554,7 @@ proc tv_playbackStop {com handler} {
 	} else {
 		return 1
 	}
+	#FIXME Fix and test the window names for canceling hiding cursor?!
 	if {[info exists ::option(cursor_id\(.tv.bg\))] == 1} {
 		foreach id [split $::option(cursor_id\(.tv.bg\))] {
 			after cancel $id

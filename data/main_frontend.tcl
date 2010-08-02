@@ -482,6 +482,16 @@ proc main_frontendNewUi {} {
 	-variable main(volume_scale) \
 	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute] \
 	
+	label $toolbDisp.lDispIcon \
+	-compound center \
+	-background black \
+	-foreground white \
+	-image $::icon_s(starttv)
+	label $toolbDisp.lDispText \
+	-background black \
+	-foreground white \
+	-text [mc "Welcome to TV-Viewer"] \
+	-anchor center
 	label $toolbDisp.lTime \
 	-width 20 \
 	-background black \
@@ -595,12 +605,17 @@ proc main_frontendNewUi {} {
 	-sticky e
 	grid $toolbBot.scVolume -in $toolbBot -row 0 -column 13 \
 	-pady 2 \
-	-padx "2"
+	-padx "2 6"
 	
-	grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 0  \
+	grid $toolbDisp.lDispIcon -in $toolbDisp -row 0 -column 0 \
+	-sticky nsw \
+	-padx 2
+	grid $toolbDisp.lDispText -in $toolbDisp -row 0 -column 1 \
+	-sticky nsw \
+	-padx "0 2"
+	grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 2  \
 	-sticky nse \
-	-padx "2" \
-	-pady 1
+	-padx "2"
 	
 	
 	grid rowconfigure . 3 -weight 1
@@ -610,7 +625,7 @@ proc main_frontendNewUi {} {
 	grid columnconfigure $stations 0 -weight 1
 	grid columnconfigure $toolbTop 5 -weight 1
 	grid columnconfigure $toolbBot 12 -weight 1
-	grid columnconfigure $toolbDisp 0 -weight 1
+	grid columnconfigure $toolbDisp 2 -weight 1
 	
 	place $tvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	
@@ -757,7 +772,7 @@ proc main_frontendNewUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "widt tree [winfo width .fstations.treeSlist]"; puts "width frame [winfo width .fstations]"; puts "widt tree [winfo width .fstations.scrbSlist]"}
+	bind . <Key-x> {puts "widt tree [winfo height .ftoolb_Disp]"}
 	bind $stations.treeSlist <B1-Motion> break
 	bind $stations.treeSlist <Motion> break
 	
@@ -887,12 +902,12 @@ proc main_frontendNewUi {} {
 		autoscroll $stations.scrbSlist
 		#FIXME Does root window need a minsize?
 		#~ wm minsize . [winfo reqwidth .] [winfo reqheight .]
-		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + 141]
+		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + [winfo height .ftoolb_Disp] + 141]
 		wm minsize . 250 $height
 	} else {
 		tkwait visibility .
 		autoscroll $stations.scrbSlist
-		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + 141]
+		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + [winfo height .ftoolb_Disp] + 141]
 		wm minsize . 250 $height
 	}
 	

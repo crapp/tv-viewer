@@ -33,13 +33,13 @@ proc station_editPreview {w} {
 			if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
 				set freq [lindex [$w item [lindex [$w selection] end] -values] 1]
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
-				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				tv_Playback .ftvBg .ftvBg.cont 0 0
 			} else {
 				tv_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
-				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
 			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
@@ -57,13 +57,13 @@ proc station_editZap {w} {
 		if {$status_get_input == 0} {
 			if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 1]}
-				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				return
 			} else {
 				tv_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
-				wm title . "TV-Viewer [lindex $::option(release_version) 0] - [lindex [$w item [lindex [$w selection] end] -values] 0]"
+				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
 			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."

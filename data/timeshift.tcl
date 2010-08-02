@@ -154,7 +154,7 @@ proc timeshift_Save {tvw} {
 
 proc timeshift_CopyBar {ofile} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_CopyBar \033\[0m \{$ofile\}"
-	set wtop [toplevel .tv.top_cp_progress]
+	set wtop [toplevel .top_cp_progress]
 	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	
@@ -248,8 +248,8 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 			wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 		#~ }
 		#~ wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
-		grab release .tv.top_cp_progress
-		destroy .tv.top_cp_progress
+		grab release .top_cp_progress
+		destroy .top_cp_progress
 		return
 	}
 	catch {exec ps -eo "%p"} readpid_cp
@@ -262,7 +262,7 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 				set count_up [expr (([file size $ofile] - $old_size) / $increment)]
 				set counter [expr $counter + $count_up]
 				set ::timeshift(pgp) $counter
-				wm title .tv.top_cp_progress [mc "Copying...       %%%" [format %.2f $counter]]
+				wm title .top_cp_progress [mc "Copying...       %%%" [format %.2f $counter]]
 				set old_size [file size $ofile]
 				set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $file_size_s $cp_pid $increment]]
 			} else {
@@ -272,7 +272,7 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 			set ::timeshift(cp_id) [after 50 [list timeshift_CopyBarProgr $sfile $ofile $counter $file_size $old_size $file_size_s $cp_pid $increment]]
 		}
 	} else {
-		wm title .tv.top_cp_progress [mc "Copying...       finished"]
+		wm title .top_cp_progress [mc "Copying...       finished"]
 		set ::timeshift(lProgress) "$file_size_s / $file_size_s GB"
 		set ::timeshift(pgp) 100
 		log_writeOutTv 0 "Timesift video file copied. Output file:
@@ -284,8 +284,8 @@ $ofile"
 				wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 			#~ }
 			#~ wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
-			grab release .tv.top_cp_progress
-			destroy .tv.top_cp_progress
+			grab release .top_cp_progress
+			destroy .top_cp_progress
 		}
 	}
 }
