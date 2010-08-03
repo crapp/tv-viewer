@@ -24,7 +24,7 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.2a1 96 02.08.2010}
+set option(release_version) {0.8.2a1 97 03.08.2010}
 
 set main(debug_msg) [open /dev/null a]
 

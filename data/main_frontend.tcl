@@ -226,14 +226,14 @@ proc main_frontendChannelHandler {handler} {
 		bind .fstations.treeSlist <<TreeviewSelect>> {}
 		.ftoolb_Top.lInput configure -text [mc "unknown"]
 		foreach widget [split [winfo children .ftoolb_Top]] {
-			$widget state disabled
+			catch {$widget state disabled}
 		}
 		foreach widget [split [winfo children .ftoolb_Station]] {
-			$widget state disabled
+			catch {$widget state disabled}
 		}
 		foreach widget [split [winfo children .ftoolb_Bot]] {
 			if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
-			$widget state disabled
+			catch {$widget state disabled}
 		}
 		if {"$handler" == "main"} {
 			event_constr 0
