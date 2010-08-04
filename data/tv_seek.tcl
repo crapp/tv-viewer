@@ -145,26 +145,26 @@ proc tv_seek {secs direct} {
 	}
 }
 
-proc tv_seekSwitch {w direct handler seek_var} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_seekSwitch \033\[0m \{$w\} \{$direct\} \{$handler\} \{$seek_var\}"
+proc tv_seekSwitch {btn direct handler seek_var} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_seekSwitch \033\[0m \{$btn\} \{$direct\} \{$handler\} \{$seek_var\}"
 	array set seek_com {
-		-10s {event generate .tv <<rewind_10s>>}
-		-1m {event generate .tv <<rewind_1m>>}
-		-10m {event generate .tv <<rewind_10m>>}
-		+10s {event generate .tv <<forward_10s>>}
-		+1m {event generate .tv <<forward_1m>>}
-		+10m {event generate .tv <<forward_10m>>}
+		-10s {event generate . <<rewind_10s>>}
+		-1m {event generate . <<rewind_1m>>}
+		-10m {event generate . <<rewind_10m>>}
+		+10s {event generate . <<forward_10s>>}
+		+1m {event generate . <<forward_1m>>}
+		+10m {event generate . <<forward_10m>>}
 	}
 	set seek_var_rew {::tv(check_rew_10s) ::tv(check_rew_1m) ::tv(check_rew_10m)}
 	set seek_var_for {::tv(check_fow_10s) ::tv(check_fow_1m) ::tv(check_fow_10m)}
 	if {$direct == -1} {
-		$w.b_rewind_small configure -command "$seek_com($handler)"
+		$btn configure -command "$seek_com($handler)"
 		foreach var $seek_var_rew {
 			set $var 0
 		}
 		set ::$seek_var 1
 	} else {
-		$w.b_forward_small configure -command "$seek_com($handler)"
+		$btn configure -command "$seek_com($handler)"
 		foreach var $seek_var_for {
 			set $var 0
 		}

@@ -36,7 +36,6 @@ exit 1
 #necessary changes will be made by the configure tcl script.
 
 set where_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
-set option(release_version) {0.8.2a1 97 03.08.2010}
 set prefix FOO
 set eprefix FOO
 set bindir FOO
@@ -47,6 +46,17 @@ set mandir FOO
 set docdir FOO
 set arch FOO
 set tktray FOO
+
+if {[file exists $where_is/data/release_version.tcl]} {
+	source $where_is/data/release_version.tcl
+} else {
+	puts "
+FATAL ERROR
+Could not read file
+$where_is/data/release_version.tcl
+EXIT 1"
+	exit 1
+}
 
 array set start_options {--uninstall 0 --help 0 --quiet 0}
 foreach command_argument $argv {

@@ -4,41 +4,37 @@
 #
 
 mcset $lang \
-	{Tune up.} \
-	{Tune up.}
+	{Tune up} \
+	{Tune up}
 
 mcset $lang \
-	{Tune down.} \
-	{Tune down.}
+	{Tune down} \
+	{Tune down}
 
 mcset $lang \
-	{Zap among the last two stations.} \
-	{Zap among the last two stations.}
+	{Zap among the last two stations} \
+	{Zap among the last two stations}
 
 mcset $lang \
-	{Show/hide station list.} \
-	{Show/hide station list.}
+	{Alter volume} \
+	{Alter volume}
 
 mcset $lang \
-	{Alter volume.} \
-	{Alter volume.}
+	{Toggle mute} \
+	{Toggle mute}
 
 mcset $lang \
-	{Toggle mute.} \
-	{Toggle mute.}
+	{Start/Stop timeshift} \
+	{Start/Stop timeshift}
 
 mcset $lang \
-	{Start/Stop timeshift.} \
-	{Start/Stop timeshift.}
+	{Start/Stop record} \
+	{Start/Stop record}
 
 mcset $lang \
-	{Start/Stop record.} \
-	{Start/Stop record.}
+	{Execute the selected EPG application} \
+	{Execute the selected EPG application}
 
 mcset $lang \
-	{Execute the selected epg application.} \
-	{Execute the selected epg application.}
-
-mcset $lang \
-	{Start/Stop TV playback.} \
-	{Start/stop TV playback.}
+	{Start/Stop TV playback} \
+	{Start/stop TV playback}

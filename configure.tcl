@@ -44,7 +44,17 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set printchan stdout
-set option(release_version) {0.8.2a1 97 03.08.2010}
+
+if {[file exists $where_is/data/release_version.tcl]} {
+	source $where_is/data/release_version.tcl
+} else {
+	puts "
+FATAL ERROR
+Could not read file
+$where_is/data/release_version.tcl
+EXIT 1"
+	exit 1
+}
 
 array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --host 0}
 foreach command_argument $argv {

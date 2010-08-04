@@ -426,14 +426,17 @@ proc main_frontendNewUi {} {
 	ttk::button $toolbBot.bPlay \
 	-image $::icon_m(playback-start) \
 	-style Toolbutton \
+	-state disabled \
 	-command {event generate . <<start>>}
 	ttk::button $toolbBot.bPause \
 	-image $::icon_m(playback-pause) \
 	-style Toolbutton \
+	-state disabled \
 	-command {event generate . <<pause>>}
 	ttk::button $toolbBot.bStop \
 	-image $::icon_m(playback-stop) \
 	-style Toolbutton \
+	-state disabled \
 	-command {event generate . <<stop>>}
 	
 	ttk::separator $toolbBot.seperat1 \
@@ -442,25 +445,40 @@ proc main_frontendNewUi {} {
 	ttk::button $toolbBot.bRewStart \
 	-style Toolbutton \
 	-image $::icon_m(rewind-first) \
+	-state disabled \
 	-command {event generate . <<rewind_start>>}
 	ttk::button $toolbBot.bRewSmall \
 	-style Toolbutton \
 	-image $::icon_m(rewind-small) \
+	-state disabled \
 	-command {event generate . <<rewind_10s>>}
 	ttk::menubutton $toolbBot.mbRewChoose \
 	-style Toolbutton \
-	-image $::icon_e(arrow-d)
+	-image $::icon_e(arrow-d) \
+	-menu $toolbBot.mbRewChoose.mRewChoose \
+	-state disabled
 	ttk::button $toolbBot.bForwSmall \
 	-style Toolbutton \
 	-image $::icon_m(forward-small) \
+	-state disabled \
 	-command {event generate . <<forward_10s>>}
 	ttk::menubutton $toolbBot.mbForwChoose \
 	-style Toolbutton \
-	-image $::icon_e(arrow-d)
+	-image $::icon_e(arrow-d) \
+	-menu $toolbBot.mbForwChoose.mForwChoose \
+	-state disabled
 	ttk::button $toolbBot.bForwEnd \
 	-style Toolbutton \
 	-image $::icon_m(forward-last) \
+	-state disabled \
 	-command {event generate . <<forward_end>>}
+	
+	set mRew [menu $toolbBot.mbRewChoose.mRewChoose \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mForw [menu $toolbBot.mbForwChoose.mForwChoose \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
 	
 	ttk::separator $toolbBot.seperat2 \
 	-orient vertical
@@ -721,6 +739,37 @@ proc main_frontendNewUi {} {
 	-compound left \
 	-image $::icon_s(help-about) \
 	-label [mc "Info"]
+	
+	$mRew add checkbutton \
+	-label [mc "-10 seconds"] \
+	-accelerator [mc "Left"] \
+	-command [list tv_seekSwitch .ftoolb_Bot.bRewSmall -1 -10s tv(check_rew_10s)] \
+	-variable tv(check_rew_10s)
+	$mRew add checkbutton \
+	-label [mc "-1 minute"] \
+	-accelerator [mc "Shift+Left"] \
+	-command [list tv_seekSwitch .ftoolb_Bot.bRewSmall -1 -1m tv(check_rew_1m)] \
+	-variable tv(check_rew_1m)
+	$mRew add checkbutton \
+	-label [mc "-10 minutes"] \
+	-accelerator [mc "Ctrl+Shift+Left"] \
+	-command [list tv_seekSwitch .ftoolb_Bot.bRewSmall -1 -10m tv(check_rew_10m)] \
+	-variable tv(check_rew_10m)
+	$mForw add checkbutton \
+	-label [mc "+10 seconds"] \
+	-accelerator [mc "Right"] \
+	-command [list tv_seekSwitch .ftoolb_Bot.bForwSmall 1 +10s tv(check_fow_10s)] \
+	-variable tv(check_fow_10s)
+	$mForw add checkbutton \
+	-label [mc "+1 minute"] \
+	-accelerator [mc "Shift+Right"] \
+	-command [list tv_seekSwitch .ftoolb_Bot.bForwSmall 1 +1m tv(check_fow_1m)] \
+	-variable tv(check_fow_1m)
+	$mForw add checkbutton \
+	-label [mc "+10 minutes"] \
+	-accelerator [mc "Ctrl+Shift+Right"] \
+	-command [list tv_seekSwitch .ftoolb_Bot.bForwSmall 1 +10m tv(check_fow_10m)] \
+	-variable tv(check_fow_10m)
 	
 	set font [ttk::style lookup [$stations.treeSlist cget -style] -font]
 	if {[string trim $font] == {}} {

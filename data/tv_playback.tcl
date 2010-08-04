@@ -234,6 +234,17 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
 		
 		set ::tv(pbMode) 0
+		set ::main(label_file_time) "--:-- / --:--"
+		
+		.ftoolb_Bot.bPause state disabled
+		.ftoolb_Bot.bPlay state disabled
+		.ftoolb_Bot.bStop state disabled
+		.ftoolb_Bot.bRewStart state disabled
+		.ftoolb_Bot.bRewSmall state disabled
+		.ftoolb_Bot.mbRewChoose state disabled
+		.ftoolb_Bot.bForwSmall state disabled
+		.ftoolb_Bot.mbForwChoose state disabled
+		.ftoolb_Bot.bForwEnd state disabled
 		
 		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
@@ -293,6 +304,13 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					bind . <<start>> {}
 					.ftoolb_Bot.bPause state !disabled
 					.ftoolb_Bot.bPlay state disabled
+					.ftoolb_Bot.bStop state !disabled
+					.ftoolb_Bot.bRewStart state !disabled
+					.ftoolb_Bot.bRewSmall state !disabled
+					.ftoolb_Bot.mbRewChoose state !disabled
+					.ftoolb_Bot.bForwSmall state !disabled
+					.ftoolb_Bot.mbForwChoose state !disabled
+					.ftoolb_Bot.bForwEnd state !disabled
 					
 					set ::data(mplayer) [open "|$::tv(mcommand)" r+]
 					fconfigure $::data(mplayer) -blocking 0 -buffering line

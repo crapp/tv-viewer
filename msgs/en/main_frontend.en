@@ -110,6 +110,10 @@ mcset $lang \
 	{and attach the generated file.}
 
 mcset $lang \
+	{Now playing %} \
+	{Now playing %s}
+
+mcset $lang \
 	{TV-Viewer %} \
 	{TV-Viewer %s}
 

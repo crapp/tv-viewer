@@ -36,16 +36,27 @@ proc tooltips {toolbTop toolbStation toolbBot section} {
 	if {"$section" == "main"} {
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_main) == 1} {
-				settooltip $toolbStation.bChanUp [mc "Tune up."]
-				settooltip $toolbStation.bChanDown [mc "Tune down."]
-				settooltip $toolbStation.bChanJump [mc "Zap among the last two stations."]
-				settooltip $toolbBot.scVolume [mc "Alter volume."]
-				settooltip $toolbBot.bVolMute [mc "Toggle mute."]
-				settooltip $toolbTop.bTimeshift [mc "Start/Stop timeshift."]
-				settooltip $toolbTop.bRecord [mc "Start/Stop record."]
-				settooltip $toolbTop.bEpg [mc "Execute the selected epg application."]
+				settooltip $toolbStation.bChanUp [mc "Tune up"]
+				settooltip $toolbStation.bChanDown [mc "Tune down"]
+				settooltip $toolbStation.bChanJump [mc "Zap among the last two stations"]
+				settooltip $toolbBot.scVolume [mc "Alter volume"]
+				settooltip $toolbBot.bVolMute [mc "Toggle mute"]
+				settooltip $toolbTop.bTimeshift [mc "Start/Stop timeshift"]
+				settooltip $toolbTop.bRecord [mc "Start/Stop record"]
+				settooltip $toolbTop.bEpg [mc "Execute the selected EPG application"]
 				settooltip $toolbTop.bRadio [mc "Switch to radio mode"]
-				settooltip $toolbTop.bTv [mc "Start/Stop TV playback."]
+				settooltip $toolbTop.bTv [mc "Start/Stop TV playback"]
+				settooltip $toolbBot.bPlay [mc "Start playback"]
+				settooltip $toolbBot.bPause [mc "Pause playback"]
+				settooltip $toolbBot.bStop [mc "Stop playback"]
+				settooltip $toolbBot.bRewStart [mc "Jump to the beginning"]
+				settooltip $toolbBot.bRewSmall [mc "Seek back"]
+				settooltip $toolbBot.mbRewChoose [mc "Choose amount of seek back"]
+				settooltip $toolbBot.bForwSmall [mc "Seek forward"]
+				settooltip $toolbBot.mbForwChoose [mc "Choose amount of seek forward"]
+				settooltip $toolbBot.bForwEnd [mc "Jump to the end"]
+				#~ settooltip $toolbBot.b_fullscreen [mc "Toggle fullscreen"]
+				#~ settooltip $toolbBot.l_time [mc "Current position / File length"]
 			} else {
 				settooltip $toolbStation.bChanUp {}
 				settooltip $toolbStation.bChanDown {}
@@ -57,6 +68,17 @@ proc tooltips {toolbTop toolbStation toolbBot section} {
 				settooltip $toolbTop.bEpg {}
 				settooltip $toolbTop.bRadio {}
 				settooltip $toolbTop.bTv {}
+				settooltip $toolbBot.bPlay {}
+				settooltip $toolbBot.bPause {}
+				settooltip $toolbBot.bStop {}
+				settooltip $toolbBot.bRewStart {}
+				settooltip $toolbBot.bRewSmall {}
+				settooltip $toolbBot.mbRewChoose {}
+				settooltip $toolbBot.bForwSmall {}
+				settooltip $toolbBot.mbForwChoose {}
+				settooltip $toolbBot.bForwEnd {}
+				#~ settooltip $toolbBot.b_fullscreen {}
+				#~ settooltip $toolbBot.l_time {}
 			}
 		} else {
 			settooltip $toolbStation.bChanUp {}
@@ -69,6 +91,17 @@ proc tooltips {toolbTop toolbStation toolbBot section} {
 			settooltip $toolbTop.bEpg {}
 			settooltip $toolbTop.bRadio {}
 			settooltip $toolbTop.bTv {}
+			settooltip $toolbBot.bPlay {}
+			settooltip $toolbBot.bPause {}
+			settooltip $toolbBot.bStop {}
+			settooltip $toolbBot.bRewStart {}
+			settooltip $toolbBot.bRewSmall {}
+			settooltip $toolbBot.mbRewChoose {}
+			settooltip $toolbBot.bForwSmall {}
+			settooltip $toolbBot.mbForwChoose {}
+			settooltip $toolbBot.bForwEnd {}
+			#~ settooltip $toolbBot.b_fullscreen {}
+			#~ settooltip $toolbBot.l_time {}
 		}
 		return
 	}

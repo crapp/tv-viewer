@@ -50,7 +50,7 @@ This is not recommended!"
 	}
 }
 
-set option(release_version) {0.8.2a1 97 03.08.2010}
+source $dwhere_is/release_version.tcl
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}

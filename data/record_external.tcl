@@ -24,10 +24,9 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
 
-set option(release_version) {0.8.2a1 97 03.08.2010}
-
 set main(debug_msg) [open /dev/null a]
 
+source $option(root)/data/release_version.tcl
 source $option(root)/data/agrep.tcl
 source $option(root)/data/main_read_config.tcl
 source $option(root)/data/main_read_station_file.tcl

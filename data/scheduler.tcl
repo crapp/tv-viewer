@@ -23,7 +23,6 @@ package require Tcl 8.5
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
-set option(release_version) {0.8.2a1 97 03.08.2010}
 
 set root_test "/usr/bin/tv-viewer.tst"
 set root_test_open [catch {open $root_test w}]
@@ -48,6 +47,7 @@ EXIT 1"
 	exit 1
 }
 
+source $option(root)/release_version.tcl
 source $option(root)/agrep.tcl
 source $option(root)/monitor.tcl
 source $option(root)/main_read_config.tcl

@@ -106,6 +106,10 @@ mcset $lang \
 	{und hänge die Datei an.}
 
 mcset $lang \
+	{Now playing %} \
+	{Jetzt läuft %s}
+
+mcset $lang \
 	{TV-Viewer %} \
 	{TV-Viewer %s}
 
