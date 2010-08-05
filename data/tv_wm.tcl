@@ -361,7 +361,10 @@ proc tv_wmGivenSize {w size} {
 	} else {
 		wm geometry . {}
 		$w configure -width [expr round($::option(resolx) * $size)] -height [expr round($::option(resoly) * $size)]
-		place .ftvBg.cont -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
+		set status [tv_callbackMplayerRemote alive]
+		if {$status != 1} {
+			place .ftvBg.cont -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
+		}
 		log_writeOutTv 0 "Setting size of application to [expr $size * 100]."
 		return
 	}

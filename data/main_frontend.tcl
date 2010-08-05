@@ -71,120 +71,6 @@ proc main_frontendEpg {} {
 	catch {exec sh -c "[subst $::option(epg_command)] >/dev/null 2>&1" &}
 }
 
-#~ proc main_frontendShowslist {w} {
-	#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendShowslist \033\[0m \{$w\}"
-	#~ if {[winfo exists .frame_slistbox] == 0} {
-		#~ 
-		#~ log_writeOutTv 0 "Building station list..."
-		#~ 
-		#~ $w.button_showslist state pressed
-		#~ 
-		#~ set wflbox [ttk::frame .frame_slistbox]
-		#~ 
-		#~ listbox $wflbox.listbox_slist \
-		#~ -yscrollcommand [list $wflbox.scrollbar_slist set] \
-		#~ -exportselection false \
-		#~ -takefocus 0
-		#~ 
-		#~ ttk::scrollbar $wflbox.scrollbar_slist \
-		#~ -orient vertical \
-		#~ -command [list $wflbox.listbox_slist yview]
-		#~ 
-		#~ grid $wflbox -in . -row 4 -column 0 \
-		#~ -columnspan 3 \
-		#~ -sticky news
-		#~ grid $wflbox.listbox_slist -in $wflbox -row 0 -column 0 \
-		#~ -sticky nesw \
-		#~ -pady "2 0"
-		#~ grid $wflbox.scrollbar_slist -in $wflbox -row 0 -column 1 \
-		#~ -sticky nws  \
-		#~ -pady "2 0"
-		#~ 
-		#~ grid rowconfigure $wflbox 0 -weight 1
-		#~ grid columnconfigure $wflbox 0  -weight 1
-		#~ 
-		#~ autoscroll $wflbox.scrollbar_slist
-		#~ 
-		#~ wm resizable . 1 1
-		#~ 
-		#~ if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			#~ log_writeOutTv 2 "There are no stations to insert into station list."
-			#~ $wflbox.listbox_slist configure -state disabled
-		#~ } else {
-			#~ for {set i 1} {$i <= $::station(max)} {incr i} {
-				#~ if {$i < 10} {
-					#~ $wflbox.listbox_slist insert end " $i     $::kanalid($i)"
-				#~ } else {
-					#~ if {$i < 100} {
-						#~ $wflbox.listbox_slist insert end " $i   $::kanalid($i)"
-					#~ } else {
-						#~ $wflbox.listbox_slist insert end " $i $::kanalid($i)"
-					#~ }
-				#~ }
-			#~ }
-			#~ bindtags $wflbox.listbox_slist {. .frame_slistbox.listbox_slist Listbox all}
-			#~ bind $wflbox.listbox_slist <<ListboxSelect>> [list main_stationListboxStations $wflbox.listbox_slist]
-			#~ bind $wflbox.listbox_slist <Key-Prior> {break}
-			#~ bind $wflbox.listbox_slist <Key-Next> {break}
-			#~ $wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
-			#~ bind . <Configure> {
-				#~ if {[winfo ismapped .frame_slistbox]} {
-					#~ if {[winfo height .frame_slistbox] < 36} {
-						#~ bind . <Configure> {}
-						#~ main_frontendShowslist .bottom_buttons
-						#~ .bottom_buttons.button_showslist state !pressed
-					#~ }
-				#~ }
-			#~ }
-			#~ $wflbox.listbox_slist see [$wflbox.listbox_slist curselection]
-			#~ set status_time [monitor_partRunning 4]
-			#~ set status_record [monitor_partRunning 3]
-			#~ if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
-				#~ if {$::option(rec_allow_sta_change) == 0} {
-					#~ log_writeOutTv 1 "Disabling station list due to an active recording."
-					#~ $wflbox.listbox_slist configure -state disabled
-				#~ }
-			#~ }
-		#~ }
-	#~ } else {
-		#~ log_writeOutTv 0 "Station list already exists, using grid to manage window again."
-		#~ set wflbox .frame_slistbox
-		#~ if {[string trim [grid info $wflbox]] == {}} {
-			#~ grid $wflbox -in . -row 4 -column 0
-			#~ $w.button_showslist state pressed
-			#~ $wflbox.listbox_slist selection set [expr [lindex $::station(last) 2] - 1]
-			#~ $wflbox.listbox_slist see [expr [lindex $::station(last) 2] - 1]
-			#~ if {[info exists ::main(slist_height)]} {
-				#~ set newheight [expr [winfo height .] + $::main(slist_height)]
-				#~ wm geometry . [winfo width .]x$newheight
-				#~ wm resizable . 1 1
-			#~ }
-			#~ bind . <Configure> {
-				#~ if {[winfo ismapped .frame_slistbox]} {
-					#~ if {[winfo height .frame_slistbox] < 36} {
-						#~ bind . <Configure> {}
-						#~ main_frontendShowslist .bottom_buttons
-						#~ .bottom_buttons.button_showslist state !pressed
-					#~ }
-				#~ }
-			#~ }
-		#~ } else {
-			#~ log_writeOutTv 0 "Removing station list from grid manager."
-			#~ set ::main(slist_height) [winfo height $wflbox]
-			#~ if {$::main(slist_height) < 36} {
-				#~ set ::main(slist_height) 37
-			#~ }
-			#~ set newheight [expr [winfo height .] - $::main(slist_height)]
-			#~ grid remove $wflbox
-			#~ wm geometry . [lindex [wm minsize .] 0]x$newheight
-			#~ wm resizable . 0 0
-			#~ if {$::option(systray_close) == 1} {
-				#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
-			#~ }
-		#~ }
-	#~ }
-#~ }
-
 proc msgcat::mcunknown {locale src args} {
 	log_writeOutTv 1 "-=Unknown string for locale $locale"
 	log_writeOutTv 1 "$src $args"
@@ -338,15 +224,30 @@ proc main_frontendChannelHandler {handler} {
 	}
 }
 
-proc main_frontendFillMenu {menubar toolbBot tvBg} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendFillMenu \033\[0m \{$menubar\} \{$toolbBot\} \{$tvBg\}"
+proc main_frontendMenu {menubar toolbBot tvBg} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendMenu \033\[0m \{$menubar\} \{$toolbBot\} \{$tvBg\}"
 	
 	log_writeOutTv 0 "Creating menus for main frontend"
 	
 	set mTv [menu $menubar.mbTvviewer.mTvviewer \
 	-tearoff 0 \
 	-background $::option(theme_$::option(use_theme))]
+	set mNav [menu $menubar.mbNavigation.mNavigation \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
 	set mView [menu $menubar.mbView.mView \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mViewPan [menu $menubar.mbView.mViewPanScan \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mViewSize [menu $menubar.mbView.mViewSize \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mViewTop [menu $menubar.mbView.mViewTop \
+	-tearoff 0 \
+	-background $::option(theme_$::option(use_theme))]
+	set mAud [menu $menubar.mbAudio.mAudio \
 	-tearoff 0 \
 	-background $::option(theme_$::option(use_theme))]
 	set mHelp [menu $menubar.mbHelp.mHelp \
@@ -420,6 +321,136 @@ proc main_frontendFillMenu {menubar toolbBot tvBg} {
 	-accelerator [mc "Ctrl+X"]
 	
 	#FIXME Fill View menu with content. 
+	$mView add separator
+	$mView add cascade \
+	-label [mc "Pan&Scan"] \
+	-compound left \
+	-image $::icon_s(placeholder) \
+	-menu $mViewPan
+		$mViewPan add command \
+		-label [mc "Zoom +"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmPanscan .ftvBg.cont 1] \
+		-accelerator "E"
+		$mViewPan add command \
+		-label [mc "Zoom -"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmPanscan .ftvBg.cont -1] \
+		-accelerator "W"
+		$mViewPan add command \
+		-label [mc "Pan&Scan (16:9 / 4:3)"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command {tv_wmPanscanAuto} \
+		-accelerator "Shift+W"
+		$mViewPan add separator
+		$mViewPan add command \
+		-label [mc "Move up"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmMoveVideo 3] \
+		-accelerator "Alt+Up"
+		$mViewPan add command \
+		-label [mc "Move down"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmMoveVideo 1] \
+		-accelerator "Alt+Down"
+		$mViewPan add command \
+		-label [mc "Move left"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmMoveVideo 2] \
+		-accelerator "Alt+Left"
+		$mViewPan add command \
+		-label [mc "Move right"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmMoveVideo 0] \
+		-accelerator "Alt+Right"
+		$mViewPan add command \
+		-label [mc "Center video"] \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmMoveVideo 4] \
+		-accelerator "Alt+C"
+	$mView add cascade \
+	-label [mc "Size"] \
+	-compound left \
+	-image $::icon_s(placeholder) \
+	-menu $mViewSize
+		$mViewSize add command \
+		-label "50%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 0.5]
+		$mViewSize add command \
+		-label "75%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 0.75]
+		$mViewSize add command \
+		-label "100%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 1.0] \
+		-accelerator [mc "Ctrl+1"]
+		$mViewSize add command \
+		-label "125%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 1.25]
+		$mViewSize add command \
+		-label "150%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 1.5]
+		$mViewSize add command \
+		-label "175%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 1.75]
+		$mViewSize add command \
+		-label "200%" \
+		-compound left \
+		-image $::icon_s(placeholder) \
+		-command [list tv_wmGivenSize .ftvBg 2.0] \
+		-accelerator [mc "Ctrl+2"]
+	$mView add cascade \
+	-label [mc "Stay on top"] \
+	-compound left \
+	-image $::icon_s(placeholder) \
+	-menu $mViewTop
+		$mViewTop add radiobutton \
+		-label [mc "Never"] \
+		-variable tv(stayontop) \
+		-value 0 \
+		-command [list tv_wmStayonTop 0]
+		$mViewTop add radiobutton \
+		-label [mc "Always"] \
+		-variable tv(stayontop) \
+		-value 1 \
+		-command [list tv_wmStayonTop 1]
+		$mViewTop add radiobutton \
+		-label [mc "While playback"] \
+		-variable tv(stayontop) \
+		-value 2 \
+		-command [list tv_wmStayonTop 2]
+	$mView add command \
+	-command "" \
+	-compound left \
+	-image $::icon_s(compact) \
+	-label [mc "Compact mode"] \
+	-accelerator [mc "Ctrl+C"]
+	$mView add command \
+	-command "" \
+	-compound left \
+	-image $::icon_s(fullscreen) \
+	-label [mc "Fullscreen"] \
+	-accelerator F
+
 	
 	#Fill menu help
 	$mHelp add separator
@@ -651,14 +682,27 @@ proc main_frontendNewUi {} {
 	ttk::menubutton $menubar.mbTvviewer \
 	-text TV-Viewer \
 	-style Toolbutton \
+	-underline 0 \
 	-menu $menubar.mbTvviewer.mTvviewer
-	ttk::menubutton $menubar.mbView \
-	-text View \
+	ttk::menubutton $menubar.mbNavigation \
+	-text [mc "Navigation"] \
 	-style Toolbutton \
+	-underline 0 \
+	-menu $menubar.mbNavigation.mNavigation
+	ttk::menubutton $menubar.mbView \
+	-text [mc "View"] \
+	-style Toolbutton \
+	-underline 0 \
 	-menu $menubar.mbView.mView
+	ttk::menubutton $menubar.mbAudio \
+	-text [mc "Audio"] \
+	-style Toolbutton \
+	-underline 0 \
+	-menu $menubar.mbAudio.mAudio
 	ttk::menubutton $menubar.mbHelp \
 	-text Help \
 	-style Toolbutton \
+	-underline 0 \
 	-menu $menubar.mbHelp.mHelp
 	
 	ttk::button $toolbTop.bTimeshift \
@@ -841,17 +885,24 @@ proc main_frontendNewUi {} {
 	-sticky ew
 	
 	grid $menubar.mbTvviewer -in $menubar -row 0 -column 0
-	grid $menubar.mbView -in $menubar -row 0 -column 1
-	grid $menubar.mbHelp -in $menubar -row 0 -column 2
+	grid $menubar.mbNavigation -in $menubar -row 0 -column 1
+	grid $menubar.mbView -in $menubar -row 0 -column 2
+	grid $menubar.mbAudio -in $menubar -row 0 -column 3
+	grid $menubar.mbHelp -in $menubar -row 0 -column 4
 	
-	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0
-	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1
-	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2
-	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3
-	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4
+	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0 \
+	-pady 1
+	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1 \
+	-pady 1
+	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 \
+	-pady 1
+	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 \
+	-pady 1
+	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 \
+	-pady 1
 	grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 \
 	-sticky e \
-	-padx 2
+	-padx 1
 	grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 \
 	-padx "0 2"
 	
@@ -949,7 +1000,7 @@ proc main_frontendNewUi {} {
 	
 	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	
-	main_frontendFillMenu $menubar $toolbBot $tvBg
+	main_frontendMenu $menubar $toolbBot $tvBg
 	main_frontendChannelHandler main
 	
 	if {$::main(running_recording) == 0} {

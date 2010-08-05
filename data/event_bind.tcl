@@ -17,14 +17,15 @@
 #       MA 02110-1301, USA.
 
 proc event_constr {handler} {
-	set wfbar .options_bar
-	set wftop .top_buttons
-	set wfbottom .bottom_buttons
-	
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
+	#Construct events and make necessary bindings
 	bind . <Key-m> [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
 	bind . <Key-F1> [list info_helpHelp]
-	bind . <Alt-Key-o> [list event generate $wfbar.mb_options <<Invoke>>]
-	bind . <Alt-Key-h> [list event generate $wfbar.mb_help <<Invoke>>]
+	bind . <Alt-Key-t> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
+	bind . <Alt-Key-n> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
+	bind . <Alt-Key-v> [list event generate .foptions_bar.mbView <<Invoke>>]
+	bind . <Alt-Key-a> [list event generate .foptions_bar.mbAudio <<Invoke>>]
+	bind . <Alt-Key-h> [list event generate .foptions_bar.mbHelp <<Invoke>>]
 	bind . <Control-Key-p> {config_wizardMainUi}
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
@@ -73,7 +74,7 @@ proc event_constr {handler} {
 		event add <<record>> <Key-r>
 		bind . <<record>> [list record_wizardUi]
 		event add <<timeshift>> <Key-t>
-		bind . <<timeshift>> [list timeshift $wftop.button_timeshift]
+		bind . <<timeshift>> [list timeshift wftop.button_timeshift]
 		event add <<teleview>> <Key-s>
 		bind . <<teleview>> {tv_playerRendering}
 		event add <<station_up>> <Key-Prior>
@@ -93,6 +94,7 @@ proc event_constr {handler} {
 }
 
 proc event_deleSedit {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_deleSedit \033\[0m"
 	event delete <<record>>
 	bind . <<record>> {}
 	event delete <<timeshift>>
@@ -114,6 +116,7 @@ proc event_deleSedit {} {
 }
 
 proc event_recordStart {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStart \033\[0m \{$handler\}"
 	if {$::option(rec_allow_sta_change) == 0} {
 		bind . <<station_up>> {}
 		bind . <<station_down>> {}
@@ -143,6 +146,7 @@ proc event_recordStart {handler} {
 }
 
 proc event_recordStop {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStop \033\[0m"
 	bind . <<teleview>> {tv_playerRendering}
 	bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
 	bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
