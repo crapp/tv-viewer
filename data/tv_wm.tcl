@@ -342,6 +342,10 @@ proc tv_wmStayonTop {com} {
 		set status [tv_callbackMplayerRemote alive]
 		if {$status != 1} {
 			wm attributes . -topmost 1
+		} else {
+			if {[wm attributes . -topmost] == 1} {
+				wm attributes . -topmost 0
+			}
 		}
 	}
 }
@@ -358,7 +362,7 @@ proc tv_wmGivenSize {w size} {
 		wm geometry . {}
 		$w configure -width [expr round($::option(resolx) * $size)] -height [expr round($::option(resoly) * $size)]
 		place .ftvBg.cont -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
-		log_writeOutTv 0 "Setting size of video frame to [expr $size * 100]."
+		log_writeOutTv 0 "Setting size of application to [expr $size * 100]."
 		return
 	}
 }
@@ -381,9 +385,10 @@ proc tv_wmCursorHide {w com} {
 
 proc tv_wmCursorPlaybar {ypos} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmCursorPlaybar \033\[0m \{$ypos\}"
-	if {$::tv(pbMode) == 0} {
+	if {[info exists ::tv(pbMode)] && $::tv(pbMode) == 0} {
 		#FIXME TV Playback mode show controls nevertheless?!
-	} else {
+	}
+	if {[info exists ::tv(pbMode)] && $::tv(pbMode) == 1} {
 		if {[string trim [grid info .ftoolb_Bot]] == {}} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
 				grid .ftoolb_Bot -in . -row 4 -column 1 \
