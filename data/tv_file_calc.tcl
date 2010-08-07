@@ -38,7 +38,7 @@ proc tv_fileComputePos {stop} {
 		catch {after cancel $::data(file_posid)}
 		return
 	}
-	if {[.ftoolb_Bot.bPause instate disabled] == 0} {
+	if {[.ftoolb_Play.bPause instate disabled] == 0} {
 		set ::data(file_pos) [expr [clock seconds] - $::data(file_pos_calc)]
 		set lhours [expr ($::data(file_pos)%86400)/3600]
 		if {[string length $lhours] < 2} {

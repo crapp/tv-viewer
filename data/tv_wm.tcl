@@ -23,8 +23,8 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 		grid remove .seperatMenu
 		grid remove .ftoolb_Top
 		grid remove .fstations
-		grid remove .ftoolb_Station
-		grid remove .ftoolb_Bot
+		grid remove .ftoolb_ChanCtrl
+		grid remove .ftoolb_Play
 		grid remove .ftoolb_Disp
 		bind $tv_cont <Motion> {
 			tv_wmCursorHide .ftvBg.cont 0
@@ -99,9 +99,9 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 		-sticky nesw
 		grid .ftvBg -in . -row 3 -column 1 \
 		-sticky nesw
-		grid .ftoolb_Station -in . -row 4 -column 0 \
+		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
 		-sticky ew
-		grid .ftoolb_Bot -in . -row 4 -column 1 \
+		grid .ftoolb_Play -in . -row 4 -column 1 \
 		-sticky ew
 		grid .ftoolb_Disp -in . -row 5 -column 0 \
 		-columnspan 2 \
@@ -115,6 +115,43 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 				tv_wmPanscanAuto
 			}]
 		}
+	}
+}
+
+proc tv_wmCompact {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmCompact \033\[0m"
+	if {$::main(compactMode)} {
+		grid .foptions_bar -in . -row 0 -column 0 \
+		-sticky new \
+		-columnspan 2
+		grid .seperatMenu -in . -row 1 -column 0 \
+		-sticky ew \
+		-padx 2 \
+		-columnspan 2
+		grid .ftoolb_Top -in . -row 2 -column 0 \
+		-columnspan 2 \
+		-sticky ew
+		grid .fstations -in . -row 3 -column 0 \
+		-sticky nesw
+		grid .ftvBg -in . -row 3 -column 1 \
+		-sticky nesw
+		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
+		-sticky ew
+		grid .ftoolb_Play -in . -row 4 -column 1 \
+		-sticky ew
+		grid .ftoolb_Disp -in . -row 5 -column 0 \
+		-columnspan 2 \
+		-sticky ew
+		set ::main(compactMode) 0
+	} else {
+		grid remove .foptions_bar
+		grid remove .seperatMenu
+		grid remove .ftoolb_Top
+		grid remove .fstations
+		grid remove .ftoolb_ChanCtrl
+		grid remove .ftoolb_Play
+		grid remove .ftoolb_Disp
+		set ::main(compactMode) 1
 	}
 }
 
@@ -187,7 +224,7 @@ proc tv_wmPanscanAuto {} {
 			place .ftvBg.cont -relheight 1 -relx $relativeX -rely $relativeY
 			set width [expr [winfo width .] - [winfo width .fstations]]
 			set height [expr int(ceil($width.0 / 1.777777778))]
-			set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + [winfo height .ftoolb_Disp]]
+			set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp]]
 			wm geometry . [winfo width .]x$heightwp
 			set relheight [lindex [split [expr ([winfo reqwidth .ftvBg].0 / [winfo reqheight .ftvBg].0)] .] end]
 			set relheight 3333333333333333
@@ -392,9 +429,9 @@ proc tv_wmCursorPlaybar {ypos} {
 		#FIXME TV Playback mode show controls nevertheless?!
 	}
 	if {[info exists ::tv(pbMode)] && $::tv(pbMode) == 1} {
-		if {[string trim [grid info .ftoolb_Bot]] == {}} {
+		if {[string trim [grid info .ftoolb_Play]] == {}} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
-				grid .ftoolb_Bot -in . -row 4 -column 1 \
+				grid .ftoolb_Play -in . -row 4 -column 1 \
 				-sticky ew
 				grid .ftoolb_Disp -in . -row 5 -column 0 \
 				-columnspan 2 \
@@ -403,9 +440,9 @@ proc tv_wmCursorPlaybar {ypos} {
 			}
 			return
 		}
-		if {[string trim [grid info .ftoolb_Bot]] != {}} {
+		if {[string trim [grid info .ftoolb_Play]] != {}} {
 			if {$ypos < [expr [winfo screenheight .] - 80]} {
-				grid remove .ftoolb_Bot
+				grid remove .ftoolb_Play
 				grid remove .ftoolb_Disp
 				log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
 				.ftvBg configure -cursor arrow

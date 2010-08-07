@@ -198,7 +198,7 @@ proc config_wizardExit {} {
 		}
 	}
 	
-	tooltips .ftoolb_Top .ftoolb_Station .ftoolb_Bot main
+	tooltips .ftoolb_Top .ftoolb_ChanCtrl .ftoolb_Play main
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.
 	#~ if {$::option(systray_close) == 1} {

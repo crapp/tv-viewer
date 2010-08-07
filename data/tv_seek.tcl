@@ -109,9 +109,9 @@ proc tv_seek {secs direct} {
 			return
 		}
 		if {$direct == 0} {
-			if {[.ftoolb_Bot.bPause instate disabled] == 0} {
-				.ftoolb_Bot.bPause state disabled
-				.ftoolb_Bot.bPlay state !disabled
+			if {[.ftoolb_Play.bPause instate disabled] == 0} {
+				.ftoolb_Play.bPause state disabled
+				.ftoolb_Play.bPlay state !disabled
 				log_writeOutTv 0 "Pause playback."
 				bind . <<forward_10s>> {}
 				bind . <<forward_1m>> {}
@@ -124,8 +124,8 @@ proc tv_seek {secs direct} {
 				tv_callbackMplayerRemote pause
 				return
 			} else {
-				.ftoolb_Bot.bPlay state disabled
-				.ftoolb_Bot.bPause state !disabled
+				.ftoolb_Play.bPlay state disabled
+				.ftoolb_Play.bPause state !disabled
 				set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
 				log_writeOutTv 0 "Start playback."
 				bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}

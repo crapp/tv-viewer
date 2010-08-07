@@ -31,77 +31,77 @@ proc settooltip {tool_tip_widget tool_tip_text} {
 	}
 }
 
-proc tooltips {toolbTop toolbStation toolbBot section} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tooltips \033\[0m \{$toolbTop\} \{$toolbStation\} \{$toolbBot\} \{$section\}"
+proc tooltips {toolbTop toolbChanCtrl toolbPlay section} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: tooltips \033\[0m \{$toolbTop\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$section\}"
 	if {"$section" == "main"} {
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_main) == 1} {
-				settooltip $toolbStation.bChanUp [mc "Tune up"]
-				settooltip $toolbStation.bChanDown [mc "Tune down"]
-				settooltip $toolbStation.bChanJump [mc "Zap among the last two stations"]
-				settooltip $toolbBot.scVolume [mc "Alter volume"]
-				settooltip $toolbBot.bVolMute [mc "Toggle mute"]
+				settooltip $toolbChanCtrl.bChanUp [mc "Tune up"]
+				settooltip $toolbChanCtrl.bChanDown [mc "Tune down"]
+				settooltip $toolbChanCtrl.bChanJump [mc "Zap among the last two stations"]
+				settooltip $toolbPlay.scVolume [mc "Alter volume"]
+				settooltip $toolbPlay.bVolMute [mc "Toggle mute"]
 				settooltip $toolbTop.bTimeshift [mc "Start/Stop timeshift"]
 				settooltip $toolbTop.bRecord [mc "Start/Stop record"]
 				settooltip $toolbTop.bEpg [mc "Execute the selected EPG application"]
 				settooltip $toolbTop.bRadio [mc "Switch to radio mode"]
 				settooltip $toolbTop.bTv [mc "Start/Stop TV playback"]
-				settooltip $toolbBot.bPlay [mc "Start playback"]
-				settooltip $toolbBot.bPause [mc "Pause playback"]
-				settooltip $toolbBot.bStop [mc "Stop playback"]
-				settooltip $toolbBot.bRewStart [mc "Jump to the beginning"]
-				settooltip $toolbBot.bRewSmall [mc "Seek back"]
-				settooltip $toolbBot.mbRewChoose [mc "Choose amount of seek back"]
-				settooltip $toolbBot.bForwSmall [mc "Seek forward"]
-				settooltip $toolbBot.mbForwChoose [mc "Choose amount of seek forward"]
-				settooltip $toolbBot.bForwEnd [mc "Jump to the end"]
-				#~ settooltip $toolbBot.b_fullscreen [mc "Toggle fullscreen"]
-				#~ settooltip $toolbBot.l_time [mc "Current position / File length"]
+				settooltip $toolbPlay.bPlay [mc "Start playback"]
+				settooltip $toolbPlay.bPause [mc "Pause playback"]
+				settooltip $toolbPlay.bStop [mc "Stop playback"]
+				settooltip $toolbPlay.bRewStart [mc "Jump to the beginning"]
+				settooltip $toolbPlay.bRewSmall [mc "Seek back"]
+				settooltip $toolbPlay.mbRewChoose [mc "Choose amount of seek back"]
+				settooltip $toolbPlay.bForwSmall [mc "Seek forward"]
+				settooltip $toolbPlay.mbForwChoose [mc "Choose amount of seek forward"]
+				settooltip $toolbPlay.bForwEnd [mc "Jump to the end"]
+				#~ settooltip $toolbPlay.b_fullscreen [mc "Toggle fullscreen"]
+				#~ settooltip $toolbPlay.l_time [mc "Current position / File length"]
 			} else {
-				settooltip $toolbStation.bChanUp {}
-				settooltip $toolbStation.bChanDown {}
-				settooltip $toolbStation.bChanJump {}
-				settooltip $toolbBot.scVolume {}
-				settooltip $toolbBot.bVolMute {}
+				settooltip $toolbChanCtrl.bChanUp {}
+				settooltip $toolbChanCtrl.bChanDown {}
+				settooltip $toolbChanCtrl.bChanJump {}
+				settooltip $toolbPlay.scVolume {}
+				settooltip $toolbPlay.bVolMute {}
 				settooltip $toolbTop.bTimeshift {}
 				settooltip $toolbTop.bRecord {}
 				settooltip $toolbTop.bEpg {}
 				settooltip $toolbTop.bRadio {}
 				settooltip $toolbTop.bTv {}
-				settooltip $toolbBot.bPlay {}
-				settooltip $toolbBot.bPause {}
-				settooltip $toolbBot.bStop {}
-				settooltip $toolbBot.bRewStart {}
-				settooltip $toolbBot.bRewSmall {}
-				settooltip $toolbBot.mbRewChoose {}
-				settooltip $toolbBot.bForwSmall {}
-				settooltip $toolbBot.mbForwChoose {}
-				settooltip $toolbBot.bForwEnd {}
-				#~ settooltip $toolbBot.b_fullscreen {}
-				#~ settooltip $toolbBot.l_time {}
+				settooltip $toolbPlay.bPlay {}
+				settooltip $toolbPlay.bPause {}
+				settooltip $toolbPlay.bStop {}
+				settooltip $toolbPlay.bRewStart {}
+				settooltip $toolbPlay.bRewSmall {}
+				settooltip $toolbPlay.mbRewChoose {}
+				settooltip $toolbPlay.bForwSmall {}
+				settooltip $toolbPlay.mbForwChoose {}
+				settooltip $toolbPlay.bForwEnd {}
+				#~ settooltip $toolbPlay.b_fullscreen {}
+				#~ settooltip $toolbPlay.l_time {}
 			}
 		} else {
-			settooltip $toolbStation.bChanUp {}
-			settooltip $toolbStation.bChanDown {}
-			settooltip $toolbStation.bChanJump {}
-			settooltip $toolbBot.scVolume {}
-			settooltip $toolbBot.bVolMute {}
+			settooltip $toolbChanCtrl.bChanUp {}
+			settooltip $toolbChanCtrl.bChanDown {}
+			settooltip $toolbChanCtrl.bChanJump {}
+			settooltip $toolbPlay.scVolume {}
+			settooltip $toolbPlay.bVolMute {}
 			settooltip $toolbTop.bTimeshift {}
 			settooltip $toolbTop.bRecord {}
 			settooltip $toolbTop.bEpg {}
 			settooltip $toolbTop.bRadio {}
 			settooltip $toolbTop.bTv {}
-			settooltip $toolbBot.bPlay {}
-			settooltip $toolbBot.bPause {}
-			settooltip $toolbBot.bStop {}
-			settooltip $toolbBot.bRewStart {}
-			settooltip $toolbBot.bRewSmall {}
-			settooltip $toolbBot.mbRewChoose {}
-			settooltip $toolbBot.bForwSmall {}
-			settooltip $toolbBot.mbForwChoose {}
-			settooltip $toolbBot.bForwEnd {}
-			#~ settooltip $toolbBot.b_fullscreen {}
-			#~ settooltip $toolbBot.l_time {}
+			settooltip $toolbPlay.bPlay {}
+			settooltip $toolbPlay.bPause {}
+			settooltip $toolbPlay.bStop {}
+			settooltip $toolbPlay.bRewStart {}
+			settooltip $toolbPlay.bRewSmall {}
+			settooltip $toolbPlay.mbRewChoose {}
+			settooltip $toolbPlay.bForwSmall {}
+			settooltip $toolbPlay.mbForwChoose {}
+			settooltip $toolbPlay.bForwEnd {}
+			#~ settooltip $toolbPlay.b_fullscreen {}
+			#~ settooltip $toolbPlay.l_time {}
 		}
 		return
 	}

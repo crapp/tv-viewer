@@ -76,9 +76,9 @@ proc record_linkerPrestart {handler} {
 	}
 	if {$::option(rec_allow_sta_change) == 0} {
 		log_writeOutTv 1 "Station change not allowed during recording."
-		.ftoolb_Station.bChanDown state disabled
-		.ftoolb_Station.bChanUp state disabled
-		.ftoolb_Station.bChanJump state disabled
+		.ftoolb_ChanCtrl.bChanDown state disabled
+		.ftoolb_ChanCtrl.bChanUp state disabled
+		.ftoolb_ChanCtrl.bChanJump state disabled
 		if {[winfo exists .fstations] == 1} {
 			main_frontendDisableTree .fstations.treeSlist 1
 		}
@@ -110,9 +110,9 @@ proc record_linkerPrestartCancel {handler} {
 	.ftoolb_Top.bTimeshift state !disabled
 	.ftoolb_Top.bTimeshift state !pressed
 	.ftoolb_Top.bTv state !disabled
-	.ftoolb_Station.bChanDown state !disabled
-	.ftoolb_Station.bChanUp state !disabled
-	.ftoolb_Station.bChanJump state !disabled
+	.ftoolb_ChanCtrl.bChanDown state !disabled
+	.ftoolb_ChanCtrl.bChanUp state !disabled
+	.ftoolb_ChanCtrl.bChanJump state !disabled
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
 	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
@@ -244,9 +244,9 @@ proc record_linkerPreStop {handler} {
 	}
 	.ftoolb_Top.bTimeshift state !disabled
 	.ftoolb_Top.bTv state !disabled
-	.ftoolb_Station.bChanDown state !disabled
-	.ftoolb_Station.bChanUp state !disabled
-	.ftoolb_Station.bChanJump state !disabled
+	.ftoolb_ChanCtrl.bChanDown state !disabled
+	.ftoolb_ChanCtrl.bChanUp state !disabled
+	.ftoolb_ChanCtrl.bChanJump state !disabled
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
 	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
@@ -271,7 +271,7 @@ proc record_linkerPreStop {handler} {
 		}
 	} else {
 		if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
-			.ftoolb_Bot.bSave state !disabled
+			.ftoolb_Play.bSave state !disabled
 			if {$::option(tooltips_player) == 1} {
 				set file_size [expr round((([file size "$::option(timeshift_path)/timeshift.mpeg"] / 1024.0) / 1024.0))]
 				if {$file_size > 1000} {
@@ -280,7 +280,7 @@ proc record_linkerPreStop {handler} {
 				} else {
 					set file_size "$file_size MB"
 				}
-				settooltip .ftoolb_Bot.bSave "Save timeshift video file
+				settooltip .ftoolb_Play.bSave "Save timeshift video file
 File size $file_size"
 			}
 		} else {

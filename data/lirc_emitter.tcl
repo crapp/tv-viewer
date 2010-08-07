@@ -245,7 +245,7 @@ if {$start_options(volume_decr)} {
 	exit 0
 }
 if {$start_options(mute)} {
-	command_WritePipe 0 "tv-viewer_main tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute"
+	command_WritePipe 0 "tv-viewer_main tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute"
 	log_writeOutTv 0 "Lirc emitter received Signal mute"
 	exit 0
 }

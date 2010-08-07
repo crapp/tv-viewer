@@ -314,7 +314,6 @@ if {$::option(show_splash) == 1} {
 #Source station after message.
 source $::option(root)/data/station_after_msg.tcl
 #Source alle related functions for station changing.
-#~ source $::option(root)/data/main_station_zap.tcl
 source $::option(root)/data/chan_zapper.tcl
 #Source reading station list
 source $::option(root)/data/main_read_station_file.tcl
@@ -342,6 +341,8 @@ source $::option(root)/data/info_help.tcl
 source $::option(root)/data/key_sequences.tcl
 #Source tooltip
 source $::option(root)/data/tooltip.tcl
+#Source menu creating procs
+source $::option(root)/data/main_menu.tcl
 #Source main ui and related functions
 source $::option(root)/data/main_frontend.tcl
 #Source command socket

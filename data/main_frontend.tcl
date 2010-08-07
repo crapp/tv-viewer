@@ -114,10 +114,10 @@ proc main_frontendChannelHandler {handler} {
 		foreach widget [split [winfo children .ftoolb_Top]] {
 			catch {$widget state disabled}
 		}
-		foreach widget [split [winfo children .ftoolb_Station]] {
+		foreach widget [split [winfo children .ftoolb_ChanCtrl]] {
 			catch {$widget state disabled}
 		}
-		foreach widget [split [winfo children .ftoolb_Bot]] {
+		foreach widget [split [winfo children .ftoolb_Play]] {
 			if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
 			catch {$widget state disabled}
 		}
@@ -209,10 +209,10 @@ proc main_frontendChannelHandler {handler} {
 			foreach widget [split [winfo children .ftoolb_Top]] {
 				catch {$widget state !disabled}
 			}
-			foreach widget [split [winfo children .ftoolb_Station]] {
-				catch {$widget state !disabled}
+			foreach widget [split [winfo children .ftoolb_ChanCtrl]] {
+				catch {$widget state disabled}
 			}
-			foreach widget [split [winfo children .ftoolb_Bot]] {
+			foreach widget [split [winfo children .ftoolb_Play]] {
 				if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
 				catch {$widget state !disabled}
 			}
@@ -222,439 +222,6 @@ proc main_frontendChannelHandler {handler} {
 			}
 		}
 	}
-}
-
-proc main_frontendMenu {menubar toolbBot tvBg} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendMenu \033\[0m \{$menubar\} \{$toolbBot\} \{$tvBg\}"
-	
-	log_writeOutTv 0 "Creating menus for main frontend"
-	
-	set mTv [menu $menubar.mbTvviewer.mTvviewer \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mNav [menu $menubar.mbNavigation.mNavigation \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mView [menu $menubar.mbView.mView \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mViewPan [menu $menubar.mbView.mViewPanScan \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mViewSize [menu $menubar.mbView.mViewSize \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mViewTop [menu $menubar.mbView.mViewTop \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mAud [menu $menubar.mbAudio.mAudio \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mHelp [menu $menubar.mbHelp.mHelp \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	
-	set mRew [menu $toolbBot.mbRewChoose.mRewChoose \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mForw [menu $toolbBot.mbForwChoose.mForwChoose \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	
-	set mContext [menu .ftvBg.context \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mContextPan [menu .ftvBg.context.panscan \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mContextSize [menu .ftvBg.context.size \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	set mContextTop [menu .ftvBg.context.ontop \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))]
-	
-	log_writeOutTv 0 "Filling menus for main frontend with content"
-	
-	#Fill menu TV-Viewer
-	$mTv add separator
-	$mTv add command \
-	-label [mc "Color Management"] \
-	-compound left \
-	-image $::icon_s(color-management) \
-	-command colorm_mainUi \
-	-accelerator [mc "Ctrl+M"]
-	$mTv add command \
-	-label [mc "Preferences"] \
-	-compound left \
-	-image $::icon_s(settings) \
-	-accelerator [mc "Ctrl+P"] \
-	-command {config_wizardMainUi}
-	$mTv add command \
-	-label [mc "Station Editor"] \
-	-compound left \
-	-image $::icon_s(seditor) \
-	-command {station_editUi} \
-	-accelerator [mc "Ctrl+E"]
-	$mTv add command \
-	-label [mc "Record Wizard"] \
-	-compound left \
-	-image $::icon_s(record) \
-	-command {event generate . <<record>>} \
-	-accelerator "R"
-	$mTv add separator
-	$mTv add command \
-	-label [mc "Newsreader"] \
-	-compound left \
-	-image $::icon_s(newsreader) \
-	-command [list main_newsreaderCheckUpdate 0]
-	$mTv add checkbutton \
-	-label [mc "System Tray"] \
-	-command {main_systemTrayActivate 0} \
-	-variable choice(cb_systray_main)
-	$mTv add separator
-	$mTv add command \
-	-label [mc "Exit"] \
-	-compound left \
-	-image $::icon_s(dialog-close) \
-	-command [list event generate . <<exit>>] \
-	-accelerator [mc "Ctrl+X"]
-	
-	#FIXME Fill View menu with content. 
-	$mView add separator
-	$mView add cascade \
-	-label [mc "Pan&Scan"] \
-	-compound left \
-	-image $::icon_s(placeholder) \
-	-menu $mViewPan
-		$mViewPan add command \
-		-label [mc "Zoom +"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmPanscan .ftvBg.cont 1] \
-		-accelerator "E"
-		$mViewPan add command \
-		-label [mc "Zoom -"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmPanscan .ftvBg.cont -1] \
-		-accelerator "W"
-		$mViewPan add command \
-		-label [mc "Pan&Scan (16:9 / 4:3)"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command {tv_wmPanscanAuto} \
-		-accelerator "Shift+W"
-		$mViewPan add separator
-		$mViewPan add command \
-		-label [mc "Move up"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 3] \
-		-accelerator "Alt+Up"
-		$mViewPan add command \
-		-label [mc "Move down"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 1] \
-		-accelerator "Alt+Down"
-		$mViewPan add command \
-		-label [mc "Move left"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 2] \
-		-accelerator "Alt+Left"
-		$mViewPan add command \
-		-label [mc "Move right"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 0] \
-		-accelerator "Alt+Right"
-		$mViewPan add command \
-		-label [mc "Center video"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 4] \
-		-accelerator "Alt+C"
-	$mView add cascade \
-	-label [mc "Size"] \
-	-compound left \
-	-image $::icon_s(placeholder) \
-	-menu $mViewSize
-		$mViewSize add command \
-		-label "50%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 0.5]
-		$mViewSize add command \
-		-label "75%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 0.75]
-		$mViewSize add command \
-		-label "100%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.0] \
-		-accelerator [mc "Ctrl+1"]
-		$mViewSize add command \
-		-label "125%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.25]
-		$mViewSize add command \
-		-label "150%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.5]
-		$mViewSize add command \
-		-label "175%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.75]
-		$mViewSize add command \
-		-label "200%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 2.0] \
-		-accelerator [mc "Ctrl+2"]
-	$mView add cascade \
-	-label [mc "Stay on top"] \
-	-compound left \
-	-image $::icon_s(placeholder) \
-	-menu $mViewTop
-		$mViewTop add radiobutton \
-		-label [mc "Never"] \
-		-variable tv(stayontop) \
-		-value 0 \
-		-command [list tv_wmStayonTop 0]
-		$mViewTop add radiobutton \
-		-label [mc "Always"] \
-		-variable tv(stayontop) \
-		-value 1 \
-		-command [list tv_wmStayonTop 1]
-		$mViewTop add radiobutton \
-		-label [mc "While playback"] \
-		-variable tv(stayontop) \
-		-value 2 \
-		-command [list tv_wmStayonTop 2]
-	$mView add command \
-	-command "" \
-	-compound left \
-	-image $::icon_s(compact) \
-	-label [mc "Compact mode"] \
-	-accelerator [mc "Ctrl+C"]
-	$mView add command \
-	-command "" \
-	-compound left \
-	-image $::icon_s(fullscreen) \
-	-label [mc "Fullscreen"] \
-	-accelerator F
-
-	
-	#Fill menu help
-	$mHelp add separator
-	$mHelp add command \
-	-command info_helpHelp \
-	-compound left \
-	-image $::icon_s(help) \
-	-label [mc "User Guide"] \
-	-accelerator F1
-	$mHelp add command \
-	-command key_sequences \
-	-compound left \
-	-image $::icon_s(key-bindings) \
-	-label [mc "Key Sequences"]
-	$mHelp add separator
-	$mHelp add checkbutton \
-	-command [list log_viewerUi 2] \
-	-label [mc "MPlayer Log"] \
-	-variable choice(cb_log_mpl_main)
-	$mHelp add checkbutton \
-	-command [list log_viewerUi 3] \
-	-label [mc "Scheduler Log"] \
-	-variable choice(cb_log_sched_main)
-	$mHelp add checkbutton \
-	-command [list log_viewerUi 1] \
-	-label [mc "TV-Viewer Log"] \
-	-variable choice(cb_log_tv_main)
-	$mHelp add separator
-	$mHelp add command \
-	-label [mc "Diagnostic Routine"] \
-	-compound left \
-	-image $::icon_s(diag) \
-	-command diag_Ui
-	$mHelp add separator
-	$mHelp add command \
-	-command info_helpAbout \
-	-compound left \
-	-image $::icon_s(help-about) \
-	-label [mc "Info"]
-	
-	#FIXME Fill context menu with content 
-	
-	#Fill menu rewind selector
-	$mRew add checkbutton \
-	-label [mc "-10 seconds"] \
-	-accelerator [mc "Left"] \
-	-command [list tv_seekSwitch .ftoolb_Bot.bRewSmall -1 -10s tv(check_rew_10s)] \
-	-variable tv(check_rew_10s)
-	$mRew add checkbutton \
-	-label [mc "-1 minute"] \
-	-accelerator [mc "Shift+Left"] \
-	-command [list tv_seekSwitch .ftoolb_Bot.bRewSmall -1 -1m tv(check_rew_1m)] \
-	-variable tv(check_rew_1m)
-	$mRew add checkbutton \
-	-label [mc "-10 minutes"] \
-	-accelerator [mc "Ctrl+Shift+Left"] \
-	-command [list tv_seekSwitch .ftoolb_Bot.bRewSmall -1 -10m tv(check_rew_10m)] \
-	-variable tv(check_rew_10m)
-	
-	#Fill menu forward selector
-	$mForw add checkbutton \
-	-label [mc "+10 seconds"] \
-	-accelerator [mc "Right"] \
-	-command [list tv_seekSwitch .ftoolb_Bot.bForwSmall 1 +10s tv(check_fow_10s)] \
-	-variable tv(check_fow_10s)
-	$mForw add checkbutton \
-	-label [mc "+1 minute"] \
-	-accelerator [mc "Shift+Right"] \
-	-command [list tv_seekSwitch .ftoolb_Bot.bForwSmall 1 +1m tv(check_fow_1m)] \
-	-variable tv(check_fow_1m)
-	$mForw add checkbutton \
-	-label [mc "+10 minutes"] \
-	-accelerator [mc "Ctrl+Shift+Right"] \
-	-command [list tv_seekSwitch .ftoolb_Bot.bForwSmall 1 +10m tv(check_fow_10m)] \
-	-variable tv(check_fow_10m)
-	
-	$mContext add cascade \
-	-label [mc "Pan&Scan"] \
-	-compound left \
-	-image $::icon_s(placeholder) \
-	-menu $mContextPan
-		$mContextPan add command \
-		-label [mc "Zoom +"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmPanscan .ftvBg.cont 1] \
-		-accelerator "E"
-		$mContextPan add command \
-		-label [mc "Zoom -"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmPanscan .ftvBg.cont -1] \
-		-accelerator "W"
-		$mContextPan add command \
-		-label [mc "Pan&Scan (16:9 / 4:3)"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command {tv_wmPanscanAuto} \
-		-accelerator "Shift+W"
-		$mContextPan add separator
-		$mContextPan add command \
-		-label [mc "Move up"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 3] \
-		-accelerator "Alt+Up"
-		$mContextPan add command \
-		-label [mc "Move down"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 1] \
-		-accelerator "Alt+Down"
-		$mContextPan add command \
-		-label [mc "Move left"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 2] \
-		-accelerator "Alt+Left"
-		$mContextPan add command \
-		-label [mc "Move right"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 0] \
-		-accelerator "Alt+Right"
-		$mContextPan add command \
-		-label [mc "Center video"] \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 4] \
-		-accelerator "Alt+C"
-	$mContext add cascade \
-	-label [mc "Size"] \
-	-compound left \
-	-image $::icon_s(placeholder) \
-	-menu $mContextSize
-		$mContextSize add command \
-		-label "50%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 0.5]
-		$mContextSize add command \
-		-label "75%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 0.75]
-		$mContextSize add command \
-		-label "100%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.0] \
-		-accelerator [mc "Ctrl+1"]
-		$mContextSize add command \
-		-label "125%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.25]
-		$mContextSize add command \
-		-label "150%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.5]
-		$mContextSize add command \
-		-label "175%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.75]
-		$mContextSize add command \
-		-label "200%" \
-		-compound left \
-		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 2.0] \
-		-accelerator [mc "Ctrl+2"]
-	$mContext add cascade \
-	-label [mc "Stay on top"] \
-	-compound left \
-	-image $::icon_s(placeholder) \
-	-menu $mContextTop
-		$mContextTop add radiobutton \
-		-label [mc "Never"] \
-		-variable tv(stayontop) \
-		-value 0 \
-		-command [list tv_wmStayonTop 0]
-		$mContextTop add radiobutton \
-		-label [mc "Always"] \
-		-variable tv(stayontop) \
-		-value 1 \
-		-command [list tv_wmStayonTop 1]
-		$mContextTop add radiobutton \
-		-label [mc "While playback"] \
-		-variable tv(stayontop) \
-		-value 2 \
-		-command [list tv_wmStayonTop 2]
-	$mContext add command \
-	-label [mc "TV playback"] \
-	-compound left \
-	-image $::icon_s(starttv) \
-	-command {event generate . <<teleview>>} \
-	-accelerator "S"
-	$mContext add command \
-	-label [mc "Exit"] \
-	-compound left \
-	-image $::icon_s(dialog-close) \
-	-command [list event generate . <<exit>>] \
-	-accelerator [mc "Ctrl+X"]
 }
 
 proc main_frontendNewUi {} {
@@ -670,9 +237,9 @@ proc main_frontendNewUi {} {
 	
 	set stations [ttk::frame .fstations] ; place [ttk::label $stations.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
-	set toolbStation [ttk::frame .ftoolb_Station] ; place [ttk::label $toolbStation.bg -style Toolbutton] -relwidth 1 -relheight 1
+	set toolbChanCtrl [ttk::frame .ftoolb_ChanCtrl] ; place [ttk::label $toolbChanCtrl.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
-	set toolbBot [ttk::frame .ftoolb_Bot] ; place [ttk::label $toolbBot.bg -style Toolbutton] -relwidth 1 -relheight 1
+	set toolbPlay [ttk::frame .ftoolb_Play] ; place [ttk::label $toolbPlay.bg -style Toolbutton] -relwidth 1 -relheight 1
 	
 	set toolbDisp [frame .ftoolb_Disp -background black]
 	
@@ -750,88 +317,88 @@ proc main_frontendNewUi {} {
 	ttk::scrollbar $stations.scrbSlist \
 	-command [list $stations.treeSlist yview]
 	
-	ttk::button $toolbStation.bChanDown \
+	ttk::button $toolbChanCtrl.bChanDown \
 	-image $::icon_m(channel-down) \
 	-style Toolbutton \
 	-command [list chan_zapperDown $stations.treeSlist]
-	ttk::button $toolbStation.bChanUp \
+	ttk::button $toolbChanCtrl.bChanUp \
 	-image $::icon_m(channel-up) \
 	-style Toolbutton \
 	-command [list chan_zapperUp $stations.treeSlist]
-	ttk::button $toolbStation.bChanJump \
+	ttk::button $toolbChanCtrl.bChanJump \
 	-image $::icon_m(channel-jump) \
 	-style Toolbutton \
 	-command [list chan_zapperJump $stations.treeSlist]
 	
-	ttk::button $toolbBot.bPlay \
+	ttk::button $toolbPlay.bPlay \
 	-image $::icon_m(playback-start) \
 	-style Toolbutton \
 	-state disabled \
 	-command {event generate . <<start>>}
-	ttk::button $toolbBot.bPause \
+	ttk::button $toolbPlay.bPause \
 	-image $::icon_m(playback-pause) \
 	-style Toolbutton \
 	-state disabled \
 	-command {event generate . <<pause>>}
-	ttk::button $toolbBot.bStop \
+	ttk::button $toolbPlay.bStop \
 	-image $::icon_m(playback-stop) \
 	-style Toolbutton \
 	-state disabled \
 	-command {event generate . <<stop>>}
 	
-	ttk::separator $toolbBot.seperat1 \
+	ttk::separator $toolbPlay.seperat1 \
 	-orient vertical
 	
-	ttk::button $toolbBot.bRewStart \
+	ttk::button $toolbPlay.bRewStart \
 	-style Toolbutton \
 	-image $::icon_m(rewind-first) \
 	-state disabled \
 	-command {event generate . <<rewind_start>>}
-	ttk::button $toolbBot.bRewSmall \
+	ttk::button $toolbPlay.bRewSmall \
 	-style Toolbutton \
 	-image $::icon_m(rewind-small) \
 	-state disabled \
 	-command {event generate . <<rewind_10s>>}
-	ttk::menubutton $toolbBot.mbRewChoose \
+	ttk::menubutton $toolbPlay.mbRewChoose \
 	-style Toolbutton \
 	-image $::icon_e(arrow-d) \
-	-menu $toolbBot.mbRewChoose.mRewChoose \
+	-menu $toolbPlay.mbRewChoose.mRewChoose \
 	-state disabled
-	ttk::button $toolbBot.bForwSmall \
+	ttk::button $toolbPlay.bForwSmall \
 	-style Toolbutton \
 	-image $::icon_m(forward-small) \
 	-state disabled \
 	-command {event generate . <<forward_10s>>}
-	ttk::menubutton $toolbBot.mbForwChoose \
+	ttk::menubutton $toolbPlay.mbForwChoose \
 	-style Toolbutton \
 	-image $::icon_e(arrow-d) \
-	-menu $toolbBot.mbForwChoose.mForwChoose \
+	-menu $toolbPlay.mbForwChoose.mForwChoose \
 	-state disabled
-	ttk::button $toolbBot.bForwEnd \
+	ttk::button $toolbPlay.bForwEnd \
 	-style Toolbutton \
 	-image $::icon_m(forward-last) \
 	-state disabled \
 	-command {event generate . <<forward_end>>}
 	
-	ttk::separator $toolbBot.seperat2 \
+	ttk::separator $toolbPlay.seperat2 \
 	-orient vertical
 	
-	ttk::button $toolbBot.bSave \
+	ttk::button $toolbPlay.bSave \
 	-style Toolbutton \
 	-image $::icon_m(floppy) \
 	-state disabled \
 	-command [list timeshift_Save .]
 	
-	ttk::button $toolbBot.bVolMute \
+	ttk::button $toolbPlay.bVolMute \
 	-style Toolbutton \
 	-image $::icon_m(volume) \
-	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
-	ttk::scale $toolbBot.scVolume \
+	-command [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	ttk::scale $toolbPlay.scVolume \
 	-orient horizontal \
 	-from 0 \
 	-to 100 \
 	-variable main(volume_scale) \
-	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute] \
+	-command [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute] \
 	
 	label $toolbDisp.lDispIcon \
 	-compound center \
@@ -876,9 +443,9 @@ proc main_frontendNewUi {} {
 	-padx "0 2"
 	grid $tvBg -in . -row 3 -column 1 \
 	-sticky nesw
-	grid $toolbStation -in . -row 4 -column 0 \
+	grid $toolbChanCtrl -in . -row 4 -column 0 \
 	-sticky ew
-	grid $toolbBot -in . -row 4 -column 1 \
+	grid $toolbPlay -in . -row 4 -column 1 \
 	-sticky ew
 	grid $toolbDisp -in . -row 5 -column 0 \
 	-columnspan 2 \
@@ -911,58 +478,64 @@ proc main_frontendNewUi {} {
 	grid $stations.scrbSlist -in $stations -row 0 -column 1 \
 	-sticky ns
 	
-	grid $toolbStation.bChanDown -in $toolbStation -row 0 -column 0
-	grid $toolbStation.bChanUp -in $toolbStation -row 0 -column 1
-	grid $toolbStation.bChanJump -in $toolbStation -row 0 -column 2
-	
-	grid $toolbBot.bPlay -in $toolbBot -row 0 -column 0 \
+	grid $toolbChanCtrl.bChanDown -in $toolbChanCtrl -row 0 -column 0 \
 	-pady 2 \
 	-padx "2 0"
-	grid $toolbBot.bPause -in $toolbBot -row 0 -column 1 \
+	grid $toolbChanCtrl.bChanUp -in $toolbChanCtrl -row 0 -column 1 \
 	-pady 2 \
 	-padx "2 0"
-	grid $toolbBot.bStop -in $toolbBot -row 0 -column 2 \
+	grid $toolbChanCtrl.bChanJump -in $toolbChanCtrl -row 0 -column 2 \
 	-pady 2 \
 	-padx "2 0"
 	
-	grid $toolbBot.seperat1 -in $toolbBot -row 0 -column 3 \
+	grid $toolbPlay.bPlay -in $toolbPlay -row 0 -column 0 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbPlay.bPause -in $toolbPlay -row 0 -column 1 \
+	-pady 2 \
+	-padx "2 0"
+	grid $toolbPlay.bStop -in $toolbPlay -row 0 -column 2 \
+	-pady 2 \
+	-padx "2 0"
+	
+	grid $toolbPlay.seperat1 -in $toolbPlay -row 0 -column 3 \
 	-sticky ns \
 	-pady 6 \
 	-padx "2 0"
 	
-	grid $toolbBot.bRewStart -in $toolbBot -row 0 -column 4 \
+	grid $toolbPlay.bRewStart -in $toolbPlay -row 0 -column 4 \
 	-pady 2 \
 	-padx "2 0"
-	grid $toolbBot.mbRewChoose -in $toolbBot -row 0 -column 5 \
+	grid $toolbPlay.mbRewChoose -in $toolbPlay -row 0 -column 5 \
 	-sticky ns \
 	-pady 2 \
 	-padx "2 0"
-	grid $toolbBot.bRewSmall -in $toolbBot -row 0 -column 6 \
+	grid $toolbPlay.bRewSmall -in $toolbPlay -row 0 -column 6 \
 	-pady 2
-	grid $toolbBot.bForwSmall -in $toolbBot -row 0 -column 7 \
+	grid $toolbPlay.bForwSmall -in $toolbPlay -row 0 -column 7 \
 	-pady 2 \
 	-padx "2 0"
-	grid $toolbBot.mbForwChoose -in $toolbBot -row 0 -column 8 \
+	grid $toolbPlay.mbForwChoose -in $toolbPlay -row 0 -column 8 \
 	-sticky ns \
 	-pady 2
-	grid $toolbBot.bForwEnd -in $toolbBot -row 0 -column 9 \
+	grid $toolbPlay.bForwEnd -in $toolbPlay -row 0 -column 9 \
 	-pady 2 \
 	-padx "2 0"
 	
-	grid $toolbBot.seperat2 -in $toolbBot -row 0 -column 10 \
+	grid $toolbPlay.seperat2 -in $toolbPlay -row 0 -column 10 \
 	-sticky ns \
 	-pady 6 \
 	-padx "2 0"
 	
-	grid $toolbBot.bSave -in $toolbBot -row 0 -column 11 \
+	grid $toolbPlay.bSave -in $toolbPlay -row 0 -column 11 \
 	-pady 2 \
 	-padx "2 0"
 	
-	grid $toolbBot.bVolMute -in $toolbBot -row 0 -column 12 \
+	grid $toolbPlay.bVolMute -in $toolbPlay -row 0 -column 12 \
 	-pady 2 \
 	-padx "2 0" \
 	-sticky e
-	grid $toolbBot.scVolume -in $toolbBot -row 0 -column 13 \
+	grid $toolbPlay.scVolume -in $toolbPlay -row 0 -column 13 \
 	-pady 2 \
 	-padx "2 6"
 	
@@ -983,13 +556,14 @@ proc main_frontendNewUi {} {
 	grid columnconfigure . 1 -weight 10000 -minsize 250
 	grid columnconfigure $stations 0 -weight 1
 	grid columnconfigure $toolbTop 5 -weight 1
-	grid columnconfigure $toolbBot 12 -weight 1
+	grid columnconfigure $toolbPlay 12 -weight 1
 	grid columnconfigure $toolbDisp 2 -weight 1
 	
 	place $tvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	
 	set ::tv(stayontop) 0
 	set ::option(cursor_old) [$tvCont cget -cursor]
+	set ::main(compactMode) 0
 	set ::data(panscan) 0
 	set ::data(panscanAuto) 0
 	set ::data(movevidX) 0
@@ -1000,7 +574,13 @@ proc main_frontendNewUi {} {
 	
 	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	
-	main_frontendMenu $menubar $toolbBot $tvBg
+	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $tvBg standard
+	main_menuNav $menubar $toolbChanCtrl $toolbPlay $tvBg standard
+	main_menuView $menubar $toolbChanCtrl $toolbPlay $tvBg standard
+	main_menuAud $menubar $toolbChanCtrl $toolbPlay $tvBg standard
+	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $tvBg standard
+	main_menuReFo $menubar $toolbChanCtrl $toolbPlay $tvBg standard
+	main_menuContext $menubar $toolbChanCtrl $toolbPlay $tvBg
 	main_frontendChannelHandler main
 	
 	if {$::main(running_recording) == 0} {
@@ -1026,7 +606,7 @@ proc main_frontendNewUi {} {
 		}
 	}
 	
-	tooltips $toolbTop $toolbStation $toolbBot main
+	tooltips $toolbTop $toolbChanCtrl $toolbPlay main
 	
 	if {$::option(newsreader) == 1} {
 		after 5000 main_newsreaderAutomaticUpdate
@@ -1164,12 +744,12 @@ proc main_frontendNewUi {} {
 		autoscroll $stations.scrbSlist
 		#FIXME Does root window need a minsize?
 		#~ wm minsize . [winfo reqwidth .] [winfo reqheight .]
-		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + [winfo height .ftoolb_Disp] + 141]
+		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
 		wm minsize . 250 $height
 	} else {
 		tkwait visibility .
 		autoscroll $stations.scrbSlist
-		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Bot] + [winfo height .ftoolb_Disp] + 141]
+		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
 		wm minsize . 250 $height
 	}
 	
@@ -1243,7 +823,7 @@ proc main_frontendUiTvviewer {} {
 	ttk::scale $wfbottom.scale_volume \
 	-orient horizontal \
 	-variable main(volume_scale) \
-	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute] \
+	-command [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute] \
 	-from 0 \
 	-to 100
 	set ::main(volume_scale) 100
@@ -1252,7 +832,7 @@ proc main_frontendUiTvviewer {} {
 	-image $::icon_m(volume) \
 	-style Toolbutton \
 	-takefocus 0 \
-	-command [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
+	-command [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	
 	ttk::button $wftop.button_timeshift \
 	-image $::icon_m(timeshift) \

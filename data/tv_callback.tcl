@@ -64,9 +64,9 @@ proc tv_callbackVidData {} {
 				tv_wmHeartbeatCmd cancel 
 			}
 			if {$::tv(pbMode) == 1} {
-				.ftoolb_Bot.bPlay state !disabled
-				.ftoolb_Bot.bPause state disabled
-				.ftoolb_Bot.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
+				.ftoolb_Play.bPlay state !disabled
+				.ftoolb_Play.bPause state disabled
+				.ftoolb_Play.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
 				bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
@@ -150,7 +150,7 @@ proc tv_callbackVidData {} {
 						place .ftvBg.cont -relheight [expr ([dict get [place info .ftvBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
 					}
 				}
-				tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute $::main(volume_scale)
+				tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
 				tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]

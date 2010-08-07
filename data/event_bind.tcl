@@ -19,7 +19,7 @@
 proc event_constr {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
 	#Construct events and make necessary bindings
-	bind . <Key-m> [list tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute mute]
+	bind . <Key-m> [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	bind . <Key-F1> [list info_helpHelp]
 	bind . <Alt-Key-t> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
 	bind . <Alt-Key-n> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
@@ -37,8 +37,8 @@ proc event_constr {handler} {
 	bind . <<input_down>> [list chan_zapperInput 1 -1]
 	event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 	event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-	bind . <<volume_decr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) - 3]}
-	bind . <<volume_incr>> {tv_playerVolumeControl .ftoolb_Bot.scVolume .ftoolb_Bot.bVolMute [expr $::main(volume_scale) + 3]}
+	bind . <<volume_decr>> {tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
+	bind . <<volume_incr>> {tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
 	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
 	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
 	bind . <<delay_incr>> {tv_playerAudioDelay incr}
@@ -55,6 +55,7 @@ proc event_constr {handler} {
 	event add <<start>> <Shift-Key-P>
 	event add <<stop>> <Shift-Key-S>
 	bind . <Key-f> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind . <Control-Key-c> tv_wmCompact
 	bind .ftvBg.cont <Double-ButtonPress-1> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
 	bind .ftvBg <Double-ButtonPress-1> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
 	bind . <Control-Key-1> [list tv_wmGivenSize .ftvBg 1]
@@ -66,9 +67,9 @@ proc event_constr {handler} {
 	bind . <Alt-Key-Down> [list tv_wmMoveVideo 1]
 	bind . <Alt-Key-Left> [list tv_wmMoveVideo 2]
 	bind . <Alt-Key-Up> [list tv_wmMoveVideo 3]
-	bind . <Alt-Key-c> [list tv_wmMoveVideo 4]
-	bind .ftvBg <ButtonPress-3> [list tk_popup .ftvBg.context %X %Y]
-	bind .ftvBg.cont <ButtonPress-3> [list tk_popup .ftvBg.context %X %Y]
+	bind . <Key-c> [list tv_wmMoveVideo 4]
+	bind .ftvBg <ButtonPress-3> [list tk_popup .ftvBg.mContext %X %Y]
+	bind .ftvBg.cont <ButtonPress-3> [list tk_popup .ftvBg.mContext %X %Y]
 	bind . <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
 	if {$handler} {
 		event add <<record>> <Key-r>

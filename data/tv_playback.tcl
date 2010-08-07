@@ -236,15 +236,15 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 		set ::tv(pbMode) 0
 		set ::main(label_file_time) "--:-- / --:--"
 		
-		.ftoolb_Bot.bPause state disabled
-		.ftoolb_Bot.bPlay state disabled
-		.ftoolb_Bot.bStop state disabled
-		.ftoolb_Bot.bRewStart state disabled
-		.ftoolb_Bot.bRewSmall state disabled
-		.ftoolb_Bot.mbRewChoose state disabled
-		.ftoolb_Bot.bForwSmall state disabled
-		.ftoolb_Bot.mbForwChoose state disabled
-		.ftoolb_Bot.bForwEnd state disabled
+		.ftoolb_Play.bPause state disabled
+		.ftoolb_Play.bPlay state disabled
+		.ftoolb_Play.bStop state disabled
+		.ftoolb_Play.bRewStart state disabled
+		.ftoolb_Play.bRewSmall state disabled
+		.ftoolb_Play.mbRewChoose state disabled
+		.ftoolb_Play.bForwSmall state disabled
+		.ftoolb_Play.mbForwChoose state disabled
+		.ftoolb_Play.bForwEnd state disabled
 		
 		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
@@ -290,7 +290,7 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 				}
 				log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
 				after $delay {
-					.ftoolb_Bot.bPlay configure -command [list tv_seek 0 0]
+					.ftoolb_Play.bPlay configure -command [list tv_seek 0 0]
 					.ftoolb_Top.bTimeshift state !disabled
 					bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
 					bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
@@ -302,15 +302,15 @@ proc tv_Playback {tv_bg tv_cont handler file} {
 					bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
 					bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
 					bind . <<start>> {}
-					.ftoolb_Bot.bPause state !disabled
-					.ftoolb_Bot.bPlay state disabled
-					.ftoolb_Bot.bStop state !disabled
-					.ftoolb_Bot.bRewStart state !disabled
-					.ftoolb_Bot.bRewSmall state !disabled
-					.ftoolb_Bot.mbRewChoose state !disabled
-					.ftoolb_Bot.bForwSmall state !disabled
-					.ftoolb_Bot.mbForwChoose state !disabled
-					.ftoolb_Bot.bForwEnd state !disabled
+					.ftoolb_Play.bPause state !disabled
+					.ftoolb_Play.bPlay state disabled
+					.ftoolb_Play.bStop state !disabled
+					.ftoolb_Play.bRewStart state !disabled
+					.ftoolb_Play.bRewSmall state !disabled
+					.ftoolb_Play.mbRewChoose state !disabled
+					.ftoolb_Play.bForwSmall state !disabled
+					.ftoolb_Play.mbForwChoose state !disabled
+					.ftoolb_Play.bForwEnd state !disabled
 					
 					set ::data(mplayer) [open "|$::tv(mcommand)" r+]
 					fconfigure $::data(mplayer) -blocking 0 -buffering line
@@ -612,9 +612,9 @@ proc tv_playbackStop {com handler} {
 		tv_fileComputeSize cancel
 	} else {
 		if {$::tv(pbMode) == 1} {
-			.ftoolb_Bot.bPlay state !disabled
-			.ftoolb_Bot.bPause state disabled
-			.ftoolb_Bot.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
+			.ftoolb_Play.bPlay state !disabled
+			.ftoolb_Play.bPause state disabled
+			.ftoolb_Play.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
 			bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
 		}
 	}
