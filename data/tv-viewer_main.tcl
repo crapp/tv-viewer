@@ -321,16 +321,16 @@ source $::option(root)/data/main_read_station_file.tcl
 main_readStationFile
 #Source stream and picqual related stuff.
 source $::option(root)/data/main_picqual_stream.tcl
-#Source tv player and related functions
-source $::option(root)/data/tv_callback.tcl
-source $::option(root)/data/tv_file_calc.tcl
-source $::option(root)/data/tv_player.tcl
-source $::option(root)/data/tv_playback.tcl
-source $::option(root)/data/tv_seek.tcl
-source $::option(root)/data/tv_slist.tcl
-source $::option(root)/data/tv_wm.tcl
+#Source video related functions
+source $::option(root)/data/vid_callback.tcl
+source $::option(root)/data/vid_file_calc.tcl
+source $::option(root)/data/vid_player.tcl
+source $::option(root)/data/vid_playback.tcl
+source $::option(root)/data/vid_seek.tcl
+source $::option(root)/data/vid_slist.tcl
+source $::option(root)/data/vid_wm.tcl
 #Source tv osd
-source $::option(root)/data/tv_osd.tcl
+source $::option(root)/data/vid_osd.tcl
 #Source newsreader ui and update checker.
 source $::option(root)/data/main_newsreader.tcl
 #Source system tray.
@@ -398,5 +398,4 @@ source $::option(root)/data/font_chooser.tcl
 
 cd "$::env(HOME)"
 
-#main_frontendUiTvviewer
-main_frontendNewUi
+main_frontendUi

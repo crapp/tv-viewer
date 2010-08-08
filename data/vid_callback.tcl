@@ -1,4 +1,4 @@
-#       tv_callback.tcl
+#       vid_callback.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc tv_callbackVidData {} {
+proc vid_callbackVidData {} {
 	if {[info exists ::data(mplayer)]} {
 		gets $::data(mplayer) line
 		if {[eof $::data(mplayer)]} {
@@ -59,15 +59,15 @@ proc tv_callbackVidData {} {
 			} else {
 				.ftoolb_Top.bTv state !pressed
 			}
-			tv_fileComputePos cancel
+			vid_fileComputePos cancel
 			if {$::option(player_screens_value) == 1} {
-				tv_wmHeartbeatCmd cancel 
+				vid_wmHeartbeatCmd cancel 
 			}
-			if {$::tv(pbMode) == 1} {
+			if {$::vid(pbMode) == 1} {
 				.ftoolb_Play.bPlay state !disabled
 				.ftoolb_Play.bPause state disabled
-				.ftoolb_Play.bPlay configure -command {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
-				bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont 0 "$::tv(current_rec_file)"}
+				.ftoolb_Play.bPlay configure -command {vid_Playback .ftvBg .ftvBg.cont 0 "$::vid(current_rec_file)"}
+				bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont 0 "$::vid(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
 				set status_record [monitor_partRunning 3]
@@ -75,13 +75,13 @@ proc tv_callbackVidData {} {
 					settooltip .tray [mc "TV-Viewer idle"]
 				}
 			}
-			if {$::tv(stayontop) == 2} {
+			if {$::vid(stayontop) == 2} {
 				wm attributes . -topmost 0
 			}
 		} else {
 			if {[string match "A:*V:*A-V:*" $line] != 1} {
 				log_writeOutMpl 0 "$line"
-				puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_callbackVidData \033\[0m \{$line\}"
+				puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_callbackVidData \033\[0m \{$line\}"
 			}
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
 				log_writeOutTv 0 "MPlayer reported video resolution $resolution."
@@ -90,7 +90,9 @@ proc tv_callbackVidData {} {
 						set ::option(resolx) $resolx
 						set ::option(resoly) $resoly
 					}
-					.ftvBg configure -width $::option(resolx) -height $::option(resoly)
+					#FIXME Do we need to set video frame to reported resolution?!
+					#~ wm geometry . {}
+					#~ .ftvBg configure -width $::option(resolx) -height $::option(resoly)
 					bind .ftvBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
 					bind .ftvBg.cont <Configure> {}
@@ -102,13 +104,13 @@ proc tv_callbackVidData {} {
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 1 || [lindex $status_time 0] == 1} {
-					tv_fileComputeSize cancel
+					vid_fileComputeSize cancel
 					set length [lindex [split $line "="] end]
 					set length_int [expr int($length)]
 					set seconds [expr [clock seconds] - $length_int]
-					after 0 [list tv_fileComputeSize $seconds]
+					after 0 [list vid_fileComputeSize $seconds]
 				} else {
-					tv_fileComputeSize cancel_rec
+					vid_fileComputeSize cancel_rec
 					if {[info exists ::data(file_size)] == 0} {
 						set length [lindex [split $line "="] end]
 						set length_int [expr int($length)]
@@ -116,7 +118,7 @@ proc tv_callbackVidData {} {
 					}
 				}
 				set ::data(file_pos_calc) [clock seconds]
-				after 10 [list tv_fileComputePos $::data(file_pos_calc)]
+				after 10 [list vid_fileComputePos $::data(file_pos_calc)]
 			}
 			if {[string match -nocase "Starting playback*" $line]} {
 				catch {launch_splashPlay cancel 0 0 0}
@@ -140,48 +142,48 @@ proc tv_callbackVidData {} {
 					place .ftvBg.cont -rely [expr ([dict get [place info .ftvBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
 				}
 				if {$::data(panscanAuto) == 1} {
-					set ::tv(id_panscanAuto) [after 500 {
-						catch {after cancel $::tv(id_panscanAuto)}
+					set ::vid(id_panscanAuto) [after 500 {
+						catch {after cancel $::vid(id_panscanAuto)}
 						set ::data(panscanAuto) 0
-						tv_wmPanscanAuto
+						vid_wmPanscanAuto
 					}]
 				} else {
 					if {$::data(panscan) != 0} {
 						place .ftvBg.cont -relheight [expr ([dict get [place info .ftvBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
 					}
 				}
-				tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
-				tv_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
+				vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
+				vid_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
 					bind . <<input_up>> "chan_zapperInput 1 1"
 					bind . <<input_down>> "chan_zapperInput 1 -1"
-					bind . <<teleview>> {tv_playerRendering}
+					bind . <<teleview>> {vid_playerRendering}
 				}
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {
-				if {$::tv(getvid_seek) == 0} {
-					tv_fileComputePos cancel
+				if {$::vid(getvid_seek) == 0} {
+					vid_fileComputePos cancel
 					set pos [lindex [split $line \=] end]
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
-					after 10 [list tv_fileComputePos 0]
-					bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-					bind . <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-					bind . <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-					bind . <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-					bind . <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-					bind . <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-					bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-					bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+					after 10 [list vid_fileComputePos 0]
+					bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
+					bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
+					bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
+					bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
+					bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
+					bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
+					bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
+					bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
 				} else {
-					tv_fileComputePos cancel
+					vid_fileComputePos cancel
 					set pos [lindex [split $line \=] end]
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
-					after 10 [list tv_fileComputePos 0]
-					tv_seek $::tv(seek_secs) $::tv(seek_dir)
+					after 10 [list vid_fileComputePos 0]
+					vid_seek $::vid(seek_secs) $::vid(seek_dir)
 				}
 			}
 			set ::data(report) $line
@@ -192,8 +194,8 @@ proc tv_callbackVidData {} {
 	}
 }
 
-proc tv_callbackMplayerRemote {command} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_callbackMplayerRemote \033\[0m \{$command\}"
+proc vid_callbackMplayerRemote {command} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_callbackMplayerRemote \033\[0m \{$command\}"
 	if {[info exists ::data(mplayer)] == 0} {return 1}
 	if {[string trim $::data(mplayer)] != {}} {
 		log_writeOutTv 0 "Sending command $command to MPlayer remote channel."

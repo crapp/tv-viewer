@@ -20,16 +20,16 @@ proc station_after_msg {var0 var1} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_after_msg \033\[0m \{$var0\} \{$var1\}"
 	if {$::option(osd_enabled) == 1} {
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_station_w) 0] == 1} {
-			after 0 [list tv_osd osd_station_w 2000 "$::kanalid($var0)"]
+			after 0 [list vid_osd osd_station_w 2000 "$::kanalid($var0)"]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_station_f) 0] == 1} {
-			after 0 [list tv_osd osd_station_f 2000 "$::kanalid($var0)"]
+			after 0 [list vid_osd osd_station_f 2000 "$::kanalid($var0)"]
 		}
 }
 	.ftoolb_Disp.lDispText configure -text [mc "Now playing %" $::kanalid($var0)]
 	#~ wm title . "TV-Viewer [lindex $::option(release_version) 0] - "
 	if {[winfo exists .tray]} {
-		set status_tv [tv_callbackMplayerRemote alive]
+		set status_tv [vid_callbackMplayerRemote alive]
 		if {$status_tv != 1} {
 			settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]
 		}

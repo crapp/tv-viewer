@@ -19,7 +19,7 @@
 proc info_helpHelp {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHelp \033\[0m"
 	if {[wm attributes . -fullscreen] == 1} {
-		tv_wmFullscreen . .ftvBg.cont .ftvBg
+		vid_wmFullscreen . .ftvBg.cont .ftvBg
 	}
 	if {$::option(language_value) != 0} {
 		if {[string match *en* $::option(language_value)]} {

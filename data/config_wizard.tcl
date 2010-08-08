@@ -28,9 +28,9 @@ proc config_wizardMainUi {} {
 	}
 	
 	if {[wm attributes . -fullscreen] == 1} {
-		tv_wmFullscreen . .ftvBg.cont .ftvBg
+		vid_wmFullscreen . .ftvBg.cont .ftvBg
 	}
-	tv_playbackStop 1 pic
+	vid_playbackStop 1 pic
 	log_writeOutTv 0 "Starting preferences..."
 	
 	# Setting up the interface
@@ -51,6 +51,7 @@ proc config_wizardMainUi {} {
 	set wfbtn [ttk::frame $w.frame_buttons -style TLabelframe]
 	
 	#FIXME Strange way of setting some font, why?
+	#FIXME Switch to a treeview widget? Would be possible to use images.
 	listbox $wfbox.listbox_clist \
 	-font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* \
 	-width 0 \

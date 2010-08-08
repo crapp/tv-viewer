@@ -1,4 +1,4 @@
-#       tv_wm.tcl
+#       vid_wm.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc tv_wmFullscreen {mw tv_bg tv_cont} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmFullscreen \033\[0m \{$mw\} \{$tv_cont\} \{$tv_bg\}"
+proc vid_wmFullscreen {mw tv_bg tv_cont} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmFullscreen \033\[0m \{$mw\} \{$tv_cont\} \{$tv_bg\}"
 	if {[wm attributes $mw -fullscreen] == 0} {
 		grid remove .foptions_bar
 		grid remove .seperatMenu
@@ -27,27 +27,27 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 		grid remove .ftoolb_Play
 		grid remove .ftoolb_Disp
 		bind $tv_cont <Motion> {
-			tv_wmCursorHide .ftvBg.cont 0
-			tv_wmCursorPlaybar %Y
-			#~ tv_slistCursor %X %Y
+			vid_wmCursorHide .ftvBg.cont 0
+			vid_wmCursorPlaybar %Y
+			#~ vid_slistCursor %X %Y
 		}
 		bind $tv_bg <Motion> {
-			tv_wmCursorHide .ftvBg 0
-			tv_wmCursorPlaybar %Y
-			#~ tv_slistCursor %X %Y
+			vid_wmCursorHide .ftvBg 0
+			vid_wmCursorPlaybar %Y
+			#~ vid_slistCursor %X %Y
 		}
 		bind $mw <ButtonPress-1> {.ftvBg.cont configure -cursor arrow
 								  .ftvBg configure -cursor arrow}
 		set ::cursor($tv_cont) ""
 		set ::cursor($tv_bg) ""
-		tv_wmCursorHide $tv_cont 0
-		tv_wmCursorHide $tv_bg 0
+		vid_wmCursorHide $tv_cont 0
+		vid_wmCursorHide $tv_bg 0
 		wm attributes $mw -fullscreen 1
 		if {$::data(panscanAuto) == 1} {
-			set ::tv(id_panscanAuto) [after 500 {
-				catch {after cancel $::tv(id_panscanAuto)}
+			set ::vid(id_panscanAuto) [after 500 {
+				catch {after cancel $::vid(id_panscanAuto)}
 				set ::data(panscanAuto) 0
-				tv_wmPanscanAuto
+				vid_wmPanscanAuto
 			}]
 		}
 		log_writeOutTv 0 "Going to full-screen mode."
@@ -69,58 +69,64 @@ proc tv_wmFullscreen {mw tv_bg tv_cont} {
 			#~ place forget .tv.slist_lirc
 		#~ }
 		bind $tv_cont <Motion> {
-			tv_wmCursorHide .ftvBg.cont 0
-			#~ tv_wmCursorPlaybar %Y
-			#~ tv_slistCursor %X %Y
+			vid_wmCursorHide .ftvBg.cont 0
+			#~ vid_wmCursorPlaybar %Y
+			#~ vid_slistCursor %X %Y
 		}
 		bind $tv_bg <Motion> {
-			tv_wmCursorHide .ftvBg 0
-			#~ tv_wmCursorPlaybar %Y
-			#~ tv_slistCursor %X %Y
+			vid_wmCursorHide .ftvBg 0
+			#~ vid_wmCursorPlaybar %Y
+			#~ vid_slistCursor %X %Y
 		}
 		#~ bind $mw <ButtonPress-1> {}
 		#~ set ::cursor($tv_cont) ""
 		#~ set ::cursor($tv_bg) ""
-		#~ tv_wmCursorHide $tv_bg 1
-		#~ tv_wmCursorHide $tv_cont 1
+		#~ vid_wmCursorHide $tv_bg 1
+		#~ vid_wmCursorHide $tv_cont 1
 		#~ $tv_cont configure -cursor arrow
 		#~ $tv_bg configure -cursor arrow
-		grid .foptions_bar -in . -row 0 -column 0 \
-		-sticky new \
-		-columnspan 2
-		grid .seperatMenu -in . -row 1 -column 0 \
-		-sticky ew \
-		-padx 2 \
-		-columnspan 2
-		grid .ftoolb_Top -in . -row 2 -column 0 \
-		-columnspan 2 \
-		-sticky ew
-		grid .fstations -in . -row 3 -column 0 \
-		-sticky nesw
-		grid .ftvBg -in . -row 3 -column 1 \
-		-sticky nesw
-		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
-		-sticky ew
-		grid .ftoolb_Play -in . -row 4 -column 1 \
-		-sticky ew
-		grid .ftoolb_Disp -in . -row 5 -column 0 \
-		-columnspan 2 \
-		-sticky ew
+		if {$::main(compactMode) == 0} {
+			grid .foptions_bar -in . -row 0 -column 0 \
+			-sticky new \
+			-columnspan 2
+			grid .seperatMenu -in . -row 1 -column 0 \
+			-sticky ew \
+			-padx 2 \
+			-columnspan 2
+			grid .ftoolb_Top -in . -row 2 -column 0 \
+			-columnspan 2 \
+			-sticky ew
+			grid .fstations -in . -row 3 -column 0 \
+			-sticky nesw \
+			-padx "0 2"
+			grid .ftvBg -in . -row 3 -column 1 \
+			-sticky nesw
+			grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
+			-sticky ew
+			grid .ftoolb_Play -in . -row 4 -column 1 \
+			-sticky ew
+			grid .ftoolb_Disp -in . -row 5 -column 0 \
+			-columnspan 2 \
+			-sticky ew
+		}
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
 		if {$::data(panscanAuto) == 1} {
-			set ::tv(id_panscanAuto) [after 500 {
-				catch {after cancel $::tv(id_panscanAuto)}
+			set ::vid(id_panscanAuto) [after 500 {
+				catch {after cancel $::vid(id_panscanAuto)}
 				set ::data(panscanAuto) 0
-				tv_wmPanscanAuto
+				vid_wmPanscanAuto
 			}]
 		}
 	}
 }
 
-proc tv_wmCompact {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmCompact \033\[0m"
+proc vid_wmCompact {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCompact \033\[0m"
 	if {$::main(compactMode)} {
+		wm geometry . {}
+		set width [winfo width .ftvBg]
+		set height [winfo height .ftvBg]
 		grid .foptions_bar -in . -row 0 -column 0 \
 		-sticky new \
 		-columnspan 2
@@ -130,9 +136,10 @@ proc tv_wmCompact {} {
 		-columnspan 2
 		grid .ftoolb_Top -in . -row 2 -column 0 \
 		-columnspan 2 \
-		-sticky ew
+		-sticky ew 
 		grid .fstations -in . -row 3 -column 0 \
-		-sticky nesw
+		-sticky nesw \
+		-padx "0 2"
 		grid .ftvBg -in . -row 3 -column 1 \
 		-sticky nesw
 		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
@@ -142,8 +149,14 @@ proc tv_wmCompact {} {
 		grid .ftoolb_Disp -in . -row 5 -column 0 \
 		-columnspan 2 \
 		-sticky ew
+		set widthc [expr [winfo width .fstations] + $width + 2]
+		set heightc [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + $height]
+		wm geometry . $widthc\x$heightc
 		set ::main(compactMode) 0
 	} else {
+		wm geometry . {}
+		set width [winfo width .ftvBg]
+		set height [winfo height .ftvBg]
 		grid remove .foptions_bar
 		grid remove .seperatMenu
 		grid remove .ftoolb_Top
@@ -152,12 +165,13 @@ proc tv_wmCompact {} {
 		grid remove .ftoolb_Play
 		grid remove .ftoolb_Disp
 		set ::main(compactMode) 1
+		wm geometry . $width\x$height
 	}
 }
 
-proc tv_wmPanscan {w direct} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmPanscan \033\[0m \{$w\} \{$direct\}"
-	set status_tvplayback [tv_callbackMplayerRemote alive]
+proc vid_wmPanscan {w direct} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmPanscan \033\[0m \{$w\} \{$direct\}"
+	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	if {$direct == 1} {
 		if {$::data(panscan) == 100} return
@@ -167,10 +181,10 @@ proc tv_wmPanscan {w direct} {
 		set ::data(panscan) [expr $::data(panscan) + 5]
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 "Zoom $::data(panscan)"]
+			after 0 [list vid_osd osd_group_w 1000 "Zoom $::data(panscan)"]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 "Zoom $::data(panscan)"]
+			after 0 [list vid_osd osd_group_f 1000 "Zoom $::data(panscan)"]
 		}
 	}
 	if {$direct == -1} {
@@ -181,10 +195,10 @@ proc tv_wmPanscan {w direct} {
 		set ::data(panscan) [expr $::data(panscan) - 5]
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 "Zoom $::data(panscan)"]
+			after 0 [list vid_osd osd_group_w 1000 "Zoom $::data(panscan)"]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 "Zoom $::data(panscan)"]
+			after 0 [list vid_osd osd_group_f 1000 "Zoom $::data(panscan)"]
 		}
 	}
 	if {$direct == 0} {
@@ -194,52 +208,57 @@ proc tv_wmPanscan {w direct} {
 		set ::data(panscan) 0
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 4:3"]]
+			after 0 [list vid_osd osd_group_w 1000 [mc "Pan&Scan 4:3"]]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 4:3"]]
+			after 0 [list vid_osd osd_group_f 1000 [mc "Pan&Scan 4:3"]]
 		}
 	}
 }
 
-proc tv_wmPanscanAuto {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmPanscanAuto \033\[0m"
-	set status_tvplayback [tv_callbackMplayerRemote alive]
+proc vid_wmPanscanAuto {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmPanscanAuto \033\[0m"
+	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	if {$::option(player_aspect) == 0} {
 		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, zoom disabled!"
 		return
 	}
 	if {[winfo ismapped .ftvBg.cont] == 0} {
-		log_writeOutTv 1 "Video player container frame is not mapped."
+		log_writeOutTv 1 "Video frame is not mapped."
 		log_writeOutTv 1 "Auto Pan&Scan not possible."
 		return
 	}
 	if {[wm attributes . -fullscreen] == 0} {
-		#FIXME PanScan Auto in windowed does not work reliable 
 		if {$::data(panscanAuto) == 0} {
 			set relativeX [dict get [place info .ftvBg.cont] -relx]
 			set relativeY [dict get [place info .ftvBg.cont] -rely]
 			set relheight [dict get [place info .ftvBg.cont] -relheight]
 			place .ftvBg.cont -relheight 1 -relx $relativeX -rely $relativeY
-			set width [expr [winfo width .] - [winfo width .fstations]]
-			set height [expr int(ceil($width.0 / 1.777777778))]
-			set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp]]
-			wm geometry . [winfo width .]x$heightwp
+			if {$::main(compactMode)} {
+				set width [winfo width .]
+				set height [expr int(ceil($width.0 / 1.777777778))]
+				wm geometry . [winfo width .]x$height
+			} else {
+				set width [expr [winfo width .] - [winfo width .fstations]]
+				set height [expr int(ceil($width.0 / 1.777777778))]
+				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp]]
+				wm geometry . [winfo width .]x$heightwp
+			}
 			set relheight [lindex [split [expr ([winfo reqwidth .ftvBg].0 / [winfo reqheight .ftvBg].0)] .] end]
 			set relheight 3333333333333333
 			set panscan_multi [expr int(ceil(0.$relheight / 0.05))]
 			set ::data(panscan) [expr ($panscan_multi * 5)]
 			log_writeOutTv 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
 			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-				after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
+				after 0 [list vid_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
 			}
 			set ::data(panscanAuto) 1
 			place .ftvBg.cont -relheight 1.3333333333333333
 		} else {
 			#FIXME needs more testing!! Deprecated??
 			.ftvBg configure -height [expr int(ceil([winfo width .ftvBg].0 / 1.33333333333))]
-			tv_wmPanscan .ftvBg.cont 0
+			vid_wmPanscan .ftvBg.cont 0
 		}
 	} else {
 		if {$::data(panscanAuto) == 0} {
@@ -258,7 +277,7 @@ proc tv_wmPanscanAuto {} {
 				set ::data(panscan) [expr ($panscan_multi * 5)]
 				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
 				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-					after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
+					after 0 [list vid_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
 				}
 				set ::data(panscanAuto) 1
 				place .ftvBg.cont -relheight $relheight
@@ -270,31 +289,31 @@ proc tv_wmPanscanAuto {} {
 				set ::data(panscan) [expr ($panscan_multi * 5)]
 				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
 				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-					after 0 [list tv_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
+					after 0 [list vid_osd osd_group_w 1000 [mc "Pan&Scan 16:9"]]
 				}
 				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-					after 0 [list tv_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
+					after 0 [list vid_osd osd_group_f 1000 [mc "Pan&Scan 16:9"]]
 				}
 				set ::data(panscanAuto) 1
 				place .ftvBg.cont -relheight $relheight
 			}
 		} else {
-			tv_wmPanscan .ftvBg.cont 0
+			vid_wmPanscan .ftvBg.cont 0
 		}
 	}
 }
 
-proc tv_wmMoveVideo {dir} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmMoveVideo \033\[0m \{$dir\}"
+proc vid_wmMoveVideo {dir} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmMoveVideo \033\[0m \{$dir\}"
 	if {$::option(player_aspect) == 0} {
 		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, moving video disabled!"
 		return
 	}
-	set status_tvplayback [tv_callbackMplayerRemote alive]
+	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	#FIXME Why check for ismapped? Deprecated?
 	if {[winfo ismapped .ftvBg.cont] == 0} {
-		log_writeOutTv 1 "Video player container frame is not mapped."
+		log_writeOutTv 1 "Video frame is not mapped."
 		log_writeOutTv 1 "Auto Pan&Scan not possible."
 		return
 	}
@@ -304,10 +323,10 @@ proc tv_wmMoveVideo {dir} {
 		log_writeOutTv 0 "Moving video to the right by 0.5%."
 		set ::data(movevidX) [expr $::data(movevidX) + 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
+			after 0 [list vid_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidX)]]
+			after 0 [list vid_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		return
 	}
@@ -317,10 +336,10 @@ proc tv_wmMoveVideo {dir} {
 		log_writeOutTv 0 "Moving video down by 0.5%."
 		set ::data(movevidY) [expr $::data(movevidY) + 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
+			after 0 [list vid_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move y=%" $::data(movevidY)]]
+			after 0 [list vid_osd osd_group_f 1000 [mc "Move y=%" $::data(movevidY)]]
 		}
 		return
 	}
@@ -330,10 +349,10 @@ proc tv_wmMoveVideo {dir} {
 		log_writeOutTv 0 "Moving video to the left by 0.5%."
 		set ::data(movevidX) [expr $::data(movevidX) - 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
+			after 0 [list vid_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidX)]]
+			after 0 [list vid_osd osd_group_f 1000 [mc "Move x=%" $::data(movevidX)]]
 		}
 		return
 	}
@@ -343,10 +362,10 @@ proc tv_wmMoveVideo {dir} {
 		log_writeOutTv 0 "Moving video up by 0.5%."
 		set ::data(movevidY) [expr $::data(movevidY) - 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
+			after 0 [list vid_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Move y=%" $::data(movevidY)]]
+			after 0 [list vid_osd osd_group_f 1000 [mc "Move y=%" $::data(movevidY)]]
 		}
 		return
 	}
@@ -357,18 +376,18 @@ proc tv_wmMoveVideo {dir} {
 		log_writeOutTv 0 "Centering video."
 		set ::data(movevidY) [expr $::data(movevidY) - 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-			after 0 [list tv_osd osd_group_w 1000 [mc "Centering video"]]
+			after 0 [list vid_osd osd_group_w 1000 [mc "Centering video"]]
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-			after 0 [list tv_osd osd_group_f 1000 [mc "Centering video" ]]
+			after 0 [list vid_osd osd_group_f 1000 [mc "Centering video" ]]
 		}
 		return
 	}
 }
 
-proc tv_wmStayonTop {com} {
+proc vid_wmStayonTop {com} {
 	#Here we use the topmost attribute for toplevels so the video window may stay on top
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmStayonTop \033\[0m \{$com\}"
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmStayonTop \033\[0m \{$com\}"
 	if {$com == 0} {
 		wm attributes . -topmost 0
 	}
@@ -376,7 +395,7 @@ proc tv_wmStayonTop {com} {
 		wm attributes . -topmost 1
 	}
 	if {$com == 2} {
-		set status [tv_callbackMplayerRemote alive]
+		set status [vid_callbackMplayerRemote alive]
 		if {$status != 1} {
 			wm attributes . -topmost 1
 		} else {
@@ -387,8 +406,8 @@ proc tv_wmStayonTop {com} {
 	}
 }
 
-proc tv_wmGivenSize {w size} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmGivenSize \033\[0m \{$w\} \{$size\}"
+proc vid_wmGivenSize {w size} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmGivenSize \033\[0m \{$w\} \{$size\}"
 	if {$size == 1} {
 		wm geometry . {}
 		$w configure -width $::option(resolx) -height $::option(resoly)
@@ -398,7 +417,7 @@ proc tv_wmGivenSize {w size} {
 	} else {
 		wm geometry . {}
 		$w configure -width [expr round($::option(resolx) * $size)] -height [expr round($::option(resoly) * $size)]
-		set status [tv_callbackMplayerRemote alive]
+		set status [vid_callbackMplayerRemote alive]
 		if {$status != 1} {
 			place .ftvBg.cont -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
 		}
@@ -407,7 +426,7 @@ proc tv_wmGivenSize {w size} {
 	}
 }
 
-proc tv_wmCursorHide {w com} {
+proc vid_wmCursorHide {w com} {
 	if {[info exists ::option(cursor_id\($w\))] == 1} {
 		foreach id [split $::option(cursor_id\($w\))] {
 			catch {after cancel $id}
@@ -423,12 +442,12 @@ proc tv_wmCursorHide {w com} {
 	}
 }
 
-proc tv_wmCursorPlaybar {ypos} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmCursorPlaybar \033\[0m \{$ypos\}"
-	if {[info exists ::tv(pbMode)] && $::tv(pbMode) == 0} {
+proc vid_wmCursorPlaybar {ypos} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursorPlaybar \033\[0m \{$ypos\}"
+	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 0} {
 		#FIXME TV Playback mode show controls nevertheless?!
 	}
-	if {[info exists ::tv(pbMode)] && $::tv(pbMode) == 1} {
+	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
 		if {[string trim [grid info .ftoolb_Play]] == {}} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
 				grid .ftoolb_Play -in . -row 4 -column 1 \
@@ -447,25 +466,25 @@ proc tv_wmCursorPlaybar {ypos} {
 				log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
 				.ftvBg configure -cursor arrow
 				.ftvBg.cont configure -cursor arrow
-				tv_wmCursorHide .ftvBg 1
-				tv_wmCursorHide .ftvBg.cont 1
+				vid_wmCursorHide .ftvBg 1
+				vid_wmCursorHide .ftvBg.cont 1
 			}
 			return
 		}
 	}
 }
 
-proc tv_wmHeartbeatCmd {com} {
+proc vid_wmHeartbeatCmd {com} {
 	#Additional function to suppress screensaver
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_wmHeartbeatCmd \033\[0m \{$com\}"
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmHeartbeatCmd \033\[0m \{$com\}"
 	if {"$com" == "cancel"} {
 		catch {after cancel $::data(heartbeat_id)}
 		unset -nocomplain ::data(heartbeat_id)
-		catch {exec xdg-screensaver resume $::tv(screensaverId)}
-		unset -nocomplain ::tv(screensaverId)
+		catch {exec xdg-screensaver resume $::vid(screensaverId)}
+		unset -nocomplain ::vid(screensaverId)
 		return
 	}
 	tk inactive reset
-	set ::data(heartbeat_id) [after 50000 tv_wmHeartbeatCmd 0]
+	set ::data(heartbeat_id) [after 50000 vid_wmHeartbeatCmd 0]
 }
 

@@ -48,10 +48,10 @@ mcset $lang \
 	{Choose font color}
 
 mcset $lang \
-	{Specify where the message box the player window
-should be displayed} \
-	{Specify where the message box the player window
-should be displayed}
+	{Specify where the message box should be
+displayed in the video frame} \
+	{Specify where the message box should be
+displayed in the video frame}
 
 mcset $lang \
 	{top left} \

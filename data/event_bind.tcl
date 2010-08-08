@@ -19,7 +19,7 @@
 proc event_constr {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
 	#Construct events and make necessary bindings
-	bind . <Key-m> [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	bind . <Key-m> [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	bind . <Key-F1> [list info_helpHelp]
 	bind . <Alt-Key-t> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
 	bind . <Alt-Key-n> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
@@ -37,12 +37,12 @@ proc event_constr {handler} {
 	bind . <<input_down>> [list chan_zapperInput 1 -1]
 	event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 	event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-	bind . <<volume_decr>> {tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
-	bind . <<volume_incr>> {tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
+	bind . <<volume_decr>> {vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
+	bind . <<volume_incr>> {vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
 	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
 	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
-	bind . <<delay_incr>> {tv_playerAudioDelay incr}
-	bind . <<delay_decr>> {tv_playerAudioDelay decr}
+	bind . <<delay_incr>> {vid_playerAudioDelay incr}
+	bind . <<delay_decr>> {vid_playerAudioDelay decr}
 	event add <<forward_end>> <Key-End>
 	event add <<forward_10s>> <Key-Right>
 	event add <<forward_1m>> <Shift-Key-Right>
@@ -54,30 +54,30 @@ proc event_constr {handler} {
 	event add <<pause>> <Key-p>
 	event add <<start>> <Shift-Key-P>
 	event add <<stop>> <Shift-Key-S>
-	bind . <Key-f> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
-	bind . <Control-Key-c> tv_wmCompact
-	bind .ftvBg.cont <Double-ButtonPress-1> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
-	bind .ftvBg <Double-ButtonPress-1> [list tv_wmFullscreen . .ftvBg .ftvBg.cont]
-	bind . <Control-Key-1> [list tv_wmGivenSize .ftvBg 1]
-	bind . <Control-Key-2> [list tv_wmGivenSize .ftvBg 2]
-	bind . <Key-e> [list tv_wmPanscan .ftvBg.cont 1]
-	bind . <Key-w> [list tv_wmPanscan .ftvBg.cont -1]
-	bind . <Shift-Key-W> {tv_wmPanscanAuto}
-	bind . <Alt-Key-Right> [list tv_wmMoveVideo 0]
-	bind . <Alt-Key-Down> [list tv_wmMoveVideo 1]
-	bind . <Alt-Key-Left> [list tv_wmMoveVideo 2]
-	bind . <Alt-Key-Up> [list tv_wmMoveVideo 3]
-	bind . <Key-c> [list tv_wmMoveVideo 4]
+	bind . <Key-f> [list vid_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind . <Control-Key-c> vid_wmCompact
+	bind .ftvBg.cont <Double-ButtonPress-1> [list vid_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind .ftvBg <Double-ButtonPress-1> [list vid_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind . <Control-Key-1> [list vid_wmGivenSize .ftvBg 1]
+	bind . <Control-Key-2> [list vid_wmGivenSize .ftvBg 2]
+	bind . <Key-e> [list vid_wmPanscan .ftvBg.cont 1]
+	bind . <Key-w> [list vid_wmPanscan .ftvBg.cont -1]
+	bind . <Shift-Key-W> {vid_wmPanscanAuto}
+	bind . <Alt-Key-Right> [list vid_wmMoveVideo 0]
+	bind . <Alt-Key-Down> [list vid_wmMoveVideo 1]
+	bind . <Alt-Key-Left> [list vid_wmMoveVideo 2]
+	bind . <Alt-Key-Up> [list vid_wmMoveVideo 3]
+	bind . <Key-c> [list vid_wmMoveVideo 4]
 	bind .ftvBg <ButtonPress-3> [list tk_popup .ftvBg.mContext %X %Y]
 	bind .ftvBg.cont <ButtonPress-3> [list tk_popup .ftvBg.mContext %X %Y]
-	bind . <Mod4-Key-s> [list tv_callbackMplayerRemote "screenshot 0"]
+	bind . <Mod4-Key-s> [list vid_callbackMplayerRemote "screenshot 0"]
 	if {$handler} {
 		event add <<record>> <Key-r>
 		bind . <<record>> [list record_wizardUi]
 		event add <<timeshift>> <Key-t>
-		bind . <<timeshift>> [list timeshift wftop.button_timeshift]
+		bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
 		event add <<teleview>> <Key-s>
-		bind . <<teleview>> {tv_playerRendering}
+		bind . <<teleview>> {vid_playerRendering}
 		event add <<station_up>> <Key-Prior>
 		event add <<station_down>> <Key-Next>
 		event add <<station_jump>> <Key-j>
@@ -128,15 +128,15 @@ proc event_recordStart {handler} {
 		bind . <<input_up>> {}
 		bind . <<input_down>> {}
 	}
-	bind . <<stop>> {tv_playbackStop 1 pic}
-	bind . <<forward_end>> {tv_seekInitiate "tv_seek 0 2"}
-	bind . <<forward_10s>> {tv_seekInitiate "tv_seek 10 1"}
-	bind . <<forward_1m>> {tv_seekInitiate "tv_seek 60 1"}
-	bind . <<forward_10m>> {tv_seekInitiate "tv_seek 600 1"}
-	bind . <<rewind_10s>> {tv_seekInitiate "tv_seek 10 -1"}
-	bind . <<rewind_1m>> {tv_seekInitiate "tv_seek 60 -1"}
-	bind . <<rewind_10m>> {tv_seekInitiate "tv_seek 600 -1"}
-	bind . <<rewind_start>> {tv_seekInitiate "tv_seek 0 -2"}
+	bind . <<stop>> {vid_playbackStop 1 pic}
+	bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
+	bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
+	bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
+	bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
+	bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
+	bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
+	bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
+	bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
 	bind . <<teleview>> {}
 	bind . <Control-Key-m> {}
 	bind . <Control-Key-e> {}
@@ -148,7 +148,7 @@ proc event_recordStart {handler} {
 
 proc event_recordStop {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStop \033\[0m"
-	bind . <<teleview>> {tv_playerRendering}
+	bind . <<teleview>> {vid_playerRendering}
 	bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
 	bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
 	bind . <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
@@ -157,7 +157,7 @@ proc event_recordStop {} {
 	bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]
 	bind . <<input_up>> [list chan_zapperInput 1 1]
 	bind . <<input_down>> [list chan_zapperInput 1 -1]
-	bind . <<timeshift>> [list timeshift .top_buttons.button_timeshift]
+	bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
 }

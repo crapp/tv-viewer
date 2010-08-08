@@ -24,9 +24,9 @@ proc record_linkerPrestart {handler} {
 	} else {
 		log_writeOutTv 0 "Initiated prestart sequence for timeshift."
 	}
-	tv_fileComputePos cancel 
-	tv_fileComputeSize cancel
-	catch {tv_playbackStop 0 nopic}
+	vid_fileComputePos cancel 
+	vid_fileComputeSize cancel
+	catch {vid_playbackStop 0 nopic}
 	if {[winfo exists .ftvBg.l_bgImage]} {
 		place forget .ftvBg.l_bgImage
 	}
@@ -142,18 +142,18 @@ proc record_linkerRec {handler} {
 	} else {
 		log_writeOutTv 0 "Initiated timeshift sequence for main application."
 	}
-	bind . <<pause>> {tv_seek 0 0}
+	bind . <<pause>> {vid_seek 0 0}
 	if {"$handler" != "timeshift"} {
-		bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont record "$::tv(current_rec_file)"}
+		bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont record "$::vid(current_rec_file)"}
 	} else {
-		bind . <<start>> {tv_Playback .ftvBg .ftvBg.cont timeshift "$::tv(current_rec_file)"}
+		bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont timeshift "$::vid(current_rec_file)"}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[file exists "$::option(home)/config/current_rec.conf"]} {
 			set open_f [open "$::option(home)/config/current_rec.conf" r]
 			while {[gets $open_f line]!=-1} {
 				if {[string trim $line] == {}} continue
-				lassign $line station sdate stime edate etime duration ::tv(current_rec_file)
+				lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
 			}
 		} else {
 			log_writeOutTv 2 "Fatal, could not detect current_rec.conf"
@@ -175,9 +175,9 @@ Started at %" [lindex $::station(last) 0] $stime]
 		.ftoolb_Disp.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
-		catch {tv_Playback .ftvBg .ftvBg.cont record "$::tv(current_rec_file)"}
+		catch {vid_Playback .ftvBg .ftvBg.cont record "$::vid(current_rec_file)"}
 	} else {
-		catch {tv_Playback .ftvBg .ftvBg.cont timeshift "$::tv(current_rec_file)"}
+		catch {vid_Playback .ftvBg .ftvBg.cont timeshift "$::vid(current_rec_file)"}
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor arrow
@@ -261,8 +261,8 @@ proc record_linkerPreStop {handler} {
 	}
 	event_recordStop
 	if {[wm attributes . -fullscreen] == 1} {
-		bind .ftvBg.cont <Motion> {tv_wmCursorHide .ftvBg.cont 0}
-		bind .ftvBg <Motion> {tv_wmCursorHide .ftvBg 0}
+		bind .ftvBg.cont <Motion> {vid_wmCursorHide .ftvBg.cont 0}
+		bind .ftvBg <Motion> {vid_wmCursorHide .ftvBg 0}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
@@ -293,5 +293,5 @@ File size $file_size"
 		catch {place forget .ftvBg.l_anigif}
 		catch {destroy .ftvBg.l_anigif}
 	}
-	tv_fileComputeSize cancel_rec
+	vid_fileComputeSize cancel_rec
 }

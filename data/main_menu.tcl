@@ -101,8 +101,6 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay tvBg handler} {
 			-background $::option(theme_$::option(use_theme))]
 	}
 	
-	#FIXME Fill menu navigation with content
-	
 	$mNav add separator
 	$mNav add command \
 	-label [mc "Next station"] \
@@ -244,8 +242,6 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 			-background $::option(theme_$::option(use_theme))]
 	}
 	
-	
-	#FIXME Fill View menu with content. 
 	$mView add separator
 	$mView add cascade \
 	-label [mc "Pan&Scan"] \
@@ -256,50 +252,50 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-label [mc "Zoom +"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmPanscan .ftvBg.cont 1] \
+		-command [list vid_wmPanscan .ftvBg.cont 1] \
 		-accelerator "E"
 		$mViewPan add command \
 		-label [mc "Zoom -"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmPanscan .ftvBg.cont -1] \
+		-command [list vid_wmPanscan .ftvBg.cont -1] \
 		-accelerator "W"
 		$mViewPan add command \
 		-label [mc "Pan&Scan (16:9 / 4:3)"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command {tv_wmPanscanAuto} \
+		-command {vid_wmPanscanAuto} \
 		-accelerator "Shift+W"
 		$mViewPan add separator
 		$mViewPan add command \
 		-label [mc "Move up"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 3] \
+		-command [list vid_wmMoveVideo 3] \
 		-accelerator "Alt+Up"
 		$mViewPan add command \
 		-label [mc "Move down"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 1] \
+		-command [list vid_wmMoveVideo 1] \
 		-accelerator "Alt+Down"
 		$mViewPan add command \
 		-label [mc "Move left"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 2] \
+		-command [list vid_wmMoveVideo 2] \
 		-accelerator "Alt+Left"
 		$mViewPan add command \
 		-label [mc "Move right"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 0] \
+		-command [list vid_wmMoveVideo 0] \
 		-accelerator "Alt+Right"
 		$mViewPan add command \
 		-label [mc "Center video"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmMoveVideo 4] \
+		-command [list vid_wmMoveVideo 4] \
 		-accelerator "Alt+C"
 	$mView add cascade \
 	-label [mc "Size"] \
@@ -310,38 +306,38 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-label "50%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 0.5]
+		-command [list vid_wmGivenSize .ftvBg 0.5]
 		$mViewSize add command \
 		-label "75%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 0.75]
+		-command [list vid_wmGivenSize .ftvBg 0.75]
 		$mViewSize add command \
 		-label "100%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.0] \
+		-command [list vid_wmGivenSize .ftvBg 1.0] \
 		-accelerator [mc "Ctrl+1"]
 		$mViewSize add command \
 		-label "125%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.25]
+		-command [list vid_wmGivenSize .ftvBg 1.25]
 		$mViewSize add command \
 		-label "150%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.5]
+		-command [list vid_wmGivenSize .ftvBg 1.5]
 		$mViewSize add command \
 		-label "175%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 1.75]
+		-command [list vid_wmGivenSize .ftvBg 1.75]
 		$mViewSize add command \
 		-label "200%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list tv_wmGivenSize .ftvBg 2.0] \
+		-command [list vid_wmGivenSize .ftvBg 2.0] \
 		-accelerator [mc "Ctrl+2"]
 	$mView add cascade \
 	-label [mc "Stay on top"] \
@@ -352,17 +348,17 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-label [mc "Never"] \
 		-variable tv(stayontop) \
 		-value 0 \
-		-command [list tv_wmStayonTop 0]
+		-command [list vid_wmStayonTop 0]
 		$mViewTop add radiobutton \
 		-label [mc "Always"] \
 		-variable tv(stayontop) \
 		-value 1 \
-		-command [list tv_wmStayonTop 1]
+		-command [list vid_wmStayonTop 1]
 		$mViewTop add radiobutton \
 		-label [mc "While playback"] \
 		-variable tv(stayontop) \
 		-value 2 \
-		-command [list tv_wmStayonTop 2]
+		-command [list vid_wmStayonTop 2]
 	$mView add command \
 	-command "" \
 	-compound left \
@@ -370,7 +366,7 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-label [mc "Compact mode"] \
 	-accelerator [mc "Ctrl+C"]
 	$mView add command \
-	-command [list tv_wmFullscreen . .ftvBg .ftvBg.cont] \
+	-command [list vid_wmFullscreen . .ftvBg .ftvBg.cont] \
 	-compound left \
 	-image $::icon_s(fullscreen) \
 	-label [mc "Fullscreen"] \
@@ -396,7 +392,6 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-background $::option(theme_$::option(use_theme))]
 	}
 	
-	#FIXME Fill audio menu with content
 	$mAud add separator
 	$mAud add command \
 	-compound left \
@@ -414,7 +409,7 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-compound left \
 	-image $::icon_s(volume-error) \
 	-label [mc "Mute"] \
-	-command [list tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	-command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	$mAud add separator
 	$mAud add command \
 	-compound left \
@@ -490,34 +485,34 @@ proc main_menuReFo {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	$mRew add checkbutton \
 	-label [mc "-10 seconds"] \
 	-accelerator [mc "Left"] \
-	-command [list tv_seekSwitch .ftoolb_Play.bRewSmall -1 -10s tv(check_rew_10s)] \
+	-command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10s tv(check_rew_10s)] \
 	-variable tv(check_rew_10s)
 	$mRew add checkbutton \
 	-label [mc "-1 minute"] \
 	-accelerator [mc "Shift+Left"] \
-	-command [list tv_seekSwitch .ftoolb_Play.bRewSmall -1 -1m tv(check_rew_1m)] \
+	-command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -1m tv(check_rew_1m)] \
 	-variable tv(check_rew_1m)
 	$mRew add checkbutton \
 	-label [mc "-10 minutes"] \
 	-accelerator [mc "Ctrl+Shift+Left"] \
-	-command [list tv_seekSwitch .ftoolb_Play.bRewSmall -1 -10m tv(check_rew_10m)] \
+	-command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10m tv(check_rew_10m)] \
 	-variable tv(check_rew_10m)
 	
 	#Fill menu forward selector
 	$mForw add checkbutton \
 	-label [mc "+10 seconds"] \
 	-accelerator [mc "Right"] \
-	-command [list tv_seekSwitch .ftoolb_Play.bForwSmall 1 +10s tv(check_fow_10s)] \
+	-command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s tv(check_fow_10s)] \
 	-variable tv(check_fow_10s)
 	$mForw add checkbutton \
 	-label [mc "+1 minute"] \
 	-accelerator [mc "Shift+Right"] \
-	-command [list tv_seekSwitch .ftoolb_Play.bForwSmall 1 +1m tv(check_fow_1m)] \
+	-command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m tv(check_fow_1m)] \
 	-variable tv(check_fow_1m)
 	$mForw add checkbutton \
 	-label [mc "+10 minutes"] \
 	-accelerator [mc "Ctrl+Shift+Right"] \
-	-command [list tv_seekSwitch .ftoolb_Play.bForwSmall 1 +10m tv(check_fow_10m)] \
+	-command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m tv(check_fow_10m)] \
 	-variable tv(check_fow_10m)
 }
 
@@ -532,5 +527,4 @@ proc main_menuContext {menubar toolbChanCtrl toolbPlay tvBg} {
 	main_menuView $menubar $toolbChanCtrl $toolbPlay $tvBg context
 	main_menuAud $menubar $toolbChanCtrl $toolbPlay $tvBg context
 	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $tvBg context
-	#FIXME Fill context menu with content
 }

@@ -54,7 +54,7 @@ proc timeshift_start_preRec {tbutton} {
 	if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
-	set status [tv_callbackMplayerRemote alive]
+	set status [vid_callbackMplayerRemote alive]
 	if {$status != 1} {
 		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
 	} else {
@@ -65,7 +65,7 @@ proc timeshift_start_preRec {tbutton} {
 }
 
 proc timeshift_Wait {tbutton} {
-	set status [tv_callbackMplayerRemote alive]
+	set status [vid_callbackMplayerRemote alive]
 	if {$status != 1} {
 		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
 	} else {
@@ -96,7 +96,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 			log_writeOutTv 1 "Starting to calculate free disk space for timeshift."
 			after 60000 [list timeshift_calcDF 0]
 		}
-		set ::tv(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
+		set ::vid(current_rec_file) "[subst $::option(timeshift_path)/timeshift.mpeg]"
 		record_linkerRec timeshift
 	} else {
 		catch {exec kill $rec_pid}
@@ -119,7 +119,7 @@ proc timeshift_calcDF {cancel} {
 			set remaining_space [expr int([lindex $line 3].0 / 1024)]
 			if {$remaining_space <= $::option(timeshift_df)} {
 				log_writeOutTv 2 "Remaining space <= $::option(timeshift_df)\MB will stop timeshift."
-				timeshift .top_buttons.button_timeshift
+				timeshift .ftoolb_Top.bTimeshift
 				return
 			}
 		}
@@ -214,9 +214,8 @@ Please wait..."] \
 	wm title $wtop [mc "Copying...       %%%" 0]
 	wm protocol $wtop WM_DELETE_WINDOW " "
 	wm protocol . WM_DELETE_WINDOW " "
-	wm protocol .tv WM_DELETE_WINDOW " "
 	wm iconphoto $wtop $::icon_b(floppy)
-	wm transient $wtop .tv
+	wm transient $wtop .
 	
 	
 	set sfile "$::option(timeshift_path)/timeshift.mpeg"
@@ -247,7 +246,6 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		#~ } else {
 			wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 		#~ }
-		#~ wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 		grab release .top_cp_progress
 		destroy .top_cp_progress
 		return
@@ -283,7 +281,6 @@ $ofile"
 			#~ } else {
 				wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 			#~ }
-			#~ wm protocol .tv WM_DELETE_WINDOW {main_frontendExitViewer}
 			grab release .top_cp_progress
 			destroy .top_cp_progress
 		}

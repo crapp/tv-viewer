@@ -19,9 +19,9 @@
 proc station_editPreview {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editPreview \033\[0m \{$w\}"
 	log_writeOutTv 0 "Starting tv playback for preview stations."
-	set status_tv_playback [tv_callbackMplayerRemote alive]
-	if {$status_tv_playback != 1} {
-		tv_playbackStop 0 pic
+	set status_vid_Playback [vid_callbackMplayerRemote alive]
+	if {$status_vid_Playback != 1} {
+		vid_playbackStop 0 pic
 	} else {
 		if {"[string trim [$w selection]]" == {}} {
 			log_writeOutTv 1 "You need to select a channel to be previewed."
@@ -34,9 +34,9 @@ proc station_editPreview {w} {
 				set freq [lindex [$w item [lindex [$w selection] end] -values] 1]
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
 				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
-				tv_Playback .ftvBg .ftvBg.cont 0 0
+				vid_Playback .ftvBg .ftvBg.cont 0 0
 			} else {
-				tv_playbackStop 0 nopic
+				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
 				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
@@ -49,8 +49,8 @@ proc station_editPreview {w} {
 
 proc station_editZap {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editZap \033\[0m \{$w\}"
-	set status_tv_playback [tv_callbackMplayerRemote alive]
-	if {$status_tv_playback != 1} {
+	set status_vid_Playback [vid_callbackMplayerRemote alive]
+	if {$status_vid_Playback != 1} {
 		log_writeOutTv 0 "Changing frequency to [lindex [$w item [lindex [$w selection] end] -values] 1]."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
@@ -60,7 +60,7 @@ proc station_editZap {w} {
 				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				return
 			} else {
-				tv_playbackStop 0 nopic
+				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
 				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
@@ -109,9 +109,9 @@ proc station_editExit {handler} {
 		catch {array unset ::kanalinput}
 		log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
 		if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
-			set status_tv_playback [tv_callbackMplayerRemote alive]
-			if {$status_tv_playback != 1} {
-				tv_playbackStop 0 nopic
+			set status_vid_Playback [vid_callbackMplayerRemote alive]
+			if {$status_vid_Playback != 1} {
+				vid_playbackStop 0 nopic
 			}
 			log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
 			log_writeOutTv 2 "Please create one using the Station Editor."
@@ -160,44 +160,7 @@ proc station_editExit {handler} {
 				}
 			}
 		}
-		
 		main_frontendChannelHandler sedit
-		
-		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			#~ log_writeOutTv 2 "Disabling widgets due to no valid stations file."
-			#FIXME What to do with OSD Stationlists if no stations
-			#~ if {[winfo exists .tv.slist]} {
-				#~ log_writeOutTv 2 "No valid stations list, disabling station selector for video window."
-				#~ destroy .tv.slist
-			#~ }
-			#~ if {[winfo exists .tv.slist_lirc]} {
-				#~ log_writeOutTv 2 "No valid stations list, disabling lirc station selector for video window."
-				#~ destroy .tv.slist_lirc
-			#~ }
-			
-		} else {
-			#~ set status_tv_playback [tv_callbackMplayerRemote alive]
-			#~ if {$status_tv_playback != 1} {
-				#~ .station.top_buttons.b_station_preview state pressed
-			#~ }
-			#FIXME What to do with OSD Stationlists if no stations
-			#~ if {[winfo exists .tv.slist.lb_station] == 1 && [winfo exists .tv.slist_lirc.lb_station] == 1} {
-				#~ .tv.slist.lb_station delete 0 end
-				#~ .tv.slist_lirc.lb_station delete 0 end
-				#~ for {set i 1} {$i <= $::station(max)} {incr i} {
-					#~ if {$i < 10} {
-						#~ .tv.slist.lb_station insert end " $i     $::kanalid($i)"
-					#~ } else {
-						#~ if {$i < 100} {
-							#~ .tv.slist.lb_station insert end " $i   $::kanalid($i)"
-						#~ } else {
-							#~ .tv.slist.lb_station insert end " $i $::kanalid($i)"
-						#~ }
-					#~ }
-					#~ .tv.slist_lirc.lb_station insert end "$::kanalid($i)"
-				#~ }
-			#~ }
-		}
 		log_writeOutTv 0 "Exiting station editor."
 	} else {
 		log_writeOutTv 0 "Exiting station editor without any changes."
@@ -225,7 +188,7 @@ proc station_editUi {} {
 	}
 	
 	if {[wm attributes . -fullscreen] == 1} {
-		tv_wmFullscreen . .ftvBg.cont .ftvBg
+		vid_wmFullscreen . .ftvBg.cont .ftvBg
 	}
 	
 	# Setting up main Interface
@@ -461,8 +424,8 @@ Deactivated stations will be marked red."]
 				settooltip $wfbottom.b_exit [mc "Exit editor without any changes."]
 			}
 		}
-		set status_tv_playback [tv_callbackMplayerRemote alive]
-		if {$status_tv_playback != 1} {
+		set status_vid_Playback [vid_callbackMplayerRemote alive]
+		if {$status_vid_Playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
 		}
 		#~ if {$::option(systray_close) == 1} {

@@ -60,12 +60,12 @@ proc config_wizardReadSettings {} {
 		#player_keepaspect 1
 		#player_aspect_monpix 1
 		#player_monaspect_val 16:9
-		#player_pixaspect_val 1.0
+		#player_pixaspect_val 1
 		#player_shot 1
 		#player_mconfig 0
 		#player_additional_commands {}
 		#player_add_vf_commands {}
-		#player_add_af_commands {}
+		#player_add_af_commands {scaletempo}
 		streambitrate 0
 		#videobitrate ""
 		#videopeakbitrate ""
@@ -160,12 +160,12 @@ proc config_wizardReadSettings {} {
 		player_keepaspect 1
 		player_aspect_monpix 1
 		player_monaspect_val 16:9
-		player_pixaspect_val 1.0
+		player_pixaspect_val 1
 		player_shot 1
 		player_mconfig 0
 		player_additional_commands {}
 		player_add_vf_commands {}
-		player_add_af_commands {}
+		player_add_af_commands {scaletempo}
 		streambitrate 0
 		#videobitrate ""
 		#videopeakbitrate ""

@@ -32,6 +32,8 @@ might not point to the correct location.
 exit 1
 }
 
+#FIXME Reword whole diag runtime
+
 after 200
 
 set dwhere_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"

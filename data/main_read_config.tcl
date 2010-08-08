@@ -23,8 +23,8 @@ proc main_readConfig {} {
 		language Autodetect
 		language_value 0
 		starttv_startup 0
-		resolx 720
-		resoly 576
+		resolx 640
+		resoly 480
 		newsreader 1
 		newsreader_interval 7
 		epg_command "[auto_execok tvbrowser]"
@@ -59,13 +59,13 @@ proc main_readConfig {} {
 		player_keepaspect 1
 		player_aspect_monpix 1
 		player_monaspect_val 16:9
-		player_pixaspect_val 1.0
+		player_pixaspect_val 1
 		player_mpixaspect_val 1.0
 		player_shot 1
 		player_mconfig 0
 		player_additional_commands {}
 		player_add_vf_commands {}
-		player_add_af_commands {}
+		player_add_af_commands {scaletempo}
 		streambitrate 0
 		#videobitrate ""
 		#videopeakbitrate ""

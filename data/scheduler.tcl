@@ -299,7 +299,7 @@ proc scheduler_rec_prestart {jobid} {
 	if {[lindex $status_time 0] == 1} {
 		scheduler_logWriteOut 1 "Scheduler detected timeshift process."
 		scheduler_logWriteOut 1 "Will stop timeshift!"
-		command_WritePipe 0 "tv-viewer_main timeshift .top_buttons.button_timeshift"
+		command_WritePipe 0 "tv-viewer_main timeshift .ftoolb_Top.bTimeshift"
 	}
 	
 	if {[file exists $::option(video_device)] == 0} {

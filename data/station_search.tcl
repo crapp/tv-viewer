@@ -209,9 +209,9 @@ proc station_searchVideoNumber {vinput_nr} {
 
 proc station_searchRequires {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchRequires \033\[0m \{$tree\}"
-	set status_tv_playback [tv_callbackMplayerRemote alive]
-	if {$status_tv_playback != 1} {
-		tv_playbackStop 0 pic
+	set status_vid_Playback [vid_callbackMplayerRemote alive]
+	if {$status_vid_Playback != 1} {
+		vid_playbackStop 0 pic
 	}
 	log_writeOutTv 0 "Launching station search."
 	set wtop [toplevel .station.top_search]

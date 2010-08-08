@@ -242,8 +242,8 @@ proc font_chooserUi {returnw cvar} {
 		settooltip $mffont.lb_style [mc "Choose font style"]
 		settooltip $mffont.lb_size [mc "Choose font size"]
 		settooltip $mfcol.b_color [mc "Choose font color"]
-		settooltip $mfcol.mb_align [mc "Specify where the message box the player window
-should be displayed"]
+		settooltip $mfcol.mb_align [mc "Specify where the message box should be
+displayed in the video frame"]
 	}
 	wm resizable $w 0 0
 	wm protocol $w WM_DELETE_WINDOW "grab release .config_wizard.fontchooser; destroy .config_wizard.fontchooser; grab .config_wizard"

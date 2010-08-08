@@ -18,7 +18,7 @@
 
 proc key_sequences {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0m"
-	
+	#FIXME Make key sequences editable 
 	if {[winfo exists .key] == 0} {
 		log_writeOutTv 0 "Launching key sequences screen..."
 		

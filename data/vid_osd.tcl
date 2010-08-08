@@ -1,4 +1,4 @@
-#       tv_osd.tcl
+#       vid_osd.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc tv_osd {ident atime osd_text} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_osd \033\[0m \{$ident\} \{$atime\} \{$osd_text\}"
+proc vid_osd {ident atime osd_text} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_osd \033\[0m \{$ident\} \{$atime\} \{$osd_text\}"
 	if {[info exists ::data(after_id_osd)]} {
 		foreach id [split $::data(after_id_osd)] {
 			after cancel $id
@@ -58,14 +58,14 @@ proc tv_osd {ident atime osd_text} {
 		log_writeOutTv 1 "Changing font color to black"
 		$osd.label configure -foreground #000000
 	}
-	bind $osd <Map> [list tv_osdCheckDimensions $osd $osd.label "$font" $size "$style" "$osd_text"]
+	bind $osd <Map> [list vid_osdCheckDimensions $osd $osd.label "$font" $size "$style" "$osd_text"]
 	
 	set ::data(after_id_osd) [after $atime "destroy .ftvBg.osd"]
 	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
 }
 
-proc tv_osdCheckDimensions {osdf osdw font size style text} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: tv_osdCheckDimensions \033\[0m \{$osdf\} \{$osdw\} \{$font\} \{$size\} \{$style\} \{$text\}"
+proc vid_osdCheckDimensions {osdf osdw font size style text} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_osdCheckDimensions \033\[0m \{$osdf\} \{$osdw\} \{$font\} \{$size\} \{$style\} \{$text\}"
 	if {"$style" == "regular"} {
 		if {[expr [winfo reqwidth $osdf] + 10] > [winfo width .ftvBg]} {
 			for {set f $size} {$f>0} {set f [expr $f - 1 ]} {

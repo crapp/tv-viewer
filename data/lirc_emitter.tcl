@@ -150,22 +150,22 @@ if {$start_options(station_nr)} {
 }
 
 if {$start_options(slist_osd)} {
-	command_WritePipe 0 "tv-viewer_main tv_slistLirc"
+	command_WritePipe 0 "tv-viewer_main vid_slistLirc"
 	log_writeOutTv 0 "Lirc emitter received Signal slist_osd"
 	exit 0
 }
 if {$start_options(slist_osd_up)} {
-	command_WritePipe 0 "tv-viewer_main tv_slistLircMoveUp"
+	command_WritePipe 0 "tv-viewer_main vid_slistLircMoveUp"
 	log_writeOutTv 0 "Lirc emitter received Signal slist_osd_up"
 	exit 0
 }
 if {$start_options(slist_osd_down)} {
-	command_WritePipe 0 "tv-viewer_main tv_slistLircMoveDown"
+	command_WritePipe 0 "tv-viewer_main vid_slistLircMoveDown"
 	log_writeOutTv 0 "Lirc emitter received Signal slist_osd_down"
 	exit 0
 }
 if {$start_options(fullscreen)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmFullscreen . .ftvBg .ftvBg.cont"
+	command_WritePipe 0 "tv-viewer_main vid_wmFullscreen . .ftvBg .ftvBg.cont"
 	log_writeOutTv 0 "Lirc emitter received Signal fullscreen"
 	exit 0
 }
@@ -175,52 +175,52 @@ if {$start_options(quit)} {
 	exit 0
 }
 if {$start_options(zoom_incr)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmPanscan .ftvBg.cont 1"
+	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .ftvBg.cont 1"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr"
 	exit 0
 }
 if {$start_options(zoom_decr)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmPanscan .ftvBg.cont -1"
+	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .ftvBg.cont -1"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr"
 	exit 0
 }
 if {$start_options(zoom_auto)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmPanscanAuto"
+	command_WritePipe 0 "tv-viewer_main vid_wmPanscanAuto"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_auto"
 	exit 0
 }
 if {$start_options(size_stnd)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmGivenSize .ftvBg 1"
+	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .ftvBg 1"
 	log_writeOutTv 0 "Lirc emitter received Signal size_stnd"
 	exit 0
 }
 if {$start_options(size_double)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmGivenSize .ftvBg 2"
+	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .ftvBg 2"
 	log_writeOutTv 0 "Lirc emitter received Signal size_double"
 	exit 0
 }
 if {$start_options(move_right)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmMoveVideo 0"
+	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 0"
 	log_writeOutTv 0 "Lirc emitter received Signal move_right"
 	exit 0
 }
 if {$start_options(move_down)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmMoveVideo 1"
+	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 1"
 	log_writeOutTv 0 "Lirc emitter received Signal move_down"
 	exit 0
 }
 if {$start_options(move_left)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmMoveVideo 2"
+	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 2"
 	log_writeOutTv 0 "Lirc emitter received Signal move_left"
 	exit 0
 }
 if {$start_options(move_up)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmMoveVideo 3"
+	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 3"
 	log_writeOutTv 0 "Lirc emitter received Signal move_up"
 	exit 0
 }
 if {$start_options(move_center)} {
-	command_WritePipe 0 "tv-viewer_main tv_wmMoveVideo 4"
+	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 4"
 	log_writeOutTv 0 "Lirc emitter received Signal move_center"
 	exit 0
 }
@@ -245,7 +245,7 @@ if {$start_options(volume_decr)} {
 	exit 0
 }
 if {$start_options(mute)} {
-	command_WritePipe 0 "tv-viewer_main tv_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute"
+	command_WritePipe 0 "tv-viewer_main vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute"
 	log_writeOutTv 0 "Lirc emitter received Signal mute"
 	exit 0
 }

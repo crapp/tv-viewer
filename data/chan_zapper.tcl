@@ -94,10 +94,10 @@ proc chan_zapperStationNrKeys {key} {
 	if {[info exists ::chan(change_key)]} {
 		if {[string length $::chan(change_key)] == 4} {
 			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_key_w) 0] == 1} {
-				after 0 {tv_osd osd_key_w 1000 "$::chan(change_key)"}
+				after 0 {vid_osd osd_key_w 1000 "$::chan(change_key)"}
 			}
 			if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_key_f) 0] == 1} {
-				after 0 {tv_osd osd_key_f 1000 "$::chan(change_key)"}
+				after 0 {vid_osd osd_key_f 1000 "$::chan(change_key)"}
 			}
 			set ::chan(change_keyid) [after 1000 [list chan_zapperStationNr .fstations.treeSlist $::chan(change_key)]]
 			return
@@ -105,10 +105,10 @@ proc chan_zapperStationNrKeys {key} {
 	}
 	append ::chan(change_key) $key
 	if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_key_w) 0] == 1} {
-		after 0 {tv_osd osd_key_w 1000 "$::chan(change_key)"}
+		after 0 {vid_osd osd_key_w 1000 "$::chan(change_key)"}
 	}
 	if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_key_f) 0] == 1} {
-		after 0 {tv_osd osd_key_f 1000 "$::chan(change_key)"}
+		after 0 {vid_osd osd_key_f 1000 "$::chan(change_key)"}
 	}
 	set ::chan(change_keyid) [after 1000 [list chan_zapperStationNr .fstations.treeSlist $::chan(change_key)]]
 }
@@ -144,9 +144,9 @@ proc chan_zapperInput {com direct} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --list-input} read_vinputs
 		set status_list_input [catch {agrep -w "$read_vinputs" Input} resultat_list_input]
 		if {$status_query_input == 0 && $status_list_input == 0} {
-			set status_tv [tv_callbackMplayerRemote alive]
+			set status_tv [vid_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_playbackStop 0 nopic
+				vid_playbackStop 0 nopic
 				set restart 1
 			} else {
 				set restart 0
@@ -208,10 +208,10 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 		log_writeOutTv 2 "Have a look into the preferences and change it."
 		return
 	}
-	set status_tv [tv_callbackMplayerRemote alive]
+	set status_tv [vid_callbackMplayerRemote alive]
 	if {$status_tv != 1} {
 		#FIXME Why is the next line deactivated
-		#~ tv_playbackStop 0 nopic
+		#~ vid_playbackStop 0 nopic
 		set ::chan(change_inputLoop_id) [after 100 [list chan_zapperInputLoop [expr $secs + 100] $input $freq $snumber $restart $aftmsg]]
 	} else {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -221,10 +221,10 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 				log_writeOutTv 0 "Changed video input to $input."
 				.ftoolb_Top.lInput configure -text "[string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]"
 				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-					after 0 [list tv_osd osd_group_w 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
+					after 0 [list vid_osd osd_group_w 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
 				}
 				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-					after 0 [list tv_osd osd_group_f 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
+					after 0 [list vid_osd osd_group_f 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
 				}
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq} resultat_v4l2ctl
 				if {$aftmsg == 1} {
@@ -235,7 +235,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 					}
 				}
 				if {$restart == 1} {
-					tv_playerRendering
+					vid_playerRendering
 				}
 				return
 			} else {
@@ -280,13 +280,13 @@ proc chan_zapperInputQuery {secs input restart} {
 			log_writeOutTv 0 "Changed video input to $input"
 			.ftoolb_Top.lInput configure -text "[string trim [string range $check_back_input [string first \( $check_back_input] end] ()]"
 			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-				after 0 [list tv_osd osd_group_w 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
+				after 0 [list vid_osd osd_group_w 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}
 			if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-				after 0 [list tv_osd osd_group_f 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
+				after 0 [list vid_osd osd_group_f 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}
 			if {$restart == 1} {
-				tv_Playback .ftvBg .ftvBg.cont 0 0
+				vid_Playback .ftvBg .ftvBg.cont 0 0
 			} else {
 				bind . <<input_up>> "chan_zapperInput 1 1"
 				bind . <<input_down>> "chan_zapperInput 1 -1"
@@ -298,7 +298,6 @@ proc chan_zapperInputQuery {secs input restart} {
 
 proc chan_zapperInputStart {tree lasts} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInputStart \033\[0m \{$tree\} \{$lasts\}"
-	#FIXME Reduce font size of station label if displayed name to wide
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 	if {$status_get_input == 0} {
@@ -306,9 +305,9 @@ proc chan_zapperInputStart {tree lasts} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station($lasts) 1]} resultat_v4l2ctl
 			after 1000 [list station_after_msg [lindex $::station($lasts) 2] $resultat_v4l2ctl]
 		} else {
-			set status_tv [tv_callbackMplayerRemote alive]
+			set status_tv [vid_callbackMplayerRemote alive]
 			if {$status_tv != 1} {
-				tv_playbackStop 0 nopic
+				vid_playbackStop 0 nopic
 				set restart 1
 			} else {
 				set restart 0

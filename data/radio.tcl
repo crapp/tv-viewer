@@ -24,7 +24,4 @@ proc radio_ui {} {
 		return
 	}
 	#FIXME Fill with content, integrate with new interface. Make it a mode of the new interface.
-	set rd [toplevel .radio -class "TV-Viewer"]
-	place [ttk::frame $rd.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 }
