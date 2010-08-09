@@ -69,11 +69,8 @@ proc info_helpAbout {} {
 		log_writeOutTv 0 "Launching info screen..."
 		
 		set w [toplevel .top_about]
-		
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
 		set mf [ttk::frame $w.mf]
-		
 		set btnf [ttk::frame $mf.btnf -style TLabelframe]
 		
 		set t [image create photo]
@@ -84,115 +81,51 @@ proc info_helpAbout {} {
 		$small_icon copy $t -shrink -subsample [expr round(1./0.33)]
 		image delete $t
 		
-		ttk::label $mf.l_about_top \
-		-text [mc "TV-Viewer % Build %" [lindex $::option(release_version) 0] [lindex $::option(release_version) 1]] \
-		-image $small_icon \
-		-compound left  \
-		-font "systemfont 14 bold"
-		
+		ttk::label $mf.l_about_top -text [mc "TV-Viewer % Build %" [lindex $::option(release_version) 0] [lindex $::option(release_version) 1]] -image $small_icon -compound left -font "systemfont 14 bold"
 		ttk::notebook $mf.nb
-		
-		ttk::button $btnf.b_about_exit \
-		-text [mc "Exit"] \
-		-command [list info_helpExitAbout $w] \
-		-compound left \
-		-image $::icon_s(dialog-close)
+		ttk::button $btnf.b_about_exit -text [mc "Exit"] -command [list info_helpExitAbout $w] -compound left -image $::icon_s(dialog-close)
 		
 		set nb1 [ttk::frame $mf.nb.f_info]
-		
 		$mf.nb add $nb1 -text [mc "Info"] -padding 2
-		ttk::label $nb1.l_desc \
-		-text [mc "A small and simple frontend to watch and record television."] \
-		-justify center \
-		-font "systemfont 12 bold"
-		ttk::button $nb1.b_homepage \
-		-text [mc "Homepage"] \
-		-command info_helpHomepage \
-		-style Toolbutton
+		ttk::label $nb1.l_desc -text [mc "A small and simple frontend to watch and record television."] -justify center -font "systemfont 12 bold"
+		ttk::button $nb1.b_homepage -text [mc "Homepage"] -command info_helpHomepage -style Toolbutton
 		ttk::label $nb1.l_version
-		ttk::label $nb1.l_copy \
-		-text [mc "© Copyright 2007 - 2010
-Christian Rapp"] \
-		-justify center
+		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2010
+Christian Rapp"] -justify center
 		
 		set nb2 [ttk::frame $mf.nb.f_credits]
-		
 		$mf.nb add $nb2 -text [mc "Credits"] -padding 2
-		text $nb2.t_credits \
-		-yscrollcommand [list $nb2.scrollb_credits set] \
-		-width 0 \
-		-height 0 \
-		-bd 0 \
-		-relief flat \
-		-highlightthickness 0
-		ttk::scrollbar $nb2.scrollb_credits \
-		-command [list $nb2.t_credits yview]
+		text $nb2.t_credits -yscrollcommand [list $nb2.scrollb_credits set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		ttk::scrollbar $nb2.scrollb_credits -command [list $nb2.t_credits yview]
 		
 		set nb3 [ttk::frame $mf.nb.f_license]
-		
 		$mf.nb add $nb3 -text [mc "License"] -padding 2
-		text $nb3.t_license \
-		-yscrollcommand [list $nb3.scrollb_license set] \
-		-width 0 \
-		-height 0 \
-		-bd 0 \
-		-relief flat \
-		-highlightthickness 0
-		ttk::scrollbar $nb3.scrollb_license \
-		-command [list $nb3.t_license yview]
+		text $nb3.t_license -yscrollcommand [list $nb3.scrollb_license set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		ttk::scrollbar $nb3.scrollb_license -command [list $nb3.t_license yview]
 		
 		set nb4 [ttk::frame $mf.nb.f_changelog]
-		
 		$mf.nb add $nb4 -text [mc "Changelog"] -padding 2
-		text $nb4.t_changelog \
-		-yscrollcommand [list $nb4.scrollb_changelog set] \
-		-width 0 \
-		-height 0 \
-		-bd 0 \
-		-relief flat \
-		-highlightthickness 0
-		ttk::scrollbar $nb4.scrollb_changelog \
-		-command [list $nb4.t_changelog yview]
+		text $nb4.t_changelog -yscrollcommand [list $nb4.scrollb_changelog set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		ttk::scrollbar $nb4.scrollb_changelog -command [list $nb4.t_changelog yview]
 		
 		
 		grid $mf -in $w -row 0 -column 0
-		grid $mf.l_about_top -in $mf -row 0 -column 0 \
-		-sticky ew
-		grid $mf.nb -in $mf -row 1 -column 0 \
-		-sticky nesw \
-		-padx 2
-		grid $btnf -in $mf -row 2 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
-		grid $btnf.b_about_exit -in $btnf -row 0 -column 0 \
-		-pady 7 \
-		-padx 3
+		grid $mf.l_about_top -in $mf -row 0 -column 0 -sticky ew
+		grid $mf.nb -in $mf -row 1 -column 0 -sticky nesw -padx 2
+		grid $btnf -in $mf -row 2 -column 0 -sticky ew -padx 3 -pady 3
+		grid $btnf.b_about_exit -in $btnf -row 0 -column 0 -pady 7 -padx 3
 		grid anchor $btnf e
 		grid anchor $nb1 center
-		grid $nb1.l_desc -in $nb1 -row 0 -column 0 \
-		-pady 10
-		grid $nb1.b_homepage -in $nb1 -row 1 -column 0 \
-		-pady "0 10"
-		grid $nb1.l_version -in $nb1 -row 2 -column 0 \
-		-pady "0 10"
-		grid $nb1.l_copy -in $nb1 -row 3 -column 0 \
-		-pady "0 10"
-		grid $nb2.t_credits -in $nb2 -row 0 -column 0 \
-		-sticky nesw
-		grid $nb2.scrollb_credits -in $nb2 -row 0 -column 1 \
-		-sticky ns \
-		-pady 10
-		grid $nb3.t_license -in $nb3 -row 0 -column 0 \
-		-sticky nesw
-		grid $nb3.scrollb_license -in $nb3 -row 0 -column 1 \
-		-sticky ns \
-		-pady 10
-		grid $nb4.t_changelog -in $nb4 -row 0 -column 0 \
-		-sticky nesw
-		grid $nb4.scrollb_changelog -in $nb4 -row 0 -column 1 \
-		-sticky ns \
-		-pady 10
+		grid $nb1.l_desc -in $nb1 -row 0 -column 0 -pady 10
+		grid $nb1.b_homepage -in $nb1 -row 1 -column 0 -pady "0 10"
+		grid $nb1.l_version -in $nb1 -row 2 -column 0 -pady "0 10"
+		grid $nb1.l_copy -in $nb1 -row 3 -column 0 -pady "0 10"
+		grid $nb2.t_credits -in $nb2 -row 0 -column 0 -sticky nesw
+		grid $nb2.scrollb_credits -in $nb2 -row 0 -column 1 -sticky ns -pady 10
+		grid $nb3.t_license -in $nb3 -row 0 -column 0 -sticky nesw
+		grid $nb3.scrollb_license -in $nb3 -row 0 -column 1 -sticky ns -pady 10
+		grid $nb4.t_changelog -in $nb4 -row 0 -column 0 -sticky nesw
+		grid $nb4.scrollb_changelog -in $nb4 -row 0 -column 1 -sticky ns -pady 10
 		
 		grid rowconfigure $mf 1 -minsize 250
 		grid rowconfigure $nb2 0 -weight 1

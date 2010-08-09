@@ -34,13 +34,11 @@ proc option_screen_5 {} {
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(radio_nb1) [ttk::frame $w.f_radio]
 		$w add $::window(radio_nb1) -text [mc "Radio Settings"] -padding 2
-		ttk::label $::window(radio_nb1).l_dvb_more \
-		-text [mc "Expect more soon"]
+		ttk::label $::window(radio_nb1).l_dvb_more -text [mc "Expect more soon"]
 		
 		grid columnconfigure $::window(radio_nb1) 0 -weight 1
 		
-		grid $::window(radio_nb1).l_dvb_more -in $::window(radio_nb1) -row 0 -column 0 \
-		-pady 3
+		grid $::window(radio_nb1).l_dvb_more -in $::window(radio_nb1) -row 0 -column 0 -pady 3
 		
 		# Additional Code
 		

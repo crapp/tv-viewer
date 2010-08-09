@@ -139,111 +139,46 @@ proc log_viewerUi {handler} {
 		log_writeOutTv 0 "Launching log viewer for $ident(name\($handler\))."
 		
 		set w [toplevel .log_viewer_$ident(op\($handler\)) -class "TV-Viewer Log Viewer"]
-		
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
 		set mf [ttk::frame $w.f_log_$ident(op\($handler\))]
-		
 		set wfbottom [ttk::frame $w.f_log_$ident(op\($handler\))_buttons -style TLabelframe]
-		
 		set ftop [ttk::frame $w.f_log_$ident(op\($handler\))_top]
 		
-		ttk::separator $w.sep_main \
-		-orient horizontal
+		ttk::separator $w.sep_main -orient horizontal
+		ttk::button $ftop.b_save -style Toolbutton -image $::icon_m(floppy) -command [list log_viewerSaveLog $ident(op\($handler\)) $w]
+		ttk::button $ftop.b_email -style Toolbutton -image $::icon_m(e-mail) -command [list log_viewerEmail $handler]
 		
-		ttk::button $ftop.b_save \
-		-style Toolbutton \
-		-image $::icon_m(floppy) \
-		-command [list log_viewerSaveLog $ident(op\($handler\)) $w]
-		
-		ttk::button $ftop.b_email \
-		-style Toolbutton \
-		-image $::icon_m(e-mail) \
-		-command [list log_viewerEmail $handler]
-		
-		ttk::separator $ftop.sep_sep1 \
+		ttk::separator $ftop.sep_sep1
 		-orient vertical
 		
-		ttk::checkbutton $ftop.cb_verb_debug \
-		-text Debug \
-		-variable log(verbose_$ident(op\($handler\))_debug) \
-		-command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
+		ttk::checkbutton $ftop.cb_verb_debug -text Debug -variable log(verbose_$ident(op\($handler\))_debug) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
+		ttk::checkbutton $ftop.cb_verb_warn -text Warning -variable log(verbose_$ident(op\($handler\))_warn) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
+		ttk::checkbutton $ftop.cb_verb_err -text Error -variable log(verbose_$ident(op\($handler\))_err) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
+		listbox $mf.lb_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_lb_log_$ident(op\($handler\)) set] -width 0
+		ttk::scrollbar $mf.scrollb_lb_log_$ident(op\($handler\)) -command [list $mf.lb_log_$ident(op\($handler\)) yview]
+		text $mf.t_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_log_$ident(op\($handler\)) set] -wrap word
+		ttk::scrollbar $mf.scrollb_log_$ident(op\($handler\)) -command [list $mf.t_log_$ident(op\($handler\)) yview]
+		ttk::button $wfbottom.b_exit_log_$ident(op\($handler\)) -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
 		
-		ttk::checkbutton $ftop.cb_verb_warn \
-		-text Warning \
-		-variable log(verbose_$ident(op\($handler\))_warn) \
-		-command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
-		
-		ttk::checkbutton $ftop.cb_verb_err \
-		-text Error \
-		-variable log(verbose_$ident(op\($handler\))_err) \
-		-command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
-		
-		listbox $mf.lb_log_$ident(op\($handler\)) \
-		-yscrollcommand [list $mf.scrollb_lb_log_$ident(op\($handler\)) set] \
-		-width 0
-		
-		ttk::scrollbar $mf.scrollb_lb_log_$ident(op\($handler\)) \
-		-command [list $mf.lb_log_$ident(op\($handler\)) yview]
-		
-		text $mf.t_log_$ident(op\($handler\)) \
-		-yscrollcommand [list $mf.scrollb_log_$ident(op\($handler\)) set] \
-		-wrap word
-		
-		ttk::scrollbar $mf.scrollb_log_$ident(op\($handler\)) \
-		-command [list $mf.t_log_$ident(op\($handler\)) yview]
-		
-		ttk::button $wfbottom.b_exit_log_$ident(op\($handler\)) \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close) \
-		-command "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
-		
-		grid $ftop -in $w -row 0 -column 0 \
-		-sticky ew
-		grid $w.sep_main -in $w -row 1 -column 0 \
-		-sticky ew \
-		-padx 4
-		grid $mf -in $w -row 2 -column 0 \
-		-sticky nesw
-		grid $wfbottom -in $w -row 3 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
+		grid $ftop -in $w -row 0 -column 0 -sticky ew
+		grid $w.sep_main -in $w -row 1 -column 0 -sticky ew -padx 4
+		grid $mf -in $w -row 2 -column 0 -sticky nesw
+		grid $wfbottom -in $w -row 3 -column 0 -sticky ew -padx 3 -pady 3
 		
 		grid anchor $wfbottom e
 		
-		grid $ftop.b_save -in $ftop -row 0 -column 0 \
-		-padx 2 \
-		-pady 1
-		grid $ftop.b_email -in $ftop -row 0 -column 1 \
-		-pady 1
-		grid $ftop.sep_sep1 -in $ftop -row 0 -column 2 \
-		-sticky ns \
-		-padx 5
-		grid $ftop.cb_verb_debug -in $ftop -row 0 -column 3 \
-		-padx 2
-		grid $ftop.cb_verb_warn -in $ftop -row 0 -column 4 \
-		-padx 2
+		grid $ftop.b_save -in $ftop -row 0 -column 0 -padx 2 -pady 1
+		grid $ftop.b_email -in $ftop -row 0 -column 1 -pady 1
+		grid $ftop.sep_sep1 -in $ftop -row 0 -column 2 -sticky ns -padx 5
+		grid $ftop.cb_verb_debug -in $ftop -row 0 -column 3 -padx 2
+		grid $ftop.cb_verb_warn -in $ftop -row 0 -column 4 -padx 2
 		grid $ftop.cb_verb_err -in $ftop -row 0 -column 5
 		
-		grid $mf.lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 0 \
-		-sticky nesw \
-		-pady 3 \
-		-padx 3
-		grid $mf.scrollb_lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 1 \
-		-sticky ns \
-		-pady 5
-		grid $mf.t_log_$ident(op\($handler\)) -in $mf -row 0 -column 2 \
-		-sticky nesw \
-		-pady 3 \
-		-padx 3
-		grid $mf.scrollb_log_$ident(op\($handler\)) -in $mf -row 0 -column 3 \
-		-sticky ns \
-		-pady 5
-		grid $wfbottom.b_exit_log_$ident(op\($handler\)) -in $wfbottom -row 0 -column 0 \
-		-pady 7 \
-		-padx 3
+		grid $mf.lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 0 -sticky nesw -pady 3 -padx 3
+		grid $mf.scrollb_lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 1 -sticky ns -pady 5
+		grid $mf.t_log_$ident(op\($handler\)) -in $mf -row 0 -column 2 -sticky nesw -pady 3 -padx 3
+		grid $mf.scrollb_log_$ident(op\($handler\)) -in $mf -row 0 -column 3 -sticky ns -pady 5
+		grid $wfbottom.b_exit_log_$ident(op\($handler\)) -in $wfbottom -row 0 -column 0 -pady 7 -padx 3
 		
 		grid rowconfigure $mf 0 -weight 1 -minsize 350
 		grid columnconfigure $mf 2 -weight 1 -minsize 515

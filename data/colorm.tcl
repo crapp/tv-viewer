@@ -281,101 +281,54 @@ proc colorm_mainUi {} {
 		
 		set wfbtn [ttk::frame $cm_w.b_vbtn -style TLabelframe]
 		
-		ttk::scale $wfscale.s_brightness \
-		-command [list colormScalemove $wfscale.s_brightness $wfscale.l_brightness_value]
+		ttk::scale $wfscale.s_brightness -command [list colormScalemove $wfscale.s_brightness $wfscale.l_brightness_value]
 		
-		ttk::scale $wfscale.s_contrast \
-		-command [list colormScalemove $wfscale.s_contrast $wfscale.l_contrast_value]
+		ttk::scale $wfscale.s_contrast -command [list colormScalemove $wfscale.s_contrast $wfscale.l_contrast_value]
 		
-		ttk::scale $wfscale.s_hue \
-		-command [list colormScalemove $wfscale.s_hue $wfscale.l_hue_value]
+		ttk::scale $wfscale.s_hue -command [list colormScalemove $wfscale.s_hue $wfscale.l_hue_value]
 		
-		ttk::scale $wfscale.s_saturation \
-		-command [list colormScalemove $wfscale.s_saturation $wfscale.l_saturation_value]
+		ttk::scale $wfscale.s_saturation -command [list colormScalemove $wfscale.s_saturation $wfscale.l_saturation_value]
 		
-		ttk::label $wfscale.l_brightness_value \
-		-textvariable colorm(l_brightness_value)
+		ttk::label $wfscale.l_brightness_value -textvariable colorm(l_brightness_value)
 		
-		ttk::label $wfscale.l_contrast_value \
-		-textvariable colorm(l_contrast_value)
+		ttk::label $wfscale.l_contrast_value -textvariable colorm(l_contrast_value)
 		
-		ttk::label $wfscale.l_hue_value \
-		-textvariable colorm(l_hue_value)
+		ttk::label $wfscale.l_hue_value -textvariable colorm(l_hue_value)
 		
-		ttk::label $wfscale.l_saturation_value \
-		-textvariable colorm(l_saturation_value)
+		ttk::label $wfscale.l_saturation_value -textvariable colorm(l_saturation_value)
 		
-		ttk::label $wfscale.l_brightness \
-		-text [mc "Brightness"] \
-		-padding "5 0 0 0"
+		ttk::label $wfscale.l_brightness -text [mc "Brightness"] -padding "5 0 0 0"
 		
-		ttk::label $wfscale.l_contrast \
-		-text [mc "Contrast"] \
-		-padding "5 0 0 0"
+		ttk::label $wfscale.l_contrast -text [mc "Contrast"] -padding "5 0 0 0"
 		
-		ttk::label $wfscale.l_hue \
-		-text [mc "Hue"] \
-		-padding "5 0 0 0"
+		ttk::label $wfscale.l_hue -text [mc "Hue"] -padding "5 0 0 0"
 		
-		ttk::label $wfscale.l_saturation \
-		-text [mc "Saturation"] \
-		-padding "5 0 0 0"
+		ttk::label $wfscale.l_saturation -text [mc "Saturation"] -padding "5 0 0 0"
 		
-		ttk::button $wfbtn.b_ok \
-		-text [mc "Apply"] \
-		-command [list colorm_saveValues $wfscale] \
-		-compound left \
-		-image $::icon_s(dialog-ok-apply)
+		ttk::button $wfbtn.b_ok -text [mc "Apply"] -command [list colorm_saveValues $wfscale] -compound left -image $::icon_s(dialog-ok-apply)
 		
-		ttk::button $wfbtn.b_default \
-		-text [mc "Default"] \
-		-command [list colorm_setDefault $wfscale]
+		ttk::button $wfbtn.b_default -text [mc "Default"] -command [list colorm_setDefault $wfscale]
 		
-		ttk::button $wfbtn.b_exit \
-		-text [mc "Cancel"] \
-		-command [list colorm_exit $wfscale] \
-		-compound left \
-		-image $::icon_s(dialog-cancel)
+		ttk::button $wfbtn.b_exit -text [mc "Cancel"] -command [list colorm_exit $wfscale] -compound left -image $::icon_s(dialog-cancel)
 		
 		grid anchor $wfbtn e
 		
-		grid $wfscale -in .cm -row 0 -column 0 \
-		-sticky nesw
-		grid $wfbtn -in .cm -row 2 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
+		grid $wfscale -in .cm -row 0 -column 0 -sticky nesw
+		grid $wfbtn -in .cm -row 2 -column 0 -sticky ew -padx 3 -pady 3
 		
-		grid $wfscale.l_brightness -in $wfscale -row 1 -column 0 \
-		-sticky ew
-		grid $wfscale.l_contrast -in $wfscale -row 3 -column 0 \
-		-sticky ew
-		grid $wfscale.l_hue -in $wfscale -row 5 -column 0 \
-		-sticky ew
-		grid $wfscale.l_saturation -in $wfscale -row 7 -column 0 \
-		-sticky ew
+		grid $wfscale.l_brightness -in $wfscale -row 1 -column 0 -sticky ew
+		grid $wfscale.l_contrast -in $wfscale -row 3 -column 0 -sticky ew
+		grid $wfscale.l_hue -in $wfscale -row 5 -column 0 -sticky ew
+		grid $wfscale.l_saturation -in $wfscale -row 7 -column 0 -sticky ew
 		
-		grid $wfscale.s_brightness -in $wfscale -row 1 -column 1 \
-		-sticky ew \
-		-padx 5
-		grid $wfscale.s_contrast -in $wfscale -row 3 -column 1 \
-		-sticky ew \
-		-padx 5
-		grid $wfscale.s_hue -in $wfscale -row 5 -column 1 \
-		-sticky ew \
-		-padx 5
-		grid $wfscale.s_saturation -in $wfscale -row 7 -column 1 \
-		-sticky ew \
-		-padx 5
+		grid $wfscale.s_brightness -in $wfscale -row 1 -column 1 -sticky ew -padx 5
+		grid $wfscale.s_contrast -in $wfscale -row 3 -column 1 -sticky ew -padx 5
+		grid $wfscale.s_hue -in $wfscale -row 5 -column 1 -sticky ew -padx 5
+		grid $wfscale.s_saturation -in $wfscale -row 7 -column 1 -sticky ew -padx 5
 		
-		grid $wfbtn.b_ok -in $wfbtn -row 0 -column 0 \
-		-padx 3 \
-		-pady 7
-		grid $wfbtn.b_default -in $wfbtn -row 0 -column 1 \
-		-pady 7
-		grid $wfbtn.b_exit -in $wfbtn -row 0 -column 2 \
-		-pady 7 \
-		-padx 3
+		grid $wfbtn.b_ok -in $wfbtn -row 0 -column 0 -padx 3 -pady 7
+		grid $wfbtn.b_default -in $wfbtn -row 0 -column 1 -pady 7
+		grid $wfbtn.b_exit -in $wfbtn -row 0 -column 2 -pady 7 -padx 3
 		
 		grid rowconfigure . 1 -minsize 5
 		

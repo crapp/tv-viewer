@@ -34,13 +34,11 @@ proc option_screen_2 {} {
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(dvb_nb1) [ttk::frame $w.f_dvb]
 		$w add $::window(dvb_nb1) -text [mc "DVB Settings"] -padding 2
-		ttk::label $::window(dvb_nb1).l_dvb_more \
-		-text [mc "Expect more soon"]
+		ttk::label $::window(dvb_nb1).l_dvb_more -text [mc "Expect more soon"]
 		
 		grid columnconfigure $::window(dvb_nb1) 0 -weight 1
 		
-		grid $::window(dvb_nb1).l_dvb_more -in $::window(dvb_nb1) -row 0 -column 0 \
-		-padx 5
+		grid $::window(dvb_nb1).l_dvb_more -in $::window(dvb_nb1) -row 0 -column 0 -padx 5
 		
 		#Additional Code
 		

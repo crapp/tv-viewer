@@ -155,55 +155,26 @@ proc timeshift_Save {tvw} {
 proc timeshift_CopyBar {ofile} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: timeshift_CopyBar \033\[0m \{$ofile\}"
 	set wtop [toplevel .top_cp_progress]
-	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 	set mf [ttk::frame $wtop.f_main]
 	set bf [ttk::frame $wtop.f_button -style TLabelframe]
 	
-	ttk::label $mf.l_info \
-	-text [mc "Copying timeshift video file.
-Please wait..."] \
-	-compound left \
-	-image $::icon_m(dialog-information)
+	ttk::label $mf.l_info -text [mc "Copying timeshift video file.
+Please wait..."] -compound left -image $::icon_m(dialog-information)
+	ttk::progressbar $mf.pb_progcp -orient horizontal -mode determinate -variable timeshift(pgp)
+	ttk::label $mf.l_inf_progre -textvariable timeshift(lProgress)
+	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel)
 	
-	ttk::progressbar $mf.pb_progcp \
-	-orient horizontal \
-	-mode determinate \
-	-variable timeshift(pgp)
-	
-	ttk::label $mf.l_inf_progre \
-	-textvariable timeshift(lProgress)
-	
-	ttk::button $bf.b_cancel \
-	-text [mc "Cancel"] \
-	-compound left \
-	-image $::icon_s(dialog-cancel)
-	
-	grid $mf -in $wtop -row 0 -column 0 \
-	-sticky nesw
-	grid $bf -in $wtop -row 1 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $mf -in $wtop -row 0 -column 0 -sticky nesw
+	grid $bf -in $wtop -row 1 -column 0 -sticky ew -padx 3 -pady 3
 	
 	grid anchor $bf e
 	
-	grid $mf.l_info -in $mf -row 0 -column 0 \
-	-sticky w \
-	-padx 5 \
-	-pady 5
-	grid $mf.pb_progcp -in $mf -row 1 -column 0 \
-	-sticky ew \
-	-padx 10 \
-	-pady "10 5"
-	grid $mf.l_inf_progre -in $mf -row 2 -column 0 \
-	-padx "10 0" \
-	-pady "0 5"
+	grid $mf.l_info -in $mf -row 0 -column 0 -sticky w -padx 5 -pady 5
+	grid $mf.pb_progcp -in $mf -row 1 -column 0 -sticky ew -padx 10 -pady "10 5"
+	grid $mf.l_inf_progre -in $mf -row 2 -column 0 -padx "10 0" -pady "0 5"
 	
-	grid $bf.b_cancel -in $bf -row 0 -column 0 \
-	-padx 3 \
-	-pady 7
+	grid $bf.b_cancel -in $bf -row 0 -column 0 -padx 3 -pady 7
 	
 	grid rowconfigure $wtop {0 1} -weight 1
 	

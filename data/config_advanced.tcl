@@ -36,105 +36,43 @@ proc option_screen_8 {} {
 		set ::window(advanced_nb1) [ttk::frame $w.f_advanced]
 		$w add $::window(advanced_nb1) -text [mc "Advanced"] -padding 2
 		set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
-		ttk::checkbutton $::window(advanced_nb1).cb_advanced_aspect \
-		-text [mc "Manage aspect ratio"] \
-		-variable choice(cb_lf_aspect) \
-		-command [list config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.mb_moniaspect $lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect]
-		ttk::labelframe $::window(advanced_nb1).lf_advanced_aspect \
-		-labelwidget $::window(advanced_nb1).cb_advanced_aspect
-		ttk::checkbutton $lf_aspect.cb_keepaspect \
-		-text [mc "Keep video aspect ratio"] \
-		-variable choice(cb_keepaspect)
-		ttk::radiobutton $lf_aspect.rb_moniaspect \
-		-text [mc "Monitor aspect"] \
-		-variable choice(rb_aspect) \
-		-value 0 \
-		-command [list config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect]
-		ttk::menubutton $lf_aspect.mb_moniaspect \
-		-menu $::window(advanced_nb1).mbMoniaspect \
-		-textvariable choice(mbMoniaspect)
-		menu $::window(advanced_nb1).mbMoniaspect \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		ttk::radiobutton $lf_aspect.rb_monipixaspect \
-		-text [mc "Monitor pixel aspect"] \
-		-variable choice(rb_aspect) \
-		-value 1 \
-		-command [list config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect]
-		spinbox $lf_aspect.sb_monipixaspect \
-		-from 0.2 \
-		-to 9.0 \
-		-increment 0.1 \
-		-width 3 \
-		-repeatinterval 50 \
-		-state readonly \
-		-textvariable choice(sb_monipixaspect)
+		ttk::checkbutton $::window(advanced_nb1).cb_advanced_aspect -text [mc "Manage aspect ratio"] -variable choice(cb_lf_aspect) -command [list config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.mb_moniaspect $lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect]
+		ttk::labelframe $::window(advanced_nb1).lf_advanced_aspect -labelwidget $::window(advanced_nb1).cb_advanced_aspect
+		ttk::checkbutton $lf_aspect.cb_keepaspect -text [mc "Keep video aspect ratio"] -variable choice(cb_keepaspect)
+		ttk::radiobutton $lf_aspect.rb_moniaspect -text [mc "Monitor aspect"] -variable choice(rb_aspect) -value 0 -command [list config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect]
+		ttk::menubutton $lf_aspect.mb_moniaspect -menu $::window(advanced_nb1).mbMoniaspect -textvariable choice(mbMoniaspect)
+		menu $::window(advanced_nb1).mbMoniaspect -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::radiobutton $lf_aspect.rb_monipixaspect -text [mc "Monitor pixel aspect"] -variable choice(rb_aspect) -value 1 -command [list config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect]
+		spinbox $lf_aspect.sb_monipixaspect -from 0.2 -to 9.0 -increment 0.1 -width 3 -repeatinterval 50 -state readonly -textvariable choice(sb_monipixaspect)
 		set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
-		ttk::labelframe $::window(advanced_nb1).lf_advanced_screenshot \
-		-text [mc "Screenshot"]
-		ttk::checkbutton $lf_shot.cb_advanced_shot \
-		-text [mc "Activate screenshot feature"] \
-		-variable choice(cb_advanced_shot)
+		ttk::labelframe $::window(advanced_nb1).lf_advanced_screenshot -text [mc "Screenshot"]
+		ttk::checkbutton $lf_shot.cb_advanced_shot -text [mc "Activate screenshot feature"] -variable choice(cb_advanced_shot)
 		set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
-		ttk::labelframe $::window(advanced_nb1).lf_advanced_mconfig \
-		-text [mc "MPlayer config file"]
-		ttk::checkbutton $lf_mconfig.cb_advanced_mconfig \
-		-text [mc "Do not process MPlayer config files"] \
-		-variable choice(cb_advanced_mconfig)
-		ttk::labelframe $::window(advanced_nb1).lf_advanced_factory \
-		-text [mc "Default settings"]
+		ttk::labelframe $::window(advanced_nb1).lf_advanced_mconfig -text [mc "MPlayer config file"]
+		ttk::checkbutton $lf_mconfig.cb_advanced_mconfig -text [mc "Do not process MPlayer config files"] -variable choice(cb_advanced_mconfig)
+		ttk::labelframe $::window(advanced_nb1).lf_advanced_factory -text [mc "Default settings"]
 		set lf_factory $::window(advanced_nb1).lf_advanced_factory
-		ttk::button $lf_factory.b_reset \
-		-text [mc "Reset"] \
-		-command config_advancedReset
+		ttk::button $lf_factory.b_reset -text [mc "Reset"] -command config_advancedReset
 		
 		set ::window(advanced_nb2) [ttk::frame $w.f_advanced_mplayeropts]
 		$w add $::window(advanced_nb2) -text [mc "Additional options for MPlayer"] -padding 2
-		ttk::labelframe $::window(advanced_nb2).lf_additional_mplayer_com \
-		-text [mc "Additional MPlayer options"]
-		ttk::entry $::window(advanced_nb2).e_lf_additional_mplayer_com \
-		-textvariable choice(entry_mplayer_add_coms)
-		ttk::labelframe $::window(advanced_nb2).lf_add_vf_mpl \
-		-text [mc "Additional video filter options"]
-		ttk::entry $::window(advanced_nb2).e_lf_add_vf_mpl \
-		-textvariable choice(entry_vf_mplayer)
-		ttk::labelframe $::window(advanced_nb2).lf_add_af_mpl \
-		-text [mc "Additional audio filter options"]
-		ttk::entry $::window(advanced_nb2).e_lf_add_af_mpl \
-		-textvariable choice(entry_af_mplayer)
+		ttk::labelframe $::window(advanced_nb2).lf_additional_mplayer_com -text [mc "Additional MPlayer options"]
+		ttk::entry $::window(advanced_nb2).e_lf_additional_mplayer_com -textvariable choice(entry_mplayer_add_coms)
+		ttk::labelframe $::window(advanced_nb2).lf_add_vf_mpl -text [mc "Additional video filter options"]
+		ttk::entry $::window(advanced_nb2).e_lf_add_vf_mpl -textvariable choice(entry_vf_mplayer)
+		ttk::labelframe $::window(advanced_nb2).lf_add_af_mpl -text [mc "Additional audio filter options"]
+		ttk::entry $::window(advanced_nb2).e_lf_add_af_mpl -textvariable choice(entry_af_mplayer)
 		
 		set ::window(advanced_nb3) [ttk::frame $w.f_advanced_logs]
 		$w add $::window(advanced_nb3) -text [mc "Logs"] -padding 2
-		ttk::checkbutton $::window(advanced_nb3).cb_lf_logging \
-		-text [mc "Enable Logging"] \
-		-variable choice(cb_lf_logging) \
-		-command [list config_advancedLogging $::window(advanced_nb3)]
-		ttk::labelframe $::window(advanced_nb3).lf_logging \
-		-labelwidget $::window(advanced_nb3).cb_lf_logging
-		ttk::label $::window(advanced_nb3).l_logging_mplayer \
-		-text [mc "MPlayer logfile size in kBytes"]		
-		spinbox $::window(advanced_nb3).sb_logging_mplayer \
-		-from 10 \
-		-to 100 \
-		-increment 10 \
-		-state readonly \
-		-textvariable choice(sb_logging_mplayer)
-		ttk::label $::window(advanced_nb3).l_logging_sched \
-		-text [mc "Scheduler logfile size in kBytes"]
-		spinbox $::window(advanced_nb3).sb_logging_sched \
-		-from 10 \
-		-to 100 \
-		-increment 10 \
-		-state readonly \
-		-textvariable choice(sb_logging_sched)
-		ttk::label $::window(advanced_nb3).l_logging_tv \
-		-text [mc "TV-Viewer logfile size in kBytes"]
-		spinbox $::window(advanced_nb3).sb_logging_tv \
-		-from 10 \
-		-to 100 \
-		-increment 10 \
-		-state readonly \
-		-textvariable choice(sb_logging_tv)
+		ttk::checkbutton $::window(advanced_nb3).cb_lf_logging -text [mc "Enable Logging"] -variable choice(cb_lf_logging) -command [list config_advancedLogging $::window(advanced_nb3)]
+		ttk::labelframe $::window(advanced_nb3).lf_logging -labelwidget $::window(advanced_nb3).cb_lf_logging
+		ttk::label $::window(advanced_nb3).l_logging_mplayer -text [mc "MPlayer logfile size in kBytes"]
+		spinbox $::window(advanced_nb3).sb_logging_mplayer -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_mplayer)
+		ttk::label $::window(advanced_nb3).l_logging_sched -text [mc "Scheduler logfile size in kBytes"]
+		spinbox $::window(advanced_nb3).sb_logging_sched -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_sched)
+		ttk::label $::window(advanced_nb3).l_logging_tv -text [mc "TV-Viewer logfile size in kBytes"]
+		spinbox $::window(advanced_nb3).sb_logging_tv -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_tv)
 		
 		grid columnconfigure $::window(advanced_nb1) 0 -weight 1
 		grid columnconfigure $lf_aspect 1 -minsize 100
@@ -144,100 +82,33 @@ proc option_screen_8 {} {
 		grid columnconfigure $::window(advanced_nb2).lf_add_af_mpl {0} -weight 1
 		grid columnconfigure $::window(advanced_nb3) 0 -weight 1
 		
-		grid $lf_aspect -in $::window(advanced_nb1) -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $lf_aspect.cb_keepaspect -in $lf_aspect -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $lf_aspect.rb_moniaspect -in $lf_aspect -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $lf_aspect.mb_moniaspect -in $lf_aspect -row 1 -column 1 \
-		-sticky ew \
-		-pady "0 3"
-		grid $lf_aspect.rb_monipixaspect -in $lf_aspect -row 2 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $lf_aspect.sb_monipixaspect -in $lf_aspect -row 2 -column 1 \
-		-sticky ew \
-		-pady "0 3"
-		grid $lf_shot -in $::window(advanced_nb1) -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $lf_shot.cb_advanced_shot -in $lf_shot -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $lf_mconfig -in $::window(advanced_nb1) -row 2 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $lf_mconfig.cb_advanced_mconfig -in $lf_mconfig -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $lf_factory -in $::window(advanced_nb1) -row 3 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $lf_factory.b_reset -in $lf_factory -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
+		grid $lf_aspect -in $::window(advanced_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_aspect.cb_keepaspect -in $lf_aspect -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_aspect.rb_moniaspect -in $lf_aspect -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_aspect.mb_moniaspect -in $lf_aspect -row 1 -column 1 -sticky ew -pady "0 3"
+		grid $lf_aspect.rb_monipixaspect -in $lf_aspect -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_aspect.sb_monipixaspect -in $lf_aspect -row 2 -column 1 -sticky ew -pady "0 3"
+		grid $lf_shot -in $::window(advanced_nb1) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_shot.cb_advanced_shot -in $lf_shot -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_mconfig -in $::window(advanced_nb1) -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_mconfig.cb_advanced_mconfig -in $lf_mconfig -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_factory -in $::window(advanced_nb1) -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_factory.b_reset -in $lf_factory -row 0 -column 0 -sticky w -padx 7 -pady 3
 		
-		grid $::window(advanced_nb2).lf_additional_mplayer_com -in $::window(advanced_nb2) -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(advanced_nb2).e_lf_additional_mplayer_com -in $::window(advanced_nb2).lf_additional_mplayer_com -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
-		grid $::window(advanced_nb2).lf_add_vf_mpl -in $::window(advanced_nb2) -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(advanced_nb2).e_lf_add_vf_mpl -in $::window(advanced_nb2).lf_add_vf_mpl -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
-		grid $::window(advanced_nb2).lf_add_af_mpl -in $::window(advanced_nb2) -row 2 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(advanced_nb2).e_lf_add_af_mpl -in $::window(advanced_nb2).lf_add_af_mpl -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
+		grid $::window(advanced_nb2).lf_additional_mplayer_com -in $::window(advanced_nb2) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(advanced_nb2).e_lf_additional_mplayer_com -in $::window(advanced_nb2).lf_additional_mplayer_com -row 0 -column 0 -sticky ew -padx 7 -pady 3
+		grid $::window(advanced_nb2).lf_add_vf_mpl -in $::window(advanced_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(advanced_nb2).e_lf_add_vf_mpl -in $::window(advanced_nb2).lf_add_vf_mpl -row 0 -column 0 -sticky ew -padx 7 -pady 3
+		grid $::window(advanced_nb2).lf_add_af_mpl -in $::window(advanced_nb2) -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(advanced_nb2).e_lf_add_af_mpl -in $::window(advanced_nb2).lf_add_af_mpl -row 0 -column 0 -sticky ew -padx 7 -pady 3
 		
-		grid $::window(advanced_nb3).lf_logging -in $::window(advanced_nb3) -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(advanced_nb3).l_logging_mplayer -in $::window(advanced_nb3).lf_logging -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $::window(advanced_nb3).sb_logging_mplayer -in $::window(advanced_nb3).lf_logging -row 0 -column 1 \
-		-pady 3
-		grid $::window(advanced_nb3).l_logging_sched -in $::window(advanced_nb3).lf_logging -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $::window(advanced_nb3).sb_logging_sched -in $::window(advanced_nb3).lf_logging -row 1 -column 1 \
-		-pady "0 3"
-		grid $::window(advanced_nb3).l_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $::window(advanced_nb3).sb_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 1 \
-		-pady "0 3"
+		grid $::window(advanced_nb3).lf_logging -in $::window(advanced_nb3) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(advanced_nb3).l_logging_mplayer -in $::window(advanced_nb3).lf_logging -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(advanced_nb3).sb_logging_mplayer -in $::window(advanced_nb3).lf_logging -row 0 -column 1 -pady 3
+		grid $::window(advanced_nb3).l_logging_sched -in $::window(advanced_nb3).lf_logging -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $::window(advanced_nb3).sb_logging_sched -in $::window(advanced_nb3).lf_logging -row 1 -column 1 -pady "0 3"
+		grid $::window(advanced_nb3).l_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $::window(advanced_nb3).sb_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 1 -pady "0 3"
 		
 		#Additional Code
 		

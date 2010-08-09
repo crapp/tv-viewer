@@ -160,14 +160,8 @@ proc main_frontendChannelHandler {handler} {
 		}
 		if {"$handler" == "sedit"} {
 			destroy .fstations.treeSlist
-			ttk::treeview .fstations.treeSlist \
-			-yscrollcommand [list .fstations.scrbSlist set] \
-			-columns {name number} \
-			-show headings \
-			-selectmode browse \
-			-takefocus 0
-			grid .fstations.treeSlist -in .fstations -row 0 -column 0 \
-			-sticky nesw
+			ttk::treeview .fstations.treeSlist -yscrollcommand [list .fstations.scrbSlist set] -columns {name number} -show headings -selectmode browse -takefocus 0
+			grid .fstations.treeSlist -in .fstations -row 0 -column 0 -sticky nesw
 		}
 		.fstations.treeSlist heading name -text [mc "Name"]
 		set minwidth [expr [font measure $font [mc "Name"]] + 20]
@@ -231,224 +225,77 @@ proc main_frontendUi {} {
 	set menubar [ttk::frame .foptions_bar] ; place [ttk::label $menubar.bg -style Toolbutton ] -relwidth 1 -relheight 1
 	
 	ttk::separator .seperatMenu -orient horizontal
-		
+	
 	set toolbTop [ttk::frame .ftoolb_Top] ; place [ttk::label $toolbTop.bg -style Toolbutton] -relwidth 1 -relheight 1
-	
 	set stations [ttk::frame .fstations] ; place [ttk::label $stations.bg -style Toolbutton] -relwidth 1 -relheight 1
-	
 	set toolbChanCtrl [ttk::frame .ftoolb_ChanCtrl] ; place [ttk::label $toolbChanCtrl.bg -style Toolbutton] -relwidth 1 -relheight 1
-	
 	set toolbPlay [ttk::frame .ftoolb_Play] ; place [ttk::label $toolbPlay.bg -style Toolbutton] -relwidth 1 -relheight 1
-	
 	set toolbDisp [frame .ftoolb_Disp -background black]
 	
 	set vidBg [frame .fvidBg -background black -height 480 -width 654]
 	set vidCont [frame .fvidBg.cont -background "" -container yes]
 	
-	ttk::menubutton $menubar.mbTvviewer \
-	-text TV-Viewer \
-	-style Toolbutton \
-	-underline 0 \
-	-menu $menubar.mbTvviewer.mTvviewer
-	ttk::menubutton $menubar.mbNavigation \
-	-text [mc "Navigation"] \
-	-style Toolbutton \
-	-underline 0 \
-	-menu $menubar.mbNavigation.mNavigation
-	ttk::menubutton $menubar.mbView \
-	-text [mc "View"] \
-	-style Toolbutton \
-	-underline 0 \
-	-menu $menubar.mbView.mView
-	ttk::menubutton $menubar.mbAudio \
-	-text [mc "Audio"] \
-	-style Toolbutton \
-	-underline 0 \
-	-menu $menubar.mbAudio.mAudio
-	ttk::menubutton $menubar.mbHelp \
-	-text Help \
-	-style Toolbutton \
-	-underline 0 \
-	-menu $menubar.mbHelp.mHelp
+	ttk::menubutton $menubar.mbTvviewer -text TV-Viewer -style Toolbutton -underline 0 -menu $menubar.mbTvviewer.mTvviewer
+	ttk::menubutton $menubar.mbNavigation -text [mc "Navigation"] -style Toolbutton -underline 0 -menu $menubar.mbNavigation.mNavigation
+	ttk::menubutton $menubar.mbView -text [mc "View"] -style Toolbutton -underline 0 -menu $menubar.mbView.mView
+	ttk::menubutton $menubar.mbAudio -text [mc "Audio"] -style Toolbutton -underline 0 -menu $menubar.mbAudio.mAudio
+	ttk::menubutton $menubar.mbHelp -text Help -style Toolbutton -underline 0 -menu $menubar.mbHelp.mHelp
 	
-	ttk::button $toolbTop.bTimeshift \
-	-image $::icon_m(timeshift) \
-	-style Toolbutton \
-	-command {event generate . <<timeshift>>}
-	ttk::button $toolbTop.bRecord \
-	-image $::icon_m(record) \
-	-style Toolbutton \
-	-command {event generate . <<record>>}
-	ttk::button $toolbTop.bEpg \
-	-text EPG \
-	-style Toolbutton\
-	-command main_frontendEpg
-	ttk::button $toolbTop.bRadio \
-	-text Radio \
-	-style Toolbutton
+	ttk::button $toolbTop.bTimeshift -image $::icon_m(timeshift) -style Toolbutton -command {event generate . <<timeshift>>}
+	ttk::button $toolbTop.bRecord -image $::icon_m(record) -style Toolbutton -command {event generate . <<record>>}
+	ttk::button $toolbTop.bEpg -text EPG -style Toolbutton -command main_frontendEpg
+	ttk::button $toolbTop.bRadio -text Radio -style Toolbutton
 	#FIXME Find icon for Radio Button
-	ttk::button $toolbTop.bTv \
-	-image $::icon_m(starttv) \
-	-style Toolbutton \
-	-command vid_playerRendering
+	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command vid_playerRendering
 	#FIXME Which foreground color in label
-	label $toolbTop.lInput \
-	-width 10 \
-	-background black \
-	-foreground #EB3939 \
-	-anchor center \
-	-relief sunken \
-	-borderwidth 2
-	label $toolbTop.lDevice \
-	-width 10 \
-	-background black \
-	-foreground #FF5757 \
-	-anchor center \
-	-relief sunken \
-	-borderwidth 2
+	label $toolbTop.lInput -width 10 -background black -foreground #EB3939 -anchor center -relief sunken -borderwidth 2
+	label $toolbTop.lDevice -width 10 -background black -foreground #FF5757 -anchor center -relief sunken -borderwidth 2
 	
-	ttk::treeview $stations.treeSlist \
-	-yscrollcommand [list $stations.scrbSlist set] \
-	-columns {name number} \
-	-show headings \
-	-selectmode browse \
-	-takefocus 0
-	ttk::scrollbar $stations.scrbSlist \
-	-command [list $stations.treeSlist yview]
+	ttk::treeview $stations.treeSlist -yscrollcommand [list $stations.scrbSlist set] -columns {name number} -show headings -selectmode browse -takefocus 0
+	ttk::scrollbar $stations.scrbSlist -command [list $stations.treeSlist yview]
 	
-	ttk::button $toolbChanCtrl.bChanDown \
-	-image $::icon_m(channel-down) \
-	-style Toolbutton \
-	-command [list chan_zapperDown $stations.treeSlist]
-	ttk::button $toolbChanCtrl.bChanUp \
-	-image $::icon_m(channel-up) \
-	-style Toolbutton \
-	-command [list chan_zapperUp $stations.treeSlist]
-	ttk::button $toolbChanCtrl.bChanJump \
-	-image $::icon_m(channel-jump) \
-	-style Toolbutton \
-	-command [list chan_zapperJump $stations.treeSlist]
+	ttk::button $toolbChanCtrl.bChanDown -image $::icon_m(channel-down) -style Toolbutton -command [list chan_zapperDown $stations.treeSlist]
+	ttk::button $toolbChanCtrl.bChanUp -image $::icon_m(channel-up) -style Toolbutton -command [list chan_zapperUp $stations.treeSlist]
+	ttk::button $toolbChanCtrl.bChanJump -image $::icon_m(channel-jump) -style Toolbutton -command [list chan_zapperJump $stations.treeSlist]
 	
-	ttk::button $toolbPlay.bPlay \
-	-image $::icon_m(playback-start) \
-	-style Toolbutton \
-	-state disabled \
-	-command {event generate . <<start>>}
-	ttk::button $toolbPlay.bPause \
-	-image $::icon_m(playback-pause) \
-	-style Toolbutton \
-	-state disabled \
-	-command {event generate . <<pause>>}
-	ttk::button $toolbPlay.bStop \
-	-image $::icon_m(playback-stop) \
-	-style Toolbutton \
-	-state disabled \
-	-command {event generate . <<stop>>}
+	ttk::button $toolbPlay.bPlay -image $::icon_m(playback-start) -style Toolbutton -state disabled -command {event generate . <<start>>}
+	ttk::button $toolbPlay.bPause -image $::icon_m(playback-pause) -style Toolbutton -state disabled -command {event generate . <<pause>>}
+	ttk::button $toolbPlay.bStop -image $::icon_m(playback-stop) -style Toolbutton -state disabled -command {event generate . <<stop>>}
 	
-	ttk::separator $toolbPlay.seperat1 \
-	-orient vertical
+	ttk::separator $toolbPlay.seperat1 -orient vertical
 	
-	ttk::button $toolbPlay.bRewStart \
-	-style Toolbutton \
-	-image $::icon_m(rewind-first) \
-	-state disabled \
-	-command {event generate . <<rewind_start>>}
-	ttk::button $toolbPlay.bRewSmall \
-	-style Toolbutton \
-	-image $::icon_m(rewind-small) \
-	-state disabled \
-	-command {event generate . <<rewind_10s>>}
-	ttk::menubutton $toolbPlay.mbRewChoose \
-	-style Toolbutton \
-	-image $::icon_e(arrow-d) \
-	-menu $toolbPlay.mbRewChoose.mRewChoose \
-	-state disabled
-	ttk::button $toolbPlay.bForwSmall \
-	-style Toolbutton \
-	-image $::icon_m(forward-small) \
-	-state disabled \
-	-command {event generate . <<forward_10s>>}
-	ttk::menubutton $toolbPlay.mbForwChoose \
-	-style Toolbutton \
-	-image $::icon_e(arrow-d) \
-	-menu $toolbPlay.mbForwChoose.mForwChoose \
-	-state disabled
-	ttk::button $toolbPlay.bForwEnd \
-	-style Toolbutton \
-	-image $::icon_m(forward-last) \
-	-state disabled \
-	-command {event generate . <<forward_end>>}
+	ttk::button $toolbPlay.bRewStart -style Toolbutton -image $::icon_m(rewind-first) -state disabled -command {event generate . <<rewind_start>>}
+	ttk::button $toolbPlay.bRewSmall -style Toolbutton -image $::icon_m(rewind-small) -state disabled -command {event generate . <<rewind_10s>>}
+	ttk::menubutton $toolbPlay.mbRewChoose -style Toolbutton -image $::icon_e(arrow-d) -menu $toolbPlay.mbRewChoose.mRewChoose -state disabled
+	ttk::button $toolbPlay.bForwSmall -style Toolbutton -image $::icon_m(forward-small) -state disabled -command {event generate . <<forward_10s>>}
+	ttk::menubutton $toolbPlay.mbForwChoose -style Toolbutton -image $::icon_e(arrow-d) -menu $toolbPlay.mbForwChoose.mForwChoose -state disabled
+	ttk::button $toolbPlay.bForwEnd -style Toolbutton -image $::icon_m(forward-last) -state disabled -command {event generate . <<forward_end>>}
 	
-	ttk::separator $toolbPlay.seperat2 \
-	-orient vertical
+	ttk::separator $toolbPlay.seperat2 -orient vertical
 	
-	ttk::button $toolbPlay.bSave \
-	-style Toolbutton \
-	-image $::icon_m(floppy) \
-	-state disabled \
-	-command [list timeshift_Save .]
+	ttk::button $toolbPlay.bSave -style Toolbutton -image $::icon_m(floppy) -state disabled -command [list timeshift_Save .]
 	
-	ttk::button $toolbPlay.bVolMute \
-	-style Toolbutton \
-	-image $::icon_m(volume) \
-	-command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
-	ttk::scale $toolbPlay.scVolume \
-	-orient horizontal \
-	-from 0 \
-	-to 100 \
-	-variable main(volume_scale) \
-	-command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute] \
+	ttk::button $toolbPlay.bVolMute -style Toolbutton -image $::icon_m(volume) -command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	ttk::scale $toolbPlay.scVolume -orient horizontal -from 0 -to 100 -variable main(volume_scale) -command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute]
 	
-	label $toolbDisp.lDispIcon \
-	-compound center \
-	-background black \
-	-foreground white \
-	-image $::icon_s(starttv)
-	label $toolbDisp.lDispText \
-	-background black \
-	-foreground white \
-	-text [mc "Welcome to TV-Viewer"] \
-	-anchor center
-	label $toolbDisp.lTime \
-	-width 20 \
-	-background black \
-	-foreground white \
-	-anchor center \
-	-textvariable main(label_file_time)
+	label $toolbDisp.lDispIcon -compound center -background black -foreground white -image $::icon_s(starttv)
+	label $toolbDisp.lDispText -background black -foreground white -text [mc "Welcome to TV-Viewer"] -anchor center
+	label $toolbDisp.lTime -width 20 -background black -foreground white -anchor center -textvariable main(label_file_time)
 	
 	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
-		ttk::label $vidBg.l_bgImage \
-		-image $::icon_e(logo-tv-viewer08x-noload_xmas) \
-		-background #414141
+		ttk::label $vidBg.l_bgImage -image $::icon_e(logo-tv-viewer08x-noload_xmas) -background #414141
 	} else {
-		ttk::label $vidBg.l_bgImage \
-		-image $::icon_e(logo-tv-viewer08x-noload) \
-		-background #414141
+		ttk::label $vidBg.l_bgImage -image $::icon_e(logo-tv-viewer08x-noload) -background #414141
 	}
 	
-	
-	grid $menubar -in . -row 0 -column 0 \
-	-sticky new \
-	-columnspan 2
-	grid .seperatMenu -in . -row 1 -column 0 \
-	-sticky ew \
-	-padx 2 \
-	-columnspan 2
-	grid $toolbTop -in . -row 2 -column 0 \
-	-columnspan 2 \
-	-sticky ew
-	grid $stations -in . -row 3 -column 0 \
-	-sticky nesw \
-	-padx "0 2"
-	grid $vidBg -in . -row 3 -column 1 \
-	-sticky nesw
-	grid $toolbChanCtrl -in . -row 4 -column 0 \
-	-sticky ew
-	grid $toolbPlay -in . -row 4 -column 1 \
-	-sticky ew
-	grid $toolbDisp -in . -row 5 -column 0 \
-	-columnspan 2 \
-	-sticky ew
+	grid $menubar -in . -row 0 -column 0 -sticky new -columnspan 2
+	grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
+	grid $toolbTop -in . -row 2 -column 0 -columnspan 2 -sticky ew
+	grid $stations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+	grid $vidBg -in . -row 3 -column 1 -sticky nesw
+	grid $toolbChanCtrl -in . -row 4 -column 0 -sticky ew
+	grid $toolbPlay -in . -row 4 -column 1 -sticky ew
+	grid $toolbDisp -in . -row 5 -column 0 -columnspan 2 -sticky ew
 	
 	grid $menubar.mbTvviewer -in $menubar -row 0 -column 0
 	grid $menubar.mbNavigation -in $menubar -row 0 -column 1
@@ -456,97 +303,44 @@ proc main_frontendUi {} {
 	grid $menubar.mbAudio -in $menubar -row 0 -column 3
 	grid $menubar.mbHelp -in $menubar -row 0 -column 4
 	
-	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0 \
-	-pady 1
-	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1 \
-	-pady 1
-	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 \
-	-pady 1
-	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 \
-	-pady 1
-	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 \
-	-pady 1
-	grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 \
-	-sticky e \
-	-padx 1
-	grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 \
-	-padx "0 2"
+	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0 -pady 1
+	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1 -pady 1
+	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 -pady 1
+	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 -pady 1
+	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 -pady 1
+	grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 -sticky e -padx 1
+	grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 -padx "0 2"
 	
-	grid $stations.treeSlist -in $stations -row 0 -column 0 \
-	-sticky nesw
-	grid $stations.scrbSlist -in $stations -row 0 -column 1 \
-	-sticky ns
+	grid $stations.treeSlist -in $stations -row 0 -column 0 -sticky nesw
+	grid $stations.scrbSlist -in $stations -row 0 -column 1 -sticky ns
 	
-	grid $toolbChanCtrl.bChanDown -in $toolbChanCtrl -row 0 -column 0 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbChanCtrl.bChanUp -in $toolbChanCtrl -row 0 -column 1 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbChanCtrl.bChanJump -in $toolbChanCtrl -row 0 -column 2 \
-	-pady 2 \
-	-padx "2 0"
+	grid $toolbChanCtrl.bChanDown -in $toolbChanCtrl -row 0 -column 0 -pady 2 -padx "2 0"
+	grid $toolbChanCtrl.bChanUp -in $toolbChanCtrl -row 0 -column 1 -pady 2 -padx "2 0"
+	grid $toolbChanCtrl.bChanJump -in $toolbChanCtrl -row 0 -column 2 -pady 2 -padx "2 0"
 	
-	grid $toolbPlay.bPlay -in $toolbPlay -row 0 -column 0 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbPlay.bPause -in $toolbPlay -row 0 -column 1 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbPlay.bStop -in $toolbPlay -row 0 -column 2 \
-	-pady 2 \
-	-padx "2 0"
+	grid $toolbPlay.bPlay -in $toolbPlay -row 0 -column 0 -pady 2 -padx "2 0"
+	grid $toolbPlay.bPause -in $toolbPlay -row 0 -column 1 -pady 2 -padx "2 0"
+	grid $toolbPlay.bStop -in $toolbPlay -row 0 -column 2 -pady 2 -padx "2 0"
 	
-	grid $toolbPlay.seperat1 -in $toolbPlay -row 0 -column 3 \
-	-sticky ns \
-	-pady 6 \
-	-padx "2 0"
+	grid $toolbPlay.seperat1 -in $toolbPlay -row 0 -column 3 -sticky ns -pady 6 -padx "2 0"
 	
-	grid $toolbPlay.bRewStart -in $toolbPlay -row 0 -column 4 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbPlay.mbRewChoose -in $toolbPlay -row 0 -column 5 \
-	-sticky ns \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbPlay.bRewSmall -in $toolbPlay -row 0 -column 6 \
-	-pady 2
-	grid $toolbPlay.bForwSmall -in $toolbPlay -row 0 -column 7 \
-	-pady 2 \
-	-padx "2 0"
-	grid $toolbPlay.mbForwChoose -in $toolbPlay -row 0 -column 8 \
-	-sticky ns \
-	-pady 2
-	grid $toolbPlay.bForwEnd -in $toolbPlay -row 0 -column 9 \
-	-pady 2 \
-	-padx "2 0"
+	grid $toolbPlay.bRewStart -in $toolbPlay -row 0 -column 4 -pady 2 -padx "2 0"
+	grid $toolbPlay.mbRewChoose -in $toolbPlay -row 0 -column 5 -sticky ns -pady 2 -padx "2 0"
+	grid $toolbPlay.bRewSmall -in $toolbPlay -row 0 -column 6 -pady 2
+	grid $toolbPlay.bForwSmall -in $toolbPlay -row 0 -column 7 -pady 2 -padx "2 0"
+	grid $toolbPlay.mbForwChoose -in $toolbPlay -row 0 -column 8 -sticky ns -pady 2
+	grid $toolbPlay.bForwEnd -in $toolbPlay -row 0 -column 9 -pady 2 -padx "2 0"
 	
-	grid $toolbPlay.seperat2 -in $toolbPlay -row 0 -column 10 \
-	-sticky ns \
-	-pady 6 \
-	-padx "2 0"
+	grid $toolbPlay.seperat2 -in $toolbPlay -row 0 -column 10 -sticky ns -pady 6 -padx "2 0"
 	
-	grid $toolbPlay.bSave -in $toolbPlay -row 0 -column 11 \
-	-pady 2 \
-	-padx "2 0"
+	grid $toolbPlay.bSave -in $toolbPlay -row 0 -column 11 -pady 2 -padx "2 0"
 	
-	grid $toolbPlay.bVolMute -in $toolbPlay -row 0 -column 12 \
-	-pady 2 \
-	-padx "2 0" \
-	-sticky e
-	grid $toolbPlay.scVolume -in $toolbPlay -row 0 -column 13 \
-	-pady 2 \
-	-padx "2 6"
+	grid $toolbPlay.bVolMute -in $toolbPlay -row 0 -column 12 -pady 2 -padx "2 0" -sticky e
+	grid $toolbPlay.scVolume -in $toolbPlay -row 0 -column 13 -pady 2 -padx "2 6"
 	
-	grid $toolbDisp.lDispIcon -in $toolbDisp -row 0 -column 0 \
-	-sticky nsw \
-	-padx 2
-	grid $toolbDisp.lDispText -in $toolbDisp -row 0 -column 1 \
-	-sticky nsw \
-	-padx "0 2"
-	grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 2  \
-	-sticky nse \
-	-padx "2"
+	grid $toolbDisp.lDispIcon -in $toolbDisp -row 0 -column 0 -sticky nsw -padx 2
+	grid $toolbDisp.lDispText -in $toolbDisp -row 0 -column 1 -sticky nsw -padx "0 2"
+	grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 2  -sticky nse -padx "2"
 	
 	
 	grid rowconfigure . 3 -weight 1

@@ -52,25 +52,13 @@ proc config_wizardMainUi {} {
 	
 	#FIXME Strange way of setting some font, why?
 	#FIXME Switch to a treeview widget? Would be possible to use images.
-	listbox $wfbox.listbox_clist \
-	-font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* \
-	-width 0 \
-	-height 0
+	listbox $wfbox.listbox_clist -font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* -width 0 -height 0
 	
-	ttk::button $wfbtn.button_save \
-	-text [mc "Apply"] \
-	-command config_wizardSaveopts \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply)
+	ttk::button $wfbtn.button_save -text [mc "Apply"] -command config_wizardSaveopts -compound left -image $::icon_s(dialog-ok-apply)
 	
-	ttk::button $wfbtn.b_default \
-	-text [mc "Default"]
+	ttk::button $wfbtn.b_default -text [mc "Default"]
 	
-	ttk::button $wfbtn.button_quit \
-	-text [mc "Cancel"] \
-	-command config_wizardExit \
-	-compound left \
-	-image $::icon_s(dialog-cancel)
+	ttk::button $wfbtn.button_quit -text [mc "Cancel"] -command config_wizardExit -compound left -image $::icon_s(dialog-cancel)
 	
 	ttk::notebook $wfcopt.nb
 	
@@ -79,34 +67,16 @@ proc config_wizardMainUi {} {
 	grid columnconfigure $wfbox 0 -weight 1
 	grid columnconfigure $wfcopt 0 -weight 1 -minsize 470
 	
-	grid $wfbox -in $w -row 0 -column 0 \
-	-sticky nesw \
-	-padx 5 \
-	-pady 5
-	grid $wfcopt -in $w -row 0 -column 1 \
-	-sticky nesw \
-	-padx 5 \
-	-pady 5
-	grid $wfbtn -in $w -row 1 -column 0 \
-	-sticky ew \
-	-columnspan 2 \
-	-padx 3\
-	-pady 3
+	grid $wfbox -in $w -row 0 -column 0 -sticky nesw -padx 5 -pady 5
+	grid $wfcopt -in $w -row 0 -column 1 -sticky nesw -padx 5 -pady 5
+	grid $wfbtn -in $w -row 1 -column 0 -sticky ew -columnspan 2 -padx 3 -pady 3
 	
 	grid anchor $wfbtn e
-	grid $wfbox.listbox_clist -in $wfbox -row 0 -column 0 \
-	-sticky nesw
-	grid $wfbtn.button_save -in $wfbtn -row 0 -column 0 \
-	-padx "0 3" \
-	-pady 7
-	grid $wfbtn.b_default -in $wfbtn -row 0 -column 1 \
-	-sticky ns \
-	-pady 7
-	grid $wfbtn.button_quit -in $wfbtn -row 0 -column 2 \
-	-padx 3 \
-	-pady 7
-	grid $wfcopt.nb -in $wfcopt -row 0 -column 0 \
-	-sticky nesw
+	grid $wfbox.listbox_clist -in $wfbox -row 0 -column 0 -sticky nesw
+	grid $wfbtn.button_save -in $wfbtn -row 0 -column 0 -padx "0 3" -pady 7
+	grid $wfbtn.b_default -in $wfbtn -row 0 -column 1 -sticky ns -pady 7
+	grid $wfbtn.button_quit -in $wfbtn -row 0 -column 2 -padx 3 -pady 7
+	grid $wfcopt.nb -in $wfcopt -row 0 -column 0 -sticky nesw
 	
 	# Additional Code
 	

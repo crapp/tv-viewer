@@ -91,86 +91,36 @@ proc station_itemEdit {w} {
 	log_writeOutTv 0 "Editing item [$w selection]."
 	
 	set wtop [toplevel .station.top_edit]
-	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 	set wfe [ttk::frame $wtop.frame_entry]
 	set wfb [ttk::frame $wtop.frame_buttons -style TLabelframe]
 	
-	ttk::label $wfe.l_station \
-	-text [mc "Station:"]
+	ttk::label $wfe.l_station -text [mc "Station:"]
+	ttk::entry $wfe.e_station -textvariable choice(entry_station)
+	ttk::label $wfe.l_freq -text [mc "Frequency:"]
+	ttk::entry $wfe.e_freq -textvariable choice(entry_freq)
+	ttk::label $wfe.l_input -text [mc "Video input:"]
+	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable item(mbVinput)
+	menu $wfe.mbVinput -tearoff 0 -background $::option(theme_$::option(use_theme))
+	ttk::label $wfe.l_warning -justify left
+	ttk::button $wfb.b_apply -text [mc "Apply"] -command [list station_itemApplyEdit $wtop $wfe.l_warning $w] -compound left -image $::icon_s(dialog-ok-apply)
+	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemEditExit $wtop] -compound left -image $::icon_s(dialog-cancel)
 	
-	ttk::entry $wfe.e_station \
-	-textvariable choice(entry_station)
-	
-	ttk::label $wfe.l_freq \
-	-text [mc "Frequency:"]
-	
-	ttk::entry $wfe.e_freq \
-	-textvariable choice(entry_freq)
-	
-	ttk::label $wfe.l_input \
-	-text [mc "Video input:"]
-	
-	ttk::menubutton $wfe.mb_input \
-	-menu $wfe.mbVinput \
-	-textvariable item(mbVinput)
-	
-	menu $wfe.mbVinput \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))
-	
-	ttk::label $wfe.l_warning \
-	-justify left
-	
-	ttk::button $wfb.b_apply \
-	-text [mc "Apply"] \
-	-command [list station_itemApplyEdit $wtop $wfe.l_warning $w] \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply)
-	
-	ttk::button $wfb.b_exit \
-	-text [mc "Cancel"] \
-	-command [list station_itemEditExit $wtop] \
-	-compound left \
-	-image $::icon_s(dialog-cancel)
-	
-	grid $wfe -in $wtop -row 0 -column 0 \
-	-sticky nesw
-	grid $wfb -in $wtop -row 1 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $wfe -in $wtop -row 0 -column 0 -sticky nesw
+	grid $wfb -in $wtop -row 1 -column 0 -sticky ew -padx 3 -pady 3
 	
 	grid anchor $wfb e
 	
-	grid $wfe.l_station -in $wfe -row 0 -column 0 \
-	-sticky w \
-	-padx 3 \
-	-pady "7 0"
-	grid $wfe.e_station -in $wfe -row 1 -column 0 \
-	-padx 3
-	grid $wfe.l_freq -in $wfe -row 0 -column 1 \
-	-sticky w \
-	-padx 3 \
-	-pady "7 0"
-	grid $wfe.e_freq -in $wfe -row 1 -column 1 \
-	-padx 3
-	grid $wfe.l_input -in $wfe -row 0 -column 2 \
-	-sticky w \
-	-padx 3 \
-	-pady "7 0"
-	grid $wfe.mb_input -in $wfe -row 1 -column 2 \
-	-sticky ew \
-	-padx 3
-	grid $wfe.l_warning -in $wfe -row 2 -column 0 \
-	-padx 3 \
-	-columnspan 2
+	grid $wfe.l_station -in $wfe -row 0 -column 0 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.e_station -in $wfe -row 1 -column 0 -padx 3
+	grid $wfe.l_freq -in $wfe -row 0 -column 1 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.e_freq -in $wfe -row 1 -column 1 -padx 3
+	grid $wfe.l_input -in $wfe -row 0 -column 2 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.mb_input -in $wfe -row 1 -column 2 -sticky ew -padx 3
+	grid $wfe.l_warning -in $wfe -row 2 -column 0 -padx 3 -columnspan 2
 	
-	grid $wfb.b_apply -in $wfb -row 0 -column 0 \
-	-pady 7
-	grid $wfb.b_exit -in $wfb -row 0 -column 1 \
-	-padx 3
+	grid $wfb.b_apply -in $wfb -row 0 -column 0 -pady 7
+	grid $wfb.b_exit -in $wfb -row 0 -column 1 -padx 3
 	
 	grid columnconfigure $wfe 2 -minsize 120
 	
@@ -255,86 +205,36 @@ proc station_itemAdd {w} {
 	log_writeOutTv 0 "Adding item"
 	
 	set wtop [toplevel .station.top_add]
-	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 	set wfe [ttk::frame $wtop.frame_entry]
 	set wfb [ttk::frame $wtop.frame_buttons -style TLabelframe]
 	
-	ttk::label $wfe.l_station \
-	-text [mc "Station:"]
+	ttk::label $wfe.l_station -text [mc "Station:"]
+	ttk::entry $wfe.e_station -textvariable choice(entry_station_apply)
+	ttk::label $wfe.l_freq -text [mc "Frequency:"]
+	ttk::entry $wfe.e_freq -textvariable choice(entry_freq_apply)
+	ttk::label $wfe.l_input -text [mc "Video input:"]
+	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable item(mbVinput)
+	menu $wfe.mbVinput -tearoff 0 -background $::option(theme_$::option(use_theme))
+	ttk::label $wfe.l_warning -justify left
+	ttk::button $wfb.b_apply -text [mc "Apply"] -command [list station_itemApplyAdd $wtop $wfe.l_warning $w] -compound left -image $::icon_s(dialog-ok-apply)
+	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemAddExit $wtop] -compound left -image $::icon_s(dialog-cancel)
 	
-	ttk::entry $wfe.e_station \
-	-textvariable choice(entry_station_apply)
-	
-	ttk::label $wfe.l_freq \
-	-text [mc "Frequency:"]
-	
-	ttk::entry $wfe.e_freq \
-	-textvariable choice(entry_freq_apply)
-	
-	ttk::label $wfe.l_input \
-	-text [mc "Video input:"]
-	
-	ttk::menubutton $wfe.mb_input \
-	-menu $wfe.mbVinput \
-	-textvariable item(mbVinput)
-	
-	menu $wfe.mbVinput \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))
-	
-	ttk::label $wfe.l_warning \
-	-justify left
-	
-	ttk::button $wfb.b_apply \
-	-text [mc "Apply"] \
-	-command [list station_itemApplyAdd $wtop $wfe.l_warning $w] \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply)
-	
-	ttk::button $wfb.b_exit \
-	-text [mc "Cancel"] \
-	-command [list station_itemAddExit $wtop] \
-	-compound left \
-	-image $::icon_s(dialog-cancel)
-	
-	grid $wfe -in $wtop -row 0 -column 0 \
-	-sticky nesw
-	grid $wfb -in $wtop -row 1 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $wfe -in $wtop -row 0 -column 0 -sticky nesw
+	grid $wfb -in $wtop -row 1 -column 0 -sticky ew -padx 3 -pady 3
 	
 	grid anchor $wfb e
 	
-	grid $wfe.l_station -in $wfe -row 0 -column 0 \
-	-sticky w \
-	-padx 3 \
-	-pady "7 0"
-	grid $wfe.e_station -in $wfe -row 1 -column 0 \
-	-padx 3
-	grid $wfe.l_freq -in $wfe -row 0 -column 1 \
-	-sticky w \
-	-padx 3 \
-	-pady "7 0"
-	grid $wfe.e_freq -in $wfe -row 1 -column 1 \
-	-padx 3
-	grid $wfe.l_input -in $wfe -row 0 -column 2 \
-	-sticky w \
-	-padx 3 \
-	-pady "7 0"
-	grid $wfe.mb_input -in $wfe -row 1 -column 2 \
-	-sticky ew \
-	-padx 3
-	grid $wfe.l_warning -in $wfe -row 2 -column 0 \
-	-padx 3 \
-	-columnspan 2
+	grid $wfe.l_station -in $wfe -row 0 -column 0 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.e_station -in $wfe -row 1 -column 0 -padx 3
+	grid $wfe.l_freq -in $wfe -row 0 -column 1 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.e_freq -in $wfe -row 1 -column 1 -padx 3
+	grid $wfe.l_input -in $wfe -row 0 -column 2 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.mb_input -in $wfe -row 1 -column 2 -sticky ew -padx 3
+	grid $wfe.l_warning -in $wfe -row 2 -column 0 -padx 3 -columnspan 2
 	
-	grid $wfb.b_apply -in $wfb -row 0 -column 0 \
-	-pady 7
-	grid $wfb.b_exit -in $wfb -row 0 -column 1 \
-	-padx 3
+	grid $wfb.b_apply -in $wfb -row 0 -column 0 -pady 7
+	grid $wfb.b_exit -in $wfb -row 0 -column 1 -padx 3
 	
 	grid columnconfigure $wfe 2 -minsize 120
 	

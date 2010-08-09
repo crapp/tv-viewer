@@ -34,80 +34,33 @@ proc option_screen_4 {} {
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(audio_nb1) [ttk::frame $w.f_audio]
 		$w add $::window(audio_nb1) -text [mc "Audio Settings"] -padding 2
-		ttk::labelframe $::window(audio_nb1).lf_audio_stnd \
-		-text [mc "Audio Settings"]
-		ttk::label $::window(audio_nb1).l_lf_audio \
-		-text [mc "Audio output driver"]
-		ttk::menubutton $::window(audio_nb1).mb_lf_audio \
-		-menu $::window(audio_nb1).mbAudio \
-		-textvariable choice(mbAudio)
-		menu $::window(audio_nb1).mbAudio \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		ttk::label $::window(audio_nb1).l_lf_channels \
-		-text [mc "Audio channels"]
-		ttk::menubutton $::window(audio_nb1).mb_lf_channels \
-		-menu $::window(audio_nb1).mbAudio_channels \
-		-textvariable choice(mbAudio_channels)
-		menu $::window(audio_nb1).mbAudio_channels \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		ttk::checkbutton $::window(audio_nb1).cb_lf_softvol \
-		-text [mc "Use software mixer"] \
-		-variable choice(cb_softvol)
+		ttk::labelframe $::window(audio_nb1).lf_audio_stnd -text [mc "Audio Settings"]
+		ttk::label $::window(audio_nb1).l_lf_audio -text [mc "Audio output driver"]
+		ttk::menubutton $::window(audio_nb1).mb_lf_audio -menu $::window(audio_nb1).mbAudio -textvariable choice(mbAudio)
+		menu $::window(audio_nb1).mbAudio -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::label $::window(audio_nb1).l_lf_channels -text [mc "Audio channels"]
+		ttk::menubutton $::window(audio_nb1).mb_lf_channels -menu $::window(audio_nb1).mbAudio_channels -textvariable choice(mbAudio_channels)
+		menu $::window(audio_nb1).mbAudio_channels -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::checkbutton $::window(audio_nb1).cb_lf_softvol -text [mc "Use software mixer"] -variable choice(cb_softvol)
 		set lf_audioSync $::window(audio_nb1).lf_audio_sync
-		ttk::labelframe $::window(audio_nb1).lf_audio_sync \
-		-text [mc "Audio synchronization"]
-		ttk::checkbutton $lf_audioSync.cb_audautosync \
-		-text [mc "Auto synchronization"] \
-		-variable choice(cb_audautosync)
-		ttk::label $lf_audioSync.l_auddelay \
-		-text [mc "Audio/Video sync correction"]
-		spinbox $lf_audioSync.sb_auddelay \
-		-from -2 \
-		-to 2 \
-		-increment 0.1 \
-		-state readonly \
-		-textvariable choice(sb_auddelay)
+		ttk::labelframe $::window(audio_nb1).lf_audio_sync -text [mc "Audio synchronization"]
+		ttk::checkbutton $lf_audioSync.cb_audautosync -text [mc "Auto synchronization"] -variable choice(cb_audautosync)
+		ttk::label $lf_audioSync.l_auddelay -text [mc "Audio/Video sync correction"]
+		spinbox $lf_audioSync.sb_auddelay -from -2 -to 2 -increment 0.1 -state readonly -textvariable choice(sb_auddelay)
 		
 		grid columnconfigure $::window(audio_nb1) 0 -weight 1
 		grid columnconfigure $::window(audio_nb1).lf_audio_stnd 1 -minsize 120
 		
-		grid $::window(audio_nb1).lf_audio_stnd -in $::window(audio_nb1) -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(audio_nb1).l_lf_audio -in $::window(audio_nb1).lf_audio_stnd -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $::window(audio_nb1).mb_lf_audio -in $::window(audio_nb1).lf_audio_stnd -row 0 -column 1 \
-		-sticky ew \
-		-pady 3
-		grid $::window(audio_nb1).l_lf_channels -in $::window(audio_nb1).lf_audio_stnd -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $::window(audio_nb1).mb_lf_channels -in $::window(audio_nb1).lf_audio_stnd -row 1 -column 1 \
-		-sticky ew \
-		-pady "0 3"
-		grid $::window(audio_nb1).cb_lf_softvol -in $::window(audio_nb1).lf_audio_stnd -row 2 -column 0 \
-		-padx 7 \
-		-pady "0 3"
-		grid $lf_audioSync -in $::window(audio_nb1) -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $lf_audioSync.cb_audautosync -in $lf_audioSync -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $lf_audioSync.l_auddelay -in $lf_audioSync -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $lf_audioSync.sb_auddelay -in $lf_audioSync -row 1 -column 1 \
-		-pady "0 3"
+		grid $::window(audio_nb1).lf_audio_stnd -in $::window(audio_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(audio_nb1).l_lf_audio -in $::window(audio_nb1).lf_audio_stnd -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(audio_nb1).mb_lf_audio -in $::window(audio_nb1).lf_audio_stnd -row 0 -column 1 -sticky ew -pady 3
+		grid $::window(audio_nb1).l_lf_channels -in $::window(audio_nb1).lf_audio_stnd -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $::window(audio_nb1).mb_lf_channels -in $::window(audio_nb1).lf_audio_stnd -row 1 -column 1 -sticky ew -pady "0 3"
+		grid $::window(audio_nb1).cb_lf_softvol -in $::window(audio_nb1).lf_audio_stnd -row 2 -column 0 -padx 7 -pady "0 3"
+		grid $lf_audioSync -in $::window(audio_nb1) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_audioSync.cb_audautosync -in $lf_audioSync -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_audioSync.l_auddelay -in $lf_audioSync -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_audioSync.sb_auddelay -in $lf_audioSync -row 1 -column 1 -pady "0 3"
 		
 		#Additional Code
 		

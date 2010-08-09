@@ -85,50 +85,26 @@ proc main_newsreaderCheckUpdate {handler} {
 			close $date_file
 			
 			set w [toplevel .top_newsreader -class "TV-Viewer"]
-			
 			place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 			
 			set mf [ttk::frame $w.mf]
 			set fb [ttk::frame $w.mf.btn -style TLabelframe]
-			ttk::label $mf.l_top_newsr \
-			-justify left
-			text $mf.t_top_newsr \
-			-yscrollcommand [list $mf.scrollb_newsr set] \
-			-width 0 \
-			-height 0
-			ttk::scrollbar $mf.scrollb_newsr \
-			-command [list $mf.t_top_newsr yview]
-			ttk::button $fb.b_newsr_homepage \
-			-text [mc "Homepage"] \
-			-compound left \
-			-image $::icon_s(internet) \
-			-command main_newsreaderHomepage
-			ttk::button $fb.b_newsr_ok \
-			-text [mc "Exit"] \
-			-compound left \
-			-image $::icon_s(dialog-close) \
-			-command [list main_newsreaderExit $w]
+			ttk::label $mf.l_top_newsr -justify left
+			text $mf.t_top_newsr -yscrollcommand [list $mf.scrollb_newsr set] -width 0 -height 0
+			ttk::scrollbar $mf.scrollb_newsr -command [list $mf.t_top_newsr yview]
+			ttk::button $fb.b_newsr_homepage -text [mc "Homepage"] -compound left -image $::icon_s(internet) -command main_newsreaderHomepage
+			ttk::button $fb.b_newsr_ok -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command [list main_newsreaderExit $w]
 			
 			grid $mf -in $w -row 0 -column 0
-			grid $fb -in $mf -row 2 -column 0 \
-			-sticky ew \
-			-columnspan 2 \
-			-pady 3 \
-			-padx 3
+			grid $fb -in $mf -row 2 -column 0 -sticky ew -columnspan 2 -pady 3 -padx 3
 			
 			grid anchor $fb e
 			
-			grid $mf.l_top_newsr -in $mf -row 0 -column 0 \
-			-sticky ew \
-			-columnspan 2
-			grid $mf.t_top_newsr -in $mf -row 1 -column 0 \
-			-sticky nesw
-			grid $mf.scrollb_newsr -in $mf -row 1 -column 1 \
-			-sticky nesw
-			grid $fb.b_newsr_homepage -in $fb -row 0 -column 0 \
-			-pady 7
-			grid $fb.b_newsr_ok -in $fb -row 0 -column 1 \
-			-padx 3
+			grid $mf.l_top_newsr -in $mf -row 0 -column 0 -sticky ew -columnspan 2
+			grid $mf.t_top_newsr -in $mf -row 1 -column 0 -sticky nesw
+			grid $mf.scrollb_newsr -in $mf -row 1 -column 1 -sticky nesw
+			grid $fb.b_newsr_homepage -in $fb -row 0 -column 0 -pady 7
+			grid $fb.b_newsr_ok -in $fb -row 0 -column 1 -padx 3
 			
 			grid rowconfigure $mf 1 -weight 1 -minsize 350
 			grid columnconfigure $mf 0 -weight 1 -minsize 515

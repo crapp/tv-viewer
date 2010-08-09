@@ -197,138 +197,52 @@ proc station_editUi {} {
 	
 	if {[winfo exists .station] == 0 } {
 		set w [toplevel .station]
-		
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
 		set wfstation [ttk::frame $w.wfstation]
-		
 		set wfbottom [ttk::frame $w.bottom_buttons -style TLabelframe]
-		
 		set wftop [ttk::frame $w.top_buttons] ; place [ttk::label $wftop.bg -style Toolbutton] -relwidth 1 -relheight 1
 		
-		ttk::button $wftop.b_station_search \
-		-text [mc "Station search"] \
-		-style Toolbutton \
-		-command [list station_searchUi $wfstation.tv_station]
+		ttk::button $wftop.b_station_search -text [mc "Station search"] -style Toolbutton -command [list station_searchUi $wfstation.tv_station]
+		ttk::separator $wftop.sr_1 -orient vertical
+		ttk::button $wftop.b_station_add -text [mc "Add"] -style Toolbutton -command [list station_itemAdd $wfstation.tv_station]
+		ttk::button $wftop.b_station_delete -text [mc "Delete"] -style Toolbutton -command [list station_itemDelete $wfstation.tv_station]
+		ttk::button $wftop.b_station_activate -text [mc "(De)Activate"] -style Toolbutton -command [list station_itemDeactivate $wfstation.tv_station]
+		ttk::button $wftop.b_station_edit -text [mc "Edit"] -style Toolbutton -command [list station_itemEdit $wfstation.tv_station]
+		ttk::separator $wftop.sr_2 -orient vertical
+		ttk::button $wftop.b_station_up -text [mc "Up"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station -1]
+		ttk::button $wftop.b_station_down -text [mc "Down"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station 1]
+		ttk::separator $wftop.sr_3 -orient vertical
+		ttk::button $wftop.b_station_preview -text [mc "Preview"] -style Toolbutton -command [list station_editPreview $wfstation.tv_station]
+		ttk::treeview $wfstation.tv_station -yscrollcommand [list $wfstation.sb_station set] -columns {station frequency input} -show headings
+		ttk::scrollbar $wfstation.sb_station -orient vertical -command [list $wfstation.tv_station yview]
+		ttk::button $wfbottom.b_save -text [mc "Apply"] -command [list station_editSave $wfstation.tv_station] -compound left -image $::icon_s(dialog-ok-apply)
+		ttk::button $wfbottom.b_exit -text [mc "Cancel"] -command [list station_editExit cancel] -compound left -image $::icon_s(dialog-cancel)
 		
-		ttk::separator $wftop.sr_1 \
-		-orient vertical
-		
-		ttk::button $wftop.b_station_add \
-		-text [mc "Add"] \
-		-style Toolbutton \
-		-command [list station_itemAdd $wfstation.tv_station]
-		
-		ttk::button $wftop.b_station_delete \
-		-text [mc "Delete"] \
-		-style Toolbutton \
-		-command [list station_itemDelete $wfstation.tv_station]
-		
-		ttk::button $wftop.b_station_activate \
-		-text [mc "(De)Activate"] \
-		-style Toolbutton \
-		-command [list station_itemDeactivate $wfstation.tv_station]
-		
-		ttk::button $wftop.b_station_edit \
-		-text [mc "Edit"] \
-		-style Toolbutton \
-		-command [list station_itemEdit $wfstation.tv_station]
-		
-		ttk::separator $wftop.sr_2 \
-		-orient vertical
-		
-		ttk::button $wftop.b_station_up \
-		-text [mc "Up"] \
-		-style Toolbutton \
-		-command [list station_itemMove $wfstation.tv_station -1]
-		
-		ttk::button $wftop.b_station_down \
-		-text [mc "Down"] \
-		-style Toolbutton \
-		-command [list station_itemMove $wfstation.tv_station 1]
-		
-		ttk::separator $wftop.sr_3 \
-		-orient vertical
-		
-		ttk::button $wftop.b_station_preview \
-		-text [mc "Preview"] \
-		-style Toolbutton \
-		-command [list station_editPreview $wfstation.tv_station]
-		
-		ttk::treeview $wfstation.tv_station \
-		-yscrollcommand [list $wfstation.sb_station set] \
-		-columns {station frequency input} \
-		-show headings
-		
-		ttk::scrollbar $wfstation.sb_station \
-		-orient vertical \
-		-command [list $wfstation.tv_station yview]
-		
-		ttk::button $wfbottom.b_save \
-		-text [mc "Apply"] \
-		-command [list station_editSave $wfstation.tv_station] \
-		-compound left \
-		-image $::icon_s(dialog-ok-apply)
-		
-		ttk::button $wfbottom.b_exit \
-		-text [mc "Cancel"] \
-		-command [list station_editExit cancel]\
-		-compound left \
-		-image $::icon_s(dialog-cancel)
-		
-		grid $wftop -in $w -row 0 -column 0 \
-		-sticky ew
-		grid $wfstation -in $w -row 1 -column 0 \
-		-sticky nesw
-		grid $wfbottom -in $w -row 2 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
+		grid $wftop -in $w -row 0 -column 0 -sticky ew
+		grid $wfstation -in $w -row 1 -column 0 -sticky nesw
+		grid $wfbottom -in $w -row 2 -column 0 -sticky ew -padx 3 -pady 3
 		
 		grid anchor $wfbottom e
 		
-		grid $wftop.b_station_search -in $wftop -row 0 -column 0 \
-		-pady 4 \
-		-padx 3
-		grid $wftop.sr_1 -in $wftop -row 0 -column 1 \
-		-sticky ns
-		grid $wftop.b_station_add -in $wftop -row 0 -column 2 \
-		-pady 2 \
-		-padx 3
-		grid $wftop.b_station_delete -in $wftop -row 0 -column 3 \
-		-pady 2 \
-		-padx "0 3"
-		grid $wftop.b_station_activate -in $wftop -row 0 -column 5 \
-		-pady 2 \
-		-padx "0 3"
-		grid $wftop.b_station_edit -in $wftop -row 0 -column 4 \
-		-pady 2 \
-		-padx "0 3"
-		grid $wftop.sr_2 -in $wftop -row 0 -column 6 \
-		-sticky ns
-		grid $wftop.b_station_up -in $wftop -row 0 -column 7 \
-		-pady 2 \
-		-padx 3
-		grid $wftop.b_station_down -in $wftop -row 0 -column 8 \
-		-pady 2 \
-		-padx "0 3"
-		grid $wftop.sr_3 -in $wftop -row 0 -column 9 \
-		-sticky ns
-		grid $wftop.b_station_preview -in $wftop -row 0 -column 10 \
-		-pady 2 \
-		-padx 3
+		grid $wftop.b_station_search -in $wftop -row 0 -column 0 -pady 4 -padx 3
+		grid $wftop.sr_1 -in $wftop -row 0 -column 1 -sticky ns
+		grid $wftop.b_station_add -in $wftop -row 0 -column 2 -pady 2 -padx 3
+		grid $wftop.b_station_delete -in $wftop -row 0 -column 3 -pady 2 -padx "0 3"
+		grid $wftop.b_station_activate -in $wftop -row 0 -column 5 -pady 2 -padx "0 3"
+		grid $wftop.b_station_edit -in $wftop -row 0 -column 4 -pady 2 -padx "0 3"
+		grid $wftop.sr_2 -in $wftop -row 0 -column 6 -sticky ns
+		grid $wftop.b_station_up -in $wftop -row 0 -column 7 -pady 2 -padx 3
+		grid $wftop.b_station_down -in $wftop -row 0 -column 8 -pady 2 -padx "0 3"
+		grid $wftop.sr_3 -in $wftop -row 0 -column 9 -sticky ns
+		grid $wftop.b_station_preview -in $wftop -row 0 -column 10 -pady 2 -padx 3
 		
 		
-		grid $wfstation.tv_station -in $wfstation -row 0 -column 0 \
-		-sticky nesw
-		grid $wfstation.sb_station -in $wfstation -row 0 -column 1 \
-		-sticky ns
+		grid $wfstation.tv_station -in $wfstation -row 0 -column 0 -sticky nesw
+		grid $wfstation.sb_station -in $wfstation -row 0 -column 1 -sticky ns
 		
-		grid $wfbottom.b_save -in $wfbottom -row 0 -column 0 \
-		-pady 7
+		grid $wfbottom.b_save -in $wfbottom -row 0 -column 0 -pady 7
 		
-		grid $wfbottom.b_exit -in $wfbottom -row 0 -column 1 \
-		-padx 3
+		grid $wfbottom.b_exit -in $wfbottom -row 0 -column 1 -padx 3
 		
 		grid columnconfigure .station 0 -weight 1
 		grid columnconfigure $wfstation 0 -weight 1
@@ -353,8 +267,8 @@ proc station_editUi {} {
 		$wfstation.tv_station heading frequency -text [mc "Frequency"]
 		$wfstation.tv_station heading input -text [mc "Video input"]
 		$wfstation.tv_station column station -width [expr [font measure $font $name] + 380]
-		$wfstation.tv_station column frequency -width [expr [font measure $font $name] + 20]
-		$wfstation.tv_station column input -width [expr [font measure $font $name] + 60]
+		$wfstation.tv_station column frequency -width [expr [font measure $font $name] + 20] -stretch 0 -anchor center
+		$wfstation.tv_station column input -width [expr [font measure $font $name] + 60] -stretch 0 -anchor center
 		$wfstation.tv_station tag configure disabled -foreground red
 		if {[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 			set file "$::option(home)/config/stations_$::option(frequency_table).conf"

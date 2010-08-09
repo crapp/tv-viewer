@@ -21,93 +21,39 @@ proc station_searchUi {tree} {
 	if {[winfo exists .station.top_searchUi]} return
 	log_writeOutTv 0 "Building station search gui."
 	set wtop [toplevel .station.top_searchUi]
-	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 	set mf [ttk::frame $wtop.f_main]
 	set bf [ttk::frame $wtop.f_button -style TLabelframe]
 	
-	ttk::labelframe $mf.lf_search \
-	-text [mc "Station search options"]
+	ttk::labelframe $mf.lf_search -text [mc "Station search options"]
+	ttk::checkbutton $mf.cb_lf_search_append -text [mc "Append stations to existing list"] -variable search(append)
+	ttk::checkbutton $mf.cb_lf_search_full -text [mc "Perform a full frequency sweep"] -variable search(full) -command [list station_searchFull $mf]
+	ttk::menubutton $mf.mb_lf_search_full_dist -menu $mf.mbFull_dist -textvariable search(mbFull_dist)
+	menu $mf.mbFull_dist -tearoff 0 -background $::option(theme_$::option(use_theme))
+	ttk::menubutton $mf.mb_lf_search_full_time -menu $mf.mbFull_time -textvariable search(mbFull_time)
+	menu $mf.mbFull_time -tearoff 0 -background $::option(theme_$::option(use_theme))
 	
-	ttk::checkbutton $mf.cb_lf_search_append \
-	-text [mc "Append stations to existing list"] \
-	-variable search(append)
-	
-	ttk::checkbutton $mf.cb_lf_search_full \
-	-text [mc "Perform a full frequency sweep"] \
-	-variable search(full) \
-	-command [list station_searchFull $mf]
-	
-	ttk::menubutton $mf.mb_lf_search_full_dist \
-	-menu $mf.mbFull_dist \
-	-textvariable search(mbFull_dist)
-	menu $mf.mbFull_dist \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))
-	
-	ttk::menubutton $mf.mb_lf_search_full_time \
-	-menu $mf.mbFull_time \
-	-textvariable search(mbFull_time)
-	menu $mf.mbFull_time \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))
-	
-	ttk::button $bf.b_ok \
-	-text [mc "Start"] \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply) \
-	-command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1; station_searchRequires $tree"
-	
-	ttk::button $bf.b_cancel \
-	-text [mc "Cancel"] \
-	-compound left \
-	-image $::icon_s(dialog-cancel) \
-	-command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
+	ttk::button $bf.b_ok -text [mc "Start"] -compound left -image $::icon_s(dialog-ok-apply) -command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1; station_searchRequires $tree"
+	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
 	
 	grid columnconfigure $wtop 0 -weight 1
 	grid columnconfigure $mf 0 -weight 1
 	grid columnconfigure $bf 0 -weight 1 -minsize 150
 	grid rowconfigure $wtop 0 -weight 1
 	
-	grid $mf -in $wtop -row 0 -column 0 \
-	-sticky nesw
-	grid $bf -in $wtop -row 1 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $mf -in $wtop -row 0 -column 0 -sticky nesw
+	grid $bf -in $wtop -row 1 -column 0 -sticky ew -padx 3 -pady 3
 	
 	grid anchor $bf e
 	
-	grid $mf.lf_search -in $mf -row 0 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady "5 0"
-	grid $mf.cb_lf_search_append -in $mf.lf_search -row 0 -column 0 \
-	-columnspan 2 \
-	-sticky w \
-	-padx 3 \
-	-pady "0 3"
-	grid $mf.cb_lf_search_full -in $mf.lf_search -row 1 -column 0 \
-	-columnspan 2 \
-	-sticky w \
-	-padx 3 \
-	-pady "0 3"
-	grid $mf.mb_lf_search_full_dist -in $mf.lf_search -row 2 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady "0 3"
-	grid $mf.mb_lf_search_full_time -in $mf.lf_search -row 2 -column 1 \
-	-sticky ew \
-	-padx "0 3" \
-	-pady "0 3"
+	grid $mf.lf_search -in $mf -row 0 -column 0 -sticky ew -padx 3 -pady "5 0"
+	grid $mf.cb_lf_search_append -in $mf.lf_search -row 0 -column 0 -columnspan 2 -sticky w -padx 3 -pady "0 3"
+	grid $mf.cb_lf_search_full -in $mf.lf_search -row 1 -column 0 -columnspan 2 -sticky w -padx 3 -pady "0 3"
+	grid $mf.mb_lf_search_full_dist -in $mf.lf_search -row 2 -column 0 -sticky ew -padx 3 -pady "0 3"
+	grid $mf.mb_lf_search_full_time -in $mf.lf_search -row 2 -column 1 -sticky ew -padx "0 3" -pady "0 3"
 	
-	grid $bf.b_ok -in $bf -row 0 -column 0 \
-	-sticky e \
-	-pady 7
-	grid $bf.b_cancel -in $bf -row 0 -column 1 \
-	-padx 3 \
-	-pady 7
+	grid $bf.b_ok -in $bf -row 0 -column 0 -sticky e -pady 7
+	grid $bf.b_cancel -in $bf -row 0 -column 1 -padx 3 -pady 7
 	
 	wm resizable $wtop 0 0
 	wm title $wtop [mc "Station search options"]
@@ -217,52 +163,24 @@ proc station_searchRequires {tree} {
 	set wtop [toplevel .station.top_search]
 	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 	set mf [ttk::frame $wtop.f_main]
-	
 	$mf configure -cursor watch
 	
-	ttk::label $mf.l_search_msg \
-	-text [mc "Station search in progress.
-Please wait..."] \
-	-compound left \
-	-image $::icon_m(dialog-information)
-	
-	ttk::progressbar $mf.pgb_search \
-	-orient horizontal \
-	-mode determinate \
-	-variable choice(pgb_search)
-	
+	ttk::label $mf.l_search_msg -text [mc "Station search in progress.
+Please wait..."] -compound left -image $::icon_m(dialog-information)
+	ttk::progressbar $mf.pgb_search -orient horizontal -mode determinate -variable choice(pgb_search)
 	ttk::label $mf.l_search_status
-	
-	ttk::button $mf.b_search_abort \
-	-text [mc "Cancel"] \
-	-compound left \
-	-image $::icon_s(dialog-cancel) \
-	-command "station_search 0 cancel 0 0 0 0; grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
+	ttk::button $mf.b_search_abort -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command "station_search 0 cancel 0 0 0 0; grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
 	
 	grid columnconfigure $wtop 0 -minsize 280
 	grid columnconfigure $mf 0 -weight 1
 	
-	grid $mf -in $wtop -row 0 -column 0 \
-	-sticky nesw
+	grid $mf -in $wtop -row 0 -column 0 -sticky nesw
 	
-	grid $mf.l_search_msg -in $mf -row 0 -column 0 \
-	-sticky w \
-	-padx 5 \
-	-pady 5
-	grid $mf.pgb_search -in $mf -row 1 -column 0 \
-	-sticky ew \
-	-padx 10 \
-	-pady "10 5"
-	grid $mf.l_search_status -in $mf -row 2 -column 0 \
-	-sticky ew \
-	-padx 10 \
-	-pady "0 10"
-	grid $mf.b_search_abort -in $mf -row 3 -column 0 \
-	-sticky e \
-	-padx 10 \
-	-pady "5 3"
+	grid $mf.l_search_msg -in $mf -row 0 -column 0 -sticky w -padx 5 -pady 5
+	grid $mf.pgb_search -in $mf -row 1 -column 0 -sticky ew -padx 10 -pady "10 5"
+	grid $mf.l_search_status -in $mf -row 2 -column 0 -sticky ew -padx 10 -pady "0 10"
+	grid $mf.b_search_abort -in $mf -row 3 -column 0 -sticky e -padx 10 -pady "5 3"
 	
 	wm resizable $wtop 0 0
 	wm title $wtop [mc "Station search"]

@@ -23,52 +23,26 @@ proc key_sequences {} {
 		log_writeOutTv 0 "Launching key sequences screen..."
 		
 		set w [toplevel .key -class "TV-Viewer"] 
-		
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		
 		set mftop [ttk::frame $w.f_key_top]
-		
 		set mftree [ttk::frame $w.f_key_treeview]
-		
 		set mfbottom [ttk::frame $w.f_key_bottom -style TLabelframe]
 		
-		ttk::label $mftop.l_key_msg \
-		-text [mc "Available Key Sequences"]
+		ttk::label $mftop.l_key_msg -text [mc "Available Key Sequences"]
 		
-		ttk::treeview $mftree.tv_key \
-		-yscrollcommand [list $mftree.sb_key set] \
-		-columns {action key} \
-		-show headings
-			
-		ttk::scrollbar $mftree.sb_key \
-		-orient vertical \
-		-command [list $mftree.tv_key yview]
-		
-		ttk::button .key.f_key_bottom.b_exit \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close) \
-		-command [list destroy $w]
+		ttk::treeview $mftree.tv_key -yscrollcommand [list $mftree.sb_key set] -columns {action key} -show headings
+		ttk::scrollbar $mftree.sb_key -orient vertical -command [list $mftree.tv_key yview]
+		ttk::button .key.f_key_bottom.b_exit -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command [list destroy $w]
 		
 		grid $mftop -in $w -row 0 -column 0
 		grid $mftree -in $w -row 1 -column 0
-		grid $mfbottom -in $w -row 2 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
+		grid $mfbottom -in $w -row 2 -column 0 -sticky ew -padx 3 -pady 3
 		grid anchor $mfbottom e
 		
-		grid $mftop.l_key_msg -in $mftop -row 0 -column 0 \
-		-padx "3 0" \
-		-pady 2
-		grid $mftree.tv_key -in $mftree -row 0 -column 0 \
-		-sticky nesw
-		grid $mftree.sb_key -in $mftree -row 0 -column 1 \
-		-sticky ns \
-		-pady 5
-		grid $mfbottom.b_exit -in $mfbottom -row 0 -column 0 \
-		-pady 7 \
-		-padx 3
+		grid $mftop.l_key_msg -in $mftop -row 0 -column 0 -padx "3 0" -pady 2
+		grid $mftree.tv_key -in $mftree -row 0 -column 0 -sticky nesw
+		grid $mftree.sb_key -in $mftree -row 0 -column 1 -sticky ns -pady 5
+		grid $mfbottom.b_exit -in $mfbottom -row 0 -column 0 -pady 7 -padx 3
 		
 		set font [ttk::style lookup [$mftree.tv_key cget -style] -font]
 		if {[string trim $font] == {}} {

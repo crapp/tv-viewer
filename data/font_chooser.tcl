@@ -25,155 +25,73 @@ proc font_chooserUi {returnw cvar} {
 	log_writeOutTv 0 "Starting TV-Viewer font chooser..."
 	
 	set w [toplevel .config_wizard.fontchooser]
-	
 	place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	
 	set mffont [ttk::frame $w.f_ch_font]
-	
 	set mfcol [ttk::frame $w.f_ch_col]
-	
 	set mfpre [ttk::frame $w.f_ch_pre]
-	
 	set mfbottom [ttk::frame $w.f_ch_bottom -style TLabelframe]
 	
-	ttk::label $mffont.l_fam \
-	-text [mc "Family:"]
-	listbox $mffont.lb_fam \
-	-exportselection false \
-	-yscrollcommand [list $mffont.scrollb_famy set] \
-	-xscrollcommand [list $mffont.scrollb_famx set]
-	ttk::scrollbar $mffont.scrollb_famy \
-	-orient vertical \
-	-command [list $mffont.lb_fam yview]
-	ttk::scrollbar $mffont.scrollb_famx \
-	-orient horizontal \
-	-command [list $mffont.lb_fam xview]
+	ttk::label $mffont.l_fam -text [mc "Family:"]
+	listbox $mffont.lb_fam -exportselection false -yscrollcommand [list $mffont.scrollb_famy set] -xscrollcommand [list $mffont.scrollb_famx set]
+	ttk::scrollbar $mffont.scrollb_famy -orient vertical -command [list $mffont.lb_fam yview]
+	ttk::scrollbar $mffont.scrollb_famx -orient horizontal -command [list $mffont.lb_fam xview]
 	
-	ttk::label $mffont.l_style \
-	-text [mc "Style:"]
-	listbox $mffont.lb_style \
-	-exportselection false \
-	-yscrollcommand [list $mffont.scrollb_styley set]
-	ttk::scrollbar $mffont.scrollb_styley \
-	-orient vertical \
-	-command [list $mffont.lb_style yview]
+	ttk::label $mffont.l_style -text [mc "Style:"]
+	listbox $mffont.lb_style -exportselection false -yscrollcommand [list $mffont.scrollb_styley set]
+	ttk::scrollbar $mffont.scrollb_styley -orient vertical -command [list $mffont.lb_style yview]
 	
-	ttk::label $mffont.l_size \
-	-text [mc "Size:"]
-	listbox $mffont.lb_size \
-	-exportselection false \
-	-yscrollcommand [list $mffont.scrollb_sizey set] \
-	-width 0
-	ttk::scrollbar $mffont.scrollb_sizey \
-	-orient vertical \
-	-command [list $mffont.lb_size yview]
+	ttk::label $mffont.l_size -text [mc "Size:"]
+	listbox $mffont.lb_size -exportselection false -yscrollcommand [list $mffont.scrollb_sizey set] -width 0
+	ttk::scrollbar $mffont.scrollb_sizey -orient vertical -command [list $mffont.lb_size yview]
 	
-	ttk::label $mfcol.l_color \
-	-text [mc "Font color:"]
-	ttk::button $mfcol.b_color \
-	-compound image \
-	-image $::icon_e(pick-color3) \
-	-command [list font_chooserUiCol $mfpre.f_prev.c_abc]
-	ttk::label $mfcol.l_align \
-	-text [mc "Display:"]
-	ttk::menubutton $mfcol.mb_align \
-	-menu $mfcol.mbAlign \
-	-textvariable font_chooser(mb_align)
-	menu $mfcol.mbAlign \
-	-tearoff 0 \
-	-background $::option(theme_$::option(use_theme))
+	ttk::label $mfcol.l_color -text [mc "Font color:"]
+	ttk::button $mfcol.b_color -compound image -image $::icon_e(pick-color3) -command [list font_chooserUiCol $mfpre.f_prev.c_abc]
+	ttk::label $mfcol.l_align -text [mc "Display:"]
+	ttk::menubutton $mfcol.mb_align -menu $mfcol.mbAlign -textvariable font_chooser(mb_align)
+	menu $mfcol.mbAlign -tearoff 0 -background $::option(theme_$::option(use_theme))
 	
-	ttk::label $mfpre.l_prev \
-	-text [mc "Preview:"]
-	ttk::frame $mfpre.f_prev \
-	-borderwidth 2 \
-	-relief groove
-	canvas $mfpre.f_prev.c_abc \
-	-height 110 \
-	-background white
+	ttk::label $mfpre.l_prev -text [mc "Preview:"]
+	ttk::frame $mfpre.f_prev -borderwidth 2 -relief groove
+	canvas $mfpre.f_prev.c_abc -height 110 -background white
 	
-	ttk::button $mfbottom.b_apply \
-	-text [mc "Apply"] \
-	-command [list font_chooserUiApply $mffont.lb_fam $mffont.lb_style $mffont.lb_size $returnw $cvar] \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply)
-	ttk::button $mfbottom.b_cancel \
-	-text [mc "Cancel"] \
-	-command "grab release .config_wizard.fontchooser; destroy .config_wizard.fontchooser; grab .config_wizard" \
-	-compound left \
-	-image $::icon_s(dialog-cancel)
+	ttk::button $mfbottom.b_apply -text [mc "Apply"] -command [list font_chooserUiApply $mffont.lb_fam $mffont.lb_style $mffont.lb_size $returnw $cvar] -compound left -image $::icon_s(dialog-ok-apply)
+	ttk::button $mfbottom.b_cancel -text [mc "Cancel"] -command "grab release .config_wizard.fontchooser; destroy .config_wizard.fontchooser; grab .config_wizard" -compound left -image $::icon_s(dialog-cancel)
 	
 	
 	grid columnconfigure $mfpre 0 -weight 1
 	grid columnconfigure $mfpre.f_prev 0 -weight 1
 	
-	grid $mffont -in $w -row 0 -column 0 \
-	-sticky ew \
-	-padx 8 \
-	-pady 8
-	grid $mfcol -in $w -row 1 -column 0 \
-	-sticky ew \
-	-padx 8 \
-	-pady "0 8"
-	grid $mfpre -in $w -row 2 -column 0 \
-	-sticky ew \
-	-padx 8
-	grid $mfbottom -in $w -row 3 -column 0 \
-	-sticky ew \
-	-padx 8 \
-	-pady 8
+	grid $mffont -in $w -row 0 -column 0 -sticky ew -padx 8 -pady 8
+	grid $mfcol -in $w -row 1 -column 0 -sticky ew -padx 8 -pady "0 8"
+	grid $mfpre -in $w -row 2 -column 0 -sticky ew -padx 8
+	grid $mfbottom -in $w -row 3 -column 0 -sticky ew -padx 8 -pady 8
 	
 	grid anchor $mfbottom e
 	
-	grid $mffont.l_fam -in $mffont -row 0 -column 0 \
-	-sticky w
+	grid $mffont.l_fam -in $mffont -row 0 -column 0 -sticky w
 	grid $mffont.lb_fam -in $mffont -row 1 -column 0
-	grid $mffont.scrollb_famy -row 1 -column 1 \
-	-sticky ns \
-	-padx "1 4"
-	grid $mffont.scrollb_famx -row 2 -column 0 \
-	-sticky ew \
-	-pady "1 0"
+	grid $mffont.scrollb_famy -row 1 -column 1 -sticky ns -padx "1 4"
+	grid $mffont.scrollb_famx -row 2 -column 0 -sticky ew -pady "1 0"
 	
-	grid $mffont.l_style -in $mffont -row 0 -column 2 \
-	-sticky w
-	grid $mffont.lb_style -in $mffont -row 1 -column 2 \
-	-rowspan 2 \
-	-sticky ns
-	grid $mffont.scrollb_styley -in $mffont -row 1 -column 3 \
-	-rowspan 2 \
-	-sticky ns \
-	-padx "1 4"
+	grid $mffont.l_style -in $mffont -row 0 -column 2 -sticky w
+	grid $mffont.lb_style -in $mffont -row 1 -column 2 -rowspan 2 -sticky ns
+	grid $mffont.scrollb_styley -in $mffont -row 1 -column 3 -rowspan 2 -sticky ns -padx "1 4"
 	
-	grid $mffont.l_size -in $mffont -row 0 -column 4 \
-	-sticky w \
-	-columnspan 2
-	grid $mffont.lb_size -in $mffont -row 1 -column 4 \
-	-rowspan 2 \
-	-sticky nsew
-	grid $mffont.scrollb_sizey -in $mffont -row 1 -column 5 \
-	-rowspan 2 \
-	-sticky ns \
-	-padx "1 0"
+	grid $mffont.l_size -in $mffont -row 0 -column 4 -sticky w -columnspan 2
+	grid $mffont.lb_size -in $mffont -row 1 -column 4 -rowspan 2 -sticky nsew
+	grid $mffont.scrollb_sizey -in $mffont -row 1 -column 5 -rowspan 2 -sticky ns -padx "1 0"
 	
-	grid $mfcol.l_color -in $mfcol -row 0 -column 0 \
-	-padx "0 5"
+	grid $mfcol.l_color -in $mfcol -row 0 -column 0 -padx "0 5"
 	grid $mfcol.b_color -in $mfcol -row 0 -column 1
-	grid $mfcol.l_align -in $mfcol -row 0 -column 2 \
-	-padx "10 5"
+	grid $mfcol.l_align -in $mfcol -row 0 -column 2 -padx "10 5"
 	grid $mfcol.mb_align -in $mfcol -row 0 -column 3
 	
-	grid $mfpre.l_prev -in $mfpre -row 0 -column 0 \
-	-sticky w
-	grid $mfpre.f_prev -in $mfpre -row 1 -column 0 \
-	-sticky ew
-	grid $mfpre.f_prev.c_abc -in $mfpre.f_prev -row 0 -column 0 \
-	-sticky nesw
+	grid $mfpre.l_prev -in $mfpre -row 0 -column 0 -sticky w
+	grid $mfpre.f_prev -in $mfpre -row 1 -column 0 -sticky ew
+	grid $mfpre.f_prev.c_abc -in $mfpre.f_prev -row 0 -column 0 -sticky nesw
 	
-	grid $mfbottom.b_apply -in $mfbottom -row 0 -column 0 \
-	-pady 7
-	grid $mfbottom.b_cancel -in $mfbottom -row 0 -column 1 \
-	-padx 3
+	grid $mfbottom.b_apply -in $mfbottom -row 0 -column 0 -pady 7
+	grid $mfbottom.b_cancel -in $mfbottom -row 0 -column 1 -padx 3
 	
 	set fontfamilies [font families]
 	lappend fontfamilies {*}Sans Serif Monospace
@@ -208,10 +126,7 @@ proc font_chooserUi {returnw cvar} {
 	
 	set avail_aligns [dict create [mc "top left"] 0 [mc "top"] 1 [mc "top right"] 2 [mc "left"] 3 [mc "center"] 4 [mc "right"] 5 [mc "bottom left"] 6 [mc "bottom"] 7 [mc "bottom right"] 8]
 	foreach {key elem} [dict get $avail_aligns] {
-		$mfcol.mbAlign add radiobutton \
-		-label "$key" \
-		-value "{$key} $elem" \
-		-command [list font_chooserUiAlign "{$key} $elem" $cvar]
+		$mfcol.mbAlign add radiobutton -label "$key" -value "{$key} $elem" -command [list font_chooserUiAlign "{$key} $elem" $cvar]
 	}
 	
 	bind $mffont.lb_fam <<ListboxSelect>> [list font_chooserUiCfont $mffont.lb_fam $mffont.lb_style $mffont.lb_size $mfpre.f_prev.c_abc]

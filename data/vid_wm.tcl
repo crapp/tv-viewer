@@ -86,28 +86,14 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		#~ $vid_cont configure -cursor arrow
 		#~ $vid_bg configure -cursor arrow
 		if {$::main(compactMode) == 0} {
-			grid .foptions_bar -in . -row 0 -column 0 \
-			-sticky new \
-			-columnspan 2
-			grid .seperatMenu -in . -row 1 -column 0 \
-			-sticky ew \
-			-padx 2 \
-			-columnspan 2
-			grid .ftoolb_Top -in . -row 2 -column 0 \
-			-columnspan 2 \
-			-sticky ew
-			grid .fstations -in . -row 3 -column 0 \
-			-sticky nesw \
-			-padx "0 2"
-			grid .fvidBg -in . -row 3 -column 1 \
-			-sticky nesw
-			grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
-			-sticky ew
-			grid .ftoolb_Play -in . -row 4 -column 1 \
-			-sticky ew
-			grid .ftoolb_Disp -in . -row 5 -column 0 \
-			-columnspan 2 \
-			-sticky ew
+			grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
+			grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
+			grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
+			grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+			grid .fvidBg -in . -row 3 -column 1 -sticky nesw
+			grid .ftoolb_ChanCtrl -in . -row 4 -column 0 -sticky ew
+			grid .ftoolb_Play -in . -row 4 -column 1 -sticky ew
+			grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
 		}
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
@@ -127,28 +113,14 @@ proc vid_wmCompact {} {
 		wm geometry . {}
 		set width [winfo width .fvidBg]
 		set height [winfo height .fvidBg]
-		grid .foptions_bar -in . -row 0 -column 0 \
-		-sticky new \
-		-columnspan 2
-		grid .seperatMenu -in . -row 1 -column 0 \
-		-sticky ew \
-		-padx 2 \
-		-columnspan 2
-		grid .ftoolb_Top -in . -row 2 -column 0 \
-		-columnspan 2 \
-		-sticky ew 
-		grid .fstations -in . -row 3 -column 0 \
-		-sticky nesw \
-		-padx "0 2"
-		grid .fvidBg -in . -row 3 -column 1 \
-		-sticky nesw
-		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 \
-		-sticky ew
-		grid .ftoolb_Play -in . -row 4 -column 1 \
-		-sticky ew
-		grid .ftoolb_Disp -in . -row 5 -column 0 \
-		-columnspan 2 \
-		-sticky ew
+		grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
+		grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
+		grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
+		grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+		grid .fvidBg -in . -row 3 -column 1 -sticky nesw
+		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 -sticky ew
+		grid .ftoolb_Play -in . -row 4 -column 1 -sticky ew
+		grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
 		
 		if {$width != 250} {
 			set widthc [expr [winfo width .fstations] + $width + 2]

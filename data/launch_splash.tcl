@@ -31,12 +31,9 @@ proc launch_splash_screen {} {
 	}
 	label $f_pb.l -image [lindex $img_list 0] -borderwidth 0 -background #414141 -foreground #414141
 	
-	grid $f_img -in $w -row 0 -column 0 \
-	-sticky nesw
-	grid $f_img.l -in $f_img -row 0 -column 0 \
-	-sticky nesw
-	grid $f_pb.l -in $f_pb -row 0 -column 0 \
-	-sticky nesw
+	grid $f_img -in $w -row 0 -column 0 -sticky nesw
+	grid $f_img.l -in $f_img -row 0 -column 0 -sticky nesw
+	grid $f_pb.l -in $f_pb -row 0 -column 0 -sticky nesw
 	grid rowconfigure $f_img 0 -weight 1
 	grid rowconfigure $f_pb 0 -weight 1
 	grid columnconfigure $f_img 0 -weight 1

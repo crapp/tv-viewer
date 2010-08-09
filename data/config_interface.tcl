@@ -41,155 +41,70 @@ proc option_screen_6 {} {
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(interface_nb1) [ttk::frame $w.f_interface]
 		$w add $::window(interface_nb1) -text [mc "Interface Settings"] -padding 2
-		ttk::labelframe $::window(interface_nb1).lf_theme \
-		-text [mc "Theme"]
-		ttk::menubutton $::window(interface_nb1).mb_lf_theme \
-		-menu $::window(interface_nb1).mbTheme \
-		-textvariable choice(mbTheme)
-		menu $::window(interface_nb1).mbTheme \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip \
-		-text [mc "Enable Tooltips"] \
-		-variable choice(cb_tooltip) \
-		-command [list config_interfaceChangeTooltips $::window(interface_nb1)]
-		ttk::labelframe $::window(interface_nb1).lf_tooltip \
-		-labelwidget $::window(interface_nb1).cb_lf_tooltip
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_main \
-		-text [mc "Main Gui"] \
-		-variable choice(cb_tooltip_main)
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_wizard \
-		-text [mc "Preferences"] \
+		ttk::labelframe $::window(interface_nb1).lf_theme -text [mc "Theme"]
+		ttk::menubutton $::window(interface_nb1).mb_lf_theme -menu $::window(interface_nb1).mbTheme -textvariable choice(mbTheme)
+		menu $::window(interface_nb1).mbTheme -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip -text [mc "Enable Tooltips"] \
+		-variable choice(cb_tooltip) -command [list config_interfaceChangeTooltips $::window(interface_nb1)]
+		ttk::labelframe $::window(interface_nb1).lf_tooltip -labelwidget $::window(interface_nb1).cb_lf_tooltip
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_main -text [mc "Main Gui"] -variable choice(cb_tooltip_main)
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_wizard -text [mc "Preferences"] \
 		-variable choice(cb_tooltip_wizard)
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_station \
-		-text [mc "Station Editor"] \
-		-variable choice(cb_tooltip_station)
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_videocard \
-		-text [mc "Color Management"] \
-		-variable choice(cb_tooltip_colorm)
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_player \
-		-text [mc "Video player"] \
-		-variable choice(cb_tooltip_player)
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_record \
-		-text [mc "Record Wizard"] \
-		-variable choice(cb_tooltip_record)
-		ttk::labelframe $::window(interface_nb1).lf_splash \
-		-text [mc "Splash Screen"]
-		ttk::checkbutton $::window(interface_nb1).cb_lf_splash \
-		-text [mc "Show Splash Screen on initialization."] \
-		-variable choice(cb_splash)
-		ttk::labelframe $::window(interface_nb1).lf_showslist \
-		-text [mc "Station List"]
-		ttk::checkbutton $::window(interface_nb1).cb_lf_showslist \
-		-text [mc "Show Station List on initialization."] \
-		-variable choice(cb_slist)
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_station -text [mc "Station Editor"] -variable choice(cb_tooltip_station)
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_videocard -text [mc "Color Management"] -variable choice(cb_tooltip_colorm)
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_player -text [mc "Video player"] -variable choice(cb_tooltip_player)
+		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_record -text [mc "Record Wizard"] -variable choice(cb_tooltip_record)
+		ttk::labelframe $::window(interface_nb1).lf_splash -text [mc "Splash Screen"]
+		ttk::checkbutton $::window(interface_nb1).cb_lf_splash -text [mc "Show Splash Screen on initialization."] -variable choice(cb_splash)
+		ttk::labelframe $::window(interface_nb1).lf_showslist -text [mc "Station List"]
+		ttk::checkbutton $::window(interface_nb1).cb_lf_showslist -text [mc "Show Station List on initialization."] -variable choice(cb_slist)
 		
 		set ::window(interface_nb2) [ttk::frame $w.f_windowprop]
 		$w add $::window(interface_nb2) -text [mc "Window Properties"] -padding 2
-		ttk::labelframe $::window(interface_nb2).lf_tvattach \
-		-text [mc "Video window"]
-		ttk::checkbutton $::window(interface_nb2).cb_lf_tvattach \
-		-text [mc "Attach video window to main window"] \
-		-variable choice(cb_tvattach)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_tvfullscr \
-		-text [mc "Start in full-screen mode"] \
-		-variable choice(cb_tvfullscr)
-		ttk::labelframe $::window(interface_nb2).lf_systray \
-		-text [mc "System Tray"]
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_tv \
-		-text [mc "Dock video window"] \
-		-variable choice(cb_systray_tv)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_dock \
-		-text [mc "Dock TV-Viewer after initialization"] \
-		-variable choice(cb_systray_start)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_close \
-		-text [mc "Close to Tray"] \
-		-variable choice(cb_systray_close)
+		ttk::labelframe $::window(interface_nb2).lf_tvattach -text [mc "Video window"]
+		ttk::checkbutton $::window(interface_nb2).cb_lf_tvattach -text [mc "Attach video window to main window"] -variable choice(cb_tvattach)
+		ttk::checkbutton $::window(interface_nb2).cb_lf_tvfullscr -text [mc "Start in full-screen mode"] -variable choice(cb_tvfullscr)
+		ttk::labelframe $::window(interface_nb2).lf_systray -text [mc "System Tray"]
+		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_tv -text [mc "Dock video window"] -variable choice(cb_systray_tv)
+		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_dock -text [mc "Dock TV-Viewer after initialization"] -variable choice(cb_systray_start)
+		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_close -text [mc "Close to Tray"] -variable choice(cb_systray_close)
 		
 		set ::window(interface_nb3) [ttk::frame $w.f_osd]
 		$w add $::window(interface_nb3) -text [mc "On screen Display"] -padding 2
-		set ::window(interface_nb3_cont) [canvas $::window(interface_nb3).c_cont \
-		-yscrollcommand [list $::window(interface_nb3).scrollb_cont set] \
-		-highlightthickness 0]
-		ttk::scrollbar $::window(interface_nb3).scrollb_cont \
-		-command [list $::window(interface_nb3).c_cont yview]
+		set ::window(interface_nb3_cont) [canvas $::window(interface_nb3).c_cont -yscrollcommand [list $::window(interface_nb3).scrollb_cont set] -highlightthickness 0]
+		ttk::scrollbar $::window(interface_nb3).scrollb_cont -command [list $::window(interface_nb3).c_cont yview]
 		$::window(interface_nb3_cont) create window 0 0 -window [ttk::frame $::window(interface_nb3_cont).f_osd2] -anchor w -tags cont_int_nb3
 		set frame_nb3  "$::window(interface_nb3_cont).f_osd2"
 		
-		ttk::labelframe $frame_nb3.lf_osd_station \
-		-text [mc "Station"]
-		ttk::checkbutton $frame_nb3.cb_osd_station_w \
-		-variable config_int(cb_osd_station_w) \
-		-text [mc "Windowed mode"] \
-		-command {set ::choice(osd_station_w) [lreplace $::choice(osd_station_w) 0 0 $::config_int(cb_osd_station_w)]}
-		ttk::button $frame_nb3.b_osd_station_fnt_w \
-		-command [list font_chooserUi $frame_nb3.b_osd_station_fnt_w osd_station_w]
-		ttk::checkbutton $frame_nb3.cb_osd_station_f \
-		-variable config_int(cb_osd_station_f) \
-		-text [mc "Full-screen mode"] \
-		-command {set ::choice(osd_station_f) [lreplace $::choice(osd_station_f) 0 0 $::config_int(cb_osd_station_f)]}
-		ttk::button $frame_nb3.b_osd_station_fnt_f \
-		-command [list font_chooserUi $frame_nb3.b_osd_station_fnt_f osd_station_f]
+		ttk::labelframe $frame_nb3.lf_osd_station -text [mc "Station"]
+		ttk::checkbutton $frame_nb3.cb_osd_station_w -variable config_int(cb_osd_station_w) -text [mc "Windowed mode"] -command {set ::choice(osd_station_w) [lreplace $::choice(osd_station_w) 0 0 $::config_int(cb_osd_station_w)]}
+		ttk::button $frame_nb3.b_osd_station_fnt_w -command [list font_chooserUi $frame_nb3.b_osd_station_fnt_w osd_station_w]
+		ttk::checkbutton $frame_nb3.cb_osd_station_f -variable config_int(cb_osd_station_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_station_f) [lreplace $::choice(osd_station_f) 0 0 $::config_int(cb_osd_station_f)]}
+		ttk::button $frame_nb3.b_osd_station_fnt_f -command [list font_chooserUi $frame_nb3.b_osd_station_fnt_f osd_station_f]
 		
-		ttk::labelframe $frame_nb3.lf_osd_group \
-		-text [mc "Volume | Video input | Pan&Scan"]
-		ttk::checkbutton $frame_nb3.cb_osd_group_w \
-		-variable config_int(cb_osd_group_w) \
-		-text [mc "Windowed mode"] \
-		-command {set ::choice(osd_group_w) [lreplace $::choice(osd_group_w) 0 0 $::config_int(cb_osd_group_w)]}
-		ttk::button $frame_nb3.b_osd_group_fnt_w \
-		-command [list font_chooserUi $frame_nb3.b_osd_group_fnt_w osd_group_w]
-		ttk::checkbutton $frame_nb3.cb_osd_group_f \
-		-variable config_int(cb_osd_group_f) \
-		-text [mc "Full-screen mode"] \
-		-command {set ::choice(osd_group_f) [lreplace $::choice(osd_group_f) 0 0 $::config_int(cb_osd_group_f)]}
-		ttk::button $frame_nb3.b_osd_group_fnt_f \
-		-command [list font_chooserUi $frame_nb3.b_osd_group_fnt_f osd_group_f]
+		ttk::labelframe $frame_nb3.lf_osd_group -text [mc "Volume | Video input | Pan&Scan"]
+		ttk::checkbutton $frame_nb3.cb_osd_group_w -variable config_int(cb_osd_group_w) -text [mc "Windowed mode"] -command {set ::choice(osd_group_w) [lreplace $::choice(osd_group_w) 0 0 $::config_int(cb_osd_group_w)]}
+		ttk::button $frame_nb3.b_osd_group_fnt_w -command [list font_chooserUi $frame_nb3.b_osd_group_fnt_w osd_group_w]
+		ttk::checkbutton $frame_nb3.cb_osd_group_f -variable config_int(cb_osd_group_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_group_f) [lreplace $::choice(osd_group_f) 0 0 $::config_int(cb_osd_group_f)]}
+		ttk::button $frame_nb3.b_osd_group_fnt_f -command [list font_chooserUi $frame_nb3.b_osd_group_fnt_f osd_group_f]
 		
-		ttk::labelframe $frame_nb3.lf_osd_key \
-		-text [mc "Key Input"]
-		ttk::checkbutton $frame_nb3.cb_osd_key_w \
-		-variable config_int(cb_osd_key_w) \
-		-text [mc "Windowed mode"] \
-		-command {set ::choice(osd_key_w) [lreplace $::choice(osd_key_f) 0 0 $::config_int(cb_osd_key_w)]}
-		ttk::button $frame_nb3.b_osd_key_fnt_w \
-		-command [list font_chooserUi $frame_nb3.b_osd_key_fnt_w osd_key_w]
-		ttk::checkbutton $frame_nb3.cb_osd_key_f \
-		-variable config_int(cb_osd_key_f) \
-		-text [mc "Full-screen mode"] \
-		-command {set ::choice(osd_key_f) [lreplace $::choice(osd_key_f) 0 0 $::config_int(cb_osd_key_f)]}
-		ttk::button $frame_nb3.b_osd_key_fnt_f \
-		-command [list font_chooserUi $frame_nb3.b_osd_key_fnt_f osd_key_f]
+		ttk::labelframe $frame_nb3.lf_osd_key -text [mc "Key Input"]
+		ttk::checkbutton $frame_nb3.cb_osd_key_w -variable config_int(cb_osd_key_w) -text [mc "Windowed mode"] -command {set ::choice(osd_key_w) [lreplace $::choice(osd_key_f) 0 0 $::config_int(cb_osd_key_w)]}
+		ttk::button $frame_nb3.b_osd_key_fnt_w -command [list font_chooserUi $frame_nb3.b_osd_key_fnt_w osd_key_w]
+		ttk::checkbutton $frame_nb3.cb_osd_key_f -variable config_int(cb_osd_key_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_key_f) [lreplace $::choice(osd_key_f) 0 0 $::config_int(cb_osd_key_f)]}
+		ttk::button $frame_nb3.b_osd_key_fnt_f -command [list font_chooserUi $frame_nb3.b_osd_key_fnt_f osd_key_f]
 		
-		ttk::labelframe $frame_nb3.lf_osd_mouse \
-		-text [mc "OSD Station list mouse"]
-		ttk::checkbutton $frame_nb3.cb_osd_mouse_w \
-		-variable config_int(cb_osd_mouse_w) \
-		-text [mc "Windowed mode"] \
-		-command {set ::choice(osd_mouse_w) [lreplace $::choice(osd_mouse_w) 0 0 $::config_int(cb_osd_mouse_w)]}
-		ttk::menubutton $frame_nb3.b_osd_mouse_aln_w \
-		-menu $frame_nb3.mbOsd_mouse_w \
-		-textvariable config_int(osd_mouse_w)
-		menu $frame_nb3.mbOsd_mouse_w \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		ttk::checkbutton $frame_nb3.cb_osd_mouse_f \
-		-variable config_int(cb_osd_mouse_f) \
-		-text [mc "Full-screen mode"] \
-		-command {set ::choice(osd_mouse_f) [lreplace $::choice(osd_mouse_f) 0 0 $::config_int(cb_osd_mouse_f)]}
-		ttk::menubutton $frame_nb3.b_osd_mouse_aln_f \
-		-menu $frame_nb3.mbOsd_mouse_f \
-		-textvariable config_int(osd_mouse_f)
-		menu $frame_nb3.mbOsd_mouse_f \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
+		ttk::labelframe $frame_nb3.lf_osd_mouse -text [mc "OSD Station list mouse"]
+		ttk::checkbutton $frame_nb3.cb_osd_mouse_w -variable config_int(cb_osd_mouse_w) -text [mc "Windowed mode"] -command {set ::choice(osd_mouse_w) [lreplace $::choice(osd_mouse_w) 0 0 $::config_int(cb_osd_mouse_w)]}
+		ttk::menubutton $frame_nb3.b_osd_mouse_aln_w -menu $frame_nb3.mbOsd_mouse_w -textvariable config_int(osd_mouse_w)
+		menu $frame_nb3.mbOsd_mouse_w -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::checkbutton $frame_nb3.cb_osd_mouse_f -variable config_int(cb_osd_mouse_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_mouse_f) [lreplace $::choice(osd_mouse_f) 0 0 $::config_int(cb_osd_mouse_f)]}
+		ttk::menubutton $frame_nb3.b_osd_mouse_aln_f -menu $frame_nb3.mbOsd_mouse_f -textvariable config_int(osd_mouse_f)
+		menu $frame_nb3.mbOsd_mouse_f -tearoff 0 -background $::option(theme_$::option(use_theme))
 		
-		ttk::labelframe $frame_nb3.lf_osd_lirc \
-		-text [mc "OSD Station list lirc"]
-		ttk::label $frame_nb3.l_osd_lirc_fnt \
-		-text [mc "Full-screen mode"]
-		ttk::button $frame_nb3.b_osd_lirc_fnt \
-		-command [list font_chooserUi $frame_nb3.b_osd_lirc_fnt osd_lirc]
+		ttk::labelframe $frame_nb3.lf_osd_lirc -text [mc "OSD Station list lirc"]
+		ttk::label $frame_nb3.l_osd_lirc_fnt -text [mc "Full-screen mode"]
+		ttk::button $frame_nb3.b_osd_lirc_fnt -command [list font_chooserUi $frame_nb3.b_osd_lirc_fnt osd_lirc]
 		
 		grid columnconfigure $::window(interface_nb1) 0 -weight 1
 		grid columnconfigure $::window(interface_nb1).lf_theme 0 -minsize 120
@@ -199,183 +114,58 @@ proc option_screen_6 {} {
 		grid columnconfigure $::window(interface_nb3_cont).f_osd2 0 -weight 1
 		grid rowconfigure $::window(interface_nb3) 0 -weight 1
 		
-		grid $::window(interface_nb1).lf_theme -in $::window(interface_nb1) -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(interface_nb1).mb_lf_theme -in $::window(interface_nb1).lf_theme -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
-		grid $::window(interface_nb1).lf_tooltip -in $::window(interface_nb1) -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(interface_nb1).cb_lf_tooltip_main -in $::window(interface_nb1).lf_tooltip -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
-		grid $::window(interface_nb1).cb_lf_tooltip_wizard -in $::window(interface_nb1).lf_tooltip -row 0 -column 1 \
-		-sticky ew \
-		-pady 3
-		grid $::window(interface_nb1).cb_lf_tooltip_station -in $::window(interface_nb1).lf_tooltip -row 0 -column 2 \
-		-sticky ew \
-		-padx "7 0" \
-		-pady 3
-		grid $::window(interface_nb1).cb_lf_tooltip_videocard -in $::window(interface_nb1).lf_tooltip -row 1 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady "0 3"
-		grid $::window(interface_nb1).cb_lf_tooltip_player -in $::window(interface_nb1).lf_tooltip -row 1 -column 1 \
-		-sticky ew \
-		-pady "0 3"
-		grid $::window(interface_nb1).cb_lf_tooltip_record -in $::window(interface_nb1).lf_tooltip -row 1 -column 2 \
-		-sticky ew \
-		-padx "7 0" \
-		-pady "0 3"
-		grid $::window(interface_nb1).lf_splash -in $::window(interface_nb1) -row 2 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(interface_nb1).cb_lf_splash -in $::window(interface_nb1).lf_splash -row 0 -column 0 \
-		-padx 7 \
-		-pady 3
-		grid $::window(interface_nb1).lf_showslist -in $::window(interface_nb1) -row 3 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(interface_nb1).cb_lf_showslist -in $::window(interface_nb1).lf_showslist -row 0 -column 0 \
-		-padx 7 \
-		-pady 3
+		grid $::window(interface_nb1).lf_theme -in $::window(interface_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb1).mb_lf_theme -in $::window(interface_nb1).lf_theme -row 0 -column 0 -sticky ew -padx 7 -pady 3
+		grid $::window(interface_nb1).lf_tooltip -in $::window(interface_nb1) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb1).cb_lf_tooltip_main -in $::window(interface_nb1).lf_tooltip -row 0 -column 0 -sticky ew -padx 7 -pady 3
+		grid $::window(interface_nb1).cb_lf_tooltip_wizard -in $::window(interface_nb1).lf_tooltip -row 0 -column 1 -sticky ew -pady 3
+		grid $::window(interface_nb1).cb_lf_tooltip_station -in $::window(interface_nb1).lf_tooltip -row 0 -column 2 -sticky ew -padx "7 0" -pady 3
+		grid $::window(interface_nb1).cb_lf_tooltip_videocard -in $::window(interface_nb1).lf_tooltip -row 1 -column 0 -sticky ew -padx 7 -pady "0 3"
+		grid $::window(interface_nb1).cb_lf_tooltip_player -in $::window(interface_nb1).lf_tooltip -row 1 -column 1 -sticky ew -pady "0 3"
+		grid $::window(interface_nb1).cb_lf_tooltip_record -in $::window(interface_nb1).lf_tooltip -row 1 -column 2 -sticky ew -padx "7 0" -pady "0 3"
+		grid $::window(interface_nb1).lf_splash -in $::window(interface_nb1) -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb1).cb_lf_splash -in $::window(interface_nb1).lf_splash -row 0 -column 0 -padx 7 -pady 3
+		grid $::window(interface_nb1).lf_showslist -in $::window(interface_nb1) -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb1).cb_lf_showslist -in $::window(interface_nb1).lf_showslist -row 0 -column 0 -padx 7 -pady 3
 		
-		grid $::window(interface_nb2).lf_tvattach -in $::window(interface_nb2) -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(interface_nb2).cb_lf_tvattach -in $::window(interface_nb2).lf_tvattach -row 0 -column 0 \
-		-columnspan 2 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $::window(interface_nb2).cb_lf_tvfullscr -in $::window(interface_nb2).lf_tvattach -row 1 -column 0 \
-		-columnspan 2 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(interface_nb2).cb_lf_systray_dock -in $::window(interface_nb2).lf_systray -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $::window(interface_nb2).cb_lf_systray_tv -in $::window(interface_nb2).lf_systray -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $::window(interface_nb2).cb_lf_systray_close -in $::window(interface_nb2).lf_systray -row 2 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
+		grid $::window(interface_nb2).lf_tvattach -in $::window(interface_nb2) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb2).cb_lf_tvattach -in $::window(interface_nb2).lf_tvattach -row 0 -column 0 -columnspan 2 -sticky w -padx 7 -pady 3
+		grid $::window(interface_nb2).cb_lf_tvfullscr -in $::window(interface_nb2).lf_tvattach -row 1 -column 0 -columnspan 2 -sticky w -padx 7 -pady "0 3"
+		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb2).cb_lf_systray_dock -in $::window(interface_nb2).lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(interface_nb2).cb_lf_systray_tv -in $::window(interface_nb2).lf_systray -row 1 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(interface_nb2).cb_lf_systray_close -in $::window(interface_nb2).lf_systray -row 2 -column 0 -sticky w -padx 7 -pady 3
 		
-		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 \
-		-sticky nesw
-		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 \
-		-sticky ns
+		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
+		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
 		
-		grid $frame_nb3.lf_osd_station -in $frame_nb3 -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $frame_nb3.cb_osd_station_w -in $frame_nb3.lf_osd_station -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $frame_nb3.b_osd_station_fnt_w -in $frame_nb3.lf_osd_station -row 0 -column 1 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady 3
-		grid $frame_nb3.cb_osd_station_f -in $frame_nb3.lf_osd_station -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $frame_nb3.b_osd_station_fnt_f -in $frame_nb3.lf_osd_station -row 1 -column 1 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady "0 3"
+		grid $frame_nb3.lf_osd_station -in $frame_nb3 -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $frame_nb3.cb_osd_station_w -in $frame_nb3.lf_osd_station -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $frame_nb3.b_osd_station_fnt_w -in $frame_nb3.lf_osd_station -row 0 -column 1 -sticky ew -padx "0 7" -pady 3
+		grid $frame_nb3.cb_osd_station_f -in $frame_nb3.lf_osd_station -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $frame_nb3.b_osd_station_fnt_f -in $frame_nb3.lf_osd_station -row 1 -column 1 -sticky ew -padx "0 7" -pady "0 3"
 		
-		grid $frame_nb3.lf_osd_group -in $frame_nb3 -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $frame_nb3.cb_osd_group_w -in $frame_nb3.lf_osd_group -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $frame_nb3.b_osd_group_fnt_w -in $frame_nb3.lf_osd_group -row 0 -column 1 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady 3
-		grid $frame_nb3.cb_osd_group_f -in $frame_nb3.lf_osd_group -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $frame_nb3.b_osd_group_fnt_f -in $frame_nb3.lf_osd_group -row 1 -column 1 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady "0 3"
+		grid $frame_nb3.lf_osd_group -in $frame_nb3 -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $frame_nb3.cb_osd_group_w -in $frame_nb3.lf_osd_group -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $frame_nb3.b_osd_group_fnt_w -in $frame_nb3.lf_osd_group -row 0 -column 1 -sticky ew -padx "0 7" -pady 3
+		grid $frame_nb3.cb_osd_group_f -in $frame_nb3.lf_osd_group -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $frame_nb3.b_osd_group_fnt_f -in $frame_nb3.lf_osd_group -row 1 -column 1 -sticky ew -padx "0 7" -pady "0 3"
 		
-		grid $frame_nb3.lf_osd_key -in $frame_nb3 -row 2 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $frame_nb3.cb_osd_key_w -in $frame_nb3.lf_osd_key -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $frame_nb3.b_osd_key_fnt_w -in $frame_nb3.lf_osd_key -row 0 -column 1 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady 3
-		grid $frame_nb3.cb_osd_key_f -in $frame_nb3.lf_osd_key -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $frame_nb3.b_osd_key_fnt_f -in $frame_nb3.lf_osd_key -row 1 -column 1 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady "0 3"
+		grid $frame_nb3.lf_osd_key -in $frame_nb3 -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $frame_nb3.cb_osd_key_w -in $frame_nb3.lf_osd_key -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $frame_nb3.b_osd_key_fnt_w -in $frame_nb3.lf_osd_key -row 0 -column 1 -sticky ew -padx "0 7" -pady 3
+		grid $frame_nb3.cb_osd_key_f -in $frame_nb3.lf_osd_key -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $frame_nb3.b_osd_key_fnt_f -in $frame_nb3.lf_osd_key -row 1 -column 1 -sticky ew -padx "0 7" -pady "0 3"
 		
-		grid $frame_nb3.lf_osd_mouse -in $frame_nb3 -row 3 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $frame_nb3.cb_osd_mouse_w -in $frame_nb3.lf_osd_mouse -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 3
-		grid $frame_nb3.b_osd_mouse_aln_w -in $frame_nb3.lf_osd_mouse -row 0 -column 1 \
-		-sticky w \
-		-pady 3
-		grid $frame_nb3.cb_osd_mouse_f -in $frame_nb3.lf_osd_mouse -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 3"
-		grid $frame_nb3.b_osd_mouse_aln_f -in $frame_nb3.lf_osd_mouse -row 1 -column 1 \
-		-sticky w \
-		-pady "0 3"
+		grid $frame_nb3.lf_osd_mouse -in $frame_nb3 -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $frame_nb3.cb_osd_mouse_w -in $frame_nb3.lf_osd_mouse -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $frame_nb3.b_osd_mouse_aln_w -in $frame_nb3.lf_osd_mouse -row 0 -column 1 -sticky w -pady 3
+		grid $frame_nb3.cb_osd_mouse_f -in $frame_nb3.lf_osd_mouse -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $frame_nb3.b_osd_mouse_aln_f -in $frame_nb3.lf_osd_mouse -row 1 -column 1 -sticky w -pady "0 3"
 		
-		grid $frame_nb3.lf_osd_lirc -in $frame_nb3 -row 4 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady 5
-		grid $frame_nb3.l_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 0 \
-		-padx "23 7" \
-		-pady "3"
-		grid $frame_nb3.b_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 1 \
-		-sticky ew \
-		-pady "3"
+		grid $frame_nb3.lf_osd_lirc -in $frame_nb3 -row 4 -column 0 -sticky ew -padx 5 -pady 5
+		grid $frame_nb3.l_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 0 -padx "23 7" -pady "3"
+		grid $frame_nb3.b_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 1 -sticky ew -pady "3"
 		
 		#Additional Code
 		
@@ -383,10 +173,7 @@ proc option_screen_6 {} {
 		
 		foreach athemes [split [lsort [ttk::style theme names]]] {
 			log_writeOutTv 0 "Found theme: $athemes"
-			$::window(interface_nb1).mbTheme add radiobutton \
-			-variable choice(mbTheme) \
-			-command [list config_interfaceTheme $athemes] \
-			-label $athemes
+			$::window(interface_nb1).mbTheme add radiobutton -variable choice(mbTheme) -command [list config_interfaceTheme $athemes] -label $athemes
 		}
 		foreach scrollw [winfo children $::window(interface_nb3_cont).f_osd2] {
 			bind $scrollw <Button-4> {config_interfaceMousew 120}
@@ -396,16 +183,8 @@ proc option_screen_6 {} {
 		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew -120}
 		set avail_aligns [dict create [mc "top left"] 0 [mc "top"] 1 [mc "top right"] 2 [mc "left"] 3 [mc "right"] 5 [mc "bottom left"] 6 [mc "bottom"] 7 [mc "bottom right"] 8]
 		foreach {key elem} [dict get $avail_aligns] {
-			$frame_nb3.mbOsd_mouse_w add radiobutton \
-			-label "$key" \
-			-value "{$key} $elem" \
-			-variable config_int(radiobutton_osd_mouse_w) \
-			-command [list config_interfaceAlign "{$key} $elem" osd_mouse_w]
-			$frame_nb3.mbOsd_mouse_f add radiobutton \
-			-label "$key" \
-			-value "{$key} $elem" \
-			-variable config_int(radiobutton_osd_mouse_f) \
-			-command [list config_interfaceAlign "{$key} $elem" osd_mouse_f]
+			$frame_nb3.mbOsd_mouse_w add radiobutton -label "$key" -value "{$key} $elem" -variable config_int(radiobutton_osd_mouse_w) 	-command [list config_interfaceAlign "{$key} $elem" osd_mouse_w]
+			$frame_nb3.mbOsd_mouse_f add radiobutton -label "$key" -value "{$key} $elem" 	-variable config_int(radiobutton_osd_mouse_f) -command [list config_interfaceAlign "{$key} $elem" osd_mouse_f]
 		}
 		# Subprocs
 		

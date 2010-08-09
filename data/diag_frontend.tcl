@@ -28,43 +28,21 @@ proc diag_Ui {} {
 		
 		set fbottom [ttk::frame $wtop.f_bottom -style TLabelframe]
 		
-		ttk::label $mf.l_diagnostic_msg \
-		-text [mc "Diagnostic Routine is checking your system.
-Please wait..."] \
-		-compound left \
-		-image $::icon_m(dialog-information)
+		ttk::label $mf.l_diagnostic_msg -text [mc "Diagnostic Routine is checking your system.
+Please wait..."] -compound left -image $::icon_m(dialog-information)
 		
-		ttk::progressbar $mf.pgb_diagnostic \
-		-orient horizontal \
-		-mode indeterminate \
-		-variable choice(pgb_diagnostic)
+		ttk::progressbar $mf.pgb_diagnostic -orient horizontal -mode indeterminate -variable choice(pgb_diagnostic)
 		
-		ttk::button $fbottom.b_close \
-		-command {diag_UiExit} \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close)
+		ttk::button $fbottom.b_close -command {diag_UiExit} -text [mc "Exit"] -compound left -image $::icon_s(dialog-close)
 		
-		text $mf.t_diagtext \
-		-width 0 \
-		-height 0 \
-		-bd 0 \
-		-relief flat \
-		-highlightthickness 0
+		text $mf.t_diagtext -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
 		
 		grid columnconfigure $mf 0 -weight 1 -minsize 350
 		
-		grid $mf -in $wtop -row 0 -column 0 \
-		-sticky nesw
+		grid $mf -in $wtop -row 0 -column 0 -sticky nesw
 		
-		grid $mf.l_diagnostic_msg -in $mf -row 0 -column 0 \
-		-padx 5 \
-		-pady 5 \
-		-sticky w
-		grid $mf.pgb_diagnostic -in $mf -row 1 -column 0 \
-		-sticky ew \
-		-padx 10 \
-		-pady 10
+		grid $mf.l_diagnostic_msg -in $mf -row 0 -column 0 -padx 5 -pady 5 -sticky w
+		grid $mf.pgb_diagnostic -in $mf -row 1 -column 0 -sticky ew -padx 10 -pady 10
 		
 		wm resizable $wtop 0 0
 		wm title $wtop [mc "Diagnostic Routine"]
@@ -95,20 +73,12 @@ proc diag_RunFinished {handler} {
 		
 		grid rowconfigure .top_diagnostic.f_main {2} -weight 1 -minsize 150
 		
-		grid .top_diagnostic.f_main.t_diagtext -in .top_diagnostic.f_main -row 2 -column 0 \
-		-sticky nesw \
-		-padx 5 \
-		-pady "0 5"
+		grid .top_diagnostic.f_main.t_diagtext -in .top_diagnostic.f_main -row 2 -column 0 -sticky nesw -padx 5 -pady "0 5"
 		
-		grid .top_diagnostic.f_bottom -in .top_diagnostic -row 1 -column 0 \
-		-sticky ew \
-		-padx 3 \
-		-pady 3
+		grid .top_diagnostic.f_bottom -in .top_diagnostic -row 1 -column 0 -sticky ew -padx 3 -pady 3
 		grid anchor .top_diagnostic.f_bottom e
 		
-		grid .top_diagnostic.f_bottom.b_close -in .top_diagnostic.f_bottom -row 0 -column 0 \
-		-padx 3 \
-		-pady 7
+		grid .top_diagnostic.f_bottom.b_close -in .top_diagnostic.f_bottom -row 0 -column 0 -padx 3 -pady 7
 		
 		set hylink_enter "-foreground #0023FF -underline off"
 		set hylink_leave "-foreground #0064FF -underline on"

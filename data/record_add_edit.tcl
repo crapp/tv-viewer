@@ -34,19 +34,11 @@ proc record_add_edit {tree com} {
 	set recf [ttk::frame $w.record_frame]
 	set bf [ttk::frame $w.button_frame -style TLabelframe]
 	
-	listbox $lbf.lb_stations \
-	-yscrollcommand [list $lbf.scrollbar_stations set] \
-	-exportselection false \
-	-takefocus 0 \
-	-width 0
-	ttk::scrollbar $lbf.scrollbar_stations \
-	-orient vertical \
-	-command [list $lbf.lb_stations yview]
+	listbox $lbf.lb_stations -yscrollcommand [list $lbf.scrollbar_stations set] -exportselection false -takefocus 0 -width 0
+	ttk::scrollbar $lbf.scrollbar_stations -orient vertical -command [list $lbf.lb_stations yview]
 	
-	ttk::labelframe $recf.lf_rec_values \
-	-text [mc "Record options"]
-	ttk::label $recf.l_time \
-	-text [mc "Time:"]
+	ttk::labelframe $recf.lf_rec_values -text [mc "Record options"]
+	ttk::label $recf.l_time -text [mc "Time:"]
 	
 	proc record_add_editTimeHourValidate {value widget} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHourValidate \033\[0m \{$value\} \{$widget\}"
@@ -65,43 +57,15 @@ proc record_add_edit {tree com} {
 		}
 	}
 	
-	spinbox $recf.sb_time_hour \
-	-from -1 \
-	-to 24 \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editTimeHourValidate %P %W} \
-	-repeatinterval 80 \
-	-command record_add_editTimeHour \
-	-textvariable record(time_hour)
-	ttk::label $recf.l_time_colon \
-	-text ":"
-	spinbox $recf.sb_time_min \
-	-from -1 \
-	-to 60 \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editTimeMinValidate %P %W} \
-	-repeatinterval 25 \
-	-command record_add_editTimeMin \
-	-textvariable record(time_min)
-	ttk::separator $recf.sep1 \
-	-orient vertical
-	ttk::label $recf.l_date \
-	-text [mc "Date:"]
-	ttk::entry $recf.ent_date \
-	-textvariable record(date) \
-	-width 11 \
-	-state readonly
-	ttk::button $recf.b_date \
-	-width 0 \
-	-compound image \
-	-image $::icon_s(calendar) \
-	-command record_add_editDate
-	ttk::separator $recf.sep2 \
-	-orient horizontal
-	ttk::label $recf.l_duration \
-	-text [mc "Duration:"]
+	spinbox $recf.sb_time_hour -from -1 -to 24 -width 3 -validate key -vcmd {record_add_editTimeHourValidate %P %W} -repeatinterval 80 -command record_add_editTimeHour -textvariable record(time_hour)
+	ttk::label $recf.l_time_colon -text ":"
+	spinbox $recf.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %W} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
+	ttk::separator $recf.sep1 -orient vertical
+	ttk::label $recf.l_date -text [mc "Date:"]
+	ttk::entry $recf.ent_date -textvariable record(date) -width 11 -state readonly
+	ttk::button $recf.b_date -width 0 -compound image -image $::icon_s(calendar) -command record_add_editDate
+	ttk::separator $recf.sep2 -orient horizontal
+	ttk::label $recf.l_duration -text [mc "Duration:"]
 	
 	proc record_add_editDurHourValidate {value widget} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHourValidate \033\[0m \{$value\} \{$widget\}"
@@ -128,41 +92,13 @@ proc record_add_edit {tree com} {
 		}
 	}
 	
-	spinbox $recf.sb_duration_hour \
-	-from -1 \
-	-to 99 \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editDurHourValidate %P %W} \
-	-repeatinterval 25 \
-	-command record_add_editDurHour \
-	-textvariable record(duration_hour)
-	ttk::label $recf.l_duration_colon1 \
-	-text ":"
-	spinbox $recf.sb_duration_min \
-	-from -1 \
-	-to 60 \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editDurMinValidate %P %W} \
-	-repeatinterval 25 \
-	-command record_add_editDurMin \
-	-textvariable record(duration_min)
-	ttk::label $recf.l_duration_colon2 \
-	-text ":"
-	spinbox $recf.sb_duration_sec \
-	-from -1 \
-	-to 60 \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editDurSecValidate %P %W} \
-	-repeatinterval 25 \
-	-command record_add_editDurSec \
-	-textvariable record(duration_sec)
-	ttk::separator $recf.sep3 \
-	-orient vertical
-	ttk::label $recf.l_resol \
-	-text [mc "Resolution:"]
+	spinbox $recf.sb_duration_hour -from -1 -to 99 -width 3 -validate key -vcmd {record_add_editDurHourValidate %P %W} -repeatinterval 25 -command record_add_editDurHour -textvariable record(duration_hour)
+	ttk::label $recf.l_duration_colon1 -text ":"
+	spinbox $recf.sb_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurMinValidate %P %W} -repeatinterval 25 -command record_add_editDurMin -textvariable record(duration_min)
+	ttk::label $recf.l_duration_colon2 -text ":"
+	spinbox $recf.sb_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurSecValidate %P %W} -repeatinterval 25 -command record_add_editDurSec -textvariable record(duration_sec)
+	ttk::separator $recf.sep3 -orient vertical
+	ttk::label $recf.l_resol -text [mc "Resolution:"]
 	
 	proc record_add_editResolWidthValidate {value widget} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidthValidate \033\[0m \{$value\} \{$widget\}"
@@ -181,24 +117,9 @@ proc record_add_edit {tree com} {
 		}
 	}
 	
-	spinbox $recf.sb_resol_width \
-	-from 99 \
-	-to 721 \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editResolWidthValidate %P %W} \
-	-repeatinterval 10 \
-	-command record_add_editResolWidth \
-	-textvariable record(resolution_width)
-	ttk::label $recf.l_resol_slash \
-	-text "/"
-	spinbox $recf.sb_resol_height \
-	-width 3 \
-	-validate key \
-	-vcmd {record_add_editResolHeightValidate %P %W} \
-	-repeatinterval 10 \
-	-command record_add_editResolHeight \
-	-textvariable record(resolution_height)
+	spinbox $recf.sb_resol_width -from 99 -to 721 -width 3 -validate key -vcmd {record_add_editResolWidthValidate %P %W} -repeatinterval 10 -command record_add_editResolWidth -textvariable record(resolution_width)
+	ttk::label $recf.l_resol_slash -text "/"
+	spinbox $recf.sb_resol_height -width 3 -validate key -vcmd {record_add_editResolHeightValidate %P %W} -repeatinterval 10 -command record_add_editResolHeight -textvariable record(resolution_height)
 	if {"$::option(video_standard)" == "NTSC"} {
 		$recf.sb_resol_height configure -from 99 -to 481
 		set ::record(resolution_height_max) 480
@@ -209,29 +130,15 @@ proc record_add_edit {tree com} {
 		set ::record(resolution_height_min) 100
 	}
 	
-	ttk::labelframe $recf.lf_rec_file \
-	-text [mc "Output file"]
-	ttk::entry $recf.ent_file \
-	-textvariable record(file) \
-	-state readonly
-	ttk::button $recf.b_file \
-	-text "..." \
-	-width 3 \
-	-command [list record_add_editOfile $w]
+	ttk::labelframe $recf.lf_rec_file -text [mc "Output file"]
+	ttk::entry $recf.ent_file -textvariable record(file) -state readonly
+	ttk::button $recf.b_file -text "..." -width 3 -command [list record_add_editOfile $w]
 	
-	ttk::label $recf.l_warning \
-	-compound left
+	ttk::label $recf.l_warning -compound left
 	
-	ttk::button $bf.b_apply \
-	-text [mc "Apply"] \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply)
+	ttk::button $bf.b_apply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply)
 	
-	ttk::button $bf.b_cancel \
-	-text [mc "Cancel"] \
-	-compound left \
-	-image $::icon_s(dialog-cancel) \
-	-command [list record_add_editExit $w]
+	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command [list record_add_editExit $w]
 	
 	grid rowconfigure $w 1 -weight 0
 	grid rowconfigure $recf.lf_rec_values {0 2} -weight 1
@@ -239,128 +146,46 @@ proc record_add_edit {tree com} {
 	grid columnconfigure $recf.lf_rec_file 0 -weight 1
 	grid columnconfigure $recf.lf_rec_values 0 -weight 1
 	
-	grid $lbf -in $w -row 0 -column 0 \
-	-sticky nesw
-	grid $recf -in $w -row 0 -column 1 \
-	-sticky nesw
-	grid $bf -in $w -row 1 -column 0 \
-	-columnspan 2 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $lbf -in $w -row 0 -column 0 -sticky nesw
+	grid $recf -in $w -row 0 -column 1 -sticky nesw
+	grid $bf -in $w -row 1 -column 0 -columnspan 2 -sticky ew -padx 3 -pady 3
 	grid anchor $bf e
 	
-	grid $lbf.lb_stations -in $lbf -row 0 -column 0 \
-	-sticky nesw
-	grid $lbf.scrollbar_stations -in $lbf -row 0 -column 1 \
-	-sticky ns
+	grid $lbf.lb_stations -in $lbf -row 0 -column 0 -sticky nesw
+	grid $lbf.scrollbar_stations -in $lbf -row 0 -column 1 -sticky ns
 	
-	grid $recf.lf_rec_values -in $recf -row 0 -column 0 \
-	-sticky new \
-	-padx 5 \
-	-pady 6
-	grid $recf.l_time -in $recf.lf_rec_values -row 0 -column 0 \
-	-sticky w \
-	-padx 5 \
-	-pady 3
-	grid $recf.sb_time_hour -in $recf.lf_rec_values -row 0 -column 1 \
-	-sticky w \
-	-padx "0 2" \
-	-pady 3
-	grid $recf.l_time_colon -in $recf.lf_rec_values -row 0 -column 2 \
-	-padx "0 2" \
-	-pady 3
-	grid $recf.sb_time_min -in $recf.lf_rec_values -row 0 -column 3 \
-	-sticky w \
-	-padx "0 5" \
-	-pady 3
-	grid $recf.sep1 -in $recf.lf_rec_values -row 0 -column 6 \
-	-sticky ns \
-	-padx 2
-	grid $recf.l_date -in $recf.lf_rec_values -row 0 -column 7 \
-	-sticky w \
-	-padx 5 \
-	-pady 3
-	grid $recf.ent_date -in $recf.lf_rec_values -row 0 -column 8 \
-	-sticky w \
-	-padx "0 5" \
-	-pady 3 \
-	-columnspan 3
-	grid $recf.b_date -in $recf.lf_rec_values -row 0 -column 11 \
-	-sticky w \
-	-padx "0 5" \
-	-pady 3
+	grid $recf.lf_rec_values -in $recf -row 0 -column 0 -sticky new -padx 5 -pady 6
+	grid $recf.l_time -in $recf.lf_rec_values -row 0 -column 0 -sticky w -padx 5 -pady 3
+	grid $recf.sb_time_hour -in $recf.lf_rec_values -row 0 -column 1 -sticky w -padx "0 2" -pady 3
+	grid $recf.l_time_colon -in $recf.lf_rec_values -row 0 -column 2 -padx "0 2" -pady 3
+	grid $recf.sb_time_min -in $recf.lf_rec_values -row 0 -column 3 -sticky w -padx "0 5" -pady 3
+	grid $recf.sep1 -in $recf.lf_rec_values -row 0 -column 6 -sticky ns -padx 2
+	grid $recf.l_date -in $recf.lf_rec_values -row 0 -column 7 -sticky w -padx 5 -pady 3
+	grid $recf.ent_date -in $recf.lf_rec_values -row 0 -column 8 -sticky w -padx "0 5" -pady 3 -columnspan 3
+	grid $recf.b_date -in $recf.lf_rec_values -row 0 -column 11 -sticky w -padx "0 5" -pady 3
 	
-	grid $recf.sep2 -in $recf.lf_rec_values -row 1 -column 0 \
-	-sticky ew \
-	-columnspan 12 \
-	-padx 3
+	grid $recf.sep2 -in $recf.lf_rec_values -row 1 -column 0 -sticky ew -columnspan 12 -padx 3
 	
-	grid $recf.l_duration -in $recf.lf_rec_values -row 2 -column 0 \
-	-sticky w \
-	-padx 5 \
-	-pady "5 11"
-	grid $recf.sb_duration_hour -in $recf.lf_rec_values -row 2 -column 1 \
-	-sticky w \
-	-padx "0 2" \
-	-pady "5 11"
-	grid $recf.l_duration_colon1 -in $recf.lf_rec_values -row 2 -column 2 \
-	-padx "0 2" \
-	-pady "5 11"
-	grid $recf.sb_duration_min -in $recf.lf_rec_values -row 2 -column 3 \
-	-sticky w \
-	-padx "0 2" \
-	-pady "5 11"
-	grid $recf.l_duration_colon2 -in $recf.lf_rec_values -row 2 -column 4 \
-	-padx "0 2" \
-	-pady "5 11"
-	grid $recf.sb_duration_sec -in $recf.lf_rec_values -row 2 -column 5 \
-	-sticky w \
-	-padx "0 5" \
-	-pady "5 11"
-	grid $recf.sep3 -in $recf.lf_rec_values -row 2 -column 6 \
-	-sticky ns \
-	-padx 2 \
-	-pady "0 5"
-	grid $recf.l_resol -in $recf.lf_rec_values -row 2 -column 7 \
-	-sticky w \
-	-padx 5 \
-	-pady "5 11"
-	grid $recf.sb_resol_width -in $recf.lf_rec_values -row 2 -column 8 \
-	-sticky w \
-	-padx "0 2" \
-	-pady "5 11"
-	grid $recf.l_resol_slash -in $recf.lf_rec_values -row 2 -column 9 \
-	-padx "0 2" \
-	-pady "5 11"
-	grid $recf.sb_resol_height -in $recf.lf_rec_values -row 2 -column 10 \
-	-sticky w \
-	-padx "0 5" \
-	-pady "5 11"
+	grid $recf.l_duration -in $recf.lf_rec_values -row 2 -column 0 -sticky w -padx 5 -pady "5 11"
+	grid $recf.sb_duration_hour -in $recf.lf_rec_values -row 2 -column 1 -sticky w -padx "0 2" -pady "5 11"
+	grid $recf.l_duration_colon1 -in $recf.lf_rec_values -row 2 -column 2 -padx "0 2" -pady "5 11"
+	grid $recf.sb_duration_min -in $recf.lf_rec_values -row 2 -column 3 -sticky w -padx "0 2" -pady "5 11"
+	grid $recf.l_duration_colon2 -in $recf.lf_rec_values -row 2 -column 4 -padx "0 2" -pady "5 11"
+	grid $recf.sb_duration_sec -in $recf.lf_rec_values -row 2 -column 5 -sticky w -padx "0 5" -pady "5 11"
+	grid $recf.sep3 -in $recf.lf_rec_values -row 2 -column 6 -sticky ns -padx 2 -pady "0 5"
+	grid $recf.l_resol -in $recf.lf_rec_values -row 2 -column 7 -sticky w -padx 5 -pady "5 11"
+	grid $recf.sb_resol_width -in $recf.lf_rec_values -row 2 -column 8 -sticky w -padx "0 2" -pady "5 11"
+	grid $recf.l_resol_slash -in $recf.lf_rec_values -row 2 -column 9 -padx "0 2" -pady "5 11"
+	grid $recf.sb_resol_height -in $recf.lf_rec_values -row 2 -column 10 -sticky w -padx "0 5" -pady "5 11"
 	
-	grid $recf.lf_rec_file -in $recf -row 1 -column 0 \
-	-sticky new \
-	-padx 5 \
-	-pady "0 6"
-	grid $recf.ent_file -in $recf.lf_rec_file -row 0 -column 0 \
-	-sticky ew \
-	-padx 5 \
-	-pady 3
-	grid $recf.b_file -in $recf.lf_rec_file -row 0 -column 1 \
-	-padx "0 5" \
-	-pady 3
+	grid $recf.lf_rec_file -in $recf -row 1 -column 0 -sticky new -padx 5 -pady "0 6"
+	grid $recf.ent_file -in $recf.lf_rec_file -row 0 -column 0 -sticky ew -padx 5 -pady 3
+	grid $recf.b_file -in $recf.lf_rec_file -row 0 -column 1 -padx "0 5" -pady 3
 	
-	grid $recf.l_warning -in $recf -row 2 -column 0 \
-	-sticky w \
-	-padx "5 0" \
-	-pady 3
+	grid $recf.l_warning -in $recf -row 2 -column 0 -sticky w -padx "5 0" -pady 3
 	
-	grid $bf.b_apply -in $bf -row 0 -column 0 \
-	-pady 7 \
-	-padx 3
-	grid $bf.b_cancel -in $bf -row 0 -column 1 \
-	-pady 7 \
-	-padx "0 3"
+	grid $bf.b_apply -in $bf -row 0 -column 0 -pady 7 -padx 3
+	grid $bf.b_cancel -in $bf -row 0 -column 1 -pady 7 -padx "0 3"
 	
 	
 	proc record_add_editTimeHour {} {
@@ -622,84 +447,34 @@ proc record_add_editDate {} {
 	set fcho [ttk::frame $w.choose_frame]
 	set bf [ttk::frame $w.button_frame -style TLabelframe]
 	
-	ttk::button $fnavi.b_year_back \
-	-compound image \
-	-image $::icon_s(rewind-big) \
-	-width 0 \
-	-command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -2]
-	
-	ttk::button $fnavi.b_month_back \
-	-compound image \
-	-image $::icon_s(rewind-small) \
-	-width 0 \
-	-command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -1]
-	
+	ttk::button $fnavi.b_year_back -compound image -image $::icon_s(rewind-big) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -2]
+	ttk::button $fnavi.b_month_back -compound image -image $::icon_s(rewind-small) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -1]
 	ttk::label $fnavi.l_date_info
+	ttk::button $fnavi.b_month_forw -compound image -image $::icon_s(forward-small) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 1]
+	ttk::button $fnavi.b_year_forw -compound image -image $::icon_s(forward-big) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 2]
+	calwid $fcho.calw_date_choose -background $::option(theme_$::option(use_theme)) -callback [list record_add_editDateCallback $fnavi.l_date_info]
 	
-	ttk::button $fnavi.b_month_forw \
-	-compound image \
-	-image $::icon_s(forward-small) \
-	-width 0 \
-	-command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 1]
-	
-	ttk::button $fnavi.b_year_forw \
-	-compound image \
-	-image $::icon_s(forward-big) \
-	-width 0 \
-	-command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 2]
-	
-	calwid $fcho.calw_date_choose \
-	-background $::option(theme_$::option(use_theme)) \
-	-callback [list record_add_editDateCallback $fnavi.l_date_info]
-	
-	ttk::button $bf.b_apply \
-	-text [mc "Apply"] \
-	-compound left \
-	-image $::icon_s(dialog-ok-apply) \
-	-command [list record_add_editDateApply $w $fnavi.l_date_info]
-	
-	ttk::button $bf.b_cancel \
-	-text [mc "Cancel"] \
-	-compound left \
-	-image $::icon_s(dialog-cancel) \
-	-command "grab release $w; grab .record_wizard.add_edit; destroy $w; wm protocol .record_wizard.add_edit WM_DELETE_WINDOW {record_add_editExit .record_wizard.add_edit}"
+	ttk::button $bf.b_apply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply) -command [list record_add_editDateApply $w $fnavi.l_date_info]
+	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command "grab release $w; grab .record_wizard.add_edit; destroy $w; wm protocol .record_wizard.add_edit WM_DELETE_WINDOW {record_add_editExit .record_wizard.add_edit}"
 	
 	grid columnconfigure $fcho 0 -weight 1
 	grid rowconfigure $fcho 0 -weight 1
 	
-	grid $fnavi -in $w -row 0 -column 0 \
-	-sticky ew
-	grid $fcho -in $w -row 1 -column 0 \
-	-sticky nesw
-	grid $bf -in $w -row 2 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $fnavi -in $w -row 0 -column 0 -sticky ew
+	grid $fcho -in $w -row 1 -column 0 -sticky nesw
+	grid $bf -in $w -row 2 -column 0 -sticky ew -padx 3 -pady 3
 	grid anchor $bf e
 	grid anchor $fnavi center
 	grid anchor $fcho center
 	
-	grid $fnavi.b_year_back -in $fnavi -row 0 -column 0 \
-	-pady 3 \
-	-padx 3
-	grid $fnavi.b_month_back -in $fnavi -row 0 -column 1 \
-	-pady 3
-	grid $fnavi.l_date_info -in $fnavi -row 0 -column 2 \
-	-pady 3 \
-	-padx 10
-	grid $fnavi.b_month_forw -in $fnavi -row 0 -column 3 \
-	-pady 3
-	grid $fnavi.b_year_forw -in $fnavi -row 0 -column 4 \
-	-pady 3 \
-	-padx 3
-	grid $fcho.calw_date_choose -in $fcho -row 0 -column 0 \
-	-pady "5 0"
-	grid $bf.b_apply -in $bf -row 0 -column 0 \
-	-pady 7 \
-	-padx 3
-	grid $bf.b_cancel -in $bf -row 0 -column 1 \
-	-pady 7 \
-	-padx "0 3"
+	grid $fnavi.b_year_back -in $fnavi -row 0 -column 0 -pady 3 -padx 3
+	grid $fnavi.b_month_back -in $fnavi -row 0 -column 1 -pady 3
+	grid $fnavi.l_date_info -in $fnavi -row 0 -column 2 -pady 3 -padx 10
+	grid $fnavi.b_month_forw -in $fnavi -row 0 -column 3 -pady 3
+	grid $fnavi.b_year_forw -in $fnavi -row 0 -column 4 -pady 3 -padx 3
+	grid $fcho.calw_date_choose -in $fcho -row 0 -column 0 -pady "5 0"
+	grid $bf.b_apply -in $bf -row 0 -column 0 -pady 7 -padx 3
+	grid $bf.b_cancel -in $bf -row 0 -column 1 -pady 7 -padx "0 3"
 	
 	wm resizable $w 0 0
 	wm title $w [mc "Choose date"]

@@ -48,110 +48,37 @@ proc option_screen_3 {} {
 		
 		set ::window(video_nb1) [ttk::frame $w.f_video]
 		$w add $::window(video_nb1) -text [mc "Video Settings"] -padding 2
-		set ::window(video_nb1_cont) [canvas $::window(video_nb1).c_cont \
-		-yscrollcommand [list $::window(video_nb1).scrollb_cont set] \
-		-highlightthickness 0]
-		ttk::scrollbar $::window(video_nb1).scrollb_cont \
-		-command [list $::window(video_nb1).c_cont yview]
+		set ::window(video_nb1_cont) [canvas $::window(video_nb1).c_cont -yscrollcommand [list $::window(video_nb1).scrollb_cont set] -highlightthickness 0]
+		ttk::scrollbar $::window(video_nb1).scrollb_cont -command [list $::window(video_nb1).c_cont yview]
 		$::window(video_nb1_cont) create window 0 0 -window [ttk::frame $::window(video_nb1_cont).f_video2] -anchor w -tags cont_video_nb1
 		set frame_nb1  "$::window(video_nb1_cont).f_video2"
 		
-		ttk::labelframe $frame_nb1.lf_mplayer \
-		-text [mc "Video"]
+		ttk::labelframe $frame_nb1.lf_mplayer -text [mc "Video"]
+		ttk::label $frame_nb1.l_lf_vo -text [mc "Video output driver"]
+		ttk::menubutton $frame_nb1.mb_lf_vo -menu $::window(video_nb1).mbVo -textvariable choice(mbVo)
+		menu $::window(video_nb1).mbVo -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::label $frame_nb1.l_lf_deint -text [mc "Deinterlacing filter"]
+		ttk::menubutton $frame_nb1.mb_lf_deint -menu $::window(video_nb1).mbDeint -textvariable choice(mbDeint)
+		menu $::window(video_nb1).mbDeint -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::label $frame_nb1.l_lf_autoq -text [mc "Postprocessing level"]
+		spinbox $frame_nb1.sb_lf_autoq -from 0 -to 6 -state readonly -textvariable choice(sb_autoq)
+		ttk::label $frame_nb1.l_lf_cache -text [mc "Cache size (kb)"]
+		ttk::menubutton $frame_nb1.mb_lf_cache -menu $::window(video_nb1).mbCache -textvariable choice(mbCache)
+		menu $::window(video_nb1).mbCache -tearoff 0 -background $::option(theme_$::option(use_theme))
+		ttk::label $frame_nb1.l_lf_threads -text [mc "Threads for decoding"]
+		spinbox $frame_nb1.sb_lf_threads -state readonly -from 1 -to 8 -textvariable choice(sb_threads)
 		
-		ttk::label $frame_nb1.l_lf_vo \
-		-text [mc "Video output driver"]
+		ttk::separator $frame_nb1.sp_lf_mplayer -orient horizontal
 		
-		ttk::menubutton $frame_nb1.mb_lf_vo \
-		-menu $::window(video_nb1).mbVo \
-		-textvariable choice(mbVo)
-		
-		menu $::window(video_nb1).mbVo \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		
-		ttk::label $frame_nb1.l_lf_deint \
-		-text [mc "Deinterlacing filter"]
-		
-		ttk::menubutton $frame_nb1.mb_lf_deint \
-		-menu $::window(video_nb1).mbDeint \
-		-textvariable choice(mbDeint)
-		
-		menu $::window(video_nb1).mbDeint \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		
-		ttk::label $frame_nb1.l_lf_autoq \
-		-text [mc "Postprocessing level"]
-		
-		spinbox $frame_nb1.sb_lf_autoq \
-		-from 0 \
-		-to 6 \
-		-state readonly \
-		-textvariable choice(sb_autoq)
-		
-		ttk::label $frame_nb1.l_lf_cache \
-		-text [mc "Cache size (kb)"]
-		
-		ttk::menubutton $frame_nb1.mb_lf_cache \
-		-menu $::window(video_nb1).mbCache \
-		-textvariable choice(mbCache)
-		
-		menu $::window(video_nb1).mbCache \
-		-tearoff 0 \
-		-background $::option(theme_$::option(use_theme))
-		
-		ttk::label $frame_nb1.l_lf_threads \
-		-text [mc "Threads for decoding"]
-		
-		spinbox $frame_nb1.sb_lf_threads \
-		-state readonly \
-		-from 1 \
-		-to 8 \
-		-textvariable choice(sb_threads)
-		
-		ttk::separator $frame_nb1.sp_lf_mplayer \
-		-orient horizontal
-		
-		ttk::checkbutton $frame_nb1.cb_lf_dr \
-		-text [mc "Direct Rendering"] \
-		-variable choice(cb_dr)
-		
-		ttk::checkbutton $frame_nb1.cb_lf_double \
-		-text [mc "Double Buffering"] \
-		-variable choice(cb_double)
-		
-		ttk::checkbutton $frame_nb1.cb_lf_slice \
-		-text [mc "Slice Mode"] \
-		-variable choice(cb_slice)
-		
-		ttk::checkbutton $frame_nb1.cb_lf_framedrop \
-		-text [mc "Framedrop"] \
-		-variable choice(cb_framedrop) \
-		-command [list config_videoFramedrop 0]
-		
-		ttk::checkbutton $frame_nb1.cb_lf_hframedrop \
-		-text [mc "Hard Framedrop"] \
-		-variable choice(cb_hframedrop) \
-		-command [list config_videoFramedrop 1]
-		
-		ttk::checkbutton $frame_nb1.cb_lf_screensaver \
-		-text [mc "Disable Screensaver"] \
-		-variable choice(cb_lf_screensaver) \
-		-command [list config_videoScreensaver $frame_nb1]
-		
-		ttk::labelframe $frame_nb1.lf_screensaver \
-		-labelwidget $frame_nb1.cb_lf_screensaver
-		
-		ttk::radiobutton $frame_nb1.rb_lf_mplayer_screens \
-		-text [mc "Use MPlayer"] \
-		-variable choice(rb_screensaver) \
-		-value 0
-		
-		ttk::radiobutton $frame_nb1.rb_lf_heartbeat_screens \
-		-text [mc "Use Heartbeat function"] \
-		-variable choice(rb_screensaver) \
-		-value 1
+		ttk::checkbutton $frame_nb1.cb_lf_dr -text [mc "Direct Rendering"] -variable choice(cb_dr)
+		ttk::checkbutton $frame_nb1.cb_lf_double -text [mc "Double Buffering"] -variable choice(cb_double)
+		ttk::checkbutton $frame_nb1.cb_lf_slice -text [mc "Slice Mode"] -variable choice(cb_slice)
+		ttk::checkbutton $frame_nb1.cb_lf_framedrop -text [mc "Framedrop"] -variable choice(cb_framedrop) -command [list config_videoFramedrop 0]
+		ttk::checkbutton $frame_nb1.cb_lf_hframedrop -text [mc "Hard Framedrop"] -variable choice(cb_hframedrop) -command [list config_videoFramedrop 1]
+		ttk::checkbutton $frame_nb1.cb_lf_screensaver -text [mc "Disable Screensaver"] -variable choice(cb_lf_screensaver) -command [list config_videoScreensaver $frame_nb1]
+		ttk::labelframe $frame_nb1.lf_screensaver -labelwidget $frame_nb1.cb_lf_screensaver
+		ttk::radiobutton $frame_nb1.rb_lf_mplayer_screens -text [mc "Use MPlayer"] -variable choice(rb_screensaver) -value 0
+		ttk::radiobutton $frame_nb1.rb_lf_heartbeat_screens -text [mc "Use Heartbeat function"] -variable choice(rb_screensaver) -value 1
 		
 		grid columnconfigure $::window(video_nb1) 0 -weight 1
 		grid columnconfigure $frame_nb1 0 -weight 1
@@ -159,92 +86,29 @@ proc option_screen_3 {} {
 		
 		grid rowconfigure $::window(video_nb1) 0 -weight 1
 		
-		grid $::window(video_nb1_cont) -in $::window(video_nb1) -row 0 -column 0 \
-		-sticky nesw
-		grid $::window(video_nb1).scrollb_cont -in $::window(video_nb1) -row 0 -column 1 \
-		-sticky ns
+		grid $::window(video_nb1_cont) -in $::window(video_nb1) -row 0 -column 0 -sticky nesw
+		grid $::window(video_nb1).scrollb_cont -in $::window(video_nb1) -row 0 -column 1 -sticky ns
 		
-		grid $frame_nb1.lf_mplayer -in $frame_nb1 -row 0 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $frame_nb1.l_lf_vo -in $frame_nb1.lf_mplayer -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "3 0"
-		grid $frame_nb1.mb_lf_vo -in $frame_nb1.lf_mplayer -row 0 -column 1 \
-		-sticky ew \
-		-padx "7" \
-		-pady "3 0"
-		grid $frame_nb1.l_lf_deint -in $frame_nb1.lf_mplayer -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "3 0"
-		grid $frame_nb1.mb_lf_deint -in $frame_nb1.lf_mplayer -row 1 -column 1 \
-		-sticky ew \
-		-padx "7" \
-		-pady "3 0"
-		grid $frame_nb1.l_lf_autoq -in $frame_nb1.lf_mplayer -row 2 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "3 0"
-		grid $frame_nb1.sb_lf_autoq -in $frame_nb1.lf_mplayer -row 2 -column 1 \
-		-sticky ew \
-		-padx "7" \
-		-pady "3 0"
-		grid $frame_nb1.l_lf_cache -in $frame_nb1.lf_mplayer -row 3 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "3 0"
-		grid $frame_nb1.mb_lf_cache -in $frame_nb1.lf_mplayer -row 3 -column 1 \
-		-sticky ew \
-		-padx "7" \
-		-pady "3 0"
-		grid $frame_nb1.l_lf_threads -in $frame_nb1.lf_mplayer -row 4 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "3 0"
-		grid $frame_nb1.sb_lf_threads -in $frame_nb1.lf_mplayer -row 4 -column 1 \
-		-sticky ew \
-		-padx "7" \
-		-pady "3 0"
-		grid $frame_nb1.sp_lf_mplayer -in $frame_nb1.lf_mplayer -row 5 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady "5 0" \
-		-columnspan 2
-		grid $frame_nb1.cb_lf_dr -in $frame_nb1.lf_mplayer -row 6 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "5 0"
-		grid $frame_nb1.cb_lf_double -in $frame_nb1.lf_mplayer -row 6 -column 1 \
-		-sticky w \
-		-padx "7 0" \
-		-pady "5 0"
-		grid $frame_nb1.cb_lf_slice -in $frame_nb1.lf_mplayer -row 7 -column 0 \
-		-sticky w \
-		-padx "7 0" \
-		-pady "3 0"
-		grid $frame_nb1.cb_lf_framedrop -in $frame_nb1.lf_mplayer -row 8 -column 0 \
-		-sticky w \
-		-padx "7 0" \
-		-pady "5 0"
-		grid $frame_nb1.cb_lf_hframedrop -in $frame_nb1.lf_mplayer -row 8 -column 1 \
-		-sticky w \
-		-padx "7" \
-		-pady "5 0"
-		grid $frame_nb1.lf_screensaver -in $frame_nb1 -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5"
-		grid $frame_nb1.rb_lf_mplayer_screens -in $frame_nb1.lf_screensaver -row 0 -column 0 \
-		-sticky w \
-		-padx "7 0" \
-		-pady "5 0"
-		grid $frame_nb1.rb_lf_heartbeat_screens -in $frame_nb1.lf_screensaver -row 0 -column 1 \
-		-sticky w \
-		-padx "7 0" \
-		-pady "5 0"
+		grid $frame_nb1.lf_mplayer -in $frame_nb1 -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $frame_nb1.l_lf_vo -in $frame_nb1.lf_mplayer -row 0 -column 0 -sticky w -padx 7 -pady "3 0"
+		grid $frame_nb1.mb_lf_vo -in $frame_nb1.lf_mplayer -row 0 -column 1 -sticky ew -padx "7" -pady "3 0"
+		grid $frame_nb1.l_lf_deint -in $frame_nb1.lf_mplayer -row 1 -column 0 -sticky w -padx 7 -pady "3 0"
+		grid $frame_nb1.mb_lf_deint -in $frame_nb1.lf_mplayer -row 1 -column 1 -sticky ew -padx "7" -pady "3 0"
+		grid $frame_nb1.l_lf_autoq -in $frame_nb1.lf_mplayer -row 2 -column 0 -sticky w -padx 7 -pady "3 0"
+		grid $frame_nb1.sb_lf_autoq -in $frame_nb1.lf_mplayer -row 2 -column 1 -sticky ew -padx "7" -pady "3 0"
+		grid $frame_nb1.l_lf_cache -in $frame_nb1.lf_mplayer -row 3 -column 0 -sticky w -padx 7 -pady "3 0"
+		grid $frame_nb1.mb_lf_cache -in $frame_nb1.lf_mplayer -row 3 -column 1 -sticky ew -padx "7" -pady "3 0"
+		grid $frame_nb1.l_lf_threads -in $frame_nb1.lf_mplayer -row 4 -column 0 -sticky w -padx 7 -pady "3 0"
+		grid $frame_nb1.sb_lf_threads -in $frame_nb1.lf_mplayer -row 4 -column 1 -sticky ew -padx "7" -pady "3 0"
+		grid $frame_nb1.sp_lf_mplayer -in $frame_nb1.lf_mplayer -row 5 -column 0 -sticky ew -padx 7 -pady "5 0" -columnspan 2
+		grid $frame_nb1.cb_lf_dr -in $frame_nb1.lf_mplayer -row 6 -column 0 -sticky w -padx 7 -pady "5 0"
+		grid $frame_nb1.cb_lf_double -in $frame_nb1.lf_mplayer -row 6 -column 1 -sticky w -padx "7 0" -pady "5 0"
+		grid $frame_nb1.cb_lf_slice -in $frame_nb1.lf_mplayer -row 7 -column 0 -sticky w -padx "7 0" -pady "3 0"
+		grid $frame_nb1.cb_lf_framedrop -in $frame_nb1.lf_mplayer -row 8 -column 0 -sticky w -padx "7 0" -pady "5 0"
+		grid $frame_nb1.cb_lf_hframedrop -in $frame_nb1.lf_mplayer -row 8 -column 1 -sticky w -padx "7" -pady "5 0"
+		grid $frame_nb1.lf_screensaver -in $frame_nb1 -row 1 -column 0 -sticky ew -padx 5 -pady "5"
+		grid $frame_nb1.rb_lf_mplayer_screens -in $frame_nb1.lf_screensaver -row 0 -column 0 -sticky w -padx "7 0" -pady "5 0"
+		grid $frame_nb1.rb_lf_heartbeat_screens -in $frame_nb1.lf_screensaver -row 0 -column 1 -sticky w -padx "7 0" -pady "5 0"
 		
 		#Additional Code
 		if {[string trim [auto_execok mplayer]] == {}} {
@@ -253,31 +117,15 @@ proc option_screen_3 {} {
 			$w tab $::window(video_nb1) -state disabled
 			set ::window(video_nb2) [ttk::frame $w.f_video_error]
 			$w add $::window(video_nb2) -text [mc "Error"]
-			ttk::labelframe $::window(video_nb2).lf_video_error \
-			-text [mc "Missing requirements"]
-			ttk::label $::window(video_nb2).l_error \
-			-text [mc "Could not detect all necessary tools to run TV-Viewer"] \
-			-compound left \
-			-image $::icon_m(dialog-warning)
-			ttk::label $::window(video_nb2).l_error_mplayer \
-			-text "MPlayer >= 1.0rc2" \
-			-justify left
-			ttk::label $::window(video_nb2).l_error_mplayer_img \
-			-justify left \
-			-image $::icon_s(dialog-error)
+			ttk::labelframe $::window(video_nb2).lf_video_error -text [mc "Missing requirements"]
+			ttk::label $::window(video_nb2).l_error -text [mc "Could not detect all necessary tools to run TV-Viewer"] -compound left -image $::icon_m(dialog-warning)
+			ttk::label $::window(video_nb2).l_error_mplayer -text "MPlayer >= 1.0rc2" -justify left
+			ttk::label $::window(video_nb2).l_error_mplayer_img -justify left -image $::icon_s(dialog-error)
 			
-			grid $::window(video_nb2).l_error -in $::window(video_nb2) -row 0 -column 0 \
-			-pady 10
-			grid $::window(video_nb2).lf_video_error -in $::window(video_nb2) -row 1 -column 0 \
-			-pady 10 \
-			-padx 5 \
-			-sticky ew
-			grid $::window(video_nb2).l_error_mplayer -in $::window(video_nb2).lf_video_error -row 0 -column 0 \
-			-pady 5 \
-			-padx "7 0"
-			grid $::window(video_nb2).l_error_mplayer_img -in $::window(video_nb2).lf_video_error -row 0 -column 1 \
-			-pady 5 \
-			-padx "7 0"
+			grid $::window(video_nb2).l_error -in $::window(video_nb2) -row 0 -column 0 -pady 10
+			grid $::window(video_nb2).lf_video_error -in $::window(video_nb2) -row 1 -column 0 -pady 10 -padx 5 -sticky ew
+			grid $::window(video_nb2).l_error_mplayer -in $::window(video_nb2).lf_video_error -row 0 -column 0 -pady 5 -padx "7 0"
+			grid $::window(video_nb2).l_error_mplayer_img -in $::window(video_nb2).lf_video_error -row 0 -column 1 -pady 5 -padx "7 0"
 			
 			grid columnconfigure $::window(video_nb2) 0 -weight 1
 			
@@ -345,9 +193,7 @@ proc option_screen_3 {} {
 				set cache {0 512 1024 2048 4096 8192 16384}
 				
 				foreach velem [split [join $vo \n] \n] {
-					$w.mbVo add radiobutton \
-					-label $velem \
-					-variable choice(mbVo)
+					$w.mbVo add radiobutton -label $velem -variable choice(mbVo)
 				}
 				
 				catch {exec sh -c "xvinfo"} read_xvinfo
@@ -356,9 +202,7 @@ proc option_screen_3 {} {
 					set test " [lindex $resultat_grep_xv 2]" 
 					set i 2
 					foreach line [split $resultat_grep_xv \n] {
-						$w.mbVo insert $i radiobutton \
-						-label "xv adaptor=[string trim [lindex $resultat_grep_xv 1] #:] - [lindex $resultat_grep_xv 2]" \
-						-variable choice(mbVo)
+						$w.mbVo insert $i radiobutton -label "xv adaptor=[string trim [lindex $resultat_grep_xv 1] #:] - [lindex $resultat_grep_xv 2]" -variable choice(mbVo)
 						incr i
 						log_writeOutTv 0 "xvinfo reports found adaptor: [lindex $resultat_grep_xv 2]"
 					}
@@ -371,9 +215,7 @@ proc option_screen_3 {} {
 				}
 				
 				foreach delem [split [join $deint \n] \n] {
-					$w.mbDeint add radiobutton \
-					-label $delem \
-					-variable choice(mbDeint)
+					$w.mbDeint add radiobutton -label $delem -variable choice(mbDeint)
 				}
 				
 				if {[info exists ::option(player_deint)]} {
@@ -389,9 +231,7 @@ proc option_screen_3 {} {
 				}
 				
 				foreach celem [split $cache] {
-					$w.mbCache add radiobutton \
-					-label $celem \
-					-variable choice(mbCache)
+					$w.mbCache add radiobutton -label $celem -variable choice(mbCache)
 				}
 				
 				if {[info exists ::option(player_cache)]} {

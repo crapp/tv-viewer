@@ -82,48 +82,23 @@ proc record_wizardUi {} {
 		set statf [ttk::frame $w.status_frame]
 		set bf [ttk::frame $w.button_frame -style TLabelframe]
 		
-		ttk::button $topf.b_add_rec \
-		-text [mc "New recording"] \
-		-style Toolbutton \
-		-command [list record_add_edit $treef.tv_rec 0]
-		ttk::button $topf.b_delete_rec \
-		-text [mc "Delete"] \
-		-style Toolbutton \
-		-command [list record_add_editDelete $treef.tv_rec]
-		ttk::button $topf.b_edit_rec \
-		-text [mc "Edit"] \
-		-style Toolbutton \
-		-command [list record_add_edit $treef.tv_rec 1]
-		ttk::separator $topf.sep_1 \
-		-orient vertical
+		ttk::button $topf.b_add_rec -text [mc "New recording"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 0]
+		ttk::button $topf.b_delete_rec -text [mc "Delete"] -style Toolbutton -command [list record_add_editDelete $treef.tv_rec]
+		ttk::button $topf.b_edit_rec -text [mc "Edit"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 1]
+		ttk::separator $topf.sep_1 -orient vertical
 		
-		ttk::treeview $treef.tv_rec \
-		-yscrollcommand [list $treef.sb_rec_vert set] \
-		-columns {jobid station time date duration resolution file} \
-		-show headings
-		ttk::scrollbar $treef.sb_rec_vert \
-		-orient vertical \
-		-command [list $treef.tv_rec yview]
+		ttk::treeview $treef.tv_rec -yscrollcommand [list $treef.sb_rec_vert set] -columns {jobid station time date duration resolution file} -show headings
+		ttk::scrollbar $treef.sb_rec_vert -orient vertical -command [list $treef.tv_rec yview]
 		
-		ttk::labelframe $statf.lf_status \
-		-text [mc "Status"]
-		ttk::label $statf.l_rec_sched \
-		-text [mc "Scheduler status:"]
+		ttk::labelframe $statf.lf_status -text [mc "Status"]
+		ttk::label $statf.l_rec_sched -text [mc "Scheduler status:"]
 		ttk::label $statf.l_rec_sched_info
-		ttk::button $statf.b_rec_sched \
-		-text [mc "Stop Scheduler"]
-		ttk::label $statf.l_rec_current \
-		-text [mc "Currently recording:"]
+		ttk::button $statf.b_rec_sched -text [mc "Stop Scheduler"]
+		ttk::label $statf.l_rec_current -text [mc "Currently recording:"]
 		ttk::label $statf.l_rec_current_info
-		ttk::button $statf.b_rec_current \
-		-text [mc "Stop recording"] \
-		-command [list record_linkerPreStop record]
+		ttk::button $statf.b_rec_current -text [mc "Stop recording"] -command [list record_linkerPreStop record]
 		
-		ttk::button $bf.b_exit \
-		-text [mc "Exit"] \
-		-compound left \
-		-image $::icon_s(dialog-close) \
-		-command record_wizardExit
+		ttk::button $bf.b_exit -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command record_wizardExit
 		
 		grid columnconfigure $w 0 -weight 1
 		grid rowconfigure $w 1 -weight 1
@@ -135,66 +110,28 @@ proc record_wizardUi {} {
 		
 		grid columnconfigure $statf.lf_status {2} -minsize 120
 		
-		grid $topf -in $w -row 0 -column 0 \
-		-sticky new
-		grid $treef -in $w -row 1 -column 0 \
-		-sticky nesw
-		grid $statf -in $w -row 2 -column 0 \
-		-sticky ew
-		grid $bf -in $w -row 3 -column 0 \
-		-sticky sew \
-		-padx 3 \
-		-pady 3
+		grid $topf -in $w -row 0 -column 0 -sticky new
+		grid $treef -in $w -row 1 -column 0 -sticky nesw
+		grid $statf -in $w -row 2 -column 0 -sticky ew
+		grid $bf -in $w -row 3 -column 0 -sticky sew -padx 3 -pady 3
 		
-		grid $topf.b_add_rec -in $topf -row 0 -column 0 \
-		-padx 3 \
-		-pady 4
-		grid $topf.b_delete_rec -in $topf -row 0 -column 1 \
-		-padx "0 3" \
-		-pady 4
-		grid $topf.b_edit_rec -in $topf -row 0 -column 2 \
-		-padx "0 3" \
-		-pady 4
-		grid $topf.sep_1 -in $topf -row 0 -column 3 \
-		-sticky ns
+		grid $topf.b_add_rec -in $topf -row 0 -column 0 -padx 3 -pady 4
+		grid $topf.b_delete_rec -in $topf -row 0 -column 1 -padx "0 3" -pady 4
+		grid $topf.b_edit_rec -in $topf -row 0 -column 2 -padx "0 3" -pady 4
+		grid $topf.sep_1 -in $topf -row 0 -column 3 -sticky ns
 		
-		grid $treef.tv_rec -in $treef -row 0 -column 0 \
-		-sticky nesw
-		grid $treef.sb_rec_vert -in $treef -row 0 -column 1 \
-		-sticky ns
+		grid $treef.tv_rec -in $treef -row 0 -column 0 -sticky nesw
+		grid $treef.sb_rec_vert -in $treef -row 0 -column 1 -sticky ns
 		
-		grid $statf.lf_status -in $statf -row 0 -column 0 \
-		-sticky ew \
-		-padx 15 \
-		-pady 10
-		grid $statf.l_rec_sched -in $statf.lf_status -row 0 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady 4
-		grid $statf.l_rec_sched_info -in $statf.lf_status -row 0 -column 1 \
-		-sticky w \
-		-padx "0 7" \
-		-pady 4
-		grid $statf.b_rec_sched -in $statf.lf_status -row 0 -column 2 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady 4
-		grid $statf.l_rec_current -in $statf.lf_status -row 1 -column 0 \
-		-sticky w \
-		-padx 7 \
-		-pady "0 4"
-		grid $statf.l_rec_current_info -in $statf.lf_status -row 1 -column 1 \
-		-sticky w \
-		-padx "0 7" \
-		-pady "0 4"
-		grid $statf.b_rec_current -in $statf.lf_status -row 1 -column 2 \
-		-sticky ew \
-		-padx "0 7" \
-		-pady "0 4"
+		grid $statf.lf_status -in $statf -row 0 -column 0 -sticky ew -padx 15 -pady 10
+		grid $statf.l_rec_sched -in $statf.lf_status -row 0 -column 0 -sticky w -padx 7 -pady 4
+		grid $statf.l_rec_sched_info -in $statf.lf_status -row 0 -column 1 -sticky w -padx "0 7" -pady 4
+		grid $statf.b_rec_sched -in $statf.lf_status -row 0 -column 2 -sticky ew -padx "0 7" -pady 4
+		grid $statf.l_rec_current -in $statf.lf_status -row 1 -column 0 -sticky w -padx 7 -pady "0 4"
+		grid $statf.l_rec_current_info -in $statf.lf_status -row 1 -column 1 -sticky w -padx "0 7" -pady "0 4"
+		grid $statf.b_rec_current -in $statf.lf_status -row 1 -column 2 -sticky ew -padx "0 7" -pady "0 4"
 		
-		grid $bf.b_exit -in $bf -row 0 -column 0 \
-		-pady 7 \
-		-padx 3
+		grid $bf.b_exit -in $bf -row 0 -column 0 -pady 7 -padx 3
 		grid anchor $bf e
 		
 		wm title $w [mc "Record Wizard"]

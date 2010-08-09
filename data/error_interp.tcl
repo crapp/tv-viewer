@@ -30,74 +30,32 @@ proc error_interpUi {msg options} {
 	set mf [ttk::frame $w.f_main]
 	set bf [ttk::frame $w.f_buttons -style TLabelframe]
 	
-	ttk::label $mf.l_info \
-	-image $::icon_m(dialog-warning) \
-	-compound left
-	
-	text $mf.t_info \
-	-yscrollcommand [list $mf.scrollb_info set] \
-	-wrap word \
-	-height 10
-		
-	ttk::scrollbar $mf.scrollb_info \
-	-command [list $mf.t_info yview]
-	
-	ttk::checkbutton $mf.cb_stoperr \
-	-variable err(cb_stoperr) \
-	-text [mc "Skip further error messages"]
-	
-	ttk::button $bf.b_ok \
-	-text [mc "OK"] \
-	-command [list destroy $w]
-	
-	ttk::button $bf.b_bugr \
-	-text [mc "File bug report"] \
-	-command error_interpFbug
-	
-	ttk::button $bf.b_save \
-	-text [mc "Save to disk"] \
-	-command [list error_interpSdisk $msg $options]
+	ttk::label $mf.l_info -image $::icon_m(dialog-warning) -compound left
+	text $mf.t_info -yscrollcommand [list $mf.scrollb_info set] -wrap word -height 10
+	ttk::scrollbar $mf.scrollb_info -command [list $mf.t_info yview]
+	ttk::checkbutton $mf.cb_stoperr -variable err(cb_stoperr) -text [mc "Skip further error messages"]
+	ttk::button $bf.b_ok -text [mc "OK"] -command [list destroy $w]
+	ttk::button $bf.b_bugr -text [mc "File bug report"] -command error_interpFbug
+	ttk::button $bf.b_save -text [mc "Save to disk"] -command [list error_interpSdisk $msg $options]
 	
 	grid rowconfigure $w 0 -weight 1
 	grid rowconfigure $mf 0 -weight 1
 	grid columnconfigure $w 0 -weight 1
 	grid columnconfigure $mf 0 -weight 1
 	
-	grid $mf -in $w -row 0 -column 0 \
-	-sticky nesw
-	grid $bf -in $w -row 1 -column 0 \
-	-sticky ew \
-	-padx 3 \
-	-pady 3
+	grid $mf -in $w -row 0 -column 0 -sticky nesw
+	grid $bf -in $w -row 1 -column 0 -sticky ew -padx 3 -pady 3
 	
 	grid anchor $bf e
 	
-	grid $mf.l_info -in $mf -row 0 -column 0 \
-	-sticky w \
-	-padx 5 \
-	-pady 10 \
-	-columnspan 2
-	grid $mf.t_info -in $mf -row 1 -column 0 \
-	-sticky nesw \
-	-padx 3 \
-	-pady 3
-	grid $mf.scrollb_info -in $mf -row 1 -column 1 \
-	-sticky ns \
-	-pady 5
-	grid $mf.cb_stoperr -in $mf -row 2 -column 0 \
-	-sticky w \
-	-padx 5 \
-	-pady 7
+	grid $mf.l_info -in $mf -row 0 -column 0 -sticky w -padx 5 -pady 10 -columnspan 2
+	grid $mf.t_info -in $mf -row 1 -column 0 -sticky nesw -padx 3 -pady 3
+	grid $mf.scrollb_info -in $mf -row 1 -column 1 -sticky ns -pady 5
+	grid $mf.cb_stoperr -in $mf -row 2 -column 0 -sticky w -padx 5 -pady 7
 	
-	grid $bf.b_ok -in $bf -row 0 -column 0 \
-	-pady 7 \
-	-padx 3
-	grid $bf.b_bugr -in $bf -row 0 -column 1 \
-	-pady 7 \
-	-padx "0 3"
-	grid $bf.b_save -in $bf -row 0 -column 2 \
-	-pady 7 \
-	-padx "0 3"
+	grid $bf.b_ok -in $bf -row 0 -column 0 -pady 7 -padx 3
+	grid $bf.b_bugr -in $bf -row 0 -column 1 -pady 7 -padx "0 3"
+	grid $bf.b_save -in $bf -row 0 -column 2 -pady 7 -padx "0 3"
 	
 	if {[string trim $msg] != {}} {
 		$mf.l_info configure -text [mc "Error: %" $msg]
