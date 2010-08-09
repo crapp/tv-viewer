@@ -81,10 +81,10 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 		log_writeOutTv 2 "Can't start timeshift. Tried for 30 seconds."
 		catch {exec kill $rec_pid}
 		catch {exec ""}
-		if {[winfo exists .ftvBg.l_anigif]} {
+		if {[winfo exists .fvidBg.l_anigif]} {
 			launch_splashPlay cancel 0 0 0
-			place forget .ftvBg.l_anigif
-			destroy .ftvBg.l_anigif
+			place forget .fvidBg.l_anigif
+			destroy .fvidBg.l_anigif
 		}
 		record_linkerPrestartCancel timeshift
 		return

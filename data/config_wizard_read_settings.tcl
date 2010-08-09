@@ -115,6 +115,7 @@ proc config_wizardReadSettings {} {
 		rec_duration_min 0
 		rec_duration_sec 0
 		rec_sched_auto 1
+		rec_hour_format 24
 		timeshift_df 1000
 		timeshift_path "$::option(home)/tmp"
 	}
@@ -214,6 +215,7 @@ proc config_wizardReadSettings {} {
 		rec_duration_min 0
 		rec_duration_sec 0
 		rec_sched_auto 1
+		rec_hour_format 24
 		timeshift_df 1000
 		timeshift_path "$::option(home)/tmp"
 	}
@@ -308,6 +310,7 @@ proc config_wizardReadSettings {} {
 		sb_duration_min rec_duration_min
 		sb_duration_sec rec_duration_sec
 		cb_sched_auto rec_sched_auto
+		rb_clock rec_hour_format
 		ent_times_df timeshift_df
 		ent_times_folder timeshift_path
 	}

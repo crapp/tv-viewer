@@ -16,10 +16,10 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc main_menuTvview {menubar toolbChanCtrl toolbPlay tvBg handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuTvview \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\} \{$handler\}"
+proc main_menuTvview {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuTvview \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
-		set mTv .ftvBg.mContext
+		set mTv .fvidBg.mContext
 	} else {
 		set mTv [menu $menubar.mbTvviewer.mTvviewer \
 		-tearoff 0 \
@@ -71,10 +71,10 @@ proc main_menuTvview {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-accelerator [mc "Ctrl+X"]
 }
 
-proc main_menuNav {menubar toolbChanCtrl toolbPlay tvBg handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuNav \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\} \{$handler\}"
+proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuNav \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
-		set menubar .ftvBg.mContext
+		set menubar .fvidBg.mContext
 		set mNav [menu $menubar.mNavigation \
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))]
@@ -93,10 +93,10 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		set mNav [menu $menubar.mbNavigation.mNavigation \
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))]
-			set mNavRew [menu $menubar.mbNavigation.mNavigationRewind \
+			set mNavRew [menu $menubar.mbNavigation.mNavigation.mNavigationRewind \
 			-tearoff 0 \
 			-background $::option(theme_$::option(use_theme))]
-			set mNavForw [menu $menubar.mbNavigation.mNavigationForward \
+			set mNavForw [menu $menubar.mbNavigation.mNavigation.mNavigationForward \
 			-tearoff 0 \
 			-background $::option(theme_$::option(use_theme))]
 	}
@@ -126,24 +126,28 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-compound left \
 	-image $::icon_s(playback-start) \
 	-command {event generate . <<start>>} \
+	-state disabled \
 	-accelerator [mc "Shift+P"]
 	$mNav add command \
 	-label [mc "Pause"] \
 	-compound left \
 	-image $::icon_s(playback-pause) \
 	-command {event generate . <<pause>>} \
+	-state disabled \
 	-accelerator P
 	$mNav add command \
 	-label [mc "Stop"] \
 	-compound left \
 	-image $::icon_s(playback-stop) \
 	-command {event generate . <<stop>>} \
+	-state disabled \
 	-accelerator [mc "Shift+S"]
 	$mNav add separator
 	$mNav add cascade \
 	-label [mc "Rewind"] \
 	-compound left \
 	-image $::icon_s(rewind-small) \
+	-state disabled \
 	-menu $mNavRew
 		$mNavRew add command \
 		-label [mc "-10 seconds"] \
@@ -173,6 +177,7 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-label [mc "Forward"] \
 	-compound left \
 	-image $::icon_s(forward-small) \
+	-state disabled \
 	-menu $mNavForw
 		$mNavForw add command \
 		-label [mc "+10 seconds"] \
@@ -200,10 +205,10 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-accelerator [mc "End"]
 }
 
-proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuView \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\} \{$handler\}"
+proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuView \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
-		set menubar .ftvBg.mContext
+		set menubar .fvidBg.mContext
 		set mView [menu $menubar.mView \
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))]
@@ -228,16 +233,16 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		set mView [menu $menubar.mbView.mView \
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))]
-			set mViewPan [menu $menubar.mbView.mViewPanScan \
+			set mViewPan [menu $menubar.mbView.mView.mViewPanScan \
 			-tearoff 0 \
 			-background $::option(theme_$::option(use_theme))]
-			set mViewSize [menu $menubar.mbView.mViewSize \
+			set mViewSize [menu $menubar.mbView.mView.mViewSize \
 			-tearoff 0 \
 			-background $::option(theme_$::option(use_theme))]
-			set mViewMove [menu $menubar.mbView.mViewMove \
+			set mViewMove [menu $menubar.mbView.mView.mViewMove \
 			-tearoff 0 \
 			-background $::option(theme_$::option(use_theme))]
-			set mViewTop [menu $menubar.mbView.mViewTop \
+			set mViewTop [menu $menubar.mbView.mView.mViewTop \
 			-tearoff 0 \
 			-background $::option(theme_$::option(use_theme))]
 	}
@@ -252,13 +257,13 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-label [mc "Zoom +"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmPanscan .ftvBg.cont 1] \
+		-command [list vid_wmPanscan .fvidBg.cont 1] \
 		-accelerator "E"
 		$mViewPan add command \
 		-label [mc "Zoom -"] \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmPanscan .ftvBg.cont -1] \
+		-command [list vid_wmPanscan .fvidBg.cont -1] \
 		-accelerator "W"
 		$mViewPan add command \
 		-label [mc "Pan&Scan (16:9 / 4:3)"] \
@@ -306,38 +311,38 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-label "50%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 0.5]
+		-command [list vid_wmGivenSize .fvidBg 0.5]
 		$mViewSize add command \
 		-label "75%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 0.75]
+		-command [list vid_wmGivenSize .fvidBg 0.75]
 		$mViewSize add command \
 		-label "100%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 1.0] \
+		-command [list vid_wmGivenSize .fvidBg 1.0] \
 		-accelerator [mc "Ctrl+1"]
 		$mViewSize add command \
 		-label "125%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 1.25]
+		-command [list vid_wmGivenSize .fvidBg 1.25]
 		$mViewSize add command \
 		-label "150%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 1.5]
+		-command [list vid_wmGivenSize .fvidBg 1.5]
 		$mViewSize add command \
 		-label "175%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 1.75]
+		-command [list vid_wmGivenSize .fvidBg 1.75]
 		$mViewSize add command \
 		-label "200%" \
 		-compound left \
 		-image $::icon_s(placeholder) \
-		-command [list vid_wmGivenSize .ftvBg 2.0] \
+		-command [list vid_wmGivenSize .fvidBg 2.0] \
 		-accelerator [mc "Ctrl+2"]
 	$mView add cascade \
 	-label [mc "Stay on top"] \
@@ -360,13 +365,13 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 		-value 2 \
 		-command [list vid_wmStayonTop 2]
 	$mView add command \
-	-command "" \
+	-command vid_wmCompact \
 	-compound left \
 	-image $::icon_s(compact) \
 	-label [mc "Compact mode"] \
 	-accelerator [mc "Ctrl+C"]
 	$mView add command \
-	-command [list vid_wmFullscreen . .ftvBg .ftvBg.cont] \
+	-command [list vid_wmFullscreen . .fvidBg .fvidBg.cont] \
 	-compound left \
 	-image $::icon_s(fullscreen) \
 	-label [mc "Fullscreen"] \
@@ -374,10 +379,10 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	
 }
 
-proc main_menuAud {menubar toolbChanCtrl toolbPlay tvBg handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuAud \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\} \{$handler\}"
+proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuAud \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
-		set menubar .ftvBg.mContext
+		set menubar .fvidBg.mContext
 		set mAud [menu $menubar.mAudio \
 		-tearoff 0 \
 		-background $::option(theme_$::option(use_theme))]
@@ -426,8 +431,8 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay tvBg handler} {
 }
 
 
-proc main_menuHelp {menubar toolbChanCtrl toolbPlay tvBg handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuHelp \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\} \{$handler\}"
+proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuHelp \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	set mHelp [menu $menubar.mbHelp.mHelp \
 	-tearoff 0 \
 	-background $::option(theme_$::option(use_theme))]
@@ -472,8 +477,8 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-label [mc "Info"]
 }
 
-proc main_menuReFo {menubar toolbChanCtrl toolbPlay tvBg handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuReFo \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\} \{$handler\}"
+proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuReFo \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	set mRew [menu $toolbPlay.mbRewChoose.mRewChoose \
 	-tearoff 0 \
 	-background $::option(theme_$::option(use_theme))]
@@ -516,15 +521,15 @@ proc main_menuReFo {menubar toolbChanCtrl toolbPlay tvBg handler} {
 	-variable tv(check_fow_10m)
 }
 
-proc main_menuContext {menubar toolbChanCtrl toolbPlay tvBg} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuContext \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$tvBg\}"
-	set mContext [menu $tvBg.mContext \
+proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuContext \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\}"
+	set mContext [menu $vidBg.mContext \
 	-tearoff 0 \
 	-background $::option(theme_$::option(use_theme))]
 	$mContext add separator
 	
-	main_menuNav $menubar $toolbChanCtrl $toolbPlay $tvBg context
-	main_menuView $menubar $toolbChanCtrl $toolbPlay $tvBg context
-	main_menuAud $menubar $toolbChanCtrl $toolbPlay $tvBg context
-	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $tvBg context
+	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg context
 }

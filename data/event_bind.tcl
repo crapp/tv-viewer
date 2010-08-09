@@ -54,22 +54,22 @@ proc event_constr {handler} {
 	event add <<pause>> <Key-p>
 	event add <<start>> <Shift-Key-P>
 	event add <<stop>> <Shift-Key-S>
-	bind . <Key-f> [list vid_wmFullscreen . .ftvBg .ftvBg.cont]
+	bind . <Key-f> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
 	bind . <Control-Key-c> vid_wmCompact
-	bind .ftvBg.cont <Double-ButtonPress-1> [list vid_wmFullscreen . .ftvBg .ftvBg.cont]
-	bind .ftvBg <Double-ButtonPress-1> [list vid_wmFullscreen . .ftvBg .ftvBg.cont]
-	bind . <Control-Key-1> [list vid_wmGivenSize .ftvBg 1]
-	bind . <Control-Key-2> [list vid_wmGivenSize .ftvBg 2]
-	bind . <Key-e> [list vid_wmPanscan .ftvBg.cont 1]
-	bind . <Key-w> [list vid_wmPanscan .ftvBg.cont -1]
+	bind .fvidBg.cont <Double-ButtonPress-1> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
+	bind .fvidBg <Double-ButtonPress-1> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
+	bind . <Control-Key-1> [list vid_wmGivenSize .fvidBg 1]
+	bind . <Control-Key-2> [list vid_wmGivenSize .fvidBg 2]
+	bind . <Key-e> [list vid_wmPanscan .fvidBg.cont 1]
+	bind . <Key-w> [list vid_wmPanscan .fvidBg.cont -1]
 	bind . <Shift-Key-W> {vid_wmPanscanAuto}
 	bind . <Alt-Key-Right> [list vid_wmMoveVideo 0]
 	bind . <Alt-Key-Down> [list vid_wmMoveVideo 1]
 	bind . <Alt-Key-Left> [list vid_wmMoveVideo 2]
 	bind . <Alt-Key-Up> [list vid_wmMoveVideo 3]
 	bind . <Key-c> [list vid_wmMoveVideo 4]
-	bind .ftvBg <ButtonPress-3> [list tk_popup .ftvBg.mContext %X %Y]
-	bind .ftvBg.cont <ButtonPress-3> [list tk_popup .ftvBg.mContext %X %Y]
+	bind .fvidBg <ButtonPress-3> [list tk_popup .fvidBg.mContext %X %Y]
+	bind .fvidBg.cont <ButtonPress-3> [list tk_popup .fvidBg.mContext %X %Y]
 	bind . <Mod4-Key-s> [list vid_callbackMplayerRemote "screenshot 0"]
 	if {$handler} {
 		event add <<record>> <Key-r>

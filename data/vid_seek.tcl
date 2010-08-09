@@ -44,7 +44,7 @@ proc vid_seek {secs direct} {
 		8192 12
 		16384 18
 	}
-	if {$::vid(pbMode) == 1} {
+	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
 		if {$direct == 1} {
 			if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
 				log_writeOutTv 0 "Seeking +$secs\s"
@@ -110,8 +110,12 @@ proc vid_seek {secs direct} {
 		}
 		if {$direct == 0} {
 			if {[.ftoolb_Play.bPause instate disabled] == 0} {
-				.ftoolb_Play.bPause state disabled
 				.ftoolb_Play.bPlay state !disabled
+				.ftoolb_Play.bPause state disabled
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
+				.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
+				.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
 				log_writeOutTv 0 "Pause playback."
 				bind . <<forward_10s>> {}
 				bind . <<forward_1m>> {}
@@ -126,6 +130,10 @@ proc vid_seek {secs direct} {
 			} else {
 				.ftoolb_Play.bPlay state disabled
 				.ftoolb_Play.bPause state !disabled
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state normal
+				.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
+				.fvidBg.mContext.mNavigation entryconfigure 6 -state normal
 				set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
 				log_writeOutTv 0 "Start playback."
 				bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}

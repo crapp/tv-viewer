@@ -228,7 +228,7 @@ proc main_frontendUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendUi \033\[0m "
 	place [ttk::frame .bg] -x 0 -y 0 -relwidth 1 -relheight 1
 
-	set menubar [ttk::frame .foptions_bar] ; place [ttk::label $menubar.bg -style Toolbutton] -relwidth 1 -relheight 1
+	set menubar [ttk::frame .foptions_bar] ; place [ttk::label $menubar.bg -style Toolbutton ] -relwidth 1 -relheight 1
 	
 	ttk::separator .seperatMenu -orient horizontal
 		
@@ -242,8 +242,8 @@ proc main_frontendUi {} {
 	
 	set toolbDisp [frame .ftoolb_Disp -background black]
 	
-	set tvBg [frame .ftvBg -background black -height 480 -width 654]
-	set tvCont [frame .ftvBg.cont -background "" -container yes]
+	set vidBg [frame .fvidBg -background black -height 480 -width 654]
+	set vidCont [frame .fvidBg.cont -background "" -container yes]
 	
 	ttk::menubutton $menubar.mbTvviewer \
 	-text TV-Viewer \
@@ -417,11 +417,11 @@ proc main_frontendUi {} {
 	-textvariable main(label_file_time)
 	
 	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
-		ttk::label $tvBg.l_bgImage \
+		ttk::label $vidBg.l_bgImage \
 		-image $::icon_e(logo-tv-viewer08x-noload_xmas) \
 		-background #414141
 	} else {
-		ttk::label $tvBg.l_bgImage \
+		ttk::label $vidBg.l_bgImage \
 		-image $::icon_e(logo-tv-viewer08x-noload) \
 		-background #414141
 	}
@@ -440,7 +440,7 @@ proc main_frontendUi {} {
 	grid $stations -in . -row 3 -column 0 \
 	-sticky nesw \
 	-padx "0 2"
-	grid $tvBg -in . -row 3 -column 1 \
+	grid $vidBg -in . -row 3 -column 1 \
 	-sticky nesw
 	grid $toolbChanCtrl -in . -row 4 -column 0 \
 	-sticky ew
@@ -558,10 +558,10 @@ proc main_frontendUi {} {
 	grid columnconfigure $toolbPlay 12 -weight 1
 	grid columnconfigure $toolbDisp 2 -weight 1
 	
-	place $tvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
+	place $vidBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	
 	set ::vid(stayontop) 0
-	set ::option(cursor_old) [$tvCont cget -cursor]
+	set ::option(cursor_old) [$vidCont cget -cursor]
 	set ::main(compactMode) 0
 	set ::data(panscan) 0
 	set ::data(panscanAuto) 0
@@ -570,16 +570,17 @@ proc main_frontendUi {} {
 	set ::main(volume_scale) 100
 	set ::main(label_file_time) " --:-- / --:--"
 	set ::chan(old_channel) 0
+	set ::vid(recStart) 0
 	
 	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	
-	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $tvBg standard
-	main_menuNav $menubar $toolbChanCtrl $toolbPlay $tvBg standard
-	main_menuView $menubar $toolbChanCtrl $toolbPlay $tvBg standard
-	main_menuAud $menubar $toolbChanCtrl $toolbPlay $tvBg standard
-	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $tvBg standard
-	main_menuReFo $menubar $toolbChanCtrl $toolbPlay $tvBg standard
-	main_menuContext $menubar $toolbChanCtrl $toolbPlay $tvBg
+	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuReFo $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuContext $menubar $toolbChanCtrl $toolbPlay $vidBg
 	main_frontendChannelHandler main
 	
 	if {$::main(running_recording) == 0} {
@@ -615,8 +616,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "width [winfo width .ftvBg]"; puts "height [winfo height .ftvBg]"}
-	bind . <Key-y> {wm geometry . {}; .ftvBg configure -width $::option(resolx) -height $::option(resoly)}
+	bind . <Key-x> {puts "width [winfo width .fvidBg]"; puts "height [winfo height .fvidBg]"}
+	bind . <Key-y> {after 0 [vid_osd osd_group_w 1000 "Pan&Scan 4:3"]}
 	
 	command_socket
 	
@@ -716,22 +717,22 @@ proc main_frontendUi {} {
 	
 	#FIXME Hide cursor in windowed mode?
 	
-	bind $tvCont <Motion> {
-		vid_wmCursorHide .ftvBg.cont 0
+	bind $vidCont <Motion> {
+		vid_wmCursorHide .fvidBg.cont 0
 		#~ vid_wmCursorPlaybar %Y
 		#~ vid_slistCursor %X %Y
 	}
-	bind $tvBg <Motion> {
-		vid_wmCursorHide .ftvBg 0
+	bind $vidBg <Motion> {
+		vid_wmCursorHide .fvidBg 0
 		#~ vid_wmCursorPlaybar %Y
 		#~ vid_slistCursor %X %Y
 	}
-	bind . <ButtonPress-1> {.ftvBg.cont configure -cursor arrow
-							.ftvBg configure -cursor arrow}
-	set ::cursor($tvCont) ""
-	set ::cursor($tvBg) ""
-	vid_wmCursorHide $tvCont 0
-	vid_wmCursorHide $tvBg 0
+	bind . <ButtonPress-1> {.fvidBg.cont configure -cursor arrow
+							.fvidBg configure -cursor arrow}
+	set ::cursor($vidCont) ""
+	set ::cursor($vidBg) ""
+	vid_wmCursorHide $vidCont 0
+	vid_wmCursorHide $vidBg 0
 	
 	if {$::option(systray_start) == 1} {
 		set ::choice(cb_systray_main) 1

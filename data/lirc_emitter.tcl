@@ -165,7 +165,7 @@ if {$start_options(slist_osd_down)} {
 	exit 0
 }
 if {$start_options(fullscreen)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmFullscreen . .ftvBg .ftvBg.cont"
+	command_WritePipe 0 "tv-viewer_main vid_wmFullscreen . .fvidBg .fvidBg.cont"
 	log_writeOutTv 0 "Lirc emitter received Signal fullscreen"
 	exit 0
 }
@@ -175,12 +175,12 @@ if {$start_options(quit)} {
 	exit 0
 }
 if {$start_options(zoom_incr)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .ftvBg.cont 1"
+	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .fvidBg.cont 1"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr"
 	exit 0
 }
 if {$start_options(zoom_decr)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .ftvBg.cont -1"
+	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .fvidBg.cont -1"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr"
 	exit 0
 }
@@ -190,12 +190,12 @@ if {$start_options(zoom_auto)} {
 	exit 0
 }
 if {$start_options(size_stnd)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .ftvBg 1"
+	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .fvidBg 1"
 	log_writeOutTv 0 "Lirc emitter received Signal size_stnd"
 	exit 0
 }
 if {$start_options(size_double)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .ftvBg 2"
+	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .fvidBg 2"
 	log_writeOutTv 0 "Lirc emitter received Signal size_double"
 	exit 0
 }

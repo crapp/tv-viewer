@@ -34,7 +34,7 @@ proc station_editPreview {w} {
 				set freq [lindex [$w item [lindex [$w selection] end] -values] 1]
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
 				.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
-				vid_Playback .ftvBg .ftvBg.cont 0 0
+				vid_Playback .fvidBg .fvidBg.cont 0 0
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
@@ -188,7 +188,7 @@ proc station_editUi {} {
 	}
 	
 	if {[wm attributes . -fullscreen] == 1} {
-		vid_wmFullscreen . .ftvBg.cont .ftvBg
+		vid_wmFullscreen . .fvidBg.cont .fvidBg
 	}
 	
 	# Setting up main Interface

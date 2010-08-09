@@ -120,6 +120,7 @@ proc main_readConfig {} {
 		rec_duration_min 0
 		rec_duration_sec 0
 		rec_sched_auto 1
+		rec_hour_format 24
 		timeshift_df 1000
 		timeshift_path "$::option(home)/tmp"
 	}

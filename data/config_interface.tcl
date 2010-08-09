@@ -415,8 +415,15 @@ proc option_screen_6 {} {
 			if {"$theme" == "clam"} {
 				ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
 			}
-			.options_bar.mOptions configure -background $::option(theme_$theme)
-			.options_bar.mHelp configure -background $::option(theme_$theme)
+			#FIXME One color for all menus, no matter which theme
+			.foptions_bar.mbTvviewer.mTvviewer configure -background  $::option(theme_$theme)
+			.foptions_bar.mbNavigation.mNavigation configure -background  $::option(theme_$theme)
+			.foptions_bar.mbView.mView configure -background  $::option(theme_$theme)
+			.foptions_bar.mbAudio.mAudio configure -background  $::option(theme_$theme)
+			.foptions_bar.mbHelp.mHelp configure -background  $::option(theme_$theme)
+			.fvidBg.mContext.mNavigation configure -background  $::option(theme_$theme)
+			.fvidBg.mContext.mView configure -background  $::option(theme_$theme)
+			.fvidBg.mContext.mAudio configure -background  $::option(theme_$theme)
 		}
 		
 		proc config_interfaceChangeTooltips {w} {

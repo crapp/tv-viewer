@@ -16,8 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc vid_Playback {tv_bg tv_cont handler file} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_Playback \033\[0m \{$tv_bg\} \{$tv_cont\} \{$handler\} \{$file\}"
+proc vid_Playback {vid_bg vid_cont handler file} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_Playback \033\[0m \{$vid_bg\} \{$vid_cont\} \{$handler\} \{$file\}"
 	array set vopt {
 		x11 {-vo x11 -zoom}
 		xv {-vo xv}
@@ -151,7 +151,7 @@ proc vid_Playback {tv_bg tv_cont handler file} {
 	} else {
 		lappend mcommand -nostop-xscreensaver
 	}
-	set winid [expr [winfo id $tv_cont]]
+	set winid [expr [winfo id $vid_cont]]
 	
 	lappend mcommand -nomouseinput -input nodefault-bindings:conf=/dev/null {*}{-osdlevel 0} -nosub -noautosub
 	
@@ -218,22 +218,23 @@ proc vid_Playback {tv_bg tv_cont handler file} {
 		} else {
 			.ftoolb_Top.bTv state pressed
 		}
-		catch {place forget .ftvBg.l_bgImage}
+		catch {place forget .fvidBg.l_bgImage}
 		if {[winfo exists .tray] == 1} {
-		catch {settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]}
+			catch {settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]}
 		}
-		if {[winfo exists .ftvBg.l_anigif]} {
+		if {[winfo exists .fvidBg.l_anigif]} {
 			launch_splashPlay cancel 0 0 0
-			place forget .ftvBg.l_anigif
-			destroy .ftvBg.l_anigif
+			place forget .fvidBg.l_anigif
+			destroy .fvidBg.l_anigif
 		}
 		set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
-		label .ftvBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-		place .ftvBg.l_anigif -in .ftvBg -anchor center -relx 0.5 -rely 0.5
+		label .fvidBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+		place .fvidBg.l_anigif -in .fvidBg -anchor center -relx 0.5 -rely 0.5
 		set img_list_length [llength $img_list]
-		after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
+		after 0 [list launch_splashPlay $img_list $img_list_length 1 .fvidBg.l_anigif]
 		
 		set ::vid(pbMode) 0
+		set ::vid(recStart) 0
 		set ::main(label_file_time) "--:-- / --:--"
 		
 		.ftoolb_Play.bPause state disabled
@@ -246,6 +247,17 @@ proc vid_Playback {tv_bg tv_cont handler file} {
 		.ftoolb_Play.mbForwChoose state disabled
 		.ftoolb_Play.bForwEnd state disabled
 		.ftoolb_Play.bSave state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 7 -state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 9 -state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 10 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 7 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 9 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 10 -state disabled
+		settooltip .ftoolb_Play.bSave {}
 		
 		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
@@ -254,72 +266,88 @@ proc vid_Playback {tv_bg tv_cont handler file} {
 		log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
 	} else {
 		if {[file exists "$file"]} {
+			puts "handler vid_Playback $handler"
 			lappend mcommand -wid $winid "$file"
-			catch {place forget .ftvBg.l_bgImage}
-			#~ if {[winfo exists .tv.file_play_bar] == 0} {
-				#FIXME Why restart this proc when old fileplaybar does not exist
-				#~ vid_PlaybackFileplaybar $tv_bg $tv_cont $handler "$file"
-				#~ if {"$handler" == "timeshift"} {
-					#~ bind . <<start>> {}
-					#~ vid_Playback $tv_bg $tv_cont $handler "$file"
-					#~ return
-				#~ }
-			#~ } else {
-				log_writeOutTv 0 "Starting playback of $file."
-				log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
-				log_writeOutMpl 1 "MPlayer command line:"
-				log_writeOutMpl 1 "$mcommand"
-				if {[winfo exists .ftvBg.l_anigif]} {
-					launch_splashPlay cancel 0 0 0
-					place forget .ftvBg.l_anigif
-					destroy .ftvBg.l_anigif
-				}
-				set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
-				label .ftvBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-				place .ftvBg.l_anigif -in .ftvBg -anchor center -relx 0.5 -rely 0.5
-				set img_list_length [llength $img_list]
-				after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
-				set ::vid(mcommand) $mcommand
-				if {[info exists ::data(file_size)] == 0} {
-					set delay $playdelay($::option(player_cache))
-				} else {
-					if {[expr $::data(file_size) * 1000] < $playdelay($::option(player_cache))} {
-						set delay [expr $playdelay($::option(player_cache)) - ( $::data(file_size) * 1000)]
-					} else {
-						set delay 0
-					}
-				}
-				log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
-				after $delay {
+			catch {place forget .fvidBg.l_bgImage}
+			#FIXME Why restart this proc when old fileplaybar does not exist
+			bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
+			bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
+			bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
+			bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
+			bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
+			bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
+			bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
+			bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
+			bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
+			.ftoolb_Play.bPause state !disabled
+			.ftoolb_Play.bPlay state disabled
+			.ftoolb_Play.bStop state !disabled
+			.ftoolb_Play.bRewStart state !disabled
+			.ftoolb_Play.bRewSmall state !disabled
+			.ftoolb_Play.mbRewChoose state !disabled
+			.ftoolb_Play.bForwSmall state !disabled
+			.ftoolb_Play.mbForwChoose state !disabled
+			.ftoolb_Play.bForwEnd state !disabled
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 7 -state normal
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 9 -state normal
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 10 -state normal
+			.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
+			.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
+			.fvidBg.mContext.mNavigation entryconfigure 7 -state normal
+			.fvidBg.mContext.mNavigation entryconfigure 9 -state normal
+			.fvidBg.mContext.mNavigation entryconfigure 10 -state normal
+			if {"$handler" == "timeshift"} {
+				.ftoolb_Top.bTimeshift state !disabled
+				bind . <<start>> {}
+				.ftoolb_Play.bPlay configure -command [list vid_seek 0 0]
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
+				.fvidBg.mContext.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
+			} else {
+				if {$::vid(recStart)} {
 					.ftoolb_Play.bPlay configure -command [list vid_seek 0 0]
-					.ftoolb_Top.bTimeshift state !disabled
-					bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
-					bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
-					bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
-					bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
-					bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
-					bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
-					bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
-					bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
-					bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
-					bind . <<start>> {}
-					.ftoolb_Play.bPause state !disabled
-					.ftoolb_Play.bPlay state disabled
-					.ftoolb_Play.bStop state !disabled
-					.ftoolb_Play.bRewStart state !disabled
-					.ftoolb_Play.bRewSmall state !disabled
-					.ftoolb_Play.mbRewChoose state !disabled
-					.ftoolb_Play.bForwSmall state !disabled
-					.ftoolb_Play.mbForwChoose state !disabled
-					.ftoolb_Play.bForwEnd state !disabled
-					
-					set ::data(mplayer) [open "|$::vid(mcommand)" r+]
-					fconfigure $::data(mplayer) -blocking 0 -buffering line
-					fileevent $::data(mplayer) readable [list vid_callbackVidData]
-					log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
-					log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
+					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
+					.fvidBg.mContext.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
+				} else {
+					.ftoolb_Top.bTimeshift state disabled
+					bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
+					set ::vid(recStart) 1
+					return
 				}
-			#~ }
+			}
+			log_writeOutTv 0 "Starting playback of $file."
+			log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
+			log_writeOutMpl 1 "MPlayer command line:"
+			log_writeOutMpl 1 "$mcommand"
+			if {[winfo exists .fvidBg.l_anigif]} {
+				launch_splashPlay cancel 0 0 0
+				place forget .fvidBg.l_anigif
+				destroy .fvidBg.l_anigif
+			}
+			set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
+			label .fvidBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+			place .fvidBg.l_anigif -in .fvidBg -anchor center -relx 0.5 -rely 0.5
+			set img_list_length [llength $img_list]
+			after 0 [list launch_splashPlay $img_list $img_list_length 1 .fvidBg.l_anigif]
+			set ::vid(mcommand) $mcommand
+			if {[info exists ::data(file_size)] == 0} {
+				set delay $playdelay($::option(player_cache))
+			} else {
+				if {[expr $::data(file_size) * 1000] < $playdelay($::option(player_cache))} {
+					set delay [expr $playdelay($::option(player_cache)) - ( $::data(file_size) * 1000)]
+				} else {
+					set delay 0
+				}
+			}
+			log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
+			after $delay {
+				set ::data(mplayer) [open "|$::vid(mcommand)" r+]
+				fconfigure $::data(mplayer) -blocking 0 -buffering line
+				fileevent $::data(mplayer) readable [list vid_callbackVidData]
+				log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
+				log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
+			}
 			set ::vid(pbMode) 1
 		} else {
 			log_writeOutTv 2 "Could not locate file for file playback."
@@ -342,30 +370,30 @@ proc vid_playbackStop {com handler} {
 		return 1
 	}
 	#FIXME Fix and test the window names for canceling hiding cursor?!
-	if {[info exists ::option(cursor_id\(.ftvBg\))] == 1} {
-		foreach id [split $::option(cursor_id\(.ftvBg\))] {
+	if {[info exists ::option(cursor_id\(.fvidBg\))] == 1} {
+		foreach id [split $::option(cursor_id\(.fvidBg\))] {
 			after cancel $id
 		}
-		unset -nocomplain ::option(cursor_id\(.ftvBg\))
+		unset -nocomplain ::option(cursor_id\(.fvidBg\))
 	}
-	if {[info exists ::option(cursor_id\(.ftvBg.cont\))] == 1} {
-		foreach id [split $::option(cursor_id\(.ftvBg.cont\))] {
+	if {[info exists ::option(cursor_id\(.fvidBg.cont\))] == 1} {
+		foreach id [split $::option(cursor_id\(.fvidBg.cont\))] {
 			after cancel $id
 		}
-		unset -nocomplain ::option(cursor_id\(.ftvBg.cont\))
+		unset -nocomplain ::option(cursor_id\(.fvidBg.cont\))
 	}
-	if {[winfo exists .ftvBg.l_anigif]} {
+	if {[winfo exists .fvidBg.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .ftvBg.l_anigif}
-		catch {destroy .ftvBg.l_anigif}
+		catch {place forget .fvidBg.l_anigif}
+		catch {destroy .fvidBg.l_anigif}
 	}
 	if {"$handler" == "pic"} {
-		place forget .ftvBg.cont
-		place .ftvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
-		bind .ftvBg.cont <Configure> {}
+		place forget .fvidBg.cont
+		place .fvidBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
+		bind .fvidBg.cont <Configure> {}
 	} else {
-		place forget .ftvBg.cont
-		bind .ftvBg.cont <Configure> {}
+		place forget .fvidBg.cont
+		bind .fvidBg.cont <Configure> {}
 	}
 	if {[winfo exists .station]} {
 		.station.top_buttons.b_station_preview state !pressed
@@ -383,8 +411,14 @@ proc vid_playbackStop {com handler} {
 		if {$::vid(pbMode) == 1} {
 			.ftoolb_Play.bPlay state !disabled
 			.ftoolb_Play.bPause state disabled
-			.ftoolb_Play.bPlay configure -command {vid_Playback .ftvBg .ftvBg.cont 0 "$::vid(current_rec_file)"}
-			bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont 0 "$::vid(current_rec_file)"}
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
+			.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
+			.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
+			.ftoolb_Play.bPlay configure -command {event generate . <<start>>}
+			.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command {event generate . <<start>>}
+			.fvidBg.mContext.mNavigation entryconfigure 5 -command {event generate . <<start>>}
+			bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
 		}
 	}
 	log_writeOutTv 0 "Stopping playback"

@@ -286,7 +286,7 @@ proc chan_zapperInputQuery {secs input restart} {
 				after 0 [list vid_osd osd_group_f 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}
 			if {$restart == 1} {
-				vid_Playback .ftvBg .ftvBg.cont 0 0
+				vid_Playback .fvidBg .fvidBg.cont 0 0
 			} else {
 				bind . <<input_up>> "chan_zapperInput 1 1"
 				bind . <<input_down>> "chan_zapperInput 1 -1"

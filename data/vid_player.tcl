@@ -172,7 +172,7 @@ proc vid_playerRendering {} {
 				if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 					catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 				}
-				vid_Playback .ftvBg .ftvBg.cont
+				vid_Playback .fvidBg .fvidBg.cont
 			}
 		} else {
 			vid_playbackStop 0 pic
@@ -217,7 +217,7 @@ proc vid_playerRendering {} {
 			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
 		}
 		main_pic_streamDimensions
-		vid_Playback .ftvBg .ftvBg.cont 0 0
+		vid_Playback .fvidBg .fvidBg.cont 0 0
 	}
 }
 
@@ -230,7 +230,7 @@ proc vid_playerLoop {} {
 			catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 		}
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_playerLoop \033\[0;1;31m::complete:: \033\[0m"
-		vid_Playback .ftvBg .ftvBg.cont 0 0
+		vid_Playback .fvidBg .fvidBg.cont 0 0
 	}
 }
 

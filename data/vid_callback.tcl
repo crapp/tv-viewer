@@ -44,13 +44,13 @@ proc vid_callbackVidData {} {
 				}
 			}
 			unset -nocomplain ::data(mplayer)
-			place forget .ftvBg.cont
-			bind .ftvBg.cont <Configure> {}
+			place forget .fvidBg.cont
+			bind .fvidBg.cont <Configure> {}
 			if {[.ftoolb_Top.bTimeshift instate disabled] == 0} {
-				if {[winfo exists .ftvBg.l_anigif]} {
+				if {[winfo exists .fvidBg.l_anigif]} {
 					launch_splashPlay cancel 0 0 0
-					place forget .ftvBg.l_anigif
-					destroy .ftvBg.l_anigif
+					place forget .fvidBg.l_anigif
+					destroy .fvidBg.l_anigif
 				}
 			}
 			if {[winfo exists .station]} {
@@ -66,8 +66,14 @@ proc vid_callbackVidData {} {
 			if {$::vid(pbMode) == 1} {
 				.ftoolb_Play.bPlay state !disabled
 				.ftoolb_Play.bPause state disabled
-				.ftoolb_Play.bPlay configure -command {vid_Playback .ftvBg .ftvBg.cont 0 "$::vid(current_rec_file)"}
-				bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont 0 "$::vid(current_rec_file)"}
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
+				.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
+				.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
+				.ftoolb_Play.bPlay configure -command {event generate . <<start>>}
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command {event generate . <<start>>}
+				.fvidBg.mContext.mNavigation entryconfigure 5 -command {event generate . <<start>>}
+				bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
 				set status_record [monitor_partRunning 3]
@@ -92,10 +98,10 @@ proc vid_callbackVidData {} {
 					}
 					#FIXME Do we need to set video frame to reported resolution?!
 					#~ wm geometry . {}
-					#~ .ftvBg configure -width $::option(resolx) -height $::option(resoly)
-					bind .ftvBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+					#~ .fvidBg configure -width $::option(resolx) -height $::option(resoly)
+					bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
-					bind .ftvBg.cont <Configure> {}
+					bind .fvidBg.cont <Configure> {}
 					log_writeOutTv 1 "Video aspect not managed by TV-Viewer."
 				}
 			}
@@ -122,24 +128,24 @@ proc vid_callbackVidData {} {
 			}
 			if {[string match -nocase "Starting playback*" $line]} {
 				catch {launch_splashPlay cancel 0 0 0}
-				catch {place forget .ftvBg.l_anigif}
-				catch {destroy .ftvBg.l_anigif}
+				catch {place forget .fvidBg.l_anigif}
+				catch {destroy .fvidBg.l_anigif}
 				if {$::option(player_aspect) == 1} {
 					if {$::option(player_keepaspect) == 1} {
-						place .ftvBg.cont -in .ftvBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
-						bind .ftvBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
+						bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 					} else {
-						place .ftvBg.cont -in .ftvBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
+						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
 					}
 				} else {
-					place .ftvBg.cont -in .ftvBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
-					bind .ftvBg.cont <Configure> {}
+					place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
+					bind .fvidBg.cont <Configure> {}
 				}
 				if {$::data(movevidX) != 0} {
-					place .ftvBg.cont -relx [expr ([dict get [place info .ftvBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
+					place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
 				}
 				if {$::data(movevidY) != 0} {
-					place .ftvBg.cont -rely [expr ([dict get [place info .ftvBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
+					place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
 				}
 				if {$::data(panscanAuto) == 1} {
 					set ::vid(id_panscanAuto) [after 500 {
@@ -149,7 +155,7 @@ proc vid_callbackVidData {} {
 					}]
 				} else {
 					if {$::data(panscan) != 0} {
-						place .ftvBg.cont -relheight [expr ([dict get [place info .ftvBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
+						place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
 					}
 				}
 				vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)

@@ -35,16 +35,10 @@ proc option_screen_7 {} {
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(rec_nb1) [ttk::frame $w.f_rec]
 		$w add $::window(rec_nb1) -text [mc "Record Settings"] -padding 2
-		ttk::labelframe $::window(rec_nb1).labelframe_rec \
-		-text [mc "Standard folder"]
-		ttk::entry $::window(rec_nb1).entry_rec \
-		-textvariable choice(entry_rec_path)
-		ttk::button $::window(rec_nb1).button_rec_path \
-		-text ... \
-		-width 3 \
-		-command config_recordGetRecDir
-		ttk::labelframe $::window(rec_nb1).labelframe_rec_dur \
-		-text [mc "Default record duration"]
+		ttk::labelframe $::window(rec_nb1).labelframe_rec -text [mc "Standard folder"]
+		ttk::entry $::window(rec_nb1).entry_rec -textvariable choice(entry_rec_path)
+		ttk::button $::window(rec_nb1).button_rec_path -text ... -width 3 -command config_recordGetRecDir
+		ttk::labelframe $::window(rec_nb1).labelframe_rec_dur -text [mc "Default record duration"]
 		proc config_recordDurHourValidate {value widget} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurHourValidate \033\[0m \{$value\} \{$widget\}"
 			if {[string is integer $value] != 1 || [string length $value] > 2} {
@@ -70,64 +64,26 @@ proc option_screen_7 {} {
 			}
 		}
 		
-		spinbox $::window(rec_nb1).sb_lf_duration_hour \
-		-from -1 \
-		-to 99 \
-		-width 3 \
-		-validate key \
-		-vcmd {config_recordDurHourValidate %P %W} \
-		-repeatinterval 25 \
-		-command config_recordDurHour \
-		-textvariable choice(sb_duration_hour)
-		spinbox $::window(rec_nb1).sb_lf_duration_min \
-		-from -1 \
-		-to 60 \
-		-width 3 \
-		-validate key \
-		-vcmd {config_recordDurMinValidate %P %W} \
-		-repeatinterval 25 \
-		-command config_recordDurMin \
-		-textvariable choice(sb_duration_min)
-		spinbox $::window(rec_nb1).sb_lf_duration_sec \
-		-from -1 \
-		-to 60 \
-		-width 3 \
-		-validate key \
-		-vcmd {config_recordDurSecValidate %P %W} \
-		-repeatinterval 25 \
-		-command config_recordDurSec \
-		-textvariable choice(sb_duration_sec)
-		ttk::labelframe $::window(rec_nb1).lf_rec_station_change \
-		-text [mc "Allow station change while recording"]
-		ttk::checkbutton $::window(rec_nb1).b_lf_allow_rec \
-		-text [mc "Enable"] \
-		-variable choice(cb_allow_schange_rec)
-		ttk::labelframe $::window(rec_nb1).lf_scheduler_autostart \
-		-text [mc "Autostart scheduler"]
-		ttk::checkbutton $::window(rec_nb1).cb_lf_scheduler_autostart \
-		-text [mc "Enable"] \
-		-variable choice(cb_sched_auto) \
-		-command config_recordScheduler
+		spinbox $::window(rec_nb1).sb_lf_duration_hour -from -1 -to 99 -width 3 -validate key -vcmd {config_recordDurHourValidate %P %W} -repeatinterval 25 -command config_recordDurHour -textvariable choice(sb_duration_hour)
+		spinbox $::window(rec_nb1).sb_lf_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {config_recordDurMinValidate %P %W} -repeatinterval 25 -command config_recordDurMin -textvariable choice(sb_duration_min)
+		spinbox $::window(rec_nb1).sb_lf_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {config_recordDurSecValidate %P %W} -repeatinterval 25 -command config_recordDurSec -textvariable choice(sb_duration_sec)
+		ttk::labelframe $::window(rec_nb1).lf_rec_station_change -text [mc "Allow station change while recording"]
+		ttk::checkbutton $::window(rec_nb1).b_lf_allow_rec -text [mc "Enable"] -variable choice(cb_allow_schange_rec)
+		ttk::labelframe $::window(rec_nb1).lf_scheduler_autostart -text [mc "Autostart scheduler"]
+		ttk::checkbutton $::window(rec_nb1).cb_lf_scheduler_autostart -text [mc "Enable"] -variable choice(cb_sched_auto) -command config_recordScheduler
+		ttk::labelframe $::window(rec_nb1).lf_hoursFormat -text [mc "Hours format"]
+		ttk::radiobutton $::window(rec_nb1).lf_hoursFormat.rbHours24 -variable ::choice(rb_clock) -value 24 -text [mc "24-hour clock"]
+		ttk::radiobutton $::window(rec_nb1).lf_hoursFormat.rbHours12 -variable ::choice(rb_clock) -value 12 -text [mc "12-hour clock"]
 		
 		
 		set ::window(rec_nb2) [ttk::frame $w.f_times]
 		$w add $::window(rec_nb2) -text [mc "Timeshift"] -padding 2
-		ttk::labelframe $::window(rec_nb2).lf_times_stnd \
-		-text [mc "Timeshift folder"]
-		ttk::entry $::window(rec_nb2).e_lf_times_stnd \
-		-textvariable choice(ent_times_folder)
-		ttk::button $::window(rec_nb2).b_lf_times_stnd \
-		-text "..." \
-		-width 3 \
-		-command config_recordTimesDir
-		ttk::labelframe $::window(rec_nb2).lf_times_df \
-		-text [mc "Space to be left free"]
-		ttk::entry $::window(rec_nb2).e_lf_times_df \
-		-textvariable choice(ent_times_df) \
-		-validate key \
-		-validatecommand {string is integer %P}
-		ttk::label $::window(rec_nb2).l_lf_times_df \
-		-text "MB"
+		ttk::labelframe $::window(rec_nb2).lf_times_stnd -text [mc "Timeshift folder"]
+		ttk::entry $::window(rec_nb2).e_lf_times_stnd -textvariable choice(ent_times_folder)
+		ttk::button $::window(rec_nb2).b_lf_times_stnd -text "..." -width 3 -command config_recordTimesDir
+		ttk::labelframe $::window(rec_nb2).lf_times_df -text [mc "Space to be left free"]
+		ttk::entry $::window(rec_nb2).e_lf_times_df -textvariable choice(ent_times_df) -validate key -validatecommand {string is integer %P}
+		ttk::label $::window(rec_nb2).l_lf_times_df -text "MB"
 		
 		
 		grid columnconfigure $::window(rec_nb1) 0 -weight 1
@@ -135,69 +91,33 @@ proc option_screen_7 {} {
 		grid columnconfigure $::window(rec_nb2) 0 -weight 1
 		grid columnconfigure $::window(rec_nb2).lf_times_stnd 0 -weight 1
 		
-		grid $::window(rec_nb1).labelframe_rec -in $::window(rec_nb1) -row 0 -column 0 \
-		-padx 5 \
-		-pady "5 0" \
-		-sticky ew
-		grid $::window(rec_nb1).entry_rec -in $::window(rec_nb1).labelframe_rec -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
-		grid $::window(rec_nb1).button_rec_path -in $::window(rec_nb1).labelframe_rec -row 0 -column 1 \
-		-pady 3
+		grid $::window(rec_nb1).labelframe_rec -in $::window(rec_nb1) -row 0 -column 0 -padx 5 -pady "5 0" -sticky ew
+		grid $::window(rec_nb1).entry_rec -in $::window(rec_nb1).labelframe_rec -row 0 -column 0 -sticky ew -padx 7 -pady 3
+		grid $::window(rec_nb1).button_rec_path -in $::window(rec_nb1).labelframe_rec -row 0 -column 1 -pady 3
 		
-		grid $::window(rec_nb1).labelframe_rec_dur -in $::window(rec_nb1) -row 1 -column 0 \
-		-padx 5 \
-		-pady "5 0" \
-		-sticky ew
-		grid $::window(rec_nb1).sb_lf_duration_hour -in $::window(rec_nb1).labelframe_rec_dur -row 0 -column 0 \
-		-padx "7 3" \
-		-pady 3
-		grid $::window(rec_nb1).sb_lf_duration_min -in $::window(rec_nb1).labelframe_rec_dur -row 0 -column 1 \
-		-padx "0 3" \
-		-pady 3
-		grid $::window(rec_nb1).sb_lf_duration_sec -in $::window(rec_nb1).labelframe_rec_dur -row 0 -column 2 \
-		-padx "0 3" \
-		-pady 3
+		grid $::window(rec_nb1).labelframe_rec_dur -in $::window(rec_nb1) -row 1 -column 0 -padx 5 -pady "5 0" -sticky ew
+		grid $::window(rec_nb1).sb_lf_duration_hour -in $::window(rec_nb1).labelframe_rec_dur -row 0 -column 0 -padx "7 3" -pady 3
+		grid $::window(rec_nb1).sb_lf_duration_min -in $::window(rec_nb1).labelframe_rec_dur -row 0 -column 1 -padx "0 3" -pady 3
+		grid $::window(rec_nb1).sb_lf_duration_sec -in $::window(rec_nb1).labelframe_rec_dur -row 0 -column 2 -padx "0 3" -pady 3
 		
-		grid $::window(rec_nb1).lf_rec_station_change -in $::window(rec_nb1) -row 2 -column 0 \
-		-padx 5 \
-		-pady "5 0" \
-		-sticky ew
-		grid $::window(rec_nb1).b_lf_allow_rec -in $::window(rec_nb1).lf_rec_station_change -row 0 -column 0 \
-		-padx 7 \
-		-pady 3
+		grid $::window(rec_nb1).lf_hoursFormat -in $::window(rec_nb1) -row 2 -column 0 -padx 5 -pady "5 0" -sticky ew
+		grid $::window(rec_nb1).lf_hoursFormat.rbHours24 -in $::window(rec_nb1).lf_hoursFormat -row 0 -column 0 -padx "7 3" -pady 3
+		grid $::window(rec_nb1).lf_hoursFormat.rbHours12 -in $::window(rec_nb1).lf_hoursFormat -row 0 -column 1 -padx "7 3" -pady 3
 		
-		grid $::window(rec_nb1).lf_scheduler_autostart -in $::window(rec_nb1) -row 3 -column 0 \
-		-padx 5 \
-		-pady "5 0" \
-		-sticky ew
-		grid $::window(rec_nb1).cb_lf_scheduler_autostart -in $::window(rec_nb1).lf_scheduler_autostart -row 0 -column 0 \
-		-padx 7 \
-		-pady 3
+		grid $::window(rec_nb1).lf_rec_station_change -in $::window(rec_nb1) -row 3 -column 0 -padx 5 -pady "5 0" -sticky ew
+		grid $::window(rec_nb1).b_lf_allow_rec -in $::window(rec_nb1).lf_rec_station_change -row 0 -column 0 -padx 7 -pady 3
+		
+		grid $::window(rec_nb1).lf_scheduler_autostart -in $::window(rec_nb1) -row 4 -column 0 -padx 5 -pady "5 0" -sticky ew
+		grid $::window(rec_nb1).cb_lf_scheduler_autostart -in $::window(rec_nb1).lf_scheduler_autostart -row 0 -column 0 -padx 7 -pady 3
 		
 		
-		grid $::window(rec_nb2).lf_times_stnd -in $::window(rec_nb2) -row 0 -column 0 \
-		-padx 5 \
-		-pady "5 0" \
-		-sticky ew
-		grid $::window(rec_nb2).e_lf_times_stnd -in $::window(rec_nb2).lf_times_stnd -row 0 -column 0 \
-		-sticky ew \
-		-padx 7 \
-		-pady 3
-		grid $::window(rec_nb2).b_lf_times_stnd -in $::window(rec_nb2).lf_times_stnd -row 0 -column 1 \
-		-pady 3
+		grid $::window(rec_nb2).lf_times_stnd -in $::window(rec_nb2) -row 0 -column 0 -padx 5 -pady "5 0" -sticky ew
+		grid $::window(rec_nb2).e_lf_times_stnd -in $::window(rec_nb2).lf_times_stnd -row 0 -column 0 -sticky ew -padx 7 -pady 3
+		grid $::window(rec_nb2).b_lf_times_stnd -in $::window(rec_nb2).lf_times_stnd -row 0 -column 1 -pady 3
 		
-		grid $::window(rec_nb2).lf_times_df -in $::window(rec_nb2) -row 1 -column 0 \
-		-sticky ew \
-		-padx 5 \
-		-pady "5 0"
-		grid $::window(rec_nb2).e_lf_times_df -in $::window(rec_nb2).lf_times_df -row 0 -column 0 \
-		-padx "7 0" \
-		-pady 3
-		grid $::window(rec_nb2).l_lf_times_df -in $::window(rec_nb2).lf_times_df -row 0 -column 1 \
-		-sticky w \
-		-pady 3
+		grid $::window(rec_nb2).lf_times_df -in $::window(rec_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(rec_nb2).e_lf_times_df -in $::window(rec_nb2).lf_times_df -row 0 -column 0 -padx "7 0" -pady 3
+		grid $::window(rec_nb2).l_lf_times_df -in $::window(rec_nb2).lf_times_df -row 0 -column 1 -sticky w -pady 3
 		
 		# Additional Code
 		
@@ -299,6 +219,7 @@ proc option_screen_7 {} {
 			set ::choice(sb_duration_hour) $::option(rec_duration_hour)
 			set ::choice(sb_duration_min) $::option(rec_duration_min)
 			set ::choice(sb_duration_sec) $::option(rec_duration_sec)
+			set ::choice(rb_clock) $::option(rec_hour_format)
 			set ::choice(cb_allow_schange_rec) $::option(rec_allow_sta_change)
 			set ::choice(cb_sched_auto) $::option(rec_sched_auto)
 			config_recordScheduler
@@ -311,6 +232,8 @@ proc option_screen_7 {} {
 					settooltip $::window(rec_nb1).sb_lf_duration_hour [mc "Define the default duration for recordings (Hours)."]
 					settooltip $::window(rec_nb1).sb_lf_duration_min [mc "Define the default duration for recordings (Minutes)."]
 					settooltip $::window(rec_nb1).sb_lf_duration_sec [mc "Define the default duration for recordings (Seconds)."]
+					settooltip $::window(rec_nb1).lf_hoursFormat.rbHours24 [mc "Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings"]
+					settooltip $::window(rec_nb1).lf_hoursFormat.rbHours12 [mc "Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings"]
 					settooltip $::window(rec_nb1).b_lf_allow_rec [mc "Allow station change during recording."]
 					settooltip $::window(rec_nb1).cb_lf_scheduler_autostart [mc "Autostart the scheduler.
 This is necessary for scheduled recordings."]
@@ -326,6 +249,8 @@ A value of 0 deactivates this feature."]
 					settooltip $::window(rec_nb1).sb_lf_duration_hour {}
 					settooltip $::window(rec_nb1).sb_lf_duration_min {}
 					settooltip $::window(rec_nb1).sb_lf_duration_sec {}
+					settooltip $::window(rec_nb1).lf_hoursFormat.rbHours24 {}
+					settooltip $::window(rec_nb1).lf_hoursFormat.rbHours12 {}
 					settooltip $::window(rec_nb1).b_lf_allow_rec {}
 					settooltip $::window(rec_nb1).cb_lf_scheduler_autostart {}
 				}
@@ -338,6 +263,7 @@ A value of 0 deactivates this feature."]
 			set ::choice(sb_duration_hour) $::stnd_opt(rec_duration_hour)
 			set ::choice(sb_duration_min) $::stnd_opt(rec_duration_min)
 			set ::choice(sb_duration_sec) $::stnd_opt(rec_duration_sec)
+			set ::choice(rb_clock) $::stnd_opt(rec_hour_format)
 			set ::choice(cb_allow_schange_rec) $::stnd_opt(rec_allow_sta_change)
 			set ::choice(cb_sched_auto) $::stnd_opt(rec_sched_auto)
 			config_recordScheduler

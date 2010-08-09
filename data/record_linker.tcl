@@ -19,6 +19,7 @@
 proc record_linkerPrestart {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPrestart \033\[0m \{$handler\}"
 	#Prestart means deactivate everything that could interfere with a starting recording or timeshift.
+	set ::record(handler) $handler
 	if {"$handler" == "record"} {
 		log_writeOutTv 0 "Scheduler initiated prestart sequence for recording."
 	} else {
@@ -27,8 +28,8 @@ proc record_linkerPrestart {handler} {
 	vid_fileComputePos cancel 
 	vid_fileComputeSize cancel
 	catch {vid_playbackStop 0 nopic}
-	if {[winfo exists .ftvBg.l_bgImage]} {
-		place forget .ftvBg.l_bgImage
+	if {[winfo exists .fvidBg.l_bgImage]} {
+		place forget .fvidBg.l_bgImage
 	}
 	if {[winfo exists .station]} {
 		log_writeOutTv 1 "A recording or timeshift was started while the station editor is open."
@@ -60,12 +61,12 @@ proc record_linkerPrestart {handler} {
 		colorm_exit .cm.f_vscale
 	}
 	if {$::main(running_recording) != 1} {
-		if {[winfo exists .ftvBg.l_anigif] == 0} {
+		if {[winfo exists .fvidBg.l_anigif] == 0} {
 			set img_list [launch_splashAnigif "$::option(root)/icons/extras/BigBlackIceRoller.gif"]
-			label .ftvBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
-			place .ftvBg.l_anigif -in .ftvBg -anchor center -relx 0.5 -rely 0.5
+			label .fvidBg.l_anigif -image [lindex $img_list 0] -borderwidth 0 -background #000000
+			place .fvidBg.l_anigif -in .fvidBg -anchor center -relx 0.5 -rely 0.5
 			set img_list_length [llength $img_list]
-			after 0 [list launch_splashPlay $img_list $img_list_length 1 .ftvBg.l_anigif]
+			after 0 [list launch_splashPlay $img_list $img_list_length 1 .fvidBg.l_anigif]
 		} else {
 			log_writeOutTv 1 "Animated gif already exists in parent."
 			log_writeOutTv 1 "This should not happen!"
@@ -79,6 +80,12 @@ proc record_linkerPrestart {handler} {
 		.ftoolb_ChanCtrl.bChanDown state disabled
 		.ftoolb_ChanCtrl.bChanUp state disabled
 		.ftoolb_ChanCtrl.bChanJump state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 1 -state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 2 -state disabled
+		.foptions_bar.mbNavigation.mNavigation entryconfigure 3 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 1 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 2 -state disabled
+		.fvidBg.mContext.mNavigation entryconfigure 3 -state disabled
 		if {[winfo exists .fstations] == 1} {
 			main_frontendDisableTree .fstations.treeSlist 1
 		}
@@ -98,7 +105,7 @@ proc record_linkerPrestart {handler} {
 
 proc record_linkerPrestartCancel {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPrestartCancel \033\[0m \{$handler\}"
-	#Undo everything that was done by record_linkerPrestart in case stating of timeshift / recording failed.
+	#Undo everything that was done by record_linkerPrestart in case starting of timeshift / recording failed.
 	if {"$handler" != "timeshift"} {
 		log_writeOutTv 1 "Prestart sequence for recording has been canceled."
 	} else {
@@ -113,6 +120,12 @@ proc record_linkerPrestartCancel {handler} {
 	.ftoolb_ChanCtrl.bChanDown state !disabled
 	.ftoolb_ChanCtrl.bChanUp state !disabled
 	.ftoolb_ChanCtrl.bChanJump state !disabled
+	.foptions_bar.mbNavigation.mNavigation entryconfigure 1 -state normal
+	.foptions_bar.mbNavigation.mNavigation entryconfigure 2 -state normal
+	.foptions_bar.mbNavigation.mNavigation entryconfigure 3 -state normal
+	.fvidBg.mContext.mNavigation entryconfigure 1 -state normal
+	.fvidBg.mContext.mNavigation entryconfigure 2 -state normal
+	.fvidBg.mContext.mNavigation entryconfigure 3 -state normal
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
 	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
@@ -126,11 +139,11 @@ proc record_linkerPrestartCancel {handler} {
 		.tv.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
-	if {[winfo exists .ftvBg.l_anigif]} {
+	if {[winfo exists .fvidBg.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .ftvBg.l_anigif}
-		catch {destroy .ftvBg.l_anigif}
-		place .ftvBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
+		catch {place forget .fvidBg.l_anigif}
+		catch {destroy .fvidBg.l_anigif}
+		place .fvidBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	}
 }
 
@@ -144,9 +157,9 @@ proc record_linkerRec {handler} {
 	}
 	bind . <<pause>> {vid_seek 0 0}
 	if {"$handler" != "timeshift"} {
-		bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont record "$::vid(current_rec_file)"}
+		bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
 	} else {
-		bind . <<start>> {vid_Playback .ftvBg .ftvBg.cont timeshift "$::vid(current_rec_file)"}
+		bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[file exists "$::option(home)/config/current_rec.conf"]} {
@@ -175,9 +188,9 @@ Started at %" [lindex $::station(last) 0] $stime]
 		.ftoolb_Disp.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
-		catch {vid_Playback .ftvBg .ftvBg.cont record "$::vid(current_rec_file)"}
+		catch {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
 	} else {
-		catch {vid_Playback .ftvBg .ftvBg.cont timeshift "$::vid(current_rec_file)"}
+		catch {vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"}
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor arrow
@@ -247,6 +260,12 @@ proc record_linkerPreStop {handler} {
 	.ftoolb_ChanCtrl.bChanDown state !disabled
 	.ftoolb_ChanCtrl.bChanUp state !disabled
 	.ftoolb_ChanCtrl.bChanJump state !disabled
+	.foptions_bar.mbNavigation.mNavigation entryconfigure 1 -state normal
+	.foptions_bar.mbNavigation.mNavigation entryconfigure 2 -state normal
+	.foptions_bar.mbNavigation.mNavigation entryconfigure 3 -state normal
+	.fvidBg.mContext.mNavigation entryconfigure 1 -state normal
+	.fvidBg.mContext.mNavigation entryconfigure 2 -state normal
+	.fvidBg.mContext.mNavigation entryconfigure 3 -state normal
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
 	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
 	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
@@ -261,8 +280,8 @@ proc record_linkerPreStop {handler} {
 	}
 	event_recordStop
 	if {[wm attributes . -fullscreen] == 1} {
-		bind .ftvBg.cont <Motion> {vid_wmCursorHide .ftvBg.cont 0}
-		bind .ftvBg <Motion> {vid_wmCursorHide .ftvBg 0}
+		bind .fvidBg.cont <Motion> {vid_wmCursorHide .fvidBg.cont 0}
+		bind .fvidBg <Motion> {vid_wmCursorHide .fvidBg 0}
 	}
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
@@ -288,10 +307,10 @@ File size $file_size"
 			log_writeOutTv 2 "Saving timeshift video file not possible"
 		}
 	}
-	if {[winfo exists .ftvBg.l_anigif]} {
+	if {[winfo exists .fvidBg.l_anigif]} {
 		catch {launch_splashPlay cancel 0 0 0}
-		catch {place forget .ftvBg.l_anigif}
-		catch {destroy .ftvBg.l_anigif}
+		catch {place forget .fvidBg.l_anigif}
+		catch {destroy .fvidBg.l_anigif}
 	}
 	vid_fileComputeSize cancel_rec
 }
