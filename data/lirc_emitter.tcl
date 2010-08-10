@@ -26,12 +26,12 @@ set option(appname) "tv-viewer_lirc"
 
 source $option(root)/release_version.tcl
 source $option(root)/agrep.tcl
-source $option(root)/main_read_config.tcl
+source $option(root)/process_config.tcl
 source $option(root)/log_viewer.tcl
 source $option(root)/command_socket.tcl
 source $option(root)/monitor.tcl
 
-main_readConfig
+process_configRead
 
 if {[file exists "$::option(home)/log/tvviewer.log"]} {
 	if {$::option(log_files) == 1} {

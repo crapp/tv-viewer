@@ -47,7 +47,7 @@ proc option_screen_0 {} {
 		spinbox $::window(general_nb1).sb_newsreader -width 4 -from 1 -to 30 -validate key -vcmd {string is integer %P} -textvariable choice(sb_newsreader)
 		ttk::labelframe $::window(general_nb1).lf_epg -text [mc "Electronic Program Guide"]
 		ttk::label $::window(general_nb1).l_lf_epg -text [mc "Choose a program"]
-		ttk::entry $::window(general_nb1).e_lf_epg -textvariable choice(entry_epg)
+		ttk::entry $::window(general_nb1).e_lf_epg -textvariable choice(entry_epg) -takefocus 0
 		ttk::button $::window(general_nb1).b_lf_epg -text "..." -width 3 -command [list config_generalChooseEpg $::window(general_nb1)]
 		
 		grid columnconfigure $::window(general_nb1) 0 -weight 1
@@ -86,7 +86,7 @@ proc option_screen_0 {} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalChooseEpg \033\[0m \{$w\}"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "
 			set ::choice(entry_epg) [ttk::getOpenFile -parent .config_wizard -title [mc "Choose an EPG application"] -initialfile $::choice(entry_epg) -initialdir [file dirname $::choice(entry_epg)]]
-			wm protocol .config_wizard WM_DELETE_WINDOW config_wizardExit
+			wm protocol .config_wizard WM_DELETE_WINDOW [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb]
 			if {[string trim $::choice(entry_epg)] == {}} {
 				set ::choice(entry_epg) [subst $::stnd_opt(epg_command)]
 			}

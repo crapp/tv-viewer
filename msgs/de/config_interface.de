@@ -88,10 +88,6 @@ mcset $lang \
 	{Auswählen falls man beim Programmstart den Splash Screen sehen will.}
 
 mcset $lang \
-	{If enabled the station list will be shown after the start up.} \
-	{Senderliste nach dem Programmstart anzeigen.}
-
-mcset $lang \
 	{Video window} \
 	{Videofenster}
 
@@ -148,22 +144,6 @@ mcset $lang \
 	{OSD Senderliste lirc}
 
 mcset $lang \
-	{This option makes sure, that there will be no
-separate entry in taskbar for the video window.
-On the other hand it will be logically linked
-to the main window. For example the video window
-will also dock to the system tray regardless of
-the option "Dock video window".
-Requires a restart of TV-Viewer.} \
-	{Diese Option sorgt dafür, dass das Videofenster
-keinen eigenen Eintrag in der Taskbar bekommt.
-Auf der anderen Seite wird es logisch mit dem Haupt-
-fenster verknüpft. Das bedeutet unter anderem, dass
-das Videofenster ebenfalls in den System Tray gedockt
-wird.
-Benötigt einen Neustart von TV-Viewer.}
-
-mcset $lang \
 	{Start TV-Viewer in full-screen mode.} \
 	{TV-Viewer im Vollbild-Modus starten.}
 
@@ -211,14 +191,6 @@ mcset $lang \
 	mcset $lang \
 	{OSD for change stations via numbers input in full-screen mode.} \
 	{OSD Senderwahl über Ziffern im Vollbildmodus.}
-
-	mcset $lang \
-	{OSD station list invoked by the mouse cursor in windowed mode.} \
-	{OSD Senderliste über Maus im Fenstermodus.}
-
-	mcset $lang \
-	{OSD station list invoked by the mouse cursor in full-screen mode.} \
-	{OSD Senderliste über Maus im Vollbildmodus.}
 
 	mcset $lang \
 	{Alignment of the station list. Specifies where the widget

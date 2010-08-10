@@ -146,17 +146,17 @@ proc record_wizardUi {} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0;1;31m::font:: \033\[0m"
 		}
 		$treef.tv_rec heading jobid -text [mc "Job ID"]
-		$treef.tv_rec column jobid -anchor center -width [expr [font measure $font [mc "Job ID"]] + 15]
+		$treef.tv_rec column jobid -anchor center -stretch 0 -width [expr [font measure $font [mc "Job ID"]] + 15]
 		$treef.tv_rec heading station -text [mc "Station"]
 		$treef.tv_rec column station -anchor center -width [expr [font measure $font [mc "Station"]] + 80]
 		$treef.tv_rec heading time -text [mc "Time"]
-		$treef.tv_rec column time -anchor center -width [expr [font measure $font [mc "Time"]] + 40]
+		$treef.tv_rec column time -anchor center -stretch 0 -width [expr [font measure $font [mc "Time"]] + 55]
 		$treef.tv_rec heading date -text [mc "Date"]
-		$treef.tv_rec column date -anchor center -width [expr [font measure $font [mc "Date"]] + 55]
+		$treef.tv_rec column date -anchor center -stretch 0 -width [expr [font measure $font [mc "Date"]] + 60]
 		$treef.tv_rec heading duration -text [mc "Duration"]
-		$treef.tv_rec column duration -anchor center -width [expr [font measure $font [mc "Duration"]] + 25]
+		$treef.tv_rec column duration -anchor center -stretch 0 -width [expr [font measure $font [mc "Duration"]] + 25]
 		$treef.tv_rec heading resolution -text [mc "Resolution"]
-		$treef.tv_rec column resolution -anchor center -width [expr [font measure $font [mc "Resolution"]] + 15]
+		$treef.tv_rec column resolution -anchor center -stretch 0 -width [expr [font measure $font [mc "Resolution"]] + 20]
 		$treef.tv_rec heading file -text [mc "Output file"]
 		$treef.tv_rec column file -anchor center -width [expr [font measure $font [mc "Output file"]] + 330]
 		

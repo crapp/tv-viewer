@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc vid_slistCursor {xpos ypos} {
+	#FIXME Here are variables that are no longer in use (osd_mouse_w osd_mouse_f)
 	if {[winfo exists .tv.slist]} {
 		if {[winfo exists .tv.file_play_bar] == 1 && $::option(rec_allow_sta_change) == 0} {
 			return

@@ -148,8 +148,7 @@ proc log_viewerUi {handler} {
 		ttk::button $ftop.b_save -style Toolbutton -image $::icon_m(floppy) -command [list log_viewerSaveLog $ident(op\($handler\)) $w]
 		ttk::button $ftop.b_email -style Toolbutton -image $::icon_m(e-mail) -command [list log_viewerEmail $handler]
 		
-		ttk::separator $ftop.sep_sep1
-		-orient vertical
+		ttk::separator $ftop.sep_sep1 -orient vertical
 		
 		ttk::checkbutton $ftop.cb_verb_debug -text Debug -variable log(verbose_$ident(op\($handler\))_debug) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
 		ttk::checkbutton $ftop.cb_verb_warn -text Warning -variable log(verbose_$ident(op\($handler\))_warn) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]

@@ -1,4 +1,4 @@
-#       config_wizard_read_settings.tcl
+#       process_config_wizard.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc config_wizardReadSettings {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardReadSettings \033\[0m"
+proc process_config_wizardRead {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: process_config_wizardRead \033\[0m"
 	log_writeOutTv 0 "Reading configuration values for preferences dialog."
 	#FIXME Remove theme black if it does not work properly.
 	array set ::option {
@@ -96,6 +96,7 @@ proc config_wizardReadSettings {} {
 		show_splash 1
 		window_full 0
 		window_remProp 1
+		volRem 1
 		systray_tv 0
 		systray_start 0
 		systray_close 0
@@ -193,6 +194,7 @@ proc config_wizardReadSettings {} {
 		show_splash 1
 		window_full 0
 		window_remProp 1
+		volRem 1
 		systray_tv 0
 		systray_start 0
 		systray_close 0
@@ -284,6 +286,7 @@ proc config_wizardReadSettings {} {
 		cb_systray_tv systray_tv
 		cb_systray_start systray_start
 		cb_systray_close systray_close
+		cb_remAdio volRem
 	}
 	array set ::opt_choiceOsd {
 		osd_station_w osd_station_w

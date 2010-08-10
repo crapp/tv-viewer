@@ -134,7 +134,7 @@ proc option_screen_7 {} {
 			} else {
 				set ::choice(entry_rec_path) [ttk::chooseDirectory -parent .config_wizard -title [mc "Choose a directory"] -initialdir "$::choice(entry_rec_path)"]
 			}
-			wm protocol .config_wizard WM_DELETE_WINDOW config_wizardExit
+			wm protocol .config_wizard WM_DELETE_WINDOW [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb]
 			log_writeOutTv 0 "Chosen record directory $::choice(entry_rec_path)"
 			if {[string trim "$::choice(entry_rec_path)"] == {}} {
 				set ::choice(entry_rec_path) "$old_dir"
@@ -205,7 +205,7 @@ proc option_screen_7 {} {
 			} else {
 				set ::choice(ent_times_folder) [ttk::chooseDirectory -parent .config_wizard -title [mc "Choose a directory"] -initialdir "$::choice(ent_times_folder)"]
 			}
-			wm protocol .config_wizard WM_DELETE_WINDOW config_wizardExit
+			wm protocol .config_wizard WM_DELETE_WINDOW [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb]
 			log_writeOutTv 0 "Chosen timeshift directory $::choice(ent_times_folder)"
 			if {[string trim "$::choice(ent_times_folder)"] == {}} {
 				set ::choice(ent_times_folder) "$old_dir"

@@ -84,10 +84,6 @@ mcset $lang \
 	{Check this if you want to see the splash screen at the start of TV-Viewer.}
 
 mcset $lang \
-	{If enabled the station list will be shown after the start up.} \
-	{If enabled the station list will be shown after the start up.}
-
-mcset $lang \
 	{Video window} \
 	{Video window}
 
@@ -144,22 +140,6 @@ mcset $lang \
 	{OSD Station list lirc}
 
 mcset $lang \
-	{This option makes sure, that there will be no
-separate entry in taskbar for the video window.
-On the other hand it will be logically linked
-to the main window. For example the video window
-will also dock to the system tray regardless of
-the option "Dock video window".
-Requires a restart of TV-Viewer.} \
-	{This option makes sure, that there will be no
-separate entry in taskbar for the video window.
-On the other hand it will be logically linked
-to the main window. For example the video window
-will also dock to the system tray regardless of
-the option "Dock video window".
-Requires a restart of TV-Viewer.}
-
-mcset $lang \
 	{Start TV-Viewer in full-screen mode.} \
 	{Start TV-Viewer in full-screen mode.}
 
@@ -206,14 +186,6 @@ mcset $lang \
 	mcset $lang \
 	{OSD for change stations via numbers input in full-screen mode.} \
 	{OSD for change stations via numbers input in full-screen mode.}
-
-	mcset $lang \
-	{OSD station list invoked by the mouse cursor in windowed mode.} \
-	{OSD station list invoked by the mouse cursor in windowed mode.}
-
-	mcset $lang \
-	{OSD station list invoked by the mouse cursor in full-screen mode.} \
-	{OSD station list invoked by the mouse cursor in full-screen mode.}
 
 	mcset $lang \
 	{Alignment of the station list. Specifies where the widget

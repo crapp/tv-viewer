@@ -28,6 +28,50 @@ proc main_frontendExitViewer {} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
 	catch {file delete "$::option(home)/tmp/lockfile.tmp"}
+	if {$::option(window_remProp)} {
+		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
+		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
+		foreach {okey oelem} [array get ::mem] {
+			if {"$okey" == "mainwidth"} {
+				set width [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 0]
+				puts $wconfig_mem "mainwidth $width"
+				continue
+			}
+			if {"$okey" == "mainheight"} {
+				set height [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 1]
+				puts $wconfig_mem "mainheight $height"
+				continue
+			}
+			if {"$okey" == "compact"} {
+				puts $wconfig_mem "compact $::main(compactMode)"
+				continue
+			}
+			if {"$okey" == "ontop"} {
+				puts $wconfig_mem "ontop $::vid(stayontop)"
+				continue
+			}
+			if {$::option(volRem)} {
+				if {"$okey" == "volume"} {
+					puts $wconfig_mem "volume $::main(volume_scale)"
+					continue
+				}
+			}
+			puts $wconfig_mem "$okey $oelem"
+		}
+		close $wconfig_mem
+	}
+	if {$::option(volRem)} {
+		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
+		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
+		foreach {okey oelem} [array get ::mem] {
+			if {"$okey" == "volume"} {
+				puts $wconfig_mem "volume $::main(volume_scale)"
+				continue
+			}
+			puts $wconfig_mem "$okey $oelem"
+		}
+		close $wconfig_mem
+	}
 	destroy .top_newsreader
 	destroy .top_about
 	if {[info exists ::vid(pbMode)]} {
@@ -361,7 +405,11 @@ proc main_frontendUi {} {
 	set ::data(panscanAuto) 0
 	set ::data(movevidX) 0
 	set ::data(movevidY) 0
-	set ::main(volume_scale) 100
+	if {$::option(volRem)} {
+		set ::main(volume_scale) $::mem(volume)
+	} else {
+		set ::main(volume_scale) 100
+	}
 	set ::main(label_file_time) " --:-- / --:--"
 	set ::chan(old_channel) 0
 	set ::vid(recStart) 0
@@ -410,7 +458,7 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "width [winfo width .fvidBg]"; puts "height [winfo height .fvidBg]"}
+	bind . <Key-x> {puts "wm geometry [wm geometry .]"}
 	bind . <Key-y> {after 0 [vid_osd osd_group_w 1000 "Pan&Scan 4:3"]}
 	
 	command_socket
@@ -535,15 +583,22 @@ proc main_frontendUi {} {
 			settooltip .tray [mc "TV-Viewer idle"]
 		}
 		main_systemTrayToggle
-		tkwait visibility .
-		autoscroll $stations.scrbSlist
-		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
-		wm minsize . 250 $height
-	} else {
-		tkwait visibility .
-		autoscroll $stations.scrbSlist
-		set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
-		wm minsize . 250 $height
+	}
+	puts "::option(window_remProp) $::option(window_remProp)"
+	tkwait visibility .
+	autoscroll $stations.scrbSlist
+	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
+	wm minsize . 250 $height
+	if {$::option(window_remProp)} {
+		if {$::mem(compact)} {
+			vid_wmCompact
+		}
+		wm geometry . $::mem(mainwidth)\x$::mem(mainheight)
+		set ::vid(stayontop) $::mem(ontop)
+		vid_wmStayonTop $::vid(stayontop)
+	}
+	if {$::option(window_full)} {
+		after 500 {vid_wmFullscreen . .fvidBg.cont .fvidBg}
 	}
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.

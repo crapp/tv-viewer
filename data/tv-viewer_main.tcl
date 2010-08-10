@@ -266,12 +266,13 @@ source $::option(root)/extensions/callib/callib.tcl
 #Append fsdialog to auto_path
 set auto_path [linsert $auto_path 0 "$::option(root)/extensions/fsdialog"]
 #Source read_config to read all config values
-source $::option(root)/data/main_read_config.tcl
+source $::option(root)/data/process_config.tcl
 #Source start options
 source $::option(root)/data/main_command_line_options.tcl
 start_options
 #It is time to load all config values
-main_readConfig
+process_configRead
+process_configMem
 #Source additional ttk themes, plastik and keramik
 source "$option(root)/themes/plastik/plastik.tcl"
 source "$option(root)/themes/keramik/keramik.tcl"
@@ -370,7 +371,7 @@ source $::option(root)/data/record_linker.tcl
 #Source timeshift
 source $::option(root)/data/timeshift.tcl
 #Source read and set config values for config-wizard.
-source $::option(root)/data/config_wizard_read_settings.tcl
+source $::option(root)/data/process_config_wizard.tcl
 #Source main ui config
 source $::option(root)/data/config_wizard.tcl
 #Source general options

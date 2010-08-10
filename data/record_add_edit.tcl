@@ -60,7 +60,11 @@ proc record_add_edit {tree com} {
 	spinbox $recf.sb_time_hour -from -1 -to 24 -width 3 -validate key -vcmd {record_add_editTimeHourValidate %P %W} -repeatinterval 80 -command record_add_editTimeHour -textvariable record(time_hour)
 	ttk::label $recf.l_time_colon -text ":"
 	spinbox $recf.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %W} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
+	ttk::menubutton $recf.mbHourFormat -menu $recf.mbHourFormat.mHour -textvariable record(mbHourFormat) -state disabled -width 0
+	menu $recf.mbHourFormat.mHour -tearoff 0 -background $::option(theme_$::option(use_theme))
+	
 	ttk::separator $recf.sep1 -orient vertical
+	
 	ttk::label $recf.l_date -text [mc "Date:"]
 	ttk::entry $recf.ent_date -textvariable record(date) -width 11 -state readonly
 	ttk::button $recf.b_date -width 0 -compound image -image $::icon_s(calendar) -command record_add_editDate
@@ -97,7 +101,9 @@ proc record_add_edit {tree com} {
 	spinbox $recf.sb_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurMinValidate %P %W} -repeatinterval 25 -command record_add_editDurMin -textvariable record(duration_min)
 	ttk::label $recf.l_duration_colon2 -text ":"
 	spinbox $recf.sb_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurSecValidate %P %W} -repeatinterval 25 -command record_add_editDurSec -textvariable record(duration_sec)
+	
 	ttk::separator $recf.sep3 -orient vertical
+	
 	ttk::label $recf.l_resol -text [mc "Resolution:"]
 	
 	proc record_add_editResolWidthValidate {value widget} {
@@ -159,7 +165,10 @@ proc record_add_edit {tree com} {
 	grid $recf.sb_time_hour -in $recf.lf_rec_values -row 0 -column 1 -sticky w -padx "0 2" -pady 3
 	grid $recf.l_time_colon -in $recf.lf_rec_values -row 0 -column 2 -padx "0 2" -pady 3
 	grid $recf.sb_time_min -in $recf.lf_rec_values -row 0 -column 3 -sticky w -padx "0 5" -pady 3
+	grid $recf.mbHourFormat -in $recf.lf_rec_values -row 0 -column 5 -padx "0 5" -pady 3 -sticky w
+	
 	grid $recf.sep1 -in $recf.lf_rec_values -row 0 -column 6 -sticky ns -padx 2
+	
 	grid $recf.l_date -in $recf.lf_rec_values -row 0 -column 7 -sticky w -padx 5 -pady 3
 	grid $recf.ent_date -in $recf.lf_rec_values -row 0 -column 8 -sticky w -padx "0 5" -pady 3 -columnspan 3
 	grid $recf.b_date -in $recf.lf_rec_values -row 0 -column 11 -sticky w -padx "0 5" -pady 3
@@ -190,12 +199,46 @@ proc record_add_edit {tree com} {
 	
 	proc record_add_editTimeHour {} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHour \033\[0m"
-		if {$::record(time_hour) < 0} {
-			set ::record(time_hour) 23
+		if {$::option(rec_hour_format) == 24} {
+			if {$::record(time_hour) < 0} {
+				set ::record(time_hour) 23
+			}
+			if {$::record(time_hour) > 23} {
+				set ::record(time_hour) 0
+			}
+		} else {
+			if {$::record(time_hour) < 1} {
+				set ::record(time_hour) 12
+			}
+			if {$::record(time_hour) > 12} {
+				set ::record(time_hour) 1
+			}
+			if {$::record(time_hour) < 12 && $::record(time_hour) > 10 && $::record(time_HourOld) == 12} {
+				puts "trigger <12"
+				if {"$::record(rbAddEditHour)" == "pm"} {
+					puts "trigger pm <12"
+					set ::record(rbAddEditHour) am
+					set ::record(mbHourFormat) am
+				} else {
+					puts "trigger am <12"
+					set ::record(rbAddEditHour) pm
+					set ::record(mbHourFormat) pm
+				}
+			}
+			if {$::record(time_hour) > 11 && $::record(time_HourOld) == 11} {
+				puts "trigger >11"
+				if {"$::record(rbAddEditHour)" == "pm"} {
+					puts "trigger pm >11"
+					set ::record(rbAddEditHour) am
+					set ::record(mbHourFormat) am
+				} else {
+					puts "trigger am >11"
+					set ::record(rbAddEditHour) pm
+					set ::record(mbHourFormat) pm
+				}
+			}
 		}
-		if {$::record(time_hour) > 23} {
-			set ::record(time_hour) 0
-		}
+		set ::record(time_HourOld) $::record(time_hour)
 	}
 	proc record_add_editTimeMin {} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMin \033\[0m"
@@ -287,13 +330,26 @@ proc record_add_edit {tree com} {
 		$lbf.lb_stations insert end $::kanalid($i)
 	}
 	
+	$recf.mbHourFormat.mHour add radiobutton -label am -variable record(rbAddEditHour) -command {set ::record(mbHourFormat) am}
+	$recf.mbHourFormat.mHour add radiobutton -label pm -variable record(rbAddEditHour) -command {set ::record(mbHourFormat) pm}
+	
 	if {$com == 0} {
 		$lbf.lb_stations see [expr [lindex $::station(last) 2] - 1]
 		$lbf.lb_stations activate [expr [lindex $::station(last) 2] - 1]
 		$lbf.lb_stations selection set [expr [lindex $::station(last) 2] - 1]
 		
 		$bf.b_apply configure -command [list record_applyTimeDate $tree $lbf.lb_stations $w add]
-		set ::record(time_hour) [scan [clock format [clock scan now] -format %H] %d]
+		if {$::option(rec_hour_format) == 24} {
+			set ::record(time_hour) [scan [clock format [clock scan now] -format %H] %d]
+			set ::record(time_HourOld) $::record(time_hour)
+			set ::record(mbHourFormat) [clock format [clock scan now] -format %P]
+		} else {
+			set ::record(time_hour) [scan [clock format [clock scan now] -format %I] %d]
+			set ::record(time_HourOld) $::record(time_hour)
+			set ::record(mbHourFormat) [clock format [clock scan now] -format %P]
+			set ::record(rbAddEditHour) [clock format [clock scan now] -format %P]
+			$recf.mbHourFormat state !disabled
+		}
 		set ::record(time_min) [scan [clock format [clock scan now] -format %M] %d]
 		set ::record(date) [clock format [clock scan now] -format {%Y-%m-%d}]
 		set ::record(duration_hour) [scan $::option(rec_duration_hour) %d]
@@ -368,7 +424,7 @@ and store the file in the default record path."]
 proc record_add_editExit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editExit \033\[0m \{$w\}"
 	log_writeOutTv 0 "Exiting 'add/edit recording'."
-	unset -nocomplain ::record(time) ::record(date) ::record(duration) ::record(resolution) ::record(file)
+	unset -nocomplain ::record(time_hour) ::record(time_HourOld) ::record(time_min) set ::record(rbAddEditHour) ::record(mbHourFormat) ::record(date) ::record(duration) ::record(resolution) ::record(file)
 	grab release $w
 	destroy $w
 }

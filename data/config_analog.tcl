@@ -191,16 +191,10 @@ proc option_screen_1 {} {
 			if {$::config(rec_running) == 1} {
 				set ::window(analog_nb4) [ttk::frame $w.f_analog_rec]
 				$w add $::window(analog_nb4) -text [mc "Disabled"]
-				ttk::label $::window(analog_nb4).l_warn \
-				-text [mc "Analog settings are disabled,
-while running a recording or timeshift"] \
-				-compound left \
-				-image $::icon_m(dialog-warning)
+				ttk::label $::window(analog_nb4).l_warn -text [mc "Analog settings are disabled,
+while running a recording or timeshift"] -compound left -image $::icon_m(dialog-warning)
 				
-				grid $::window(analog_nb4).l_warn -in $::window(analog_nb4) -row 0 -column 0 \
-				-pady 10 \
-				-padx 5 \
-				-sticky w
+				grid $::window(analog_nb4).l_warn -in $::window(analog_nb4) -row 0 -column 0 -pady 10 -padx 5 -sticky w
 			}
 				.config_wizard.frame_buttons.b_default configure -command [list stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)]
 			
@@ -316,10 +310,7 @@ while running a recording or timeshift"] \
 				if {[string trim $query_dev_node] != {}} {
 					set i 1
 					foreach node [split $query_dev_node] {
-						$w1.mbVideo_device add radiobutton \
-						-variable choice(mbVideo) \
-						-label "$node" \
-						-command [list default_com1 $w1 $w2]
+						$w1.mbVideo_device add radiobutton -variable choice(mbVideo) -label "$node" -command [list default_com1 $w1 $w2]
 						set devnode($i) $node
 						log_writeOutTv 0 "Found device node: $devnode($i)"
 						incr i
@@ -338,10 +329,7 @@ while running a recording or timeshift"] \
 									unset explode
 									continue
 								}
-								$w1.mbVideo_device add radiobutton \
-								-variable choice(mbVideo) \
-								-label "$node" \
-								-command [list default_com1 $w1 $w2]
+								$w1.mbVideo_device add radiobutton -variable choice(mbVideo) -label "$node" -command [list default_com1 $w1 $w2]
 								set devnode($i) $node
 								incr i
 							}
@@ -407,9 +395,7 @@ while running a recording or timeshift"] \
 				catch {exec ivtv-tune -L} resultat_get_freqt
 				foreach freqtable [split [lrange $resultat_get_freqt 0 end-2]] {
 					log_writeOutTv 0 "Found frequency table: $freqtable"
-					$w1.mbFreqtable add radiobutton \
-					-variable choice(mbFreqtable) \
-					-label $freqtable
+					$w1.mbFreqtable add radiobutton -variable choice(mbFreqtable) -label $freqtable
 				}
 				set ::choice(mbFreqtable) $::option(frequency_table)
 				set ::choice(mbVideo_standard) $::option(video_standard)
@@ -713,10 +699,7 @@ to change this value."]
 					if {$status_vid_inputs == 0} {
 						set i 1
 						foreach vi [split $resultat_vid_inputs \n] {
-							$w1.mbVideo_input add radiobutton \
-							-variable choice(mbVideo_input) \
-							-label "[string trimleft [string range $vi [string first : $vi] end] {: }]" \
-							-command [list config_analog_optScrInput [expr $i - 1]]
+							$w1.mbVideo_input add radiobutton -variable choice(mbVideo_input) -label "[string trimleft [string range $vi [string first : $vi] end] {: }]" -command [list config_analog_optScrInput [expr $i - 1]]
 							set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 							incr i
 						}

@@ -35,13 +35,16 @@ proc option_screen_4 {} {
 		set ::window(audio_nb1) [ttk::frame $w.f_audio]
 		$w add $::window(audio_nb1) -text [mc "Audio Settings"] -padding 2
 		ttk::labelframe $::window(audio_nb1).lf_audio_stnd -text [mc "Audio Settings"]
-		ttk::label $::window(audio_nb1).l_lf_audio -text [mc "Audio output driver"]
-		ttk::menubutton $::window(audio_nb1).mb_lf_audio -menu $::window(audio_nb1).mbAudio -textvariable choice(mbAudio)
+		set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
+		ttk::label $lf_audioStnd.l_audio -text [mc "Audio output driver"]
+		ttk::menubutton $lf_audioStnd.mb_audio -menu $::window(audio_nb1).mbAudio -textvariable choice(mbAudio)
 		menu $::window(audio_nb1).mbAudio -tearoff 0 -background $::option(theme_$::option(use_theme))
-		ttk::label $::window(audio_nb1).l_lf_channels -text [mc "Audio channels"]
-		ttk::menubutton $::window(audio_nb1).mb_lf_channels -menu $::window(audio_nb1).mbAudio_channels -textvariable choice(mbAudio_channels)
+		ttk::label $lf_audioStnd.l_channels -text [mc "Audio channels"]
+		ttk::menubutton $lf_audioStnd.mb_channels -menu $::window(audio_nb1).mbAudio_channels -textvariable choice(mbAudio_channels)
 		menu $::window(audio_nb1).mbAudio_channels -tearoff 0 -background $::option(theme_$::option(use_theme))
-		ttk::checkbutton $::window(audio_nb1).cb_lf_softvol -text [mc "Use software mixer"] -variable choice(cb_softvol)
+		ttk::checkbutton $lf_audioStnd.cb_softvol -text [mc "Use software mixer"] -variable choice(cb_softvol)
+		ttk::checkbutton $lf_audioStnd.cb_remAudio -text [mc "Remember volume level"] -variable choice(cb_remAdio)
+		
 		set lf_audioSync $::window(audio_nb1).lf_audio_sync
 		ttk::labelframe $::window(audio_nb1).lf_audio_sync -text [mc "Audio synchronization"]
 		ttk::checkbutton $lf_audioSync.cb_audautosync -text [mc "Auto synchronization"] -variable choice(cb_audautosync)
@@ -51,12 +54,14 @@ proc option_screen_4 {} {
 		grid columnconfigure $::window(audio_nb1) 0 -weight 1
 		grid columnconfigure $::window(audio_nb1).lf_audio_stnd 1 -minsize 120
 		
-		grid $::window(audio_nb1).lf_audio_stnd -in $::window(audio_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(audio_nb1).l_lf_audio -in $::window(audio_nb1).lf_audio_stnd -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $::window(audio_nb1).mb_lf_audio -in $::window(audio_nb1).lf_audio_stnd -row 0 -column 1 -sticky ew -pady 3
-		grid $::window(audio_nb1).l_lf_channels -in $::window(audio_nb1).lf_audio_stnd -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $::window(audio_nb1).mb_lf_channels -in $::window(audio_nb1).lf_audio_stnd -row 1 -column 1 -sticky ew -pady "0 3"
-		grid $::window(audio_nb1).cb_lf_softvol -in $::window(audio_nb1).lf_audio_stnd -row 2 -column 0 -padx 7 -pady "0 3"
+		grid $lf_audioStnd -in $::window(audio_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_audioStnd.l_audio -in $lf_audioStnd -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_audioStnd.mb_audio -in $lf_audioStnd -row 0 -column 1 -sticky ew -pady 3
+		grid $lf_audioStnd.l_channels -in $lf_audioStnd -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_audioStnd.mb_channels -in $lf_audioStnd -row 1 -column 1 -sticky ew -pady "0 3"
+		grid $lf_audioStnd.cb_softvol -in $lf_audioStnd -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_audioStnd.cb_remAudio -in $lf_audioStnd -row 3 -column 0 -sticky w -padx 7 -pady "0 3"
+		
 		grid $lf_audioSync -in $::window(audio_nb1) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $lf_audioSync.cb_audautosync -in $lf_audioSync -row 0 -column 0 -sticky w -padx 7 -pady 3
 		grid $lf_audioSync.l_auddelay -in $lf_audioSync -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
@@ -72,6 +77,7 @@ proc option_screen_4 {} {
 			#Find and set values for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
 			log_writeOutTv 0 "Starting to collect data for audio section."
+			set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
 			set lf_audioSync $::window(audio_nb1).lf_audio_sync
 			catch {exec [auto_execok mplayer] -ao help} audio_out
 			if {[string trim $audio_out] != {}} {
@@ -175,20 +181,23 @@ proc option_screen_4 {} {
 			} else {
 				set ::choice(sb_auddelay) $::stnd_opt(player_audio_delay)
 			}
+			set ::choice(cb_remAdio) $::option(volRem)
 			
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
-					settooltip $::window(audio_nb1).mb_lf_audio [mc "Choose an audio output driver, alsa is recommended."]
-					settooltip $::window(audio_nb1).cb_lf_softvol [mc "Check this option to use the software mixer,
+					settooltip $lf_audioStnd.mb_audio [mc "Choose an audio output driver, alsa is recommended."]
+					settooltip $lf_audioStnd.cb_softvol [mc "Check this option to use the software mixer,
 instead of the hardware mixer."]
-					settooltip $::window(audio_nb1).mb_lf_channels [mc "This option is used by MPlayer so the audio is decoded
+					settooltip $lf_audioStnd.mb_channels [mc "This option is used by MPlayer so the audio is decoded
 to the chosen value."]
+					settooltip $lf_audioStnd.cb_remAudio [mc "Remeber volume level when exiting TV-Viewer"]
 					settooltip $lf_audioSync.cb_audautosync [mc "Gradually adjusts the A/V sync based on audio delay measurements."]
 					settooltip $lf_audioSync.sb_auddelay [mc "Audio/Video sync correction per frame in seconds."]
 				} else {
-					settooltip $::window(audio_nb1).mb_lf_audio {}
-					settooltip $::window(audio_nb1).cb_lf_softvol {}
-					settooltip $::window(audio_nb1).mb_lf_channels {}
+					settooltip $lf_audioStnd.mb_audio {}
+					settooltip $lf_audioStnd.cb_softvol {}
+					settooltip $lf_audioStnd.mb_channels {}
+					settooltip $lf_audioStnd.cb_remAudio {}
 					settooltip $lf_audioSync.cb_audautosync {}
 					settooltip $lf_audioSync.sb_auddelay {}
 				}
@@ -198,10 +207,12 @@ to the chosen value."]
 			#Setting defaults for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
 			log_writeOutTv 1 "Setting audio options to default."
+			set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
 			set lf_audioSync $::window(audio_nb1).lf_audio_sync
 			set ::choice(mbAudio) $::stnd_opt(player_audio)
 			set ::choice(cb_softvol) $::stnd_opt(player_aud_softvol)
 			set ::choice(mbAudio_channels) $::stnd_opt(player_audio_channels)
+			set ::choice(cb_remAdio) $::stnd_opt(volRem)
 			set ::choice(cb_audautosync) $::stnd_opt(player_audio_autosync)
 			set ::choice(sb_auddelay) $::stnd_opt(player_audio_delay)
 		}

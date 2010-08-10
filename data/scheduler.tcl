@@ -50,7 +50,7 @@ EXIT 1"
 source $option(root)/release_version.tcl
 source $option(root)/agrep.tcl
 source $option(root)/monitor.tcl
-source $option(root)/main_read_config.tcl
+source $option(root)/process_config.tcl
 source $option(root)/main_picqual_stream.tcl
 source $option(root)/main_newsreader.tcl
 source $option(root)/command_socket.tcl
@@ -470,7 +470,7 @@ proc scheduler_main_loop {} {
 
 proc scheduler_Init {handler} {
 	if {$handler == 0} {
-		main_readConfig
+		process_configRead
 		scheduler_log
 		command_socket
 		set status [monitor_partRunning 1]
@@ -480,7 +480,7 @@ proc scheduler_Init {handler} {
 		scheduler_stations
 		scheduler_main_loop
 	} else {
-		main_readConfig
+		process_configRead
 		scheduler_stations
 		scheduler_logWriteOut 1 "Scheduler has been reinitiated."
 		set ::scheduler(loop_date) 0

@@ -28,13 +28,13 @@ set main(debug_msg) [open /dev/null a]
 
 source $option(root)/data/release_version.tcl
 source $option(root)/data/agrep.tcl
-source $option(root)/data/main_read_config.tcl
+source $option(root)/data/process_config.tcl
 source $option(root)/data/main_read_station_file.tcl
 source $option(root)/data/log_viewer.tcl
 source $option(root)/data/command_socket.tcl
 source $option(root)/data/monitor.tcl
 
-main_readConfig
+process_configRead
 
 if {[file exists "$::option(home)/log/tvviewer.log"]} {
 	if {$::option(log_files) == 1} {

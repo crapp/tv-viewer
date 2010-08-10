@@ -1,4 +1,4 @@
-#       main_read_config.tcl
+#       process_config.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc main_readConfig {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readConfig \033\[0m"}
+proc process_configRead {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configRead \033\[0m"}
 	array set ::option {
 		#FIXME Remove theme black if it does not work properly.
 		language Autodetect
@@ -94,7 +94,8 @@ proc main_readConfig {} {
 		tooltips_record 1
 		show_splash 1
 		window_full 0
-		window_remSize 1
+		window_remProp 1
+		volRem 1
 		systray_tv 0
 		systray_start 0
 		systray_close 0
@@ -143,6 +144,48 @@ proc main_readConfig {} {
 			log_writeOutTv 1 "Will use standard values."
 		}
 		foreach {key elem} [array get ::option] {
+			if {[info exists ::logf_tv_open_append]} {
+				log_writeOutTv 1 "$key $elem"
+			}
+		}
+	}
+}
+
+proc process_configMem {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configMem \033\[0m"}
+	#FIXME The values for width and height are quite randow and were only chosen to have some fallback values.
+	array set ::mem {
+		mainwidth 654
+		mainheight 480
+		ontop 0
+		compact 0
+		volume 100
+		wizardSec 0
+		wizardTab .config_wizard.frame_configoptions.nb.f_general
+	}
+	
+	if {[info exists ::logf_tv_open_append]} {
+		if {"$::option(appname)" == "tv-viewer_main"} {
+			log_writeOutTv 0 "Reading memory configuration values."
+		}
+	}
+	if {[file exists "$::option(home)/config/tv-viewer_mem.conf"]} {
+		set open_config_file [open "$::option(home)/config/tv-viewer_mem.conf" r]
+		while {[gets $open_config_file line]!=-1} {
+			if {[string match #* $line] || [string trim $line] == {} } continue
+			if {[catch {array set ::mem $line}]} {
+				if {[info exists ::logf_tv_open_append]} {
+					log_writeOutTv 2 "Mem config file line incorrect: $line"
+				}
+			}
+		}
+		close $open_config_file
+	} else {
+		if {[info exists ::logf_tv_open_append]} {
+			log_writeOutTv 1 "Could not locate a mem configuration file!"
+			log_writeOutTv 1 "Will use standard values."
+		}
+		foreach {key elem} [array get ::mem] {
 			if {[info exists ::logf_tv_open_append]} {
 				log_writeOutTv 1 "$key $elem"
 			}

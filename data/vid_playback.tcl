@@ -269,7 +269,6 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 			puts "handler vid_Playback $handler"
 			lappend mcommand -wid $winid "$file"
 			catch {place forget .fvidBg.l_bgImage}
-			#FIXME Why restart this proc when old fileplaybar does not exist
 			bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
 			bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
 			bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
@@ -279,8 +278,6 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 			bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
 			bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
 			bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
-			.ftoolb_Play.bPause state !disabled
-			.ftoolb_Play.bPlay state disabled
 			.ftoolb_Play.bStop state !disabled
 			.ftoolb_Play.bRewStart state !disabled
 			.ftoolb_Play.bRewSmall state !disabled
@@ -288,31 +285,50 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 			.ftoolb_Play.bForwSmall state !disabled
 			.ftoolb_Play.mbForwChoose state !disabled
 			.ftoolb_Play.bForwEnd state !disabled
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
 			.foptions_bar.mbNavigation.mNavigation entryconfigure 7 -state normal
 			.foptions_bar.mbNavigation.mNavigation entryconfigure 9 -state normal
 			.foptions_bar.mbNavigation.mNavigation entryconfigure 10 -state normal
-			.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
-			.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
 			.fvidBg.mContext.mNavigation entryconfigure 7 -state normal
 			.fvidBg.mContext.mNavigation entryconfigure 9 -state normal
 			.fvidBg.mContext.mNavigation entryconfigure 10 -state normal
 			if {"$handler" == "timeshift"} {
 				.ftoolb_Top.bTimeshift state !disabled
+				.ftoolb_Play.bPlay state disabled
+				.ftoolb_Play.bPause state !disabled
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
+				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state normal
+				.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
+				.fvidBg.mContext.mNavigation entryconfigure 6 -state normal
 				bind . <<start>> {}
 				.ftoolb_Play.bPlay configure -command [list vid_seek 0 0]
 				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
 				.fvidBg.mContext.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
 			} else {
 				if {$::vid(recStart)} {
+					.ftoolb_Play.bPlay state disabled
+					.ftoolb_Play.bPause state !disabled
+					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
+					.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state normal
+					.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
+					.fvidBg.mContext.mNavigation entryconfigure 6 -state normal
 					.ftoolb_Play.bPlay configure -command [list vid_seek 0 0]
 					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
 					.fvidBg.mContext.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
 				} else {
 					.ftoolb_Top.bTimeshift state disabled
+					.ftoolb_Play.bPlay state !disabled
+					.ftoolb_Play.bPause state disabled
+					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
+					.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
+					.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
+					.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
 					bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
 					set ::vid(recStart) 1
+					if {[winfo exists .fvidBg.l_anigif]} {
+						launch_splashPlay cancel 0 0 0
+						place forget .fvidBg.l_anigif
+						destroy .fvidBg.l_anigif
+					}
 					return
 				}
 			}

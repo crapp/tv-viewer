@@ -36,7 +36,6 @@ proc config_wizardMainUi {} {
 	# Setting up the interface
 	
 	set w [toplevel .config_wizard]
-	
 	place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	
 	#~ foreach sy [split [lsort [ttk::style theme names]]] {
@@ -46,19 +45,15 @@ proc config_wizardMainUi {} {
 	#~ }
 	#ttk::frame $wfopt; place [ttk::label $wfopt.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set wfbox [ttk::frame $w.frame_configbox]
-	
 	set wfcopt [ttk::frame $w.frame_configoptions]
 	set wfbtn [ttk::frame $w.frame_buttons -style TLabelframe]
 	
 	#FIXME Strange way of setting some font, why?
 	#FIXME Switch to a treeview widget? Would be possible to use images.
-	listbox $wfbox.listbox_clist -font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* -width 0 -height 0
-	
+	listbox $wfbox.listbox_clist -font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* -width 0 -height 0 -exportselection 0
 	ttk::button $wfbtn.button_save -text [mc "Apply"] -command config_wizardSaveopts -compound left -image $::icon_s(dialog-ok-apply)
-	
 	ttk::button $wfbtn.b_default -text [mc "Default"]
-	
-	ttk::button $wfbtn.button_quit -text [mc "Cancel"] -command config_wizardExit -compound left -image $::icon_s(dialog-cancel)
+	ttk::button $wfbtn.button_quit -text [mc "Cancel"] -command [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb] -compound left -image $::icon_s(dialog-cancel)
 	
 	ttk::notebook $wfcopt.nb
 	
@@ -85,20 +80,18 @@ proc config_wizardMainUi {} {
 	foreach config_option [split $conf_opts] {
 		$wfbox.listbox_clist insert end " $config_option"
 	}
+	#~ bindtags $wfbox.listbox_clist {.config_wizard .config_wizard.frame_configbox.listbox_clist Listbox all}
 	bind $wfbox.listbox_clist <<ListboxSelect>> {config_wizardListbox}
-	bind $w <Control-Key-x> {config_wizardExit}
+	bind $w <Control-Key-x> [list config_wizardExit $wfbox.listbox_clist $wfcopt.nb]
 	bind $w <Key-F1> [list info_helpHelp]
 	
-	$wfbox.listbox_clist selection set 0
-	$wfbox.listbox_clist activate 0
-	
 	wm resizable $w 0 0
-	wm protocol $w WM_DELETE_WINDOW config_wizardExit
+	wm protocol $w WM_DELETE_WINDOW [list config_wizardExit $wfbox.listbox_clist $wfcopt.nb]
 	wm title $w [mc "Preferences"]
 	wm iconphoto $w $::icon_b(settings)
 	wm transient $w .
 	
-	config_wizardReadSettings
+	process_config_wizardRead
 	
 	settooltip $wfbtn.button_save [mc "Apply your changes and exit preferences dialog."]
 	settooltip $wfbtn.b_default [mc "Load default values, for the corresponding section."]
@@ -121,7 +114,17 @@ proc config_wizardMainUi {} {
 	option_screen_6
 	option_screen_7
 	option_screen_8
-	option_screen_0
+	if {$::option(window_remProp)} {
+		log_writeOutTv 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
+		option_screen_$::mem(wizardSec)
+		$wfcopt.nb select $::mem(wizardTab)
+		$wfbox.listbox_clist selection set $::mem(wizardSec)
+		$wfbox.listbox_clist activate $::mem(wizardSec)
+	} else {
+		option_screen_0
+		$wfbox.listbox_clist selection set 0
+		$wfbox.listbox_clist activate 0
+	}
 	
 	#~ if {$::option(systray_close) == 1} {
 		#~ wm protocol . WM_DELETE_WINDOW {  }
@@ -141,11 +144,30 @@ proc config_wizardListbox {} {
 	option_screen_$get_lb_index
 }
 
-proc config_wizardExit {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m"
+proc config_wizardExit {lbox nbook} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m \{$lbox\} \{$nbook\}"
 	log_writeOutTv 0 "Closing preferences dialog and reread configuration."
 	
-	main_readConfig
+	if {$::option(window_remProp)} {
+		log_writeOutTv 0 "Saving wizard section and notebook tab"
+		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
+		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
+		foreach {okey oelem} [array get ::mem] {
+			if {"$okey" == "wizardSec"} {
+				puts $wconfig_mem "wizardSec [$lbox curselection]"
+				continue
+			}
+			if {"$okey" == "wizardTab"} {
+				puts $wconfig_mem "wizardTab [$nbook select]"
+				continue
+			}
+			puts $wconfig_mem "$okey $oelem"
+		}
+		close $wconfig_mem
+	}
+	
+	process_configRead
+	process_configMem
 	
 	if {$::config(rec_running) == 0} {
 		if {$::option(forcevideo_standard) == 1} {
@@ -277,5 +299,5 @@ puts $config_file_open "
 	if {[lindex $status 0] == 1} {
 		command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 	}
-	config_wizardExit
+	config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb
 }

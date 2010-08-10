@@ -110,9 +110,9 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		$mViewSize add command -label "175%" -compound left -image $::icon_s(placeholder) -command [list vid_wmGivenSize .fvidBg 1.75]
 		$mViewSize add command -label "200%" -compound left -image $::icon_s(placeholder) -command [list vid_wmGivenSize .fvidBg 2.0] -accelerator [mc "Ctrl+2"]
 	$mView add cascade -label [mc "Stay on top"] -compound left -image $::icon_s(placeholder) -menu $mViewTop
-		$mViewTop add radiobutton -label [mc "Never"] -variable tv(stayontop) -value 0 -command [list vid_wmStayonTop 0]
-		$mViewTop add radiobutton -label [mc "Always"] -variable tv(stayontop) -value 1 -command [list vid_wmStayonTop 1]
-		$mViewTop add radiobutton -label [mc "While playback"] -variable tv(stayontop) -value 2 -command [list vid_wmStayonTop 2]
+		$mViewTop add radiobutton -label [mc "Never"] -variable vid(stayontop) -value 0 -command [list vid_wmStayonTop 0]
+		$mViewTop add radiobutton -label [mc "Always"] -variable vid(stayontop) -value 1 -command [list vid_wmStayonTop 1]
+		$mViewTop add radiobutton -label [mc "While playback"] -variable vid(stayontop) -value 2 -command [list vid_wmStayonTop 2]
 	$mView add command -command vid_wmCompact -compound left -image $::icon_s(compact) -label [mc "Compact mode"] -accelerator [mc "Ctrl+C"]
 	$mView add command -command [list vid_wmFullscreen . .fvidBg .fvidBg.cont] -compound left -image $::icon_s(fullscreen) -label [mc "Fullscreen"] -accelerator F
 }
@@ -161,14 +161,14 @@ proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	set mForw [menu $toolbPlay.mbForwChoose.mForwChoose -tearoff 0 -background $::option(theme_$::option(use_theme))]
 	
 	#Fill menu rewind selector
-	$mRew add checkbutton -label [mc "-10 seconds"] -accelerator [mc "Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10s tv(check_rew_10s)] -variable tv(check_rew_10s)
-	$mRew add checkbutton -label [mc "-1 minute"] -accelerator [mc "Shift+Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -1m tv(check_rew_1m)] -variable tv(check_rew_1m)
-	$mRew add checkbutton -label [mc "-10 minutes"] -accelerator [mc "Ctrl+Shift+Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10m tv(check_rew_10m)] -variable tv(check_rew_10m)
+	$mRew add checkbutton -label [mc "-10 seconds"] -accelerator [mc "Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10s vid(check_rew_10s)] -variable tv(check_rew_10s)
+	$mRew add checkbutton -label [mc "-1 minute"] -accelerator [mc "Shift+Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -1m vid(check_rew_1m)] -variable tv(check_rew_1m)
+	$mRew add checkbutton -label [mc "-10 minutes"] -accelerator [mc "Ctrl+Shift+Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10m vid(check_rew_10m)] -variable tv(check_rew_10m)
 	
 	#Fill menu forward selector
-	$mForw add checkbutton -label [mc "+10 seconds"] -accelerator [mc "Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s tv(check_fow_10s)] -variable tv(check_fow_10s)
-	$mForw add checkbutton -label [mc "+1 minute"] -accelerator [mc "Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m tv(check_fow_1m)] -variable tv(check_fow_1m)
-	$mForw add checkbutton -label [mc "+10 minutes"] -accelerator [mc "Ctrl+Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m tv(check_fow_10m)] -variable tv(check_fow_10m)
+	$mForw add checkbutton -label [mc "+10 seconds"] -accelerator [mc "Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s vid(check_fow_10s)] -variable tv(check_fow_10s)
+	$mForw add checkbutton -label [mc "+1 minute"] -accelerator [mc "Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m vid(check_fow_1m)] -variable tv(check_fow_1m)
+	$mForw add checkbutton -label [mc "+10 minutes"] -accelerator [mc "Ctrl+Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m vid(check_fow_10m)] -variable tv(check_fow_10m)
 }
 
 proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {

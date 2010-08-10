@@ -188,9 +188,9 @@ Started at %" [lindex $::station(last) 0] $stime]
 		.ftoolb_Disp.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
-		catch {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
+		vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"
 	} else {
-		catch {vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"}
+		vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor arrow

@@ -20,10 +20,18 @@ proc record_applyTimeDate {tree lb w handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyTimeDate \033\[0m \{$tree\} \{$lb\} \{$w\} \{$handler\}"
 	set thour [scan $::record(time_hour) %d]
 	set tmin [scan $::record(time_min) %d]
-	if {$thour > 23 || $thour < 0} {
-		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (hour)!"]
-		log_writeOutTv 2 "Time format incorrect (hour)."
-		return
+	if {$::option(rec_hour_format) == 24} {
+		if {$thour > 23 || $thour < 0} {
+			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (%-hour clock)!" $::option(rec_hour_format)]
+			log_writeOutTv 2 "Time format incorrect (24-hour clock)."
+			return
+		}
+	} else {
+		if {$thour > 12 || $thour < 1} {
+			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (%-hour clock)!" $::option(rec_hour_format)]
+			log_writeOutTv 2 "Time format incorrect (12-hour clock)."
+			return
+		}
 	}
 	if {$tmin > 59 || $tmin < 0} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (min)!"]
@@ -40,14 +48,28 @@ proc record_applyTimeDate {tree lb w handler} {
 		}
 	}
 	if {$curr_date == $chos_date} {
-		set timeoff [expr {([clock scan $::record(time_hour)\:$::record(time_min)]-[clock seconds])*1000}]
+		if {$::option(rec_hour_format) == 12} {
+			if {"$::record(rbAddEditHour)" == "pm"} {
+				set thour [expr $thour + 12]
+				if {$thour > 23} {
+					set thour 12
+				}
+			}
+		}
+		puts "thour $thour"
+		set timeoff [expr {([clock scan $thour\:$tmin]-[clock seconds])*1000}]
+		puts "timeoff $timeoff"
 		if {$timeoff < -500000} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time is in the past!"]
 			log_writeOutTv 2 "Time is in the past."
 			return
 		}
 	}
-	log_writeOutTv 0 "Recording time $thour\:$tmin\, date $::record(date)."
+	if {$::option(rec_hour_format) == 24} {
+		log_writeOutTv 0 "Recording time $thour\:$tmin\, date $::record(date)."
+	} else {
+		log_writeOutTv 0 "Recording time $thour\:$tmin\ $::record(rbAddEditHour), date $::record(date)."
+	}
 	record_applyDuration $tree $lb $w $handler
 }
 
@@ -140,18 +162,30 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	set lbindex [$lb curselection]
 	set ::record(lbcontent) [$lb get $lbindex]
 	if {"$handler" == "add"} {
-		$tree insert {} end -values [list $jobid "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-		log_writeOutTv 0 "Adding new recording:"
-		log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		if {$::option(rec_hour_format) == 24} {
+			$tree insert {} end -values [list $jobid "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+			log_writeOutTv 0 "Adding new recording:"
+			log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		} else {
+			$tree insert {} end -values [list $jobid "$::record(lbcontent)" "$::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour)" $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+			log_writeOutTv 0 "Adding new recording:"
+			log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		}
 	} else {
-		$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-		log_writeOutTv 0 "Edit recording:"
-		log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		if {$::option(rec_hour_format) == 24} {
+			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+			log_writeOutTv 0 "Edit recording:"
+			log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		} else {
+			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" "$::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour)" $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
+			log_writeOutTv 0 "Edit recording:"
+			log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		}
 	}
 	catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
 	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
 	foreach ritem [split [$tree children {}]] {
-		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
+		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} \{[lindex [$tree item $ritem -values] 2]\} [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
 	}
 	close $f_open
 	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)

@@ -56,14 +56,12 @@ proc option_screen_6 {} {
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_record -text [mc "Record Wizard"] -variable choice(cb_tooltip_record)
 		ttk::labelframe $::window(interface_nb1).lf_splash -text [mc "Splash Screen"]
 		ttk::checkbutton $::window(interface_nb1).cb_lf_splash -text [mc "Show Splash Screen on initialization."] -variable choice(cb_splash)
-		ttk::labelframe $::window(interface_nb1).lf_showslist -text [mc "Station List"]
-		ttk::checkbutton $::window(interface_nb1).cb_lf_showslist -text [mc "Show Station List on initialization."] -variable choice(cb_slist)
 		
 		set ::window(interface_nb2) [ttk::frame $w.f_windowprop]
 		$w add $::window(interface_nb2) -text [mc "Window Properties"] -padding 2
-		ttk::labelframe $::window(interface_nb2).lf_tvattach -text [mc "Video window"]
-		ttk::checkbutton $::window(interface_nb2).cb_lf_tvattach -text [mc "Attach video window to main window"] -variable choice(cb_tvattach)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_tvfullscr -text [mc "Start in full-screen mode"] -variable choice(cb_tvfullscr)
+		ttk::labelframe $::window(interface_nb2).lf_mainWindow -text [mc "Main window"]
+		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_fullscr -text [mc "Start in full-screen mode"] -variable choice(cb_fullscr)
+		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_remProp -text [mc "Remember window properties"] -variable choice(cb_remProp)
 		ttk::labelframe $::window(interface_nb2).lf_systray -text [mc "System Tray"]
 		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_tv -text [mc "Dock video window"] -variable choice(cb_systray_tv)
 		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_dock -text [mc "Dock TV-Viewer after initialization"] -variable choice(cb_systray_start)
@@ -94,14 +92,6 @@ proc option_screen_6 {} {
 		ttk::checkbutton $frame_nb3.cb_osd_key_f -variable config_int(cb_osd_key_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_key_f) [lreplace $::choice(osd_key_f) 0 0 $::config_int(cb_osd_key_f)]}
 		ttk::button $frame_nb3.b_osd_key_fnt_f -command [list font_chooserUi $frame_nb3.b_osd_key_fnt_f osd_key_f]
 		
-		ttk::labelframe $frame_nb3.lf_osd_mouse -text [mc "OSD Station list mouse"]
-		ttk::checkbutton $frame_nb3.cb_osd_mouse_w -variable config_int(cb_osd_mouse_w) -text [mc "Windowed mode"] -command {set ::choice(osd_mouse_w) [lreplace $::choice(osd_mouse_w) 0 0 $::config_int(cb_osd_mouse_w)]}
-		ttk::menubutton $frame_nb3.b_osd_mouse_aln_w -menu $frame_nb3.mbOsd_mouse_w -textvariable config_int(osd_mouse_w)
-		menu $frame_nb3.mbOsd_mouse_w -tearoff 0 -background $::option(theme_$::option(use_theme))
-		ttk::checkbutton $frame_nb3.cb_osd_mouse_f -variable config_int(cb_osd_mouse_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_mouse_f) [lreplace $::choice(osd_mouse_f) 0 0 $::config_int(cb_osd_mouse_f)]}
-		ttk::menubutton $frame_nb3.b_osd_mouse_aln_f -menu $frame_nb3.mbOsd_mouse_f -textvariable config_int(osd_mouse_f)
-		menu $frame_nb3.mbOsd_mouse_f -tearoff 0 -background $::option(theme_$::option(use_theme))
-		
 		ttk::labelframe $frame_nb3.lf_osd_lirc -text [mc "OSD Station list lirc"]
 		ttk::label $frame_nb3.l_osd_lirc_fnt -text [mc "Full-screen mode"]
 		ttk::button $frame_nb3.b_osd_lirc_fnt -command [list font_chooserUi $frame_nb3.b_osd_lirc_fnt osd_lirc]
@@ -109,7 +99,6 @@ proc option_screen_6 {} {
 		grid columnconfigure $::window(interface_nb1) 0 -weight 1
 		grid columnconfigure $::window(interface_nb1).lf_theme 0 -minsize 120
 		grid columnconfigure $::window(interface_nb2) 0 -weight 1
-		grid columnconfigure $::window(interface_nb2).lf_tvattach 1 -minsize 100
 		grid columnconfigure $::window(interface_nb3) 0 -weight 1
 		grid columnconfigure $::window(interface_nb3_cont).f_osd2 0 -weight 1
 		grid rowconfigure $::window(interface_nb3) 0 -weight 1
@@ -125,16 +114,14 @@ proc option_screen_6 {} {
 		grid $::window(interface_nb1).cb_lf_tooltip_record -in $::window(interface_nb1).lf_tooltip -row 1 -column 2 -sticky ew -padx "7 0" -pady "0 3"
 		grid $::window(interface_nb1).lf_splash -in $::window(interface_nb1) -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb1).cb_lf_splash -in $::window(interface_nb1).lf_splash -row 0 -column 0 -padx 7 -pady 3
-		grid $::window(interface_nb1).lf_showslist -in $::window(interface_nb1) -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(interface_nb1).cb_lf_showslist -in $::window(interface_nb1).lf_showslist -row 0 -column 0 -padx 7 -pady 3
 		
-		grid $::window(interface_nb2).lf_tvattach -in $::window(interface_nb2) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(interface_nb2).cb_lf_tvattach -in $::window(interface_nb2).lf_tvattach -row 0 -column 0 -columnspan 2 -sticky w -padx 7 -pady 3
-		grid $::window(interface_nb2).cb_lf_tvfullscr -in $::window(interface_nb2).lf_tvattach -row 1 -column 0 -columnspan 2 -sticky w -padx 7 -pady "0 3"
+		grid $::window(interface_nb2).lf_mainWindow -in $::window(interface_nb2) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb2).lf_mainWindow.cb_fullscr -in $::window(interface_nb2).lf_mainWindow -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(interface_nb2).lf_mainWindow.cb_remProp -in $::window(interface_nb2).lf_mainWindow -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb2).cb_lf_systray_dock -in $::window(interface_nb2).lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $::window(interface_nb2).cb_lf_systray_tv -in $::window(interface_nb2).lf_systray -row 1 -column 0 -sticky w -padx 7 -pady 3
-		grid $::window(interface_nb2).cb_lf_systray_close -in $::window(interface_nb2).lf_systray -row 2 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(interface_nb2).cb_lf_systray_tv -in $::window(interface_nb2).lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $::window(interface_nb2).cb_lf_systray_close -in $::window(interface_nb2).lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
 		
 		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
 		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
@@ -157,12 +144,6 @@ proc option_screen_6 {} {
 		grid $frame_nb3.cb_osd_key_f -in $frame_nb3.lf_osd_key -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $frame_nb3.b_osd_key_fnt_f -in $frame_nb3.lf_osd_key -row 1 -column 1 -sticky ew -padx "0 7" -pady "0 3"
 		
-		grid $frame_nb3.lf_osd_mouse -in $frame_nb3 -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $frame_nb3.cb_osd_mouse_w -in $frame_nb3.lf_osd_mouse -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $frame_nb3.b_osd_mouse_aln_w -in $frame_nb3.lf_osd_mouse -row 0 -column 1 -sticky w -pady 3
-		grid $frame_nb3.cb_osd_mouse_f -in $frame_nb3.lf_osd_mouse -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $frame_nb3.b_osd_mouse_aln_f -in $frame_nb3.lf_osd_mouse -row 1 -column 1 -sticky w -pady "0 3"
-		
 		grid $frame_nb3.lf_osd_lirc -in $frame_nb3 -row 4 -column 0 -sticky ew -padx 5 -pady 5
 		grid $frame_nb3.l_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 0 -padx "23 7" -pady "3"
 		grid $frame_nb3.b_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 1 -sticky ew -pady "3"
@@ -181,11 +162,6 @@ proc option_screen_6 {} {
 		}
 		bind $::window(interface_nb3_cont).f_osd2  <Button-4> {config_interfaceMousew 120}
 		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew -120}
-		set avail_aligns [dict create [mc "top left"] 0 [mc "top"] 1 [mc "top right"] 2 [mc "left"] 3 [mc "right"] 5 [mc "bottom left"] 6 [mc "bottom"] 7 [mc "bottom right"] 8]
-		foreach {key elem} [dict get $avail_aligns] {
-			$frame_nb3.mbOsd_mouse_w add radiobutton -label "$key" -value "{$key} $elem" -variable config_int(radiobutton_osd_mouse_w) 	-command [list config_interfaceAlign "{$key} $elem" osd_mouse_w]
-			$frame_nb3.mbOsd_mouse_f add radiobutton -label "$key" -value "{$key} $elem" 	-variable config_int(radiobutton_osd_mouse_f) -command [list config_interfaceAlign "{$key} $elem" osd_mouse_f]
-		}
 		# Subprocs
 		
 		proc config_interfaceTheme {theme} {
@@ -244,9 +220,8 @@ proc option_screen_6 {} {
 			set ::choice(cb_tooltip_player) $::option(tooltips_player)
 			set ::choice(cb_tooltip_record) $::option(tooltips_record)
 			set ::choice(cb_splash) $::option(show_splash)
-			set ::choice(cb_slist) $::option(show_slist)
-			set ::choice(cb_tvattach) $::option(vidwindow_attach)
-			set ::choice(cb_tvfullscr) $::option(vidwindow_full)
+			set ::choice(cb_fullscr) $::option(window_full)
+			set ::choice(cb_remProp) $::option(window_remProp)
 			set ::choice(cb_systray_tv) $::option(systray_tv)
 			set ::choice(cb_systray_start) $::option(systray_start)
 			set ::choice(cb_systray_close) $::option(systray_close)
@@ -292,21 +267,6 @@ proc option_screen_6 {} {
 			} else {
 				$::window(interface_nb3_cont).f_osd2.b_osd_key_fnt_f configure -text "[lindex $::choice(osd_key_f) 1] - [lindex $::choice(osd_key_f) 2] | [lindex $::choice(osd_key_f) 3]"
 			}
-			set ::choice(osd_mouse_w) $::option(osd_mouse_w)
-			set ::choice(osd_mouse_f) $::option(osd_mouse_f)
-			set ::config_int(cb_osd_mouse_w) [lindex $::choice(osd_mouse_w) 0]
-			set ::config_int(cb_osd_mouse_f) [lindex $::choice(osd_mouse_f) 0]
-			if {[lindex $::choice(osd_mouse_w) 1] >= 5} {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [expr [lindex $::choice(osd_mouse_w) 1] - 1]
-			} else {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [lindex $::choice(osd_mouse_w) 1]
-				
-			}
-			if {[lindex $::choice(osd_mouse_f) 1] >= 5} {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [expr [lindex $::choice(osd_mouse_f) 1] - 1]
-			} else {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [lindex $::choice(osd_mouse_f) 1]
-			}
 			set ::choice(osd_lirc) $::option(osd_lirc)
 			if {"[lindex $::choice(osd_lirc) 2]" == "Regular"} {
 				$::window(interface_nb3_cont).f_osd2.b_osd_lirc_fnt configure -text "[lindex $::choice(osd_lirc) 1] | [lindex $::choice(osd_lirc) 3]"
@@ -325,15 +285,8 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb1).cb_lf_tooltip_player [mc "Tooltips for the Video Player."]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record [mc "Tooltips for the Record Wizard."]
 					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer."]
-					settooltip $::window(interface_nb1).cb_lf_showslist [mc "If enabled the station list will be shown after the start up."]
-					settooltip $::window(interface_nb2).cb_lf_tvattach [mc "This option makes sure, that there will be no
-separate entry in taskbar for the video window.
-On the other hand it will be logically linked
-to the main window. For example the video window
-will also dock to the system tray regardless of
-the option \"Dock video window\".
-Requires a restart of TV-Viewer."]
-					settooltip $::window(interface_nb2).cb_lf_tvfullscr [mc "Start TV-Viewer in full-screen mode."]
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode."]
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_remProp [mc "Remember window properties like size, compact mode, stay ontop..."]
 					settooltip $::window(interface_nb2).cb_lf_systray_tv [mc "With this option enabled, the video window will be
 docked to the system tray with the rest of TV-Viewer."]
 					settooltip $::window(interface_nb2).cb_lf_systray_dock [mc "Enable this option if you want to dock TV-Viewer after initialization."]
@@ -351,14 +304,6 @@ main window is closed."]
 					settooltip $w3.cb_osd_key_f [mc "OSD for change stations via numbers input in full-screen mode."]
 					settooltip $w3.b_osd_key_fnt_w [mc "Change font, color and alignment."]
 					settooltip $w3.b_osd_key_fnt_f [mc "Change font, color and alignment."]
-					settooltip $w3.cb_osd_mouse_w [mc "OSD station list invoked by the mouse cursor in windowed mode."]
-					settooltip $w3.cb_osd_mouse_f [mc "OSD station list invoked by the mouse cursor in full-screen mode."]
-					settooltip $w3.b_osd_mouse_aln_w [mc "Alignment of the station list. Specifies where the widget
-should popup and where you have to move the
-mouse cursor to invoke it."]
-					settooltip $w3.b_osd_mouse_aln_f [mc "Alignment of the station list. Specifies where the widget
-should popup and where you have to move the
-mouse cursor to invoke it."]
 					settooltip $w3.b_osd_lirc_fnt [mc "Change font, color and alignment."]
 				} else {
 					settooltip $::window(interface_nb1).mb_lf_theme {}
@@ -370,9 +315,8 @@ mouse cursor to invoke it."]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_player {}
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record {}
 					settooltip $::window(interface_nb1).cb_lf_splash {}
-					settooltip $::window(interface_nb1).cb_lf_showslist {}
-					settooltip $::window(interface_nb2).cb_lf_tvattach {}
-					settooltip $::window(interface_nb2).cb_lf_tvfullscr {}
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr {}
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_remProp {}
 					settooltip $::window(interface_nb2).cb_lf_systray_tv {}
 					settooltip $w3.cb_osd_station_w {}
 					settooltip $w3.cb_osd_station_f {}
@@ -386,10 +330,6 @@ mouse cursor to invoke it."]
 					settooltip $w3.cb_osd_key_f {}
 					settooltip $w3.b_osd_key_fnt_w {}
 					settooltip $w3.b_osd_key_fnt_f {}
-					settooltip $w3.cb_osd_mouse_w {}
-					settooltip $w3.cb_osd_mouse_f {}
-					settooltip $w3.b_osd_mouse_aln_w {}
-					settooltip $w3.b_osd_mouse_aln_f {}
 					settooltip $w3.b_osd_lirc_fnt {}
 				}
 			}
@@ -407,9 +347,8 @@ mouse cursor to invoke it."]
 			set ::choice(cb_tooltip_player) $::stnd_opt(tooltips_player)
 			set ::choice(cb_tooltip_record) $::stnd_opt(tooltips_record)
 			set ::choice(cb_splash) $::stnd_opt(show_splash)
-			set ::choice(cb_slist) $::stnd_opt(show_slist)
-			set ::choice(cb_tvattach) $::stnd_opt(vidwindow_attach)
-			set ::choice(cb_tvfullscr) $::stnd_opt(vidwindow_full)
+			set ::choice(cb_fullscr) $::stnd_opt(window_full)
+			set ::choice(cb_remProp) $::option(window_remProp)
 			set ::choice(cb_systray_tv) $::stnd_opt(systray_tv)
 			set ::choice(cb_systray_start) $::stnd_opt(systray_start)
 			set ::choice(cb_systray_close) $::stnd_opt(systray_close)
@@ -454,21 +393,6 @@ mouse cursor to invoke it."]
 				$::window(interface_nb3_cont).f_osd2.b_osd_key_fnt_f configure -text "[lindex $::choice(osd_key_f) 1] | [lindex $::choice(osd_key_f) 3]"
 			} else {
 				$::window(interface_nb3_cont).f_osd2.b_osd_key_fnt_f configure -text "[lindex $::choice(osd_key_f) 1] - [lindex $::choice(osd_key_f) 2] | [lindex $::choice(osd_key_f) 3]"
-			}
-			set ::choice(osd_mouse_w) $::stnd_opt(osd_mouse_w)
-			set ::choice(osd_mouse_f) $::stnd_opt(osd_mouse_f)
-			set ::config_int(cb_osd_mouse_w) [lindex $::choice(osd_mouse_w) 0]
-			set ::config_int(cb_osd_mouse_f) [lindex $::choice(osd_mouse_f) 0]
-			if {[lindex $::choice(osd_mouse_w) 1] >= 5} {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [expr [lindex $::choice(osd_mouse_w) 1] - 1]
-			} else {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_w invoke [lindex $::choice(osd_mouse_w) 1]
-				
-			}
-			if {[lindex $::choice(osd_mouse_f) 1] >= 5} {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [expr [lindex $::choice(osd_mouse_f) 1] - 1]
-			} else {
-				$::window(interface_nb3_cont).f_osd2.mbOsd_mouse_f invoke [lindex $::choice(osd_mouse_f) 1]
 			}
 			set ::choice(osd_lirc) $::stnd_opt(osd_lirc)
 			if {"[lindex $::choice(osd_lirc) 2]" == "Regular"} {
