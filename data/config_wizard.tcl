@@ -23,7 +23,7 @@ proc config_wizardMainUi {} {
 		if {[winfo ismapped .] == 0} {
 			log_writeOutTv 1 "User attempted to start preferences while main is docked."
 			log_writeOutTv 1 "Will undock main."
-			 main_systemTrayToggle
+			 system_trayToggle
 		}
 	}
 	
@@ -126,7 +126,7 @@ proc config_wizardMainUi {} {
 		$wfbox.listbox_clist activate 0
 	}
 	
-	#~ if {$::option(systray_close) == 1} {
+	#~ if {$::option(systrayClose) == 1} {
 		#~ wm protocol . WM_DELETE_WINDOW {  }
 	#~ }
 	
@@ -194,8 +194,8 @@ proc config_wizardExit {lbox nbook} {
 	tooltips .ftoolb_Top .ftoolb_ChanCtrl .ftoolb_Play main
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.
-	#~ if {$::option(systray_close) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ if {$::option(systrayClose) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
 	#~ } else {
 		#~ 
 	#~ }

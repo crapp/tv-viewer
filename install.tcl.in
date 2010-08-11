@@ -146,7 +146,11 @@ you are $::tcl_platform(user)
 			catch {file delete -force "$mandir/man1/tv-viewer.1.gz"}
 			catch {file delete -force "$docdir/README"}
 			if {$tktray} {
+				#Make sure all previous installed versions will be deleted. What if this is provided by some package?
+				catch {file delete -force -- pathname "$libdir/tktray1.2"}
 				catch {file delete -force -- pathname "$libdir/tktray1.3.3/"}
+				catch {file delete -force -- pathname "$libdir/tktray1.3.8/"}
+				catch {file delete -force -- pathname "$libdir/tktray1.3.9/"}
 			}
 			puts "TV-Viewer has been uninstalled successfully
 
@@ -283,12 +287,12 @@ $resultat_permissions_desktop"
 
 proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray} {
 	if {$tktray} {
-		if {[file isdirectory $libdir/tktray1.3.8] == 0} {
-			file mkdir "$libdir/tktray1.3.8/"
-		} else {
-			file delete -force -- pathname "$libdir/tktray1.3.8/"
-			file mkdir "$libdir/tktray1.3.8/"
-		}
+		#Make sure all previous installed versions will be deleted. What if this is provided by some package?
+		catch {file delete -force -- pathname "$libdir/tktray1.2"}
+		catch {file delete -force -- pathname "$libdir/tktray1.3.3/"}
+		catch {file delete -force -- pathname "$libdir/tktray1.3.8/"}
+		catch {file delete -force -- pathname "$libdir/tktray1.3.9/"}
+		file mkdir "$libdir/tktray1.3.9/"
 		
 		if {$arch == 32} {
 			set filelist_tray [lsort [glob "$where_is/extensions/tktray/32/*"]]
@@ -299,7 +303,7 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 			set pincr [format %.2f [expr 100.0 / $elements.0]]
 			set percentage 0
 			foreach tfile32 [file normalize $filelist_tray] {
-				set status_tfile32 [catch {file copy -force "$tfile32" "$libdir/tktray1.3.8/"} resultat_tfile32]
+				set status_tfile32 [catch {file copy -force "$tfile32" "$libdir/tktray1.3.9/"} resultat_tfile32]
 				if { $status_tfile32 != 0 } {
 					puts "
 	could not copy file: $tfile32
@@ -311,10 +315,10 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 					set percentage [format %.2f [expr $percentage + $pincr]]
 					puts -nonewline "\rprocessing extensions \[${percentage}%\]\033\[K"
 					flush stdout
-					set status_permissions_tfile32 [catch {file attributes "$libdir/tktray1.3.8/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
+					set status_permissions_tfile32 [catch {file attributes "$libdir/tktray1.3.9/[lindex [file split $tfile32] end]" -permissions rwxr-xr-x} resultat_permissions_tfile32]
 					if {$status_permissions_tfile32 != 0} {
 						puts "
-	could not change permissions for: $libdir/tktray1.3.8/[lindex [file split $tfile32] end]
+	could not change permissions for: $libdir/tktray1.3.9/[lindex [file split $tfile32] end]
 		
 	$resultat_permissions_tfile32"
 						exit 1
@@ -333,7 +337,7 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 			set pincr [format %.2f [expr 100.0 / $elements.0]]
 			set percentage 0
 			foreach tfile64 [file normalize $filelist_tray] {
-				set status_tfile64 [catch {file copy -force "$tfile64" "$libdir/tktray1.3.8/"} resultat_tfile64]
+				set status_tfile64 [catch {file copy -force "$tfile64" "$libdir/tktray1.3.9/"} resultat_tfile64]
 				if { $status_tfile64 != 0 } {
 					puts "
 	could not copy file: $tfile64
@@ -345,10 +349,10 @@ proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir dat
 					set percentage [format %.2f [expr $percentage + $pincr]]
 					puts -nonewline "\rprocessing extensions \[${percentage}%\]\033\[K"
 					flush stdout
-					set status_permissions_tfile64 [catch {file attributes "$libdir/tktray1.3.8/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
+					set status_permissions_tfile64 [catch {file attributes "$libdir/tktray1.3.9/[lindex [file split $tfile64] end]" -permissions rwxr-xr-x} resultat_permissions_tfile64]
 					if {$status_permissions_tfile64 != 0} {
 						puts "
-	could not change permissions for: $libdir/tktray1.3.8/[lindex [file split $tfile64] end]
+	could not change permissions for: $libdir/tktray1.3.9/[lindex [file split $tfile64] end]
 	
 	$resultat_permissions_tfile64"
 						exit 1

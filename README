@@ -95,7 +95,7 @@ The icons, distributed with TV-Viewer, are covered by different licenses. See
 --
 tktray:
 
-The shared library libtktray1.3.8.so is copyrighted by Anton Kovalenko under the BSD
+The shared library libtktray1.3.9.so is copyrighted by Anton Kovalenko under the BSD
 license.
 
 http://sw4me.com/wiki/Tktray
@@ -124,4 +124,4 @@ Wiki http://tv-viewer.sourceforge.net
 
 --
 2007-2010 by Christian Rapp
-saedelaere(at)arcor(dot)de
+saedelaere.tv(at)googlemail(dot)com

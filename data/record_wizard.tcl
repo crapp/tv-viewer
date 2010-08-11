@@ -18,8 +18,8 @@
 
 proc record_wizardExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardExit \033\[0m"
-	#~ if {$::option(systray_close) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ if {$::option(systrayClose) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
 	#~ }
 	destroy .record_wizard
 }

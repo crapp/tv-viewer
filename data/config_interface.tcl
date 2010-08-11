@@ -54,6 +54,7 @@ proc option_screen_6 {} {
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_videocard -text [mc "Color Management"] -variable choice(cb_tooltip_colorm)
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_player -text [mc "Video player"] -variable choice(cb_tooltip_player)
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_record -text [mc "Record Wizard"] -variable choice(cb_tooltip_record)
+		
 		ttk::labelframe $::window(interface_nb1).lf_splash -text [mc "Splash Screen"]
 		ttk::checkbutton $::window(interface_nb1).cb_lf_splash -text [mc "Show Splash Screen on initialization."] -variable choice(cb_splash)
 		
@@ -62,10 +63,12 @@ proc option_screen_6 {} {
 		ttk::labelframe $::window(interface_nb2).lf_mainWindow -text [mc "Main window"]
 		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_fullscr -text [mc "Start in full-screen mode"] -variable choice(cb_fullscr)
 		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_remProp -text [mc "Remember window properties"] -variable choice(cb_remProp)
+		
 		ttk::labelframe $::window(interface_nb2).lf_systray -text [mc "System Tray"]
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_tv -text [mc "Dock video window"] -variable choice(cb_systray_tv)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_dock -text [mc "Dock TV-Viewer after initialization"] -variable choice(cb_systray_start)
-		ttk::checkbutton $::window(interface_nb2).cb_lf_systray_close -text [mc "Close to Tray"] -variable choice(cb_systray_close)
+		set lf_systray $::window(interface_nb2).lf_systray
+		ttk::checkbutton $lf_systray.cb_systray -text [mc "Show icon in system tray"] -variable choice(cb_systray) -command {system_trayActivate 0}
+		ttk::checkbutton $lf_systray.cb_systray_mini -text [mc "Minimize to tray"] -variable choice(cb_systrayMini)
+		ttk::checkbutton $lf_systray.cb_lf_systrayClose -text [mc "Close to tray"] -variable choice(cb_systrayClose)
 		
 		set ::window(interface_nb3) [ttk::frame $w.f_osd]
 		$w add $::window(interface_nb3) -text [mc "On screen Display"] -padding 2
@@ -119,9 +122,9 @@ proc option_screen_6 {} {
 		grid $::window(interface_nb2).lf_mainWindow.cb_fullscr -in $::window(interface_nb2).lf_mainWindow -row 0 -column 0 -sticky w -padx 7 -pady 3
 		grid $::window(interface_nb2).lf_mainWindow.cb_remProp -in $::window(interface_nb2).lf_mainWindow -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(interface_nb2).cb_lf_systray_dock -in $::window(interface_nb2).lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $::window(interface_nb2).cb_lf_systray_tv -in $::window(interface_nb2).lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $::window(interface_nb2).cb_lf_systray_close -in $::window(interface_nb2).lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.cb_systray -in $lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_systray.cb_systray_mini -in $lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.cb_lf_systrayClose -in $lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
 		
 		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
 		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
@@ -171,14 +174,14 @@ proc option_screen_6 {} {
 				ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
 			}
 			#FIXME One color for all menus, no matter which theme
-			.foptions_bar.mbTvviewer.mTvviewer configure -background  $::option(theme_$theme)
-			.foptions_bar.mbNavigation.mNavigation configure -background  $::option(theme_$theme)
-			.foptions_bar.mbView.mView configure -background  $::option(theme_$theme)
-			.foptions_bar.mbAudio.mAudio configure -background  $::option(theme_$theme)
-			.foptions_bar.mbHelp.mHelp configure -background  $::option(theme_$theme)
-			.fvidBg.mContext.mNavigation configure -background  $::option(theme_$theme)
-			.fvidBg.mContext.mView configure -background  $::option(theme_$theme)
-			.fvidBg.mContext.mAudio configure -background  $::option(theme_$theme)
+			#~ .foptions_bar.mbTvviewer.mTvviewer configure -background  $::option(theme_$theme)
+			#~ .foptions_bar.mbNavigation.mNavigation configure -background  $::option(theme_$theme)
+			#~ .foptions_bar.mbView.mView configure -background  $::option(theme_$theme)
+			#~ .foptions_bar.mbAudio.mAudio configure -background  $::option(theme_$theme)
+			#~ .foptions_bar.mbHelp.mHelp configure -background  $::option(theme_$theme)
+			#~ .fvidBg.mContext.mNavigation configure -background  $::option(theme_$theme)
+			#~ .fvidBg.mContext.mView configure -background  $::option(theme_$theme)
+			#~ .fvidBg.mContext.mAudio configure -background  $::option(theme_$theme)
 		}
 		
 		proc config_interfaceChangeTooltips {w} {
@@ -211,6 +214,9 @@ proc option_screen_6 {} {
 		proc default_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			log_writeOutTv 0 "Starting to collect data for interface section."
+			
+			set lf_systray $::window(interface_nb2).lf_systray
+			
 			set ::choice(mbTheme) $::option(use_theme)
 			set ::choice(cb_tooltip) $::option(tooltips)
 			set ::choice(cb_tooltip_main) $::option(tooltips_main)
@@ -222,9 +228,9 @@ proc option_screen_6 {} {
 			set ::choice(cb_splash) $::option(show_splash)
 			set ::choice(cb_fullscr) $::option(window_full)
 			set ::choice(cb_remProp) $::option(window_remProp)
-			set ::choice(cb_systray_tv) $::option(systray_tv)
-			set ::choice(cb_systray_start) $::option(systray_start)
-			set ::choice(cb_systray_close) $::option(systray_close)
+			set ::choice(cb_systray) $::option(systray)
+			set ::choice(cb_systrayMini) $::option(systrayMini)
+			set ::choice(cb_systrayClose) $::option(systrayClose)
 			set ::choice(osd_station_w) $::option(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {
@@ -287,11 +293,9 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer."]
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode."]
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_remProp [mc "Remember window properties like size, compact mode, stay ontop..."]
-					settooltip $::window(interface_nb2).cb_lf_systray_tv [mc "With this option enabled, the video window will be
-docked to the system tray with the rest of TV-Viewer."]
-					settooltip $::window(interface_nb2).cb_lf_systray_dock [mc "Enable this option if you want to dock TV-Viewer after initialization."]
-					settooltip $::window(interface_nb2).cb_lf_systray_close [mc "Docks the application into the system tray if the
-main window is closed."]
+					settooltip $lf_systray.cb_systray [mc "Activate system tray icon"]
+					settooltip $lf_systray.cb_systray_mini [mc "Minimize to tray"]
+					settooltip $lf_systray.cb_lf_systrayClose [mc "Close to tray"]
 					settooltip $w3.cb_osd_station_w [mc "OSD for station name in windowed mode."]
 					settooltip $w3.cb_osd_station_f [mc "OSD for station name in full-screen mode."]
 					settooltip $w3.b_osd_station_fnt_w [mc "Change font, color and alignment."]
@@ -317,7 +321,9 @@ main window is closed."]
 					settooltip $::window(interface_nb1).cb_lf_splash {}
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr {}
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_remProp {}
-					settooltip $::window(interface_nb2).cb_lf_systray_tv {}
+					settooltip $lf_systray.cb_systray {}
+					settooltip $lf_systray.cb_systray_mini {}
+					settooltip $lf_systray.cb_lf_systrayClose {}
 					settooltip $w3.cb_osd_station_w {}
 					settooltip $w3.cb_osd_station_f {}
 					settooltip $w3.b_osd_station_fnt_w {}
@@ -337,6 +343,9 @@ main window is closed."]
 		proc stnd_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			log_writeOutTv 1 "Setting interface options to default."
+			
+			set lf_systray $::window(interface_nb2).lf_systray
+			
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
 			config_interfaceTheme $::stnd_opt(use_theme)
 			set ::choice(cb_tooltip) $::stnd_opt(tooltips)
@@ -349,9 +358,9 @@ main window is closed."]
 			set ::choice(cb_splash) $::stnd_opt(show_splash)
 			set ::choice(cb_fullscr) $::stnd_opt(window_full)
 			set ::choice(cb_remProp) $::option(window_remProp)
-			set ::choice(cb_systray_tv) $::stnd_opt(systray_tv)
-			set ::choice(cb_systray_start) $::stnd_opt(systray_start)
-			set ::choice(cb_systray_close) $::stnd_opt(systray_close)
+			set ::choice(cb_systray) $::stnd_opt(systray)
+			set ::choice(cb_systrayMini) $::stnd_opt(systrayMini)
+			set ::choice(cb_systrayClose) $::stnd_opt(systrayClose)
 			set ::choice(osd_station_w) $::stnd_opt(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {

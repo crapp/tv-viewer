@@ -73,6 +73,16 @@ rewind-first.png/gif
 Part of "Tango icon theme". License public domain.
 http://tango.freedesktop.org/Tango_Desktop_Project
 ---------------------------------------
+radio.png/gif
+
+Created by DarKobra. Creative Commons Attribution-Share Alike 3.0 License
+http://darkobra.deviantart.com/gallery/#/d1vt87y
+---------------------------------------
+compact.png/gif
+
+Part of Silk Icons v1.3 - Creative Commons Attribution 3.0 License
+http://www.famfamfam.com/lab/icons/silk/
+---------------------------------------
 logo-tv-viewer08x-noload.png/gif
 pick-color3.xbm
 arrow-d.gif

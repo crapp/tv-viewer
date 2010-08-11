@@ -49,7 +49,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 		wm protocol $wtop WM_DELETE_WINDOW " "
 		wm iconphoto $wtop $::icon_e(tv-viewer_icon)
 		wm transient $wtop .
-		#~ if {$::option(systray_close) == 1} {
+		#~ if {$::option(systrayClose) == 1} {
 			#~ wm protocol . WM_DELETE_WINDOW {  }
 		#~ }
 		tkwait visibility $wtop
@@ -127,8 +127,8 @@ $::env(HOME)/tv-viewer_diag.out" hyper_file
 proc diag_UiExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_UiExit \033\[0m"
 	grab release .top_diagnostic
-	#~ if {$::option(systray_close) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ if {$::option(systrayClose) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
 	#~ }
 	destroy .top_diagnostic
 }

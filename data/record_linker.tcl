@@ -42,8 +42,8 @@ proc record_linkerPrestart {handler} {
 			grab release .station.top_search
 			destroy .station.top_search
 		}
-		#~ if {$::option(systray_close) == 1} {
-			#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		#~ if {$::option(systrayClose) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
 		#~ }
 		grab release .station
 		destroy .station
@@ -51,8 +51,8 @@ proc record_linkerPrestart {handler} {
 	if {[winfo exists .config_wizard]} {
 		log_writeOutTv 1 "A recording or timeshift was started while the configuration dialog is open."
 		log_writeOutTv 1 "Will close it now, you will loose all your changes."
-		#~ if {$::option(systray_close) == 1} {
-			#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+		#~ if {$::option(systrayClose) == 1} {
+			#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
 		#~ }
 		grab release .config_wizard
 		destroy .config_wizard

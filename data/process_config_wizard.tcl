@@ -97,9 +97,9 @@ proc process_config_wizardRead {} {
 		window_full 0
 		window_remProp 1
 		volRem 1
-		systray_tv 0
-		systray_start 0
-		systray_close 0
+		systray 0
+		systrayMini 0
+		systrayClose 0
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -195,9 +195,9 @@ proc process_config_wizardRead {} {
 		window_full 0
 		window_remProp 1
 		volRem 1
-		systray_tv 0
-		systray_start 0
-		systray_close 0
+		systray 0
+		systrayMini 0
+		systrayClose 0
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -283,9 +283,9 @@ proc process_config_wizardRead {} {
 		cb_splash show_splash
 		cb_fullscr window_full
 		cb_remProp window_remProp
-		cb_systray_tv systray_tv
-		cb_systray_start systray_start
-		cb_systray_close systray_close
+		cb_systray systray
+		cb_systrayMini systrayMini
+		cb_systrayClose systrayClose
 		cb_remAdio volRem
 	}
 	array set ::opt_choiceOsd {

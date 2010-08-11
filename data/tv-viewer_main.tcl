@@ -251,7 +251,7 @@ if {$insertGlob} {
 }
 unset -nocomplain insertLocal insertGlob pa
 puts "loading shared libraries"
-set status_tray [catch {package require tktray 1.3.8} result_tktray]
+set status_tray [catch {package require tktray 1.3.9} result_tktray]
 if {$status_tray == 1} {
 	puts "
 ERROR:  $result_tktray
@@ -335,7 +335,7 @@ source $::option(root)/data/vid_osd.tcl
 #Source newsreader ui and update checker.
 source $::option(root)/data/main_newsreader.tcl
 #Source system tray.
-source $::option(root)/data/main_system_tray.tcl
+source $::option(root)/data/system_tray.tcl
 #Source info toplevel and user guide.
 source $::option(root)/data/info_help.tcl
 #Source key sequences

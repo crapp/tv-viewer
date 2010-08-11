@@ -30,10 +30,12 @@ proc main_systemTrayActivate {handler} {
 			} else {
 				set after_tray 1000
 			}
+			
 			after $after_tray {
 				if {[winfo exists .tray]} {
 					.tray configure -image $::icon_e(tv-viewer_icon_systray) -visible 1
-					bind .tray <Button-1> { main_systemTrayToggle}
+					bind .tray <Button-1> {main_systemTrayToggle}
+					bind .tray <<IconConfigure>> {puts "tray bbox [.tray bbox]"}
 					settooltip .tray [mc "TV-Viewer idle"]
 					log_writeOutTv 0 "Succesfully added Icon to system tray."
 				}
@@ -43,6 +45,7 @@ proc main_systemTrayActivate {handler} {
 		}
 	} else {
 		bind .tray <Button-1> {}
+		bind .tray <<IconConfigure>> {}
 		destroy .tray
 		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	}
@@ -90,7 +93,7 @@ proc main_systemTrayToggle {} {
 
 #FIXME - Minimize to tray, problems when moving window from one desktop to another.
 #FIXME Therefor deactivated this feature. Now we only have close to tray. Idea look if 
-#FIXME window is still maped when app receives <Map> <Unmap> events.
+#FIXME window is still mapped when app receives <Map> <Unmap> events.
 #FIXME On the other hand it might be the feature becomes obsolete with the new interface.
 #~ proc main_systemTrayClose {com} {
 	#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: main_systemTrayClose \033\[0m \{$com\}"

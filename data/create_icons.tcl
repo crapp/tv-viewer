@@ -26,6 +26,7 @@ proc create_icons {} {
 			log_writeOutTv 1 "Install tkimg (libtk-img) to get high quality icons."
 			foreach ic [split [glob $::option(root)/icons/16x16/*.gif]] {
 				set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
+				set ::icon_men([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic" -width 20]
 			}
 			foreach ic [split [glob $::option(root)/icons/22x22/*.gif]] {
 				set ::icon_m([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
@@ -40,6 +41,7 @@ proc create_icons {} {
 			log_writeOutTv 0 "Found package tkimg, activating png support for icons."
 			foreach ic [split [glob $::option(root)/icons/16x16/*.png]] {
 				set ::icon_s([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
+				set ::icon_men([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic" -width 20]
 			}
 			foreach ic [split [glob $::option(root)/icons/22x22/*.png]] {
 				set ::icon_m([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
@@ -66,7 +68,7 @@ proc create_icons {} {
 			set ::icon_e([lindex [file split [file rootname $ic]] end]) [image create photo -file "$ic"]
 		}
 	}
-	# Creating a special icon for choosing font color.
+	# Creating a special icon for choosing font color and an arrow-down image
 	set ::icon_e(pick-color3) [image create bitmap -file "$::option(root)/icons/extras/pick-color3.xbm"]
 	set ::icon_e(arrow-d) [image create photo -file "$::option(root)/icons/extras/arrow-d.gif"]
 }

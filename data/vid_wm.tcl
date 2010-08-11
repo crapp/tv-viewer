@@ -109,6 +109,10 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 
 proc vid_wmCompact {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCompact \033\[0m"
+	if {[wm attributes . -fullscreen] == 1} {
+		log_writeOutTv 1 "Can not switch compact mode while in full-screen"
+		return
+	}
 	if {$::main(compactMode)} {
 		wm geometry . {}
 		set width [winfo width .fvidBg]
@@ -135,6 +139,7 @@ proc vid_wmCompact {} {
 		} else {
 			wm geometry . $widthc\x$heightc
 		}
+		log_writeOutTv 0 "Normal window mode"
 		set ::main(compactMode) 0
 	} else {
 		wm geometry . {}
@@ -154,6 +159,7 @@ proc vid_wmCompact {} {
 		} else {
 			wm geometry . $width\x$height
 		}
+		log_writeOutTv 0 "Compact mode"
 		set ::main(compactMode) 1
 	}
 }

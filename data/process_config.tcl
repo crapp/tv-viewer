@@ -96,9 +96,9 @@ proc process_configRead {} {
 		window_full 0
 		window_remProp 1
 		volRem 1
-		systray_tv 0
-		systray_start 0
-		systray_close 0
+		systray 0
+		systrayMini 0
+		systrayClose 0
 		osd_enabled 1
 		osd_font "DejaVu Sans Mono"
 		osd_font_size 72

@@ -28,6 +28,7 @@ proc main_frontendExitViewer {} {
 		catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 	}
 	catch {file delete "$::option(home)/tmp/lockfile.tmp"}
+	set done 0
 	if {$::option(window_remProp)} {
 		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
 		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
@@ -35,24 +36,30 @@ proc main_frontendExitViewer {} {
 			if {"$okey" == "mainwidth"} {
 				set width [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 0]
 				puts $wconfig_mem "mainwidth $width"
+				set ::mem(mainwidth) $width
 				continue
 			}
 			if {"$okey" == "mainheight"} {
 				set height [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 1]
 				puts $wconfig_mem "mainheight $height"
+				set ::mem(mainheight) $height
 				continue
 			}
 			if {"$okey" == "compact"} {
 				puts $wconfig_mem "compact $::main(compactMode)"
+				set ::mem(compact) $::main(compactMode)
 				continue
 			}
 			if {"$okey" == "ontop"} {
 				puts $wconfig_mem "ontop $::vid(stayontop)"
+				set ::mem(ontop) $::vid(stayontop)
 				continue
 			}
 			if {$::option(volRem)} {
 				if {"$okey" == "volume"} {
 					puts $wconfig_mem "volume $::main(volume_scale)"
+					set ::mem(volume) $::main(volume_scale)
+					set done 1
 					continue
 				}
 			}
@@ -60,17 +67,20 @@ proc main_frontendExitViewer {} {
 		}
 		close $wconfig_mem
 	}
-	if {$::option(volRem)} {
-		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
-		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
-		foreach {okey oelem} [array get ::mem] {
-			if {"$okey" == "volume"} {
-				puts $wconfig_mem "volume $::main(volume_scale)"
-				continue
+	if {$done == 0} {
+		if {$::option(volRem)} {
+			catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
+			set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
+			foreach {okey oelem} [array get ::mem] {
+				if {"$okey" == "volume"} {
+					puts $wconfig_mem "volume $::main(volume_scale)"
+					continue
+				}
+				puts $wconfig_mem "$okey $oelem"
+				puts "$okey $oelem"
 			}
-			puts $wconfig_mem "$okey $oelem"
+			close $wconfig_mem
 		}
-		close $wconfig_mem
 	}
 	destroy .top_newsreader
 	destroy .top_about
@@ -288,7 +298,7 @@ proc main_frontendUi {} {
 	ttk::button $toolbTop.bTimeshift -image $::icon_m(timeshift) -style Toolbutton -command {event generate . <<timeshift>>}
 	ttk::button $toolbTop.bRecord -image $::icon_m(record) -style Toolbutton -command {event generate . <<record>>}
 	ttk::button $toolbTop.bEpg -text EPG -style Toolbutton -command main_frontendEpg
-	ttk::button $toolbTop.bRadio -text Radio -style Toolbutton
+	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton
 	#FIXME Find icon for Radio Button
 	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command vid_playerRendering
 	#FIXME Which foreground color in label
@@ -394,7 +404,8 @@ proc main_frontendUi {} {
 	grid columnconfigure $stations 0 -weight 1
 	grid columnconfigure $toolbTop 5 -weight 1
 	grid columnconfigure $toolbPlay 12 -weight 1
-	grid columnconfigure $toolbDisp 2 -weight 1
+	grid columnconfigure $toolbDisp 1 -weight 1
+	grid columnconfigure $toolbDisp 2 -weight 10000 -minsize 80
 	
 	place $vidBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	
@@ -458,8 +469,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "wm geometry [wm geometry .]"}
-	bind . <Key-y> {after 0 [vid_osd osd_group_w 1000 "Pan&Scan 4:3"]}
+	bind . <Key-x> {puts "tray bbox [.tray bbox]"}
+	bind . <Key-y> {bind .tray <<IconConfigure>> {puts "tray bbox [.tray bbox]"}}
 	
 	command_socket
 	
@@ -576,16 +587,17 @@ proc main_frontendUi {} {
 	vid_wmCursorHide $vidCont 0
 	vid_wmCursorHide $vidBg 0
 	
-	if {$::option(systray_start) == 1} {
-		set ::choice(cb_systray_main) 1
-		main_systemTrayActivate 1
+	if {$::option(systray) == 1} {
+		set ::menu(cbSystray) 1
+		system_trayActivate 1
 		if {[winfo exists .tray]} {
 			settooltip .tray [mc "TV-Viewer idle"]
 		}
-		main_systemTrayToggle
 	}
-	puts "::option(window_remProp) $::option(window_remProp)"
+	
+	#Do everything that needs to be done after . is visible
 	tkwait visibility .
+	log_writeOutTv 0 "Main is visible, processing things that need to be done now."
 	autoscroll $stations.scrbSlist
 	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
 	wm minsize . 250 $height
@@ -602,8 +614,8 @@ proc main_frontendUi {} {
 	}
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.
-	#~ if {$::option(systray_close) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {main_systemTrayTogglePre}
+	#~ if {$::option(systrayClose) == 1} {
+		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
 	#~ } else {
 		#~ wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	#~ }
