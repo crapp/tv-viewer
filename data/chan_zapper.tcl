@@ -235,7 +235,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 					}
 				}
 				if {$restart == 1} {
-					vid_playerRendering
+					vid_playbackRendering
 				}
 				return
 			} else {

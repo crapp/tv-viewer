@@ -19,7 +19,7 @@
 proc event_constr {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
 	#Construct events and make necessary bindings
-	bind . <Key-m> [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	bind . <Key-m> [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	bind . <Key-F1> [list info_helpHelp]
 	bind . <Alt-Key-t> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
 	bind . <Alt-Key-n> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
@@ -37,8 +37,8 @@ proc event_constr {handler} {
 	bind . <<input_down>> [list chan_zapperInput 1 -1]
 	event add <<volume_incr>> <Key-plus> <Key-KP_Add>
 	event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
-	bind . <<volume_decr>> {vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
-	bind . <<volume_incr>> {vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
+	bind . <<volume_decr>> {vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
+	bind . <<volume_incr>> {vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
 	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
 	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
 	bind . <<delay_incr>> {vid_playerAudioDelay incr}
@@ -77,7 +77,7 @@ proc event_constr {handler} {
 		event add <<timeshift>> <Key-t>
 		bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
 		event add <<teleview>> <Key-s>
-		bind . <<teleview>> {vid_playerRendering}
+		bind . <<teleview>> {vid_playbackRendering}
 		event add <<station_up>> <Key-Prior>
 		event add <<station_down>> <Key-Next>
 		event add <<station_jump>> <Key-j>
@@ -94,26 +94,28 @@ proc event_constr {handler} {
 	}
 }
 
-proc event_deleSedit {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_deleSedit \033\[0m"
+proc event_deleSedit {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_deleSedit \033\[0m \{$handler\}"
 	event delete <<record>>
 	bind . <<record>> {}
 	event delete <<timeshift>>
 	bind . <<timeshift>> {}
 	event delete <<teleview>>
 	bind . <<teleview>> {}
-	event delete <<station_up>>
-	event delete <<station_down>>
-	event delete <<station_jump>>
-	event delete <<station_key>>
-	event delete <<station_key_lirc>>
-	event delete <<station_key_ext>>
-	bind . <<station_up>> {}
-	bind . <<station_down>> {}
-	bind . <<station_jump>> {}
-	bind . <<station_key>> {}
-	bind . <<station_key_lirc>> {}
-	bind . <<station_key_ext>> {}
+	if {"$handler" == "nokanal"} {
+		event delete <<station_up>>
+		event delete <<station_down>>
+		event delete <<station_jump>>
+		event delete <<station_key>>
+		event delete <<station_key_lirc>>
+		event delete <<station_key_ext>>
+		bind . <<station_up>> {}
+		bind . <<station_down>> {}
+		bind . <<station_jump>> {}
+		bind . <<station_key>> {}
+		bind . <<station_key_lirc>> {}
+		bind . <<station_key_ext>> {}
+	}
 }
 
 proc event_recordStart {handler} {
@@ -141,14 +143,16 @@ proc event_recordStart {handler} {
 	bind . <Control-Key-m> {}
 	bind . <Control-Key-e> {}
 	if {"$handler" != "timeshift"} {
-		.ftoolb_Top.bTimeshift state disabled
+		vid_pmhandlerButton {{1 disabled}} {100 0} {100 0}
+		vid_pmhandlerMenuTv {{4 disabled}} {{7 disabled}} 
+		vid_pmhandlerMenuTray {{7 disabled}}
 		bind . <<timeshift>> {}
 	}
 }
 
 proc event_recordStop {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStop \033\[0m"
-	bind . <<teleview>> {vid_playerRendering}
+	bind . <<teleview>> {vid_playbackRendering}
 	bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
 	bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
 	bind . <<station_jump>> [list chan_zapperJump .fstations.treeSlist]

@@ -323,10 +323,11 @@ main_readStationFile
 #Source stream and picqual related stuff.
 source $::option(root)/data/main_picqual_stream.tcl
 #Source video related functions
+source $::option(root)/data/vid_audio.tcl
 source $::option(root)/data/vid_callback.tcl
 source $::option(root)/data/vid_file_calc.tcl
-source $::option(root)/data/vid_player.tcl
 source $::option(root)/data/vid_playback.tcl
+source $::option(root)/data/vid_pmhandler.tcl
 source $::option(root)/data/vid_seek.tcl
 source $::option(root)/data/vid_slist.tcl
 source $::option(root)/data/vid_wm.tcl

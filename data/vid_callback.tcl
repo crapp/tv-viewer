@@ -64,15 +64,9 @@ proc vid_callbackVidData {} {
 				vid_wmHeartbeatCmd cancel 
 			}
 			if {$::vid(pbMode) == 1} {
-				.ftoolb_Play.bPlay state !disabled
-				.ftoolb_Play.bPause state disabled
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
-				.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
-				.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
-				.ftoolb_Play.bPlay configure -command {event generate . <<start>>}
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command {event generate . <<start>>}
-				.fvidBg.mContext.mNavigation entryconfigure 5 -command {event generate . <<start>>}
+				vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
+				vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
+				vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
 				bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
 			}
 			if {[winfo exists .tray] == 1} {
@@ -158,14 +152,14 @@ proc vid_callbackVidData {} {
 						place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
 					}
 				}
-				vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
+				vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
 				vid_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
 					bind . <<input_up>> "chan_zapperInput 1 1"
 					bind . <<input_down>> "chan_zapperInput 1 -1"
-					bind . <<teleview>> {vid_playerRendering}
+					bind . <<teleview>> {vid_playbackRendering}
 				}
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {

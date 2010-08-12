@@ -36,8 +36,6 @@ log-viewer.png/gif
 newsreader.png/gif
 pick-color1.png/gif
 pick-color2.png/gif
-placeholder.png/gif
-record.png/gif
 rewind-big.png/gif
 rewind-small.png/gif
 seditor.png/gif
@@ -53,7 +51,11 @@ volume.png/gif
 Part of "Crystal Diamond Icons for KDE 3.5 and KDE 4". Thanks for the permission Paolo. License GPL
 http://www.paolinoland.it/kde/PaolinoLandIcons/Crystal_Diamond_Icons.html
 ---------------------------------------
+record.png/gif
 
+Part of gnome-icon-theme 2.30.3 - Licenese GPL
+http://art.gnome.org/
+---------------------------------------
 fullscreen.png/gif
 nofullscreen.png/gif
 
@@ -83,9 +85,10 @@ compact.png/gif
 Part of Silk Icons v1.3 - Creative Commons Attribution 3.0 License
 http://www.famfamfam.com/lab/icons/silk/
 ---------------------------------------
+arrow-d.gif
 logo-tv-viewer08x-noload.png/gif
 pick-color3.xbm
-arrow-d.gif
+placeholder.png/gif
 
 Created by Christian Rapp in cooperation with revealed using the Gimp. License GPL
 saedelaere_at_arcor_dot_de

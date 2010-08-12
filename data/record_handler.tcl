@@ -56,9 +56,7 @@ proc record_applyTimeDate {tree lb w handler} {
 				}
 			}
 		}
-		puts "thour $thour"
 		set timeoff [expr {([clock scan $thour\:$tmin]-[clock seconds])*1000}]
-		puts "timeoff $timeoff"
 		if {$timeoff < -500000} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time is in the past!"]
 			log_writeOutTv 2 "Time is in the past."

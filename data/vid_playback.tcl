@@ -237,26 +237,9 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		set ::vid(recStart) 0
 		set ::main(label_file_time) "--:-- / --:--"
 		
-		.ftoolb_Play.bPause state disabled
-		.ftoolb_Play.bPlay state disabled
-		.ftoolb_Play.bStop state disabled
-		.ftoolb_Play.bRewStart state disabled
-		.ftoolb_Play.bRewSmall state disabled
-		.ftoolb_Play.mbRewChoose state disabled
-		.ftoolb_Play.bForwSmall state disabled
-		.ftoolb_Play.mbForwChoose state disabled
-		.ftoolb_Play.bForwEnd state disabled
-		.ftoolb_Play.bSave state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 7 -state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 9 -state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 10 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 7 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 9 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 10 -state disabled
+		vid_pmhandlerButton {100 0} {100 0} {{1 disabled} {2 disabled} {3 disabled} {4 disabled} {5 disabled} {6 disabled} {7 disabled} {8 disabled} {9 disabled} {10 disabled}}
+		vid_pmhandlerMenuNav {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}} {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
+		vid_pmhandlerMenuTray {{15 disabled} {16 disabled} {17 disabled}}
 		settooltip .ftoolb_Play.bSave {}
 		
 		set ::data(mplayer) [open "|$mcommand" r+]
@@ -266,7 +249,6 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
 	} else {
 		if {[file exists "$file"]} {
-			puts "handler vid_Playback $handler"
 			lappend mcommand -wid $winid "$file"
 			catch {place forget .fvidBg.l_bgImage}
 			bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
@@ -278,50 +260,24 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 			bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
 			bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
 			bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
-			.ftoolb_Play.bStop state !disabled
-			.ftoolb_Play.bRewStart state !disabled
-			.ftoolb_Play.bRewSmall state !disabled
-			.ftoolb_Play.mbRewChoose state !disabled
-			.ftoolb_Play.bForwSmall state !disabled
-			.ftoolb_Play.mbForwChoose state !disabled
-			.ftoolb_Play.bForwEnd state !disabled
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 7 -state normal
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 9 -state normal
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 10 -state normal
-			.fvidBg.mContext.mNavigation entryconfigure 7 -state normal
-			.fvidBg.mContext.mNavigation entryconfigure 9 -state normal
-			.fvidBg.mContext.mNavigation entryconfigure 10 -state normal
+			vid_pmhandlerButton {100 0} {100 0} {{3 !disabled} {4 !disabled} {5 !disabled} {6 !disabled} {7 !disabled} {8 !disabled} {9 !disabled} {10 disabled}}
+			vid_pmhandlerMenuNav {{6 normal} {8 normal} {9 normal}} {{6 normal} {8 normal} {9 normal}}
+			vid_pmhandlerMenuTray {{17 normal}}
 			if {"$handler" == "timeshift"} {
-				.ftoolb_Top.bTimeshift state !disabled
-				.ftoolb_Play.bPlay state disabled
-				.ftoolb_Play.bPause state !disabled
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state normal
-				.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
-				.fvidBg.mContext.mNavigation entryconfigure 6 -state normal
-				bind . <<start>> {}
-				.ftoolb_Play.bPlay configure -command [list vid_seek 0 0]
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
-				.fvidBg.mContext.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
+				vid_pmhandlerButton {{1 !disabled}} {100 0} {{1 disabled} {2 !disabled}}
+				vid_pmhandlerMenuNav {{4 disabled} {5 normal}} {{4 disabled} {5 normal}}
+				vid_pmhandlerMenuTray {{15 disabled} {16 normal}}
+				bind . <<start>> {vid_seek 0 0}
 			} else {
 				if {$::vid(recStart)} {
-					.ftoolb_Play.bPlay state disabled
-					.ftoolb_Play.bPause state !disabled
-					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
-					.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state normal
-					.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
-					.fvidBg.mContext.mNavigation entryconfigure 6 -state normal
-					.ftoolb_Play.bPlay configure -command [list vid_seek 0 0]
-					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
-					.fvidBg.mContext.mNavigation entryconfigure 5 -command [list vid_seek 0 0]
+					vid_pmhandlerButton {100 0} {100 0} {{1 disabled} {2 !disabled}}
+					vid_pmhandlerMenuNav {{4 disabled} {5 normal}} {{4 disabled} {5 normal}}
+					vid_pmhandlerMenuTray {{15 disabled} {16 normal}}
+					bind . <<start>> {vid_seek 0 0}
 				} else {
-					.ftoolb_Top.bTimeshift state disabled
-					.ftoolb_Play.bPlay state !disabled
-					.ftoolb_Play.bPause state disabled
-					.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
-					.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
-					.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
-					.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
+					vid_pmhandlerButton {{1 disabled}} {100 0} {{1 !disabled} {2 disabled}}
+					vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
+					vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
 					bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
 					set ::vid(recStart) 1
 					if {[winfo exists .fvidBg.l_anigif]} {
@@ -425,17 +381,153 @@ proc vid_playbackStop {com handler} {
 		vid_fileComputeSize cancel
 	} else {
 		if {$::vid(pbMode) == 1} {
-			.ftoolb_Play.bPlay state !disabled
-			.ftoolb_Play.bPause state disabled
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
-			.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
-			.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
-			.ftoolb_Play.bPlay configure -command {event generate . <<start>>}
-			.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -command {event generate . <<start>>}
-			.fvidBg.mContext.mNavigation entryconfigure 5 -command {event generate . <<start>>}
+			vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
+			vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
+			vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
 			bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
 		}
 	}
 	log_writeOutTv 0 "Stopping playback"
 }
+
+proc vid_playbackRendering {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_playbackRendering \033\[0m"
+	set status [vid_callbackMplayerRemote alive]
+	if {$status != 1} {
+		if {$::vid(pbMode) == 1} {
+			vid_playbackStop 0 nopic
+			vid_fileComputePos cancel
+			vid_fileComputeSize cancel
+			bind . <<pause>> {}
+			bind . <<start>> {}
+			bind . <<stop>> {}
+			bind . <<forward_10s>> {}
+			bind . <<forward_1m>> {}
+			bind . <<forward_10m>> {}
+			bind . <<rewind_10s>> {}
+			bind . <<rewind_1m>> {}
+			bind . <<rewind_10m>> {}
+			bind . <<forward_end>> {}
+			bind . <<rewind_start>> {}
+			if {$::main(running_recording) == 1} {
+				if {$::option(forcevideo_standard) == 1} {
+					main_pic_streamForceVideoStandard
+				}
+				main_pic_streamDimensions
+				if {$::option(streambitrate) == 1} {
+					main_pic_streamVbitrate
+				}
+				if {$::option(temporal_filter) == 1} {
+					main_pic_streamPicqualTemporal
+				}
+				main_pic_streamColormControls
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
+				if {$::option(audio_v4l2) == 1} {
+					main_pic_streamAudioV4l2
+				}
+				set ::main(running_recording) 0
+			}
+			.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
+			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+			set status [vid_callbackMplayerRemote alive]
+			if {$status != 1} {
+				after 100 {vid_playbackLoop}
+			} else {
+				if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
+					catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
+				}
+				vid_Playback .fvidBg .fvidBg.cont
+			}
+		} else {
+			vid_playbackStop 0 pic
+		}
+	} else {
+		if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
+			vid_fileComputePos cancel
+			vid_fileComputeSize cancel
+			bind . <<pause>> {}
+			bind . <<start>> {}
+			bind . <<stop>> {}
+			bind . <<forward_10s>> {}
+			bind . <<forward_1m>> {}
+			bind . <<forward_10m>> {}
+			bind . <<rewind_10s>> {}
+			bind . <<rewind_1m>> {}
+			bind . <<rewind_10m>> {}
+			bind . <<forward_end>> {}
+			bind . <<rewind_start>> {}
+			if {$::main(running_recording) == 1} {
+				if {$::option(forcevideo_standard) == 1} {
+					main_pic_streamForceVideoStandard
+				}
+				main_pic_streamDimensions
+				if {$::option(streambitrate) == 1} {
+					main_pic_streamVbitrate
+				}
+				if {$::option(temporal_filter) == 1} {
+					main_pic_streamPicqualTemporal
+				}
+				main_pic_streamColormControls
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
+				if {$::option(audio_v4l2) == 1} {
+					main_pic_streamAudioV4l2
+				}
+				set ::main(running_recording) 0
+			}
+			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
+				catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
+			}
+			.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
+			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+		}
+		main_pic_streamDimensions
+		vid_Playback .fvidBg .fvidBg.cont 0 0
+	}
+}
+
+proc vid_playbackLoop {} {
+	set status [vid_callbackMplayerRemote alive]
+	if {$status != 1} {
+		after 100 {vid_playbackLoop}
+	} else {
+		if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
+			catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
+		}
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_playbackLoop \033\[0;1;31m::complete:: \033\[0m"
+		vid_Playback .fvidBg .fvidBg.cont 0 0
+	}
+}
+
+# Deprecated code that stays here in case it will be needed again
+
+#~ proc tv_autorepeat_press {keycode serial seek_com} {
+	#~ if {$::data(key_first_press) == 1} {
+		#~ set ::data(key_first_press) 0
+		#~ if {"[lindex $seek_com 0]" == "vid_seek"} {
+			#~ set ::vid(seek_secs) [lindex $seek_com 1]
+			#~ set ::vid(seek_dir) [lindex $seek_com 2]
+			#~ set ::vid(getvid_seek) 1
+			#~ vid_callbackMplayerRemote get_time_pos
+		#~ }
+	#~ }
+	#~ set ::data(key_serial) $serial
+#~ }
+#~ 
+#~ proc tv_autorepeat_release {keycode serial} {
+	#~ global delay
+	#~ after 10 "if {$serial != \$::data(key_serial)} {
+	#~ set ::data(key_first_press) 1
+	#~ }"
+#~ }
+#~ 
+#~ proc tv_syncing_file_pos {stop} {
+	#~ catch {after cancel $::data(sync_remoteid)}
+	#~ catch {after cancel $::data(sync_id)}
+	#~ set ::data(sync_remoteid) [after 500 {vid_callbackMplayerRemote get_time_pos}]
+	#~ set ::data(sync_id) [after 1000 {
+		#~ if {[string match -nocase "ANS_TIME_POSITION*" $::data(report)]} {
+			#~ set pos [lindex [split $::data(report) \=] end]
+			#~ set ::data(file_pos_calc) [expr [clock seconds] - [expr int($pos)]]
+		#~ }
+	#~ }]
+#~ }

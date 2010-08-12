@@ -330,8 +330,6 @@ proc colorm_mainUi {} {
 		grid $wfbtn.b_default -in $wfbtn -row 0 -column 1 -pady 7
 		grid $wfbtn.b_exit -in $wfbtn -row 0 -column 2 -pady 7 -padx 3
 		
-		grid rowconfigure . 1 -minsize 5
-		
 		grid rowconfigure $wfscale 0 -minsize 20
 		grid rowconfigure $wfscale 2 -minsize 20
 		grid rowconfigure $wfscale 4 -minsize 20

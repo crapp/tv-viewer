@@ -110,12 +110,9 @@ proc vid_seek {secs direct} {
 		}
 		if {$direct == 0} {
 			if {[.ftoolb_Play.bPause instate disabled] == 0} {
-				.ftoolb_Play.bPlay state !disabled
-				.ftoolb_Play.bPause state disabled
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state normal
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state disabled
-				.fvidBg.mContext.mNavigation entryconfigure 5 -state normal
-				.fvidBg.mContext.mNavigation entryconfigure 6 -state disabled
+				vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
+				vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
+				vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
 				log_writeOutTv 0 "Pause playback."
 				bind . <<forward_10s>> {}
 				bind . <<forward_1m>> {}
@@ -128,12 +125,9 @@ proc vid_seek {secs direct} {
 				vid_callbackMplayerRemote pause
 				return
 			} else {
-				.ftoolb_Play.bPlay state disabled
-				.ftoolb_Play.bPause state !disabled
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 5 -state disabled
-				.foptions_bar.mbNavigation.mNavigation entryconfigure 6 -state normal
-				.fvidBg.mContext.mNavigation entryconfigure 5 -state disabled
-				.fvidBg.mContext.mNavigation entryconfigure 6 -state normal
+				vid_pmhandlerButton {100 0} {100 0} {{1 disabled} {2 !disabled}}
+				vid_pmhandlerMenuNav {{4 disabled} {5 normal}} {{4 disabled} {5 normal}}
+				vid_pmhandlerMenuTray {{15 disabled} {16 normal}}
 				set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
 				log_writeOutTv 0 "Start playback."
 				bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}

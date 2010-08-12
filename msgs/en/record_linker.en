@@ -10,8 +10,8 @@ Started at %} \
 Started at %s}
 
 mcset $lang \
-	{Recording % - Started at %} \
-	{Recording %s - Started at %s}
+	{Recording % - Ends at % %} \
+	{Recording %s - Started at %s %s}
 
 mcset $lang \
 	{Timeshift %} \

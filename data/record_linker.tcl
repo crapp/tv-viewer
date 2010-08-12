@@ -77,15 +77,9 @@ proc record_linkerPrestart {handler} {
 	}
 	if {$::option(rec_allow_sta_change) == 0} {
 		log_writeOutTv 1 "Station change not allowed during recording."
-		.ftoolb_ChanCtrl.bChanDown state disabled
-		.ftoolb_ChanCtrl.bChanUp state disabled
-		.ftoolb_ChanCtrl.bChanJump state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 1 -state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 2 -state disabled
-		.foptions_bar.mbNavigation.mNavigation entryconfigure 3 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 1 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 2 -state disabled
-		.fvidBg.mContext.mNavigation entryconfigure 3 -state disabled
+		vid_pmhandlerButton {100 0} {{1 disabled} {2 disabled} {3 disabled}} {100 0}
+		vid_pmhandlerMenuNav {{0 disabled} {1 disabled} {2 disabled}} {{0 disabled} {1 disabled} {2 disabled}} 
+		vid_pmhandlerMenuTray {{11 disabled} {12 disabled} {13 disabled}}
 		if {[winfo exists .fstations] == 1} {
 			main_frontendDisableTree .fstations.treeSlist 1
 		}
@@ -97,10 +91,10 @@ proc record_linkerPrestart {handler} {
 		}
 	}
 	event_recordStart $handler
-	.ftoolb_Top.bTv state disabled
-	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state disabled
-	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state disabled
-	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state disabled
+	vid_pmhandlerButton {{4 disabled} {5 disabled}} {100 0} {100 0}
+	vid_pmhandlerMenuTv {{0 disabled} {2 disabled} {7 disabled} {8 disabled}} {{3 disabled} {5 disabled} {10 disabled} {11 disabled}}
+	vid_pmhandlerMenuHelp {{7 disabled}} 
+	vid_pmhandlerMenuTray {{2 disabled} {4 disabled} {8 disabled} {9 disabled}}
 }
 
 proc record_linkerPrestartCancel {handler} {
@@ -114,21 +108,11 @@ proc record_linkerPrestartCancel {handler} {
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor arrow
 	}
-	.ftoolb_Top.bTimeshift state !disabled
-	.ftoolb_Top.bTimeshift state !pressed
-	.ftoolb_Top.bTv state !disabled
-	.ftoolb_ChanCtrl.bChanDown state !disabled
-	.ftoolb_ChanCtrl.bChanUp state !disabled
-	.ftoolb_ChanCtrl.bChanJump state !disabled
-	.foptions_bar.mbNavigation.mNavigation entryconfigure 1 -state normal
-	.foptions_bar.mbNavigation.mNavigation entryconfigure 2 -state normal
-	.foptions_bar.mbNavigation.mNavigation entryconfigure 3 -state normal
-	.fvidBg.mContext.mNavigation entryconfigure 1 -state normal
-	.fvidBg.mContext.mNavigation entryconfigure 2 -state normal
-	.fvidBg.mContext.mNavigation entryconfigure 3 -state normal
-	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
-	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
-	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
+	vid_pmhandlerButton {{1 !disabled} {1 !pressed} {4 !disabled} {5 !disabled}} {{1 !disabled} {2 !disabled} {3 !disabled}} {100 0}
+	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{3 normal} {5 normal} {7 normal} {10 normal} {11 normal}}
+	vid_pmhandlerMenuNav {{0 normal} {1 normal} {2 normal}} {{0 normal} {1 normal} {2 normal}}
+	vid_pmhandlerMenuHelp {{7 normal}}
+	vid_pmhandlerTray {{2 normal} {4 normal} {5 normal} {8 normal} {9 normal} {11 normal} {12 normal} {13 normal}}
 	if {[winfo exists .fstations] == 1} {
 		main_frontendDisableTree .fstations.treeSlist 0
 	}
@@ -175,16 +159,16 @@ proc record_linkerRec {handler} {
 	if {[winfo exists .tray]} {
 		if {"$handler" != "timeshift"} {
 			settooltip .tray [mc "Currently recording %
-Started at %" [lindex $::station(last) 0] $stime]
+Started at %" $station $stime]
 		} else {
 			settooltip .tray [mc "Timeshift %" [lindex $::station(last) 0]]
 		}
 	}
 	if {"$handler" != "timeshift"} {
 		.ftoolb_Disp.lDispIcon configure -image $::icon_s(record)
-		.ftoolb_Disp.lDispText configure -text [mc "Recording % - Started at %" [lindex $::station(last) 0] $stime]
+		.ftoolb_Disp.lDispText configure -text [mc "Recording % - Ends at % %" $station $edate $etime]
 	} else {
-		.ftoolb_Disp.lDispIcon configure -image $::icon_s(record)
+		.ftoolb_Disp.lDispIcon configure -image $::icon_s(timeshift)
 		.ftoolb_Disp.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
@@ -255,20 +239,11 @@ proc record_linkerPreStop {handler} {
 	} else {
 		log_writeOutTv 0 "Prestop sequence for timeshift initiated."
 	}
-	.ftoolb_Top.bTimeshift state !disabled
-	.ftoolb_Top.bTv state !disabled
-	.ftoolb_ChanCtrl.bChanDown state !disabled
-	.ftoolb_ChanCtrl.bChanUp state !disabled
-	.ftoolb_ChanCtrl.bChanJump state !disabled
-	.foptions_bar.mbNavigation.mNavigation entryconfigure 1 -state normal
-	.foptions_bar.mbNavigation.mNavigation entryconfigure 2 -state normal
-	.foptions_bar.mbNavigation.mNavigation entryconfigure 3 -state normal
-	.fvidBg.mContext.mNavigation entryconfigure 1 -state normal
-	.fvidBg.mContext.mNavigation entryconfigure 2 -state normal
-	.fvidBg.mContext.mNavigation entryconfigure 3 -state normal
-	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 1 -state normal
-	.foptions_bar.mbTvviewer.mTvviewer entryconfigure 3 -state normal
-	.foptions_bar.mbHelp.mHelp entryconfigure 8 -state normal
+	vid_pmhandlerButton {{1 !disabled} {4 !disabled} {5 !disabled}} {{1 !disabled} {2 !disabled} {3 !disabled}} {100 0}
+	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{3 normal} {5 normal} {7 normal} {10 normal} {11 normal}}
+	vid_pmhandlerMenuNav {{0 normal} {1 normal} {2 normal}} {{0 normal} {1 normal} {2 normal}}
+	vid_pmhandlerMenuHelp {{7 normal}}
+	vid_pmhandlerMenuTray {{2 normal} {4 normal} {5 normal} {8 normal} {9 normal} {11 normal} {12 normal} {13 normal}}
 	if {[winfo exists .fstations] == 1} {
 		main_frontendDisableTree .fstations.treeSlist 0
 	}
@@ -290,7 +265,7 @@ proc record_linkerPreStop {handler} {
 		}
 	} else {
 		if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
-			.ftoolb_Play.bSave state !disabled
+			vid_pmhandlerButton {100 0} {100 0} {{10 !disabled}}
 			if {$::option(tooltips_player) == 1} {
 				set file_size [expr round((([file size "$::option(timeshift_path)/timeshift.mpeg"] / 1024.0) / 1024.0))]
 				if {$file_size > 1000} {

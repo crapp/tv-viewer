@@ -110,24 +110,68 @@ proc system_trayMenu {x y} {
 		menu .tray.mTray -tearoff 0 -background $::option(theme_$::option(use_theme))
 		.tray.mTray add command -label [mc "Hide"] -compound left -image $::icon_men(placeholder) -command system_trayToggle
 		.tray.mTray add separator
-		.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [mc "Ctrl+M"]
+		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 0 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [mc "Ctrl+M"] -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [mc "Ctrl+M"]
+		}
 		.tray.mTray add command -label [mc "Preferences"] -compound left -image $::icon_men(settings) -accelerator [mc "Ctrl+P"] -command {config_wizardMainUi}
-		.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator [mc "Ctrl+E"]
-		.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator "T"
+		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 2 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator [mc "Ctrl+E"] -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator [mc "Ctrl+E"]
+		}
+		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 4 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator "T" -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator "T"
+		}
 		.tray.mTray add command -label [mc "Record Wizard"] -compound left -image $::icon_men(record) -command {event generate . <<record>>} -accelerator "R"
 		.tray.mTray add command -label [mc "EPG"] -compound left -image $::icon_men(placeholder) -command main_frontendEpg -accelerator ""
-		.tray.mTray add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator ""
-		.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command vid_playerRendering -accelerator "S"
+		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 7 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator "" -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator ""
+		}
+		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 8 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator "S" -state disabled
+		} else {
+			.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator "S"
+		}
 		.tray.mTray add separator
-		.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-up) -command [list chan_zapperUp .fstations.treeSlist] -accelerator [mc "PageDOWN"]
-		.tray.mTray add command -label [mc "Previous station"] -compound left -image $::icon_men(channel-down) -command [list chan_zapperDown .fstations.treeSlist] -accelerator [mc "PageUP"]
-		.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator J
+		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 0 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-up) -command [list chan_zapperUp .fstations.treeSlist] -accelerator [mc "PageDOWN"] -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-up) -command [list chan_zapperUp .fstations.treeSlist] -accelerator [mc "PageDOWN"]
+		}
+		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 1 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Previous station"] -compound left -image $::icon_men(channel-down) -command [list chan_zapperDown .fstations.treeSlist] -accelerator [mc "PageUP"] -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Previous station"] -compound left -image $::icon_men(channel-down) -command [list chan_zapperDown .fstations.treeSlist] -accelerator [mc "PageUP"]
+		}
+		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 2 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator J -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator J
+		}
 		.tray.mTray add separator
-		.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator [mc "Shift+P"]
-		.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -state disabled -accelerator P
-		.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -state disabled -accelerator [mc "Shift+S"]
-		tray.mTray add separator
-		tray.mTray add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator [mc "Ctrl+X"]
+		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 4 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator [mc "Shift+P"] -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator [mc "Shift+P"]
+		}
+		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 5 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -accelerator P -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -state normal -accelerator P
+		}
+		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 6 -state]" == "disabled"} {
+			.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -accelerator [mc "Shift+S"] -state disabled
+		} else {
+			.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -state normal -accelerator [mc "Shift+S"]
+		}
+		.tray.mTray add separator
+		.tray.mTray add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator [mc "Ctrl+X"]
 		tk_popup .tray.mTray $x $y
 	}
 	log_writeOutTv 0 "Popup context menu for system tray icon"
@@ -161,7 +205,7 @@ proc system_trayToggle {} {
 			if {[winfo exists .tray.mTray]} {
 				.tray.mTray entryconfigure 0 -label [mc "Restore"]
 			}
-			set ::menu(cbSystray) 0
+			#~ set ::menu(cbSystray) 0
 		} else {
 			wm deiconify .
 			log_writeOutTv 0 "Undocking \".\" from system tray."
@@ -174,7 +218,7 @@ proc system_trayToggle {} {
 			if {[winfo exists .tray.mTray]} {
 				.tray.mTray entryconfigure 0 -label [mc "Hide"]
 			}
-			set ::menu(cbSystray) 0
+			#~ set ::menu(cbSystray) 0
 		}
 	} else {
 		log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."

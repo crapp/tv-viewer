@@ -25,15 +25,17 @@ proc station_after_msg {var0 var1} {
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_station_f) 0] == 1} {
 			after 0 [list vid_osd osd_station_f 2000 "$::kanalid($var0)"]
 		}
-}
-	.ftoolb_Disp.lDispText configure -text [mc "Now playing %" $::kanalid($var0)]
-	#~ wm title . "TV-Viewer [lindex $::option(release_version) 0] - "
-	if {[winfo exists .tray]} {
-		set status_tv [vid_callbackMplayerRemote alive]
-		if {$status_tv != 1} {
-			settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]
-		}
 	}
+	set status_tv [vid_callbackMplayerRemote alive]
+		if {$status_tv != 1} {
+			if {"[.ftoolb_Disp.lDispIcon cget -image]" != "$::icon_s(starttv)"} {
+				.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
+			}
+			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" $::kanalid($var0)]
+			if {[winfo exists .tray]} {
+				settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]
+			}
+		}
 	catch {exec v4l2-ctl --device=$::option(video_device) -T} read_signal
 	set status_grepvidstd [catch {agrep -m "$read_signal" signal} read_signal_strength]
 	if {$status_grepvidstd == 0} {

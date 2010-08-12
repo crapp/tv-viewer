@@ -21,7 +21,7 @@ proc main_menuTvview {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	if {"$handler" == "context"} {
 		set mTv .fvidBg.mContext
 	} else {
-		set mTv [menu $menubar.mbTvviewer.mTvviewer -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mTv [menu $menubar.mbTvviewer.mTvviewer -tearoff 0]
 	}
 	
 	#Fill menu TV-Viewer
@@ -34,7 +34,7 @@ proc main_menuTvview {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	$mTv add command -label [mc "Record Wizard"] -compound left -image $::icon_men(record) -command {event generate . <<record>>} -accelerator "R"
 	$mTv add command -label [mc "EPG"] -compound left -image $::icon_men(placeholder) -command main_frontendEpg -accelerator ""
 	$mTv add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator ""
-	$mTv add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command vid_playerRendering -accelerator "S"
+	$mTv add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator "S"
 	$mTv add separator
 	$mTv add command -label [mc "Newsreader"] -compound left -image $::icon_men(newsreader) -command [list main_newsreaderCheckUpdate 0]
 	$mTv add checkbutton -label [mc "System Tray"] -command {system_trayActivate 0} -variable menu(cbSystray)
@@ -135,7 +135,7 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	#$mAud add separator
 	$mAud add command -compound left -image $::icon_men(volume) -label [mc "Volume +"] -command {event generate . <<volume_incr>>} -accelerator +
 	$mAud add command -compound left -image $::icon_men(volume) -label [mc "Volume -"] -command {event generate . <<volume_decr>>} -accelerator -
-	$mAud add command -compound left -image $::icon_men(volume-error) -label [mc "Mute"] -command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	$mAud add command -compound left -image $::icon_men(volume-error) -label [mc "Mute"] -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	$mAud add separator
 	$mAud add command -compound left -image $::icon_men(placeholder) -label [mc "Delay +"] -command {event generate . <<delay_incr>>} -accelerator [mc "Alt++"]
 	$mAud add command -compound left -image $::icon_men(placeholder) -label [mc "Delay -"] -command {event generate . <<delay_decr>>} -accelerator [mc "Alt+-"]
@@ -160,6 +160,17 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	$mHelp add command -command info_helpAbout -compound left -image $::icon_men(help-about) -label [mc "Info"]
 }
 
+proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuContext \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\}"
+	set mContext [menu $vidBg.mContext -tearoff 0 -background $::option(theme_$::option(use_theme))]
+	#$mContext add separator
+	
+	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg context
+}
+
 proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuReFo \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	set mRew [menu $toolbPlay.mbRewChoose.mRewChoose -tearoff 0 -background $::option(theme_$::option(use_theme))]
@@ -174,15 +185,4 @@ proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	$mForw add checkbutton -label [mc "+10 seconds"] -accelerator [mc "Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s vid(check_fow_10s)] -variable tv(check_fow_10s)
 	$mForw add checkbutton -label [mc "+1 minute"] -accelerator [mc "Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m vid(check_fow_1m)] -variable tv(check_fow_1m)
 	$mForw add checkbutton -label [mc "+10 minutes"] -accelerator [mc "Ctrl+Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m vid(check_fow_10m)] -variable tv(check_fow_10m)
-}
-
-proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuContext \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\}"
-	set mContext [menu $vidBg.mContext -tearoff 0 -background $::option(theme_$::option(use_theme))]
-	#$mContext add separator
-	
-	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg context
-	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg context
-	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg context
-	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg context
 }

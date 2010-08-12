@@ -184,7 +184,7 @@ proc main_frontendChannelHandler {handler} {
 				}
 			}
 			catch {array unset ::kanalitemID}
-			event_deleSedit
+			event_deleSedit nokanal
 			set status [monitor_partRunning 2]
 			if {[lindex $status 0] == 1} {
 				command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
@@ -299,8 +299,7 @@ proc main_frontendUi {} {
 	ttk::button $toolbTop.bRecord -image $::icon_m(record) -style Toolbutton -command {event generate . <<record>>}
 	ttk::button $toolbTop.bEpg -text EPG -style Toolbutton -command main_frontendEpg
 	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton
-	#FIXME Find icon for Radio Button
-	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command vid_playerRendering
+	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command {event generate . <<teleview>>}
 	#FIXME Which foreground color in label
 	label $toolbTop.lInput -width 10 -background black -foreground #EB3939 -anchor center -relief sunken -borderwidth 2
 	label $toolbTop.lDevice -width 10 -background black -foreground #FF5757 -anchor center -relief sunken -borderwidth 2
@@ -329,8 +328,8 @@ proc main_frontendUi {} {
 	
 	ttk::button $toolbPlay.bSave -style Toolbutton -image $::icon_m(floppy) -state disabled -command [list timeshift_Save .]
 	
-	ttk::button $toolbPlay.bVolMute -style Toolbutton -image $::icon_m(volume) -command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
-	ttk::scale $toolbPlay.scVolume -orient horizontal -from 0 -to 100 -variable main(volume_scale) -command [list vid_playerVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute]
+	ttk::button $toolbPlay.bVolMute -style Toolbutton -image $::icon_m(volume) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	ttk::scale $toolbPlay.scVolume -orient horizontal -from 0 -to 100 -variable main(volume_scale) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute]
 	
 	label $toolbDisp.lDispIcon -compound center -background black -foreground white -image $::icon_s(starttv)
 	label $toolbDisp.lDispText -background black -foreground white -text [mc "Welcome to TV-Viewer"] -anchor center
@@ -405,7 +404,7 @@ proc main_frontendUi {} {
 	grid columnconfigure $toolbTop 5 -weight 1
 	grid columnconfigure $toolbPlay 12 -weight 1
 	grid columnconfigure $toolbDisp 1 -weight 1
-	grid columnconfigure $toolbDisp 2 -weight 10000 -minsize 80
+	grid columnconfigure $toolbDisp 2 -weight 10000 -minsize 130
 	
 	place $vidBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	
@@ -469,8 +468,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "tray bbox [.tray bbox]"}
-	bind . <Key-y> {bind .tray <<IconConfigure>> {puts "tray bbox [.tray bbox]"}}
+	bind . <Key-x> {.ftoolb_Top.bRecord configure -image $::icon_m(trecord)}
+	bind . <Key-y> {.ftoolb_Top.bRecord configure -image $::icon_m(record)}
 	
 	command_socket
 	
@@ -483,19 +482,12 @@ proc main_frontendUi {} {
 					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; event generate . <<teleview>>}
 				}
 			} else {
-				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash}
-				$toolbTop.bRecord state disabled
-				$toolbTop.bEpg state disabled
-				$toolbTop.bRadio state disabled
-				$toolbTop.bTv state disabled
-				#$wfbar.mOptions entryconfigure 4 -state disabled
-				event delete <<record>>
-				event delete <<teleview>>
-				event delete <<timeshift>>
-				bind . <<record>> {}
-				bind . <<timeshift>> {}
-				bind . <<teleview>> {}
+				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
+				event_deleSedit nomplay
 			}
 		} else {
 			if {[string trim [auto_execok mplayer]] != {}} {
@@ -506,18 +498,11 @@ proc main_frontendUi {} {
 				}
 			} else {
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
-				$toolbTop.bRecord state disabled
-				$toolbTop.bEpg state disabled
-				$toolbTop.bRadio state disabled
-				$toolbTop.bTv state disabled
-				#$wfbar.mOptions entryconfigure 4 -state disabled
-				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
-				event delete <<record>>
-				event delete <<teleview>>
-				event delete <<timeshift>>
-				bind . <<record>> {}
-				bind . <<timeshift>> {}
-				bind . <<teleview>> {}
+				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
+				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
+				event_deleSedit nomplay
 			}
 		}
 	} else {
@@ -531,33 +516,20 @@ proc main_frontendUi {} {
 			} else {
 				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
 				after 1500 {wm deiconify .}
-				$toolbTop.bRecord state disabled
-				$toolbTop.bEpg state disabled
-				$toolbTop.bRadio state disabled
-				$toolbTop.bTv state disabled
-				#$wfbar.mOptions entryconfigure 4 -state disabled
-				event delete <<record>>
-				event delete <<teleview>>
-				event delete <<timeshift>>
-				bind . <<record>> {}
-				bind . <<timeshift>> {}
-				bind . <<teleview>> {}
+				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
+				event_deleSedit nomplay
 			}
 		} else {
 			if {[string trim [auto_execok mplayer]] == {}} {
-				$toolbTop.bRecord state disabled
-				$toolbTop.bEpg state disabled
-				$toolbTop.bRadio state disabled
-				$toolbTop.bTv state disabled
-				#$wfbar.mOptions entryconfigure 4 -state disabled
-				log_writeOutTv 2 "Deactivating Button \"Start TV\" because MPlayer is not installed."
-				event delete <<record>>
-				event delete <<teleview>>
-				event delete <<timeshift>>
-				bind . <<record>> {}
-				bind . <<timeshift>> {}
-				bind . <<teleview>> {}
 				after 1500 {wm deiconify .}
+				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				after 1500 {wm deiconify .}
+				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
+				event_deleSedit nomplay
 			} else {
 				if {$::main(running_recording) == 1} {
 					after 1500 {wm deiconify . ; record_linkerPrestart record ; record_linkerRec record}
@@ -619,4 +591,42 @@ proc main_frontendUi {} {
 	#~ } else {
 		#~ wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	#~ }
+}
+
+proc main_frontendInfoVars {} {
+	#Debug proc to analyse all existing arrays and variables
+	set varfile [open "$::env(HOME)/varfile" w+]
+	foreach var [info globals] {
+		if {[array exists ::$var]} {
+			puts $varfile "FOUND ARRAY $var:"
+			flush $varfile
+			foreach {key elem} [array get ::$var] {
+				puts $varfile "key: $key
+element: $elem
+"
+				flush $varfile
+			}
+		} else {
+			puts $varfile "
+$var: [set ::$var]"
+			flush $varfile
+		}
+	}
+	close $varfile
+}
+
+proc main_frontendcheckMapped {} {
+	#Debug proc to test if widget ismapped
+	puts "
+	
+"
+	foreach w [winfo children .] {
+		puts "w $w"
+		if {[winfo ismapped $w]} {
+			puts "$w ismapped"
+		}
+		if {[winfo viewable $w]} {
+			puts "$w viewable"
+		}
+	}
 }
