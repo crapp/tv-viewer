@@ -29,10 +29,10 @@ proc main_frontendExitViewer {} {
 	}
 	catch {file delete "$::option(home)/tmp/lockfile.tmp"}
 	set done 0
-	if {$::option(window_remProp)} {
-		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
-		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
-		foreach {okey oelem} [array get ::mem] {
+	catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
+	set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
+	foreach {okey oelem} [array get ::mem] {
+		if {$::option(window_remGeom)} {
 			if {"$okey" == "mainwidth"} {
 				set width [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 0]
 				puts $wconfig_mem "mainwidth $width"
@@ -45,43 +45,61 @@ proc main_frontendExitViewer {} {
 				set ::mem(mainheight) $height
 				continue
 			}
-			if {"$okey" == "compact"} {
-				puts $wconfig_mem "compact $::main(compactMode)"
-				set ::mem(compact) $::main(compactMode)
+			if {"$okey" == "mainX"} {
+				set x [lindex [split [string trimleft [string range [wm geometry .] [string first + [wm geometry .]] end] +] +] 0]
+				puts $wconfig_mem "mainX $x"
+				set ::mem(mainX) $x
 				continue
 			}
-			if {"$okey" == "ontop"} {
-				puts $wconfig_mem "ontop $::vid(stayontop)"
-				set ::mem(ontop) $::vid(stayontop)
+			if {"$okey" == "mainY"} {
+				set y [lindex [split [string trimleft [string range [wm geometry .] [string first + [wm geometry .]] end] +] +] 1]
+				puts $wconfig_mem "mainY $y"
+				set ::mem(mainY) $y
 				continue
 			}
-			if {$::option(volRem)} {
-				if {"$okey" == "volume"} {
-					puts $wconfig_mem "volume $::main(volume_scale)"
-					set ::mem(volume) $::main(volume_scale)
-					set done 1
-					continue
-				}
-			}
-			puts $wconfig_mem "$okey $oelem"
 		}
-		close $wconfig_mem
-	}
-	if {$done == 0} {
 		if {$::option(volRem)} {
-			catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
-			set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
-			foreach {okey oelem} [array get ::mem] {
-				if {"$okey" == "volume"} {
-					puts $wconfig_mem "volume $::main(volume_scale)"
-					continue
-				}
-				puts $wconfig_mem "$okey $oelem"
-				puts "$okey $oelem"
+			if {"$okey" == "volume"} {
+				puts $wconfig_mem "volume $::main(volume_scale)"
+				set ::mem(volume) $::main(volume_scale)
+				set done 1
+				continue
 			}
-			close $wconfig_mem
 		}
+		if {"$okey" == "compact"} {
+			puts $wconfig_mem "compact $::main(compactMode)"
+			set ::mem(compact) $::main(compactMode)
+			continue
+		}
+		if {"$okey" == "ontop"} {
+			puts $wconfig_mem "ontop $::vid(stayontop)"
+			set ::mem(ontop) $::vid(stayontop)
+			continue
+		}
+		if {"$okey" == "toolbMain"} {
+			puts $wconfig_mem "toolbMain $::menu(cbViewMainToolbar)"
+			set ::mem(toolbMain) $::menu(cbViewMainToolbar)
+			continue
+		}
+		if {"$okey" == "toolbStation"} {
+			puts $wconfig_mem "toolbStation $::menu(cbViewStationl)"
+			set ::mem(toolbStation) $::menu(cbViewStationl)
+			continue
+		}
+		if {"$okey" == "sbarStatus"} {
+			puts $wconfig_mem "sbarStatus $::menu(cbViewStatusm)"
+			set ::mem(sbarStatus) $::menu(cbViewStatusm)
+			continue
+		}
+		if {"$okey" == "sbarTime"} {
+			puts $wconfig_mem "sbarTime $::menu(cbViewStatust)"
+			set ::mem(sbarTime) $::menu(cbViewStatust)
+			continue
+		}
+		puts $wconfig_mem "$okey $oelem"
 	}
+	close $wconfig_mem
+	
 	destroy .top_newsreader
 	destroy .top_about
 	if {[info exists ::vid(pbMode)]} {
@@ -168,7 +186,7 @@ proc main_frontendChannelHandler {handler} {
 		foreach widget [split [winfo children .ftoolb_Top]] {
 			catch {$widget state disabled}
 		}
-		foreach widget [split [winfo children .ftoolb_ChanCtrl]] {
+		foreach widget [split [winfo children .fstations.ftoolb_ChanCtrl]] {
 			catch {$widget state disabled}
 		}
 		foreach widget [split [winfo children .ftoolb_Play]] {
@@ -257,7 +275,7 @@ proc main_frontendChannelHandler {handler} {
 			foreach widget [split [winfo children .ftoolb_Top]] {
 				catch {$widget state !disabled}
 			}
-			foreach widget [split [winfo children .ftoolb_ChanCtrl]] {
+			foreach widget [split [winfo children .fstations.ftoolb_ChanCtrl]] {
 				catch {$widget state disabled}
 			}
 			foreach widget [split [winfo children .ftoolb_Play]] {
@@ -282,11 +300,12 @@ proc main_frontendUi {} {
 	
 	set toolbTop [ttk::frame .ftoolb_Top] ; place [ttk::label $toolbTop.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set stations [ttk::frame .fstations] ; place [ttk::label $stations.bg -style Toolbutton] -relwidth 1 -relheight 1
-	set toolbChanCtrl [ttk::frame .ftoolb_ChanCtrl] ; place [ttk::label $toolbChanCtrl.bg -style Toolbutton] -relwidth 1 -relheight 1
-	set toolbPlay [ttk::frame .ftoolb_Play] ; place [ttk::label $toolbPlay.bg -style Toolbutton] -relwidth 1 -relheight 1
+	set toolbChanCtrl [ttk::frame .fstations.ftoolb_ChanCtrl] ; place [ttk::label $toolbChanCtrl.bg -style Toolbutton] -relwidth 1 -relheight 1
+	set toolbPlay [ttk::frame .ftoolb_Play -borderwidth 1 -relief groove] ; place [ttk::label $toolbPlay.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set toolbDisp [frame .ftoolb_Disp -background black]
+	set toolbDispIcTxt [frame .ftoolb_Disp.fIcTxt -background black]
 	
-	set vidBg [frame .fvidBg -background black -height 480 -width 654]
+	set vidBg [frame .fvidBg -background black -height 480 -width 654 -bd 1 -relief sunken]
 	set vidCont [frame .fvidBg.cont -background "" -container yes]
 	
 	ttk::menubutton $menubar.mbTvviewer -text TV-Viewer -style Toolbutton -underline 0 -menu $menubar.mbTvviewer.mTvviewer
@@ -328,12 +347,14 @@ proc main_frontendUi {} {
 	
 	ttk::button $toolbPlay.bSave -style Toolbutton -image $::icon_m(floppy) -state disabled -command [list timeshift_Save .]
 	
+	ttk::label $toolbPlay.lFillSpace
+	
 	ttk::button $toolbPlay.bVolMute -style Toolbutton -image $::icon_m(volume) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	ttk::scale $toolbPlay.scVolume -orient horizontal -from 0 -to 100 -variable main(volume_scale) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute]
 	
-	label $toolbDisp.lDispIcon -compound center -background black -foreground white -image $::icon_s(starttv)
-	label $toolbDisp.lDispText -background black -foreground white -text [mc "Welcome to TV-Viewer"] -anchor center
-	label $toolbDisp.lTime -width 20 -background black -foreground white -anchor center -textvariable main(label_file_time)
+	label $toolbDispIcTxt.lDispIcon -compound center -background black -foreground white -image $::icon_s(starttv)
+	label $toolbDispIcTxt.lDispText -background black -foreground white -text [mc "Welcome to TV-Viewer"] -anchor center
+	label $toolbDisp.lTime -background black -foreground white -anchor center -textvariable main(label_file_time)
 	
 	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
 		ttk::label $vidBg.l_bgImage -image $::icon_e(logo-tv-viewer08x-noload_xmas) -background #414141
@@ -343,11 +364,14 @@ proc main_frontendUi {} {
 	
 	grid $menubar -in . -row 0 -column 0 -sticky new -columnspan 2
 	grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
-	grid $toolbTop -in . -row 2 -column 0 -columnspan 2 -sticky ew
-	grid $stations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+	if {$::mem(toolbMain)} {
+		grid $toolbTop -in . -row 2 -column 0 -columnspan 2 -sticky ew
+	}
+	if {$::mem(toolbStation)} {
+		grid $stations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+	}
 	grid $vidBg -in . -row 3 -column 1 -sticky nesw
-	grid $toolbChanCtrl -in . -row 4 -column 0 -sticky ew
-	grid $toolbPlay -in . -row 4 -column 1 -sticky ew
+	grid $toolbPlay -in . -row 4 -column 0 -columnspan 2 -sticky ew
 	grid $toolbDisp -in . -row 5 -column 0 -columnspan 2 -sticky ew
 	
 	grid $menubar.mbTvviewer -in $menubar -row 0 -column 0
@@ -356,14 +380,15 @@ proc main_frontendUi {} {
 	grid $menubar.mbAudio -in $menubar -row 0 -column 3
 	grid $menubar.mbHelp -in $menubar -row 0 -column 4
 	
-	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0 -pady 1
-	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1 -pady 1
-	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 -pady 1
-	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 -pady 1
-	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 -pady 1
-	grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 -sticky e -padx 1
-	grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 -padx "0 2"
+	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0 -pady 1 -padx "2 0"
+	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1 -pady 1 -padx "2 0"
+	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 -pady 1 -padx "2 0"
+	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 -pady 1 -padx "2 0"
+	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 -pady 1 -padx "2 0"
+	#~ grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 -sticky e -padx 1
+	#~ grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 -padx "0 2"
 	
+	grid $toolbChanCtrl -in $stations -row 1 -column 0 -columnspan 2 -sticky ew
 	grid $stations.treeSlist -in $stations -row 0 -column 0 -sticky nesw
 	grid $stations.scrbSlist -in $stations -row 0 -column 1 -sticky ns
 	
@@ -388,12 +413,19 @@ proc main_frontendUi {} {
 	
 	grid $toolbPlay.bSave -in $toolbPlay -row 0 -column 11 -pady 2 -padx "2 0"
 	
-	grid $toolbPlay.bVolMute -in $toolbPlay -row 0 -column 12 -pady 2 -padx "2 0" -sticky e
-	grid $toolbPlay.scVolume -in $toolbPlay -row 0 -column 13 -pady 2 -padx "2 6"
+	grid $toolbPlay.lFillSpace -in $toolbPlay -row 0 -column 12 -sticky e
 	
-	grid $toolbDisp.lDispIcon -in $toolbDisp -row 0 -column 0 -sticky nsw -padx 2
-	grid $toolbDisp.lDispText -in $toolbDisp -row 0 -column 1 -sticky nsw -padx "0 2"
-	grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 2  -sticky nse -padx "2"
+	grid $toolbPlay.bVolMute -in $toolbPlay -row 0 -column 13 -pady 2 -padx "2 0"
+	grid $toolbPlay.scVolume -in $toolbPlay -row 0 -column 14 -pady 2 -padx "2 6"
+	
+	grid $toolbDispIcTxt -in $toolbDisp -row 0 -column 0
+	grid $toolbDispIcTxt.lDispIcon -in $toolbDispIcTxt -row 0 -column 0 -sticky nsw -padx 2
+	if {$::mem(sbarStatus)} {
+		grid $toolbDispIcTxt.lDispText -in $toolbDispIcTxt -row 0 -column 1 -sticky nsw -padx "0 2"
+	}
+	if {$::mem(sbarTime)} {
+		grid $toolbDisp.lTime -in $toolbDisp -row 0 -column 1  -sticky nse -padx 2
+	}
 	
 	
 	grid rowconfigure . 3 -weight 1
@@ -402,9 +434,9 @@ proc main_frontendUi {} {
 	grid columnconfigure . 1 -weight 10000 -minsize 250
 	grid columnconfigure $stations 0 -weight 1
 	grid columnconfigure $toolbTop 5 -weight 1
-	grid columnconfigure $toolbPlay 12 -weight 1
-	grid columnconfigure $toolbDisp 1 -weight 1
-	grid columnconfigure $toolbDisp 2 -weight 10000 -minsize 130
+	grid columnconfigure $toolbPlay 12 -weight 10000 -minsize 1
+	grid columnconfigure $toolbDisp 0 -weight 1
+	grid columnconfigure $toolbDisp 1 -weight 10000 -minsize 150
 	
 	place $vidBg.l_bgImage -relx 0.5 -rely 0.5 -anchor center
 	
@@ -468,8 +500,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {.ftoolb_Top.bRecord configure -image $::icon_m(trecord)}
-	bind . <Key-y> {.ftoolb_Top.bRecord configure -image $::icon_m(record)}
+	bind . <Key-x> {puts [wm geometry .tray]}
+	bind . <Key-y> {puts [.tray bbox]}
 	
 	command_socket
 	
@@ -571,16 +603,21 @@ proc main_frontendUi {} {
 	tkwait visibility .
 	log_writeOutTv 0 "Main is visible, processing things that need to be done now."
 	autoscroll $stations.scrbSlist
-	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
-	wm minsize . 250 $height
-	if {$::option(window_remProp)} {
-		if {$::mem(compact)} {
-			vid_wmCompact
-		}
-		wm geometry . $::mem(mainwidth)\x$::mem(mainheight)
-		set ::vid(stayontop) $::mem(ontop)
-		vid_wmStayonTop $::vid(stayontop)
+	if {$::menu(cbViewMainToolbar)} {
+		set mainHeight [winfo height .ftoolb_Top]
+	} else {
+		set mainHeight 0
 	}
+	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
+	wm minsize . 250 $height
+	if {$::mem(compact)} {
+		vid_wmCompact
+	}
+	if {$::option(window_remGeom)} {
+		wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+$::mem(mainX)\+$::mem(mainY)
+	}
+	set ::vid(stayontop) $::mem(ontop)
+	vid_wmStayonTop $::vid(stayontop)
 	if {$::option(window_full)} {
 		after 500 {vid_wmFullscreen . .fvidBg.cont .fvidBg}
 	}

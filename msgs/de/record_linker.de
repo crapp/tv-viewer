@@ -16,3 +16,7 @@ mcset $lang \
 mcset $lang \
 	{Timeshift %} \
 	{Timeshift %s}
+
+mcset $lang \
+	{Playing file: %} \
+	{Spiele Datei: %s}

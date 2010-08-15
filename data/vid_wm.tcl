@@ -23,9 +23,11 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		grid remove .seperatMenu
 		grid remove .ftoolb_Top
 		grid remove .fstations
-		grid remove .ftoolb_ChanCtrl
 		grid remove .ftoolb_Play
 		grid remove .ftoolb_Disp
+		
+		.fvidBg configure -borderwidth 0
+		
 		bind $vid_cont <Motion> {
 			vid_wmCursorHide .fvidBg.cont 0
 			vid_wmCursorPlaybar %Y
@@ -88,13 +90,19 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		if {$::main(compactMode) == 0} {
 			grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
 			grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
-			grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
-			grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+			if {$::menu(cbViewMainToolbar)} {
+				grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
+			}
+			if {$::menu(cbViewStationl)} {
+				grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+			}
 			grid .fvidBg -in . -row 3 -column 1 -sticky nesw
-			grid .ftoolb_ChanCtrl -in . -row 4 -column 0 -sticky ew
-			grid .ftoolb_Play -in . -row 4 -column 1 -sticky ew
+			grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
 			grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+			
+			.fvidBg configure -borderwidth 1
 		}
+		
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
 		if {$::data(panscanAuto) == 1} {
@@ -119,20 +127,34 @@ proc vid_wmCompact {} {
 		set height [winfo height .fvidBg]
 		grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
 		grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
-		grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
-		grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+		if {$::menu(cbViewMainToolbar)} {
+			grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
+		}
+		if {$::menu(cbViewStationl)} {
+			grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
+		}
 		grid .fvidBg -in . -row 3 -column 1 -sticky nesw
-		grid .ftoolb_ChanCtrl -in . -row 4 -column 0 -sticky ew
-		grid .ftoolb_Play -in . -row 4 -column 1 -sticky ew
+		grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
 		grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
 		
+		.fvidBg configure -borderwidth 1
+		
 		if {$width != 250} {
-			set widthc [expr [winfo width .fstations] + $width + 2]
+			if {$::menu(cbViewStationl)} {
+				set widthc [expr [winfo width .fstations] + $width + 2]
+			} else {
+				set widthc $width
+			}
 		} else {
 			set widthc 250
 		}
-		set heightc [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + $height]
-		set heightmin [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
+		if {$::menu(cbViewMainToolbar)} {
+			set mainHeight [winfo height .ftoolb_Top]
+		} else {
+			set mainHeight 0
+		}
+		set heightc [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + $height]
+		set heightmin [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
 		wm minsize . 250 $heightmin
 		if {$widthc < 250 || $heightc < $heightmin} {
 			wm geometry . 250x$heightc
@@ -149,9 +171,10 @@ proc vid_wmCompact {} {
 		grid remove .seperatMenu
 		grid remove .ftoolb_Top
 		grid remove .fstations
-		grid remove .ftoolb_ChanCtrl
 		grid remove .ftoolb_Play
 		grid remove .ftoolb_Disp
+		
+		.fvidBg configure -borderwidth 0
 		
 		wm minsize . 250 141
 		if {$width < 250 || $height < 141} {
@@ -164,12 +187,57 @@ proc vid_wmCompact {} {
 	}
 }
 
+proc vid_wmViewToolb {bar} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmViewToolb \033\[0m \{$bar\}"
+	array set bargrid {
+		main {.ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew}
+		station {.fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"}
+	}
+	array set barrem {
+		main .ftoolb_Top
+		station .fstations
+	}
+	if {[string trim [grid info $barrem($bar)]] == {}} {
+		if {"$bar" == "station"} {
+			grid .fvidBg -in . -row 3 -column 1 -sticky nesw
+		}
+		grid {*}$bargrid($bar)
+		log_writeOutTv 0 "Grid manager added $bar"
+	} else {
+		grid remove $barrem($bar)
+		if {"$bar" == "station"} {
+			grid .fvidBg -in . -row 3 -column 0 -columnspan 2 -sticky nesw
+		}
+		log_writeOutTv 0 "Grid manager removed $bar"
+	}
+}
+
+proc vid_wmViewStatus {lbl} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmViewStatus \033\[0m \{$lbl\}"
+	array set lblgrid {
+		ltxt {.ftoolb_Disp.fIcTxt.lDispText -in .ftoolb_Disp.fIcTxt -row 0 -column 1 -sticky nsw -padx "0 2"}
+		ltm {.ftoolb_Disp.lTime -in .ftoolb_Disp -row 0 -column 1  -sticky nse -padx 2}
+	}
+	array set lblrem {
+		ltxt .ftoolb_Disp.fIcTxt.lDispText
+		ltm .ftoolb_Disp.lTime
+	}
+	
+	if {[string trim [grid info $lblrem($lbl)]] == {}} {
+		grid {*}$lblgrid($lbl)
+		log_writeOutTv 0 "Grid manager added $lbl"
+	} else {
+		grid remove $lblrem($lbl)
+		log_writeOutTv 0 "Grid manager removed $lbl"
+	}
+}
+
 proc vid_wmPanscan {w direct} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmPanscan \033\[0m \{$w\} \{$direct\}"
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	if {$direct == 1} {
-		if {$::data(panscan) == 100} return
+		if {$::data(panscan) == 100} returnyour
 		if {[string trim [place info $w]] == {}} return
 		place $w -relheight [expr {[dict get [place info $w] -relheight] + 0.05}]
 		log_writeOutTv 0 "Increasing zoom by 5%."
@@ -235,9 +303,18 @@ proc vid_wmPanscanAuto {} {
 				set height [expr int(ceil($width.0 / 1.777777778))]
 				wm geometry . [winfo width .]x$height
 			} else {
-				set width [expr [winfo width .] - [winfo width .fstations]]
+				if {$::menu(cbViewStationl)} {
+					set width [expr [winfo width .] - [winfo width .fstations]]
+				} else {
+					set width [winfo width .]
+				}
 				set height [expr int(ceil($width.0 / 1.777777778))]
-				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + [winfo height .ftoolb_Top] + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp]]
+				if {$::menu(cbViewMainToolbar)} {
+					set mainHeight [winfo height .ftoolb_Top]
+				} else {
+					set mainHeight 0
+				}
+				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp]]
 				wm geometry . [winfo width .]x$heightwp
 			}
 			set relheight [lindex [split [expr ([winfo reqwidth .fvidBg].0 / [winfo reqheight .fvidBg].0)] .] end]

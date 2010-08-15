@@ -68,8 +68,8 @@ proc event_constr {handler} {
 	bind . <Alt-Key-Left> [list vid_wmMoveVideo 2]
 	bind . <Alt-Key-Up> [list vid_wmMoveVideo 3]
 	bind . <Key-c> [list vid_wmMoveVideo 4]
-	bind .fvidBg <ButtonPress-3> [list tk_popup .fvidBg.mContext %X %Y]
-	bind .fvidBg.cont <ButtonPress-3> [list tk_popup .fvidBg.mContext %X %Y]
+	bind .fvidBg <Button-3> [list tk_popup .fvidBg.mContext %X %Y]
+	bind .fvidBg.cont <Button-3> [list tk_popup .fvidBg.mContext %X %Y]
 	bind . <Mod4-Key-s> [list vid_callbackMplayerRemote "screenshot 0"]
 	if {$handler} {
 		event add <<record>> <Key-r>

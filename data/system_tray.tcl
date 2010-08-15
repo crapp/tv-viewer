@@ -36,7 +36,7 @@ proc system_trayActivate {handler} {
 					.tray configure -image $::icon_e(systray_icon22) -visible 1
 					set ::system(iconSize) 22
 					bind .tray <Button-1> {system_trayToggle}
-					bind .tray <ButtonPress-3> {system_trayMenu %X %Y}
+					bind .tray <Button-3> {system_trayMenu %X %Y}
 					settooltip .tray [mc "TV-Viewer idle"]
 					system_trayResizer cancel
 					after 2000 {system_trayResizer 2000}
@@ -104,6 +104,7 @@ proc system_trayResizer {delay} {
 proc system_trayMenu {x y} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayMenu \033\[0m \{$x\} \{$y\}" 
 	if {[winfo exists .tray.mTray]} {
+		#FIXME Find a way to pop up menu some pixels away from mouse position
 		tk_popup .tray.mTray $x $y
 	} else {
 		#Create menu .tray.mTray and fill with content

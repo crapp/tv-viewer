@@ -94,7 +94,7 @@ proc process_configRead {} {
 		tooltips_record 1
 		show_splash 1
 		window_full 0
-		window_remProp 1
+		window_remGeom 1
 		volRem 1
 		systray 0
 		systrayMini 0
@@ -154,11 +154,19 @@ proc process_configRead {} {
 proc process_configMem {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configMem \033\[0m"}
 	#FIXME The values for width and height are quite randow and were only chosen to have some fallback values.
+	set X [expr {(([winfo screenwidth .] / 2) - 327)}]
+	set Y [expr {(([winfo screenheight .] / 2) - 240)}]
 	array set ::mem {
 		mainwidth 654
 		mainheight 480
+		mainX $X
+		mainY $Y
 		ontop 0
 		compact 0
+		toolbMain 1
+		toolbStation 1
+		sbarStatus 1
+		sbarTime 1
 		volume 100
 		wizardSec 0
 		wizardTab .config_wizard.frame_configoptions.nb.f_general

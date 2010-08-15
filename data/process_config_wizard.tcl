@@ -95,7 +95,7 @@ proc process_config_wizardRead {} {
 		tooltips_record 1
 		show_splash 1
 		window_full 0
-		window_remProp 1
+		window_remGeom 1
 		volRem 1
 		systray 0
 		systrayMini 0
@@ -193,7 +193,7 @@ proc process_config_wizardRead {} {
 		tooltips_record 1
 		show_splash 1
 		window_full 0
-		window_remProp 1
+		window_remGeom 1
 		volRem 1
 		systray 0
 		systrayMini 0
@@ -282,7 +282,7 @@ proc process_config_wizardRead {} {
 		cb_tooltip_record tooltips_record
 		cb_splash show_splash
 		cb_fullscr window_full
-		cb_remProp window_remProp
+		cb_remGeom window_remGeom
 		cb_systray systray
 		cb_systrayMini systrayMini
 		cb_systrayClose systrayClose

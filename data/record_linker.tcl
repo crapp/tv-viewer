@@ -165,11 +165,11 @@ Started at %" $station $stime]
 		}
 	}
 	if {"$handler" != "timeshift"} {
-		.ftoolb_Disp.lDispIcon configure -image $::icon_s(record)
-		.ftoolb_Disp.lDispText configure -text [mc "Recording % - Ends at % %" $station $edate $etime]
+		.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(record)
+		.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Recording % - Ends at % %" $station $edate $etime]
 	} else {
-		.ftoolb_Disp.lDispIcon configure -image $::icon_s(timeshift)
-		.ftoolb_Disp.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
+		.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(timeshift)
+		.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
 		vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"
@@ -258,6 +258,8 @@ proc record_linkerPreStop {handler} {
 		bind .fvidBg.cont <Motion> {vid_wmCursorHide .fvidBg.cont 0}
 		bind .fvidBg <Motion> {vid_wmCursorHide .fvidBg 0}
 	}
+	.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
+	.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::::vid(current_rec_file)]
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
 			.record_wizard.status_frame.l_rec_current_info configure -text "Idle"

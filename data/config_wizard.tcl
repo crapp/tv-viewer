@@ -114,7 +114,7 @@ proc config_wizardMainUi {} {
 	option_screen_6
 	option_screen_7
 	option_screen_8
-	if {$::option(window_remProp)} {
+	if {$::option(window_remGeom)} {
 		log_writeOutTv 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
 		option_screen_$::mem(wizardSec)
 		$wfcopt.nb select $::mem(wizardTab)
@@ -148,7 +148,7 @@ proc config_wizardExit {lbox nbook} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m \{$lbox\} \{$nbook\}"
 	log_writeOutTv 0 "Closing preferences dialog and reread configuration."
 	
-	if {$::option(window_remProp)} {
+	if {$::option(window_remGeom)} {
 		log_writeOutTv 0 "Saving wizard section and notebook tab"
 		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
 		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
@@ -191,7 +191,7 @@ proc config_wizardExit {lbox nbook} {
 		}
 	}
 	
-	tooltips .ftoolb_Top .ftoolb_ChanCtrl .ftoolb_Play main
+	tooltips .ftoolb_Top .fstations.ftoolb_ChanCtrl .ftoolb_Play main
 	
 	#FIXME No longer close to tray, this needs to be reworked probably.
 	#~ if {$::option(systrayClose) == 1} {

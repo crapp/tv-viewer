@@ -28,9 +28,9 @@ proc vid_pmhandlerButton {bListTop bListChan bListPlay} {
 		5 .ftoolb_Top.bTv
 	}
 	array set butChan {
-		1 .ftoolb_ChanCtrl.bChanDown
-		2 .ftoolb_ChanCtrl.bChanUp
-		3 .ftoolb_ChanCtrl.bChanJump
+		1 .fstations.ftoolb_ChanCtrl.bChanDown
+		2 .fstations.ftoolb_ChanCtrl.bChanUp
+		3 .fstations.ftoolb_ChanCtrl.bChanJump
 	}
 	array set butPlay {
 		1 .ftoolb_Play.bPlay

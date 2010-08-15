@@ -21,6 +21,7 @@ proc create_icons {} {
 	log_writeOutTv 0 "Creating icons for TV-Viewer."
 	if {[package vcompare [info patchlevel] 8.6] == -1} {
 		set status_img [catch {package require Img} resultat_img]
+		#FIXME Create icons is missing a routine if an icon does not exist.
 		if { $status_img != 0 } {
 			log_writeOutTv 1 "Your version of Tcl/Tk doesn't support png."
 			log_writeOutTv 1 "Install tkimg (libtk-img) to get high quality icons."

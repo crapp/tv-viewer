@@ -62,7 +62,7 @@ proc option_screen_6 {} {
 		$w add $::window(interface_nb2) -text [mc "Window Properties"] -padding 2
 		ttk::labelframe $::window(interface_nb2).lf_mainWindow -text [mc "Main window"]
 		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_fullscr -text [mc "Start in full-screen mode"] -variable choice(cb_fullscr)
-		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_remProp -text [mc "Remember window properties"] -variable choice(cb_remProp)
+		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_remGeom -text [mc "Remember size and position"] -variable choice(cb_remGeom)
 		
 		ttk::labelframe $::window(interface_nb2).lf_systray -text [mc "System Tray"]
 		set lf_systray $::window(interface_nb2).lf_systray
@@ -120,7 +120,7 @@ proc option_screen_6 {} {
 		
 		grid $::window(interface_nb2).lf_mainWindow -in $::window(interface_nb2) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb2).lf_mainWindow.cb_fullscr -in $::window(interface_nb2).lf_mainWindow -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $::window(interface_nb2).lf_mainWindow.cb_remProp -in $::window(interface_nb2).lf_mainWindow -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $::window(interface_nb2).lf_mainWindow.cb_remGeom -in $::window(interface_nb2).lf_mainWindow -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $lf_systray.cb_systray -in $lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
 		grid $lf_systray.cb_systray_mini -in $lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
@@ -227,7 +227,7 @@ proc option_screen_6 {} {
 			set ::choice(cb_tooltip_record) $::option(tooltips_record)
 			set ::choice(cb_splash) $::option(show_splash)
 			set ::choice(cb_fullscr) $::option(window_full)
-			set ::choice(cb_remProp) $::option(window_remProp)
+			set ::choice(cb_remGeom) $::option(window_remGeom)
 			set ::choice(cb_systray) $::option(systray)
 			set ::choice(cb_systrayMini) $::option(systrayMini)
 			set ::choice(cb_systrayClose) $::option(systrayClose)
@@ -292,7 +292,7 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record [mc "Tooltips for the Record Wizard."]
 					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer."]
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode."]
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_remProp [mc "Remember window properties like size, compact mode, stay ontop..."]
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom [mc "Remember window size and position"]
 					settooltip $lf_systray.cb_systray [mc "Activate system tray icon"]
 					settooltip $lf_systray.cb_systray_mini [mc "Minimize to tray"]
 					settooltip $lf_systray.cb_lf_systrayClose [mc "Close to tray"]
@@ -320,7 +320,7 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record {}
 					settooltip $::window(interface_nb1).cb_lf_splash {}
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr {}
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_remProp {}
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom {}
 					settooltip $lf_systray.cb_systray {}
 					settooltip $lf_systray.cb_systray_mini {}
 					settooltip $lf_systray.cb_lf_systrayClose {}
@@ -357,7 +357,7 @@ proc option_screen_6 {} {
 			set ::choice(cb_tooltip_record) $::stnd_opt(tooltips_record)
 			set ::choice(cb_splash) $::stnd_opt(show_splash)
 			set ::choice(cb_fullscr) $::stnd_opt(window_full)
-			set ::choice(cb_remProp) $::option(window_remProp)
+			set ::choice(cb_remGeom) $::option(window_remGeom)
 			set ::choice(cb_systray) $::stnd_opt(systray)
 			set ::choice(cb_systrayMini) $::stnd_opt(systrayMini)
 			set ::choice(cb_systrayClose) $::stnd_opt(systrayClose)

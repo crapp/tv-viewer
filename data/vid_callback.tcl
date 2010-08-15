@@ -69,11 +69,18 @@ proc vid_callbackVidData {} {
 				vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
 				bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
 			}
-			if {[winfo exists .tray] == 1} {
-				set status_record [monitor_partRunning 3]
-				if {[lindex $status_record 0] == 0} {
+			set status_time [monitor_partRunning 4]
+			set status_record [monitor_partRunning 3]
+			if {[lindex $status_time 0] == 0 && [lindex $status_record 0] == 0 } {
+				if {[winfo exists .tray] == 1} {
 					settooltip .tray [mc "TV-Viewer idle"]
 				}
+				if {$::vid(pbMode)} {
+					.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
+				} else {
+					.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
+				}
+				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "idle"]
 			}
 			if {$::vid(stayontop) == 2} {
 				wm attributes . -topmost 0
@@ -160,6 +167,13 @@ proc vid_callbackVidData {} {
 					bind . <<input_up>> "chan_zapperInput 1 1"
 					bind . <<input_down>> "chan_zapperInput 1 -1"
 					bind . <<teleview>> {vid_playbackRendering}
+					if {$::vid(pbMode)} {
+						.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
+						.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::vid(current_rec_file)]
+					} else {
+						.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
+						.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+					}
 				}
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {

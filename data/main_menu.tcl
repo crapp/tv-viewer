@@ -86,6 +86,8 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 			set mViewSize [menu $menubar.mViewSize -tearoff 0 -background $::option(theme_$::option(use_theme))]
 			set mViewMove [menu $menubar.mViewMove -tearoff 0 -background $::option(theme_$::option(use_theme))]
 			set mViewTop [menu $menubar.mViewTop -tearoff 0 -background $::option(theme_$::option(use_theme))]
+			set mViewToolb [menu $menubar.mViewToolb -tearoff 0 -background $::option(theme_$::option(use_theme))]
+			set mViewStatusb [menu $menubar.mViewStatusb -tearoff 0 -background $::option(theme_$::option(use_theme))]
 		$menubar add cascade -label [mc "View"] -compound left -image $::icon_men(placeholder) -menu $mView
 	} else {
 		set mView [menu $menubar.mbView.mView -tearoff 0 -background $::option(theme_$::option(use_theme))]
@@ -93,6 +95,8 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 			set mViewSize [menu $menubar.mbView.mView.mViewSize -tearoff 0 -background $::option(theme_$::option(use_theme))]
 			set mViewMove [menu $menubar.mbView.mView.mViewMove -tearoff 0 -background $::option(theme_$::option(use_theme))]
 			set mViewTop [menu $menubar.mbView.mView.mViewTop -tearoff 0 -background $::option(theme_$::option(use_theme))]
+			set mViewToolb [menu $menubar.mbView.mView.mViewToolb -tearoff 0 -background $::option(theme_$::option(use_theme))]
+			set mViewStatusb [menu $menubar.mbView.mView.mViewStatusb -tearoff 0 -background $::option(theme_$::option(use_theme))]
 	}
 	
 	#$mView add separator
@@ -118,8 +122,18 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		$mViewTop add radiobutton -label [mc "Never"] -variable vid(stayontop) -value 0 -command [list vid_wmStayonTop 0]
 		$mViewTop add radiobutton -label [mc "Always"] -variable vid(stayontop) -value 1 -command [list vid_wmStayonTop 1]
 		$mViewTop add radiobutton -label [mc "While playback"] -variable vid(stayontop) -value 2 -command [list vid_wmStayonTop 2]
+	$mView add cascade -label [mc "Toolbars"] -compound left -image $::icon_men(placeholder) -menu $mViewToolb
+		$mViewToolb add checkbutton -label [mc "Main toolbar"] -variable menu(cbViewMainToolbar) -command {vid_wmViewToolb main}
+		$mViewToolb add checkbutton -label [mc "Station list"] -variable menu(cbViewStationl) -command {vid_wmViewToolb station}
+	$mView add cascade -label [mc "Statusbar"] -compound left -image $::icon_men(placeholder) -menu $mViewStatusb
+		$mViewStatusb add checkbutton -label [mc "Show status messages"] -variable menu(cbViewStatusm) -command {vid_wmViewStatus ltxt}
+		$mViewStatusb add checkbutton -label [mc "Show playback time"] -variable menu(cbViewStatust) -command {vid_wmViewStatus ltm}
 	$mView add command -command vid_wmCompact -compound left -image $::icon_men(compact) -label [mc "Compact mode"] -accelerator [mc "Ctrl+C"]
 	$mView add command -command [list vid_wmFullscreen . .fvidBg .fvidBg.cont] -compound left -image $::icon_men(fullscreen) -label [mc "Fullscreen"] -accelerator F
+	set ::menu(cbViewMainToolbar) $::mem(toolbMain)
+	set ::menu(cbViewStationl) $::mem(toolbStation)
+	set ::menu(cbViewStatusm) $::mem(sbarStatus)
+	set ::menu(cbViewStatust) $::mem(sbarTime)
 }
 
 proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {

@@ -380,12 +380,12 @@ proc vid_playbackStop {com handler} {
 	if {$com == 0} {
 		vid_fileComputeSize cancel
 	} else {
-		if {$::vid(pbMode) == 1} {
-			vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
-			vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
-			vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
-			bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
-		}
+		#~ if {$::vid(pbMode) == 1} {
+			#~ vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
+			#~ vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
+			#~ vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
+			#~ bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
+		#~ }
 	}
 	log_writeOutTv 0 "Stopping playback"
 }
@@ -427,8 +427,8 @@ proc vid_playbackRendering {} {
 				}
 				set ::main(running_recording) 0
 			}
-			.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
-			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+			.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
+			.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
 			set status [vid_callbackMplayerRemote alive]
 			if {$status != 1} {
 				after 100 {vid_playbackLoop}
@@ -477,8 +477,8 @@ proc vid_playbackRendering {} {
 			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 				catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 			}
-			.ftoolb_Disp.lDispIcon configure -image $::icon_s(starttv)
-			.ftoolb_Disp.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+			.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
+			.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
 		}
 		main_pic_streamDimensions
 		vid_Playback .fvidBg .fvidBg.cont 0 0

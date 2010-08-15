@@ -503,11 +503,11 @@ proc record_add_editDate {} {
 	set fcho [ttk::frame $w.choose_frame]
 	set bf [ttk::frame $w.button_frame -style TLabelframe]
 	
-	ttk::button $fnavi.b_year_back -compound image -image $::icon_s(rewind-big) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -2]
+	ttk::button $fnavi.b_year_back -compound image -image $::icon_s(rewind-first) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -2]
 	ttk::button $fnavi.b_month_back -compound image -image $::icon_s(rewind-small) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info -1]
 	ttk::label $fnavi.l_date_info
 	ttk::button $fnavi.b_month_forw -compound image -image $::icon_s(forward-small) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 1]
-	ttk::button $fnavi.b_year_forw -compound image -image $::icon_s(forward-big) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 2]
+	ttk::button $fnavi.b_year_forw -compound image -image $::icon_s(forward-last) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 2]
 	calwid $fcho.calw_date_choose -background $::option(theme_$::option(use_theme)) -callback [list record_add_editDateCallback $fnavi.l_date_info]
 	
 	ttk::button $bf.b_apply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply) -command [list record_add_editDateApply $w $fnavi.l_date_info]

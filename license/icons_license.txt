@@ -11,40 +11,26 @@ Member of the www.linux-club.de community
 For more informations about TUX please refer to http://www.isc.tamu.edu/~lewing/linux/
 ---------------------------------------
 calendar.png/gif
-channel-down.png/gif
-channel-jump.png/gif
-channel-up.png/gif
 clock.png/gif
 diag.png/gif
 dialog-cancel.png/gif
 dialog-close.png/gif
-dialog-error.png/gif
 dialog-information.png/gif
 dialog-ok-apply.png/gif
 dialog-ok.png/gif
-dialog-warning.png/gif
 e-mail.png/gif
 floppy.png/gif
-forward-big.png/gif
-forward-small.png/gif
 help-about.png/gif
 help.png/gif
 image-missing.png/gif
 internet.png/gif
 key-bindings.png/gif
-log-viewer.png/gif
 newsreader.png/gif
-pick-color1.png/gif
-pick-color2.png/gif
-rewind-big.png/gif
-rewind-small.png/gif
 seditor.png/gif
 settings.png/gif
 starttv.png/gif
 stationlist.png/gif
-systray.png/gif
 timeshift.png/gif
-undo.png/gif
 volume-error.png/gif
 volume.png/gif
 
@@ -67,10 +53,19 @@ color-management.png/gif
 Part of "The Gimp 2.x" shipped with openSUSE 11.0. License GPL
 http://www.gimp.org/
 ---------------------------------------
+channel-down.png/gif
+channel-jump.png/gif
+channel-up.png/gif
 dialog-warning.png/gif
 dialog-error.png/gif
 forward-last.png/gif
+forward-small.png/gif
+playback-pause.png/gif
+playback-start.png/gif
+playback-stop.png/gif
 rewind-first.png/gif
+rewind-small.png/gif
+video.png/gif
 
 Part of "Tango icon theme". License public domain.
 http://tango.freedesktop.org/Tango_Desktop_Project
