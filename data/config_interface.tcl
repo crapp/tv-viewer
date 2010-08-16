@@ -43,7 +43,7 @@ proc option_screen_6 {} {
 		$w add $::window(interface_nb1) -text [mc "Interface Settings"] -padding 2
 		ttk::labelframe $::window(interface_nb1).lf_theme -text [mc "Theme"]
 		ttk::menubutton $::window(interface_nb1).mb_lf_theme -menu $::window(interface_nb1).mbTheme -textvariable choice(mbTheme)
-		menu $::window(interface_nb1).mbTheme -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(interface_nb1).mbTheme -tearoff 0
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip -text [mc "Enable Tooltips"] \
 		-variable choice(cb_tooltip) -command [list config_interfaceChangeTooltips $::window(interface_nb1)]
 		ttk::labelframe $::window(interface_nb1).lf_tooltip -labelwidget $::window(interface_nb1).cb_lf_tooltip
@@ -68,7 +68,10 @@ proc option_screen_6 {} {
 		set lf_systray $::window(interface_nb2).lf_systray
 		ttk::checkbutton $lf_systray.cb_systray -text [mc "Show icon in system tray"] -variable choice(cb_systray) -command {system_trayActivate 0}
 		ttk::checkbutton $lf_systray.cb_systray_mini -text [mc "Minimize to tray"] -variable choice(cb_systrayMini)
-		ttk::checkbutton $lf_systray.cb_lf_systrayClose -text [mc "Close to tray"] -variable choice(cb_systrayClose)
+		ttk::checkbutton $lf_systray.cb_systrayClose -text [mc "Close to tray"] -variable choice(cb_systrayClose)
+		ttk::checkbutton $lf_systray.cb_systrayResize -text [mc "Resize system tray icon"] -variable choice(cb_systrayResize) -state disabled
+		ttk::label $lf_systray.l_systrayIcSize -text [mc "System tray icon size"]
+		ttk::menubutton $lf_systray.mb_systrayIcSize -menu $lf_systray.mb_systrayIcSize.mIcSize
 		
 		set ::window(interface_nb3) [ttk::frame $w.f_osd]
 		$w add $::window(interface_nb3) -text [mc "On screen Display"] -padding 2
@@ -102,6 +105,7 @@ proc option_screen_6 {} {
 		grid columnconfigure $::window(interface_nb1) 0 -weight 1
 		grid columnconfigure $::window(interface_nb1).lf_theme 0 -minsize 120
 		grid columnconfigure $::window(interface_nb2) 0 -weight 1
+		grid columnconfigure $lf_systray 1 -minsize 120
 		grid columnconfigure $::window(interface_nb3) 0 -weight 1
 		grid columnconfigure $::window(interface_nb3_cont).f_osd2 0 -weight 1
 		grid rowconfigure $::window(interface_nb3) 0 -weight 1
@@ -124,7 +128,10 @@ proc option_screen_6 {} {
 		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $lf_systray.cb_systray -in $lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
 		grid $lf_systray.cb_systray_mini -in $lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $lf_systray.cb_lf_systrayClose -in $lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.cb_systrayClose -in $lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.cb_systrayResize -in $lf_systray -row 3 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.l_systrayIcSize -in $lf_systray -row 4 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.mb_systrayIcSize -in $lf_systray -row 4 -column 1 -sticky w -pady "0 3"
 		
 		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
 		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
@@ -159,6 +166,10 @@ proc option_screen_6 {} {
 			log_writeOutTv 0 "Found theme: $athemes"
 			$::window(interface_nb1).mbTheme add radiobutton -variable choice(mbTheme) -command [list config_interfaceTheme $athemes] -label $athemes
 		}
+		menu $lf_systray.mb_systrayIcSize.mIcSize -tearoff 0
+		foreach size {22 32 48 64} {
+			$lf_systray.mb_systrayIcSize.mIcSize add radiobutton -variable choice(mb_systrayIcSize) -label "$size\px" -command [list config_interfaceSystray $size] -value $size
+		}
 		foreach scrollw [winfo children $::window(interface_nb3_cont).f_osd2] {
 			bind $scrollw <Button-4> {config_interfaceMousew 120}
 			bind $scrollw <Button-5> {config_interfaceMousew -120}
@@ -173,15 +184,16 @@ proc option_screen_6 {} {
 			if {"$theme" == "clam"} {
 				ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
 			}
-			#FIXME One color for all menus, no matter which theme
-			#~ .foptions_bar.mbTvviewer.mTvviewer configure -background  $::option(theme_$theme)
-			#~ .foptions_bar.mbNavigation.mNavigation configure -background  $::option(theme_$theme)
-			#~ .foptions_bar.mbView.mView configure -background  $::option(theme_$theme)
-			#~ .foptions_bar.mbAudio.mAudio configure -background  $::option(theme_$theme)
-			#~ .foptions_bar.mbHelp.mHelp configure -background  $::option(theme_$theme)
-			#~ .fvidBg.mContext.mNavigation configure -background  $::option(theme_$theme)
-			#~ .fvidBg.mContext.mView configure -background  $::option(theme_$theme)
-			#~ .fvidBg.mContext.mAudio configure -background  $::option(theme_$theme)
+		}
+		
+		proc config_interfaceSystray {size} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceSystray \033\[0m \{$size\}"
+			set lf_systray $::window(interface_nb2).lf_systray
+			$lf_systray.mb_systrayIcSize configure -text "$size\px"
+			if {[winfo exists .tray]} {
+				.tray configure -image $::icon_e(systray_icon$size)
+				log_writeOutTv 0 "Changing systray icon size to $size"
+			}
 		}
 		
 		proc config_interfaceChangeTooltips {w} {
@@ -231,6 +243,9 @@ proc option_screen_6 {} {
 			set ::choice(cb_systray) $::option(systray)
 			set ::choice(cb_systrayMini) $::option(systrayMini)
 			set ::choice(cb_systrayClose) $::option(systrayClose)
+			set ::choice(cb_systrayResize) $::option(systrayResize)
+			set ::choice(mb_systrayIcSize) $::option(systrayIcSize)
+			$lf_systray.mb_systrayIcSize configure -text $::option(systrayIcSize)\px
 			set ::choice(osd_station_w) $::option(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {
@@ -295,7 +310,10 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom [mc "Remember window size and position"]
 					settooltip $lf_systray.cb_systray [mc "Activate system tray icon"]
 					settooltip $lf_systray.cb_systray_mini [mc "Minimize to tray"]
-					settooltip $lf_systray.cb_lf_systrayClose [mc "Close to tray"]
+					settooltip $lf_systray.cb_systrayClose [mc "Close to tray"]
+					settooltip $lf_systray.cb_systrayResize [mc "Automatically resize system tray icon if the size of the tray 
+itself is changed. Be careful with this option."]
+					settooltip $lf_systray.mb_systrayIcSize [mc "Choose the size for the system tray icon"]
 					settooltip $w3.cb_osd_station_w [mc "OSD for station name in windowed mode."]
 					settooltip $w3.cb_osd_station_f [mc "OSD for station name in full-screen mode."]
 					settooltip $w3.b_osd_station_fnt_w [mc "Change font, color and alignment."]
@@ -323,7 +341,9 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom {}
 					settooltip $lf_systray.cb_systray {}
 					settooltip $lf_systray.cb_systray_mini {}
-					settooltip $lf_systray.cb_lf_systrayClose {}
+					settooltip $lf_systray.cb_systrayClose {}
+					settooltip $lf_systray.cb_systrayResize {}
+					settooltip $lf_systray.mb_systrayIcSize {}
 					settooltip $w3.cb_osd_station_w {}
 					settooltip $w3.cb_osd_station_f {}
 					settooltip $w3.b_osd_station_fnt_w {}
@@ -361,6 +381,9 @@ proc option_screen_6 {} {
 			set ::choice(cb_systray) $::stnd_opt(systray)
 			set ::choice(cb_systrayMini) $::stnd_opt(systrayMini)
 			set ::choice(cb_systrayClose) $::stnd_opt(systrayClose)
+			set ::choice(cb_systrayResize) $::stnd_opt(systrayResize)
+			set ::choice(mb_systrayIcSize) $::stnd_opt(systrayIcSize)
+			$lf_systray.mb_systrayIcSize configure -text $::stnd_opt(systrayIcSize)\px
 			set ::choice(osd_station_w) $::stnd_opt(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {

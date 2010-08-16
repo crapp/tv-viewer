@@ -23,7 +23,7 @@ proc config_wizardMainUi {} {
 		if {[winfo ismapped .] == 0} {
 			log_writeOutTv 1 "User attempted to start preferences while main is docked."
 			log_writeOutTv 1 "Will undock main."
-			 system_trayToggle
+			 system_trayToggle 0
 		}
 	}
 	
@@ -114,21 +114,11 @@ proc config_wizardMainUi {} {
 	option_screen_6
 	option_screen_7
 	option_screen_8
-	if {$::option(window_remGeom)} {
-		log_writeOutTv 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
-		option_screen_$::mem(wizardSec)
-		$wfcopt.nb select $::mem(wizardTab)
-		$wfbox.listbox_clist selection set $::mem(wizardSec)
-		$wfbox.listbox_clist activate $::mem(wizardSec)
-	} else {
-		option_screen_0
-		$wfbox.listbox_clist selection set 0
-		$wfbox.listbox_clist activate 0
-	}
-	
-	#~ if {$::option(systrayClose) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {  }
-	#~ }
+	log_writeOutTv 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
+	option_screen_$::mem(wizardSec)
+	$wfcopt.nb select $::mem(wizardTab)
+	$wfbox.listbox_clist selection set $::mem(wizardSec)
+	$wfbox.listbox_clist activate $::mem(wizardSec)
 	
 	tkwait visibility $w
 	grab $w
@@ -148,23 +138,21 @@ proc config_wizardExit {lbox nbook} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m \{$lbox\} \{$nbook\}"
 	log_writeOutTv 0 "Closing preferences dialog and reread configuration."
 	
-	if {$::option(window_remGeom)} {
-		log_writeOutTv 0 "Saving wizard section and notebook tab"
-		catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
-		set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
-		foreach {okey oelem} [array get ::mem] {
-			if {"$okey" == "wizardSec"} {
-				puts $wconfig_mem "wizardSec [$lbox curselection]"
-				continue
-			}
-			if {"$okey" == "wizardTab"} {
-				puts $wconfig_mem "wizardTab [$nbook select]"
-				continue
-			}
-			puts $wconfig_mem "$okey $oelem"
+	log_writeOutTv 0 "Saving wizard section and notebook tab"
+	catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
+	set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
+	foreach {okey oelem} [array get ::mem] {
+		if {"$okey" == "wizardSec"} {
+			puts $wconfig_mem "wizardSec [$lbox curselection]"
+			continue
 		}
-		close $wconfig_mem
+		if {"$okey" == "wizardTab"} {
+			puts $wconfig_mem "wizardTab [$nbook select]"
+			continue
+		}
+		puts $wconfig_mem "$okey $oelem"
 	}
+	close $wconfig_mem
 	
 	process_configRead
 	process_configMem
@@ -190,16 +178,30 @@ proc config_wizardExit {lbox nbook} {
 			main_pic_streamAudioV4l2
 		}
 	}
+	if {[winfo exists .tray]} {
+		if {$::option(systrayMini)} {
+			bind .fvidBg <Map> {
+				bind .fvidBg <Map> {}
+				bind .fvidBg <Unmap> {}
+				after idle [list after 0 system_trayToggle 1]
+			}
+			bind .fvidBg <Unmap> {
+				bind .fvidBg <Map> {}
+				bind .fvidBg <Unmap> {}
+				after idle [list after 0 system_trayToggle 1]
+			}
+		} else {
+			bind .fvidBg <Map> {}
+			bind .fvidBg <Unmap> {}
+		}
+		if {$::option(systrayClose)} {
+			wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
+		} else {
+			wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
+		}
+	}
 	
 	tooltips .ftoolb_Top .fstations.ftoolb_ChanCtrl .ftoolb_Play main
-	
-	#FIXME No longer close to tray, this needs to be reworked probably.
-	#~ if {$::option(systrayClose) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
-	#~ } else {
-		#~ 
-	#~ }
-	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	
 	grab release .config_wizard
 	destroy .config_wizard

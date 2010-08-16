@@ -84,7 +84,7 @@ proc main_newsreaderCheckUpdate {handler} {
 			set date_file [open "$::option(home)/config/last_update.date" w]
 			close $date_file
 			
-			set w [toplevel .top_newsreader -class "TV-Viewer"]
+			set w [toplevel .top_newsreader -class [winfo class .]]
 			place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 			
 			set mf [ttk::frame $w.mf]

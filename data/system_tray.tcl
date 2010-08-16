@@ -33,13 +33,33 @@ proc system_trayActivate {handler} {
 			
 			after $after_tray {
 				if {[winfo exists .tray]} {
-					.tray configure -image $::icon_e(systray_icon22) -visible 1
-					set ::system(iconSize) 22
-					bind .tray <Button-1> {system_trayToggle}
-					bind .tray <Button-3> {system_trayMenu %X %Y}
+					.tray configure -image $::icon_e(systray_icon$::option(systrayIcSize)) -visible 1
+					set ::system(iconSize) $::option(systrayIcSize)
+					if {$::menu(cbSystray) == 0} {
+						set ::menu(cbSystray) 1
+					}
+					bind .tray <Button-1> {system_trayToggle 0}
+					bind .tray <ButtonRelease-3> {system_trayMenu %X %Y}
+					if {$::option(systrayMini)} {
+						bind .fvidBg <Map> {
+							bind .fvidBg <Map> {}
+							bind .fvidBg <Unmap> {}
+							after idle [list after 0 system_trayToggle 1]
+						}
+						bind .fvidBg <Unmap> {
+							bind .fvidBg <Map> {}
+							bind .fvidBg <Unmap> {}
+							after idle [list after 0 system_trayToggle 1]
+						}
+					}
+					if {$::option(systrayClose)} {
+						wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
+					}
 					settooltip .tray [mc "TV-Viewer idle"]
-					system_trayResizer cancel
-					after 2000 {system_trayResizer 2000}
+					if {$::option(systrayResize)} {
+						system_trayResizer cancel
+						after 2000 {system_trayResizer 2000}
+					}
 					log_writeOutTv 0 "Succesfully added Icon to system tray."
 				}
 			}
@@ -49,8 +69,13 @@ proc system_trayActivate {handler} {
 	} else {
 		system_trayResizer cancel
 		bind .tray <Button-1> {}
-		bind .tray <<IconConfigure>> {}
+		bind .tray <ButtonRelease-3>  {}
+		bind .fvidBg <Map> {}
+		bind .fvidBg <Unmap> {}
 		destroy .tray
+		if {$::menu(cbSystray)} {
+			set ::menu(cbSystray) 0
+		}
 		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	}
 }
@@ -104,11 +129,15 @@ proc system_trayResizer {delay} {
 proc system_trayMenu {x y} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayMenu \033\[0m \{$x\} \{$y\}" 
 	if {[winfo exists .tray.mTray]} {
-		#FIXME Find a way to pop up menu some pixels away from mouse position
-		tk_popup .tray.mTray $x $y
+		if {$y < 200} {
+			tk_popup .tray.mTray $x [expr $y + 15]
+		}
+		if {[expr [winfo screenheight .]] - 200 < $y} {
+			tk_popup .tray.mTray $x [expr $y - 15]
+		}
 	} else {
 		#Create menu .tray.mTray and fill with content
-		menu .tray.mTray -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu .tray.mTray -tearoff 0
 		.tray.mTray add command -label [mc "Hide"] -compound left -image $::icon_men(placeholder) -command system_trayToggle
 		.tray.mTray add separator
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 0 -state]" == "disabled"} {
@@ -173,16 +202,21 @@ proc system_trayMenu {x y} {
 		}
 		.tray.mTray add separator
 		.tray.mTray add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator [mc "Ctrl+X"]
-		tk_popup .tray.mTray $x $y
+		if {$y < 200} {
+			tk_popup .tray.mTray $x [expr $y + 15]
+		}
+		if {[expr [winfo screenheight .]] - 200 < $y} {
+			tk_popup .tray.mTray $x [expr $y - 15]
+		}
 	}
 	log_writeOutTv 0 "Popup context menu for system tray icon"
 }
 
-proc system_trayToggle {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayToggle \033\[0m"
+proc system_trayToggle {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayToggle \033\[0m \{$handler\}"
 	if {[winfo exists .tray] == 1} {
-		if {[winfo ismapped .] == 1} {
-			if {$::option(systray) == 1} {
+		if {$handler == 0} {
+			if {[winfo ismapped .] == 1} {
 				array unset ::system_tray
 				foreach w [winfo children .] {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
@@ -192,93 +226,96 @@ proc system_trayToggle {} {
 				}
 				log_writeOutTv 0 "Docking \".\" to system tray."
 				wm withdraw .
+				if {[winfo exists .tray.mTray]} {
+					.tray.mTray entryconfigure 0 -label [mc "Restore"]
+				}
 			} else {
+				wm deiconify .
+				log_writeOutTv 0 "Undocking \".\" from system tray."
+				foreach {key elem} [array get ::system_tray] {
+					if {[winfo exists $elem]} {
+						wm deiconify $elem
+						log_writeOutTv 0 "Undocking \"$elem\" from system tray."
+					}
+				}
+				if {[winfo exists .tray.mTray]} {
+					.tray.mTray entryconfigure 0 -label [mc "Hide"]
+				}
+				if {$::option(systrayMini)} {
+					bind .fvidBg <Map> {
+						bind .fvidBg <Map> {}
+						bind .fvidBg <Unmap> {}
+						after idle [list after 0 system_trayToggle 1]
+					}
+					bind .fvidBg <Unmap> {
+						bind .fvidBg <Map> {}
+						bind .fvidBg <Unmap> {}
+						after idle [list after 0 system_trayToggle 1]
+					}
+				}
+				if {$::option(systrayClose)} {
+					wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
+				}
+			}
+		} else {
+			set doIt 0
+			set w {.station .station.top_edit .station.top_add .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .error_w .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
+			foreach window $w {
+				if {[winfo exists $window]} {
+					set doIt 1
+					break
+				}
+			}
+			if {$doIt} {
+				log_writeOutTv 1 "Can not minimize/close to tray when $window exists."
+				if {$::option(systrayMini)} {
+					bind .fvidBg <Map> {
+						bind .fvidBg <Map> {}
+						bind .fvidBg <Unmap> {}
+						after idle [list after 0 system_trayToggle 1]
+					}
+					bind .fvidBg <Unmap> {
+						bind .fvidBg <Map> {}
+						bind .fvidBg <Unmap> {}
+						after idle [list after 0 system_trayToggle 1]
+					}
+				}
+				if {$::option(systrayClose)} {
+					wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
+				}
+				return
+			}
+			if {[winfo ismapped .] == 0} {
 				array unset ::system_tray
 				foreach w [winfo children .] {
-					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1 || [string match .tv [winfo toplevel $w]] == 1} continue
+					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
 					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
 				log_writeOutTv 0 "Docking \".\" to system tray."
 				wm withdraw .
-			}
-			if {[winfo exists .tray.mTray]} {
-				.tray.mTray entryconfigure 0 -label [mc "Restore"]
-			}
-			#~ set ::menu(cbSystray) 0
-		} else {
-			wm deiconify .
-			log_writeOutTv 0 "Undocking \".\" from system tray."
-			foreach {key elem} [array get ::system_tray] {
-				if {[winfo exists $elem]} {
-					wm deiconify $elem
-					log_writeOutTv 0 "Undocking \"$elem\" from system tray."
+				if {[winfo exists .tray.mTray]} {
+					.tray.mTray entryconfigure 0 -label [mc "Restore"]
 				}
 			}
-			if {[winfo exists .tray.mTray]} {
-				.tray.mTray entryconfigure 0 -label [mc "Hide"]
+			if {$::option(systrayMini)} {
+				bind .fvidBg <Map> {
+					bind .fvidBg <Map> {}
+					bind .fvidBg <Unmap> {}
+					after idle [list after 0 system_trayToggle 1]
+				}
+				bind .fvidBg <Unmap> {
+					bind .fvidBg <Map> {}
+					bind .fvidBg <Unmap> {}
+					after idle [list after 0 system_trayToggle 1]
+				}
 			}
-			#~ set ::menu(cbSystray) 0
+			if {$::option(systrayClose)} {
+				wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
+			}
 		}
 	} else {
 		log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 	}
-}
-
-#FIXME - Minimize to tray, problems when moving window from one desktop to another.
-#FIXME Therefor deactivated this feature. Now we only have close to tray. Idea look if 
-#FIXME window is still mapped when app receives <Map> <Unmap> events.
-#FIXME On the other hand it might be the feature becomes obsolete with the new interface.
-#~ proc system_trayClose {com} {
-	#~ puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayClose \033\[0m \{$com\}"
-	#~ if {"$com" == "tray"} {
-		#~ if {[winfo exists .tray] == 1} {
-			#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
-			#~ bind . <Map> [list main_systemTrayMini map]
-			#~ if {$::option(systray) == 1} {
-				#~ array unset ::system_tray
-				#~ foreach w [winfo children .] {
-					#~ if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
-					#~ set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
-					#~ wm withdraw $::system_tray($w)
-					#~ log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
-				#~ }
-				#~ log_writeOutTv 0 "Docking \".\" to system tray."
-				#~ wm withdraw .
-			#~ } else {
-				#~ array unset ::system_tray
-				#~ foreach w [winfo children .] {
-					#~ if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1 || [string match .tv [winfo toplevel $w]] == 1} continue
-					#~ set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
-					#~ wm withdraw $::system_tray($w)
-					#~ log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
-				#~ }
-				#~ log_writeOutTv 0 "Docking \".\" to system tray."
-				#~ wm withdraw .
-			#~ }
-		#~ } else {
-			#~ log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
-		#~ }
-	#~ }
-	 #~ else {
-		#~ bind . <Unmap> {
-			#~ if {[winfo ismapped .] == 0} {
-				#~ if {[winfo exists .tray] == 0} {
-					#~ system_trayActivate 0
-					#~ set ::menu(cbSystray) 1
-				#~ }
-				#~ main_systemTrayMini unmap
-			#~ }
-		#~ }
-		#~ bind . <Map> {}
-	#~ }
-#~ }
-
-proc system_trayTogglePre {} {
-	if {[winfo exists .tray] == 0} {
-		system_trayActivate 0
-		set ::menu(cbSystray) 1
-	}
-	system_trayToggle
 }

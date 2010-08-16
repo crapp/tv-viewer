@@ -75,16 +75,6 @@ proc process_configRead {} {
 		#audio_v4l2_value 90
 		#audio_v4l2_mult 655
 		use_theme "default"
-		theme_default #d9d9d9
-		theme_alt #d9d9d9
-		theme_clam #dcdad5
-		theme_black #626262
-		theme_classic #d9d9d9
-		theme_plastik #efefef
-		theme_keramik #cccccc
-		theme_keramik_alt #cccccc
-		theme_tilegtk #d9d9d9
-		theme_tileqt #d9d9d9
 		tooltips 1
 		tooltips_main 1
 		tooltips_wizard 1
@@ -99,6 +89,8 @@ proc process_configRead {} {
 		systray 0
 		systrayMini 0
 		systrayClose 0
+		systrayResize 0
+		systrayIcSize 22
 		osd_enabled 1
 		osd_font "DejaVu Sans Mono"
 		osd_font_size 72
@@ -154,13 +146,11 @@ proc process_configRead {} {
 proc process_configMem {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configMem \033\[0m"}
 	#FIXME The values for width and height are quite randow and were only chosen to have some fallback values.
-	set X [expr {(([winfo screenwidth .] / 2) - 327)}]
-	set Y [expr {(([winfo screenheight .] / 2) - 240)}]
 	array set ::mem {
 		mainwidth 654
 		mainheight 480
-		mainX $X
-		mainY $Y
+		mainX "[expr {(([winfo screenwidth .] / 2) - 327)}]"
+		mainY "[expr {(([winfo screenheight .] / 2) - 240)}]"
 		ontop 0
 		compact 0
 		toolbMain 1

@@ -54,7 +54,7 @@ proc option_screen_1 {} {
 		$w add $::window(analog_nb1) -text [mc "Analog Settings"] -padding 2
 		ttk::labelframe $::window(analog_nb1).lf_video_device -text [mc "Video Device Node"]
 		ttk::menubutton $::window(analog_nb1).lf_mb_video_device -menu $::window(analog_nb1).mbVideo_device -textvariable choice(mbVideo)
-		menu $::window(analog_nb1).mbVideo_device -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(analog_nb1).mbVideo_device -tearoff 0
 		ttk::labelframe $::window(analog_nb1).lf_video_standard -text [mc "Video Standard"]
 		ttk::label $::window(analog_nb1).l_lf_video_standard -text [mc "Video Standard"]
 		ttk::label $::window(analog_nb1).l_lf_freqtable -text [mc "Frequency Table"]
@@ -62,11 +62,11 @@ proc option_screen_1 {} {
 		-variable choice(cb_video_standard)
 		ttk::menubutton $::window(analog_nb1).mb_lf_video_standard -menu $::window(analog_nb1).mbVideo_standard -direction above -textvariable choice(mbVideo_standard)
 		ttk::menubutton $::window(analog_nb1).mb_lf_freqtable -menu $::window(analog_nb1).mbFreqtable -textvariable choice(mbFreqtable)
-		menu $::window(analog_nb1).mbVideo_standard -tearoff 0 -background $::option(theme_$::option(use_theme))
-		menu $::window(analog_nb1).mbFreqtable -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(analog_nb1).mbVideo_standard -tearoff 0
+		menu $::window(analog_nb1).mbFreqtable -tearoff 0
 		ttk::labelframe $::window(analog_nb1).lf_video_input -text [mc "Video Input"]
 		ttk::menubutton $::window(analog_nb1).mb_lf_video_input -menu $::window(analog_nb1).mbVideo_input -textvariable choice(mbVideo_input)
-		menu $::window(analog_nb1).mbVideo_input -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(analog_nb1).mbVideo_input -tearoff 0
 		
 		
 		set ::window(analog_nb2) [ttk::frame $w.f_analog_picture]
@@ -98,11 +98,11 @@ proc option_screen_1 {} {
 		grid $::window(analog_nb1).lf_video_device -in $::window(analog_nb1) -row 1 -column 0 -sticky ew -padx 5
 		grid $::window(analog_nb1).lf_mb_video_device -in $::window(analog_nb1).lf_video_device -row 0 -column 0 -sticky ew -padx 7 -pady 3
 		grid $::window(analog_nb1).lf_video_standard -in $::window(analog_nb1) -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(analog_nb1).l_lf_video_standard -in $::window(analog_nb1).lf_video_standard -row 0 -column 0 -pady 3
-		grid $::window(analog_nb1).mb_lf_video_standard -in $::window(analog_nb1).lf_video_standard -row 0 -column 1 -sticky ew -padx 7 -pady 3
-		grid $::window(analog_nb1).cb_lf_video_standard -in $::window(analog_nb1).lf_video_standard -row 0 -column 2 -pady 3
-		grid $::window(analog_nb1).l_lf_freqtable -in $::window(analog_nb1).lf_video_standard -row 2 -column 0 -pady "0 3"
-		grid $::window(analog_nb1).mb_lf_freqtable -in $::window(analog_nb1).lf_video_standard -row 2 -column 1 -sticky ew -padx 7 -pady "0 3"
+		grid $::window(analog_nb1).l_lf_video_standard -in $::window(analog_nb1).lf_video_standard -row 0 -column 0 -pady 3 -padx 7
+		grid $::window(analog_nb1).mb_lf_video_standard -in $::window(analog_nb1).lf_video_standard -row 0 -column 1 -sticky ew -pady 3
+		grid $::window(analog_nb1).cb_lf_video_standard -in $::window(analog_nb1).lf_video_standard -row 0 -column 2 -pady 3 -padx "7 0"
+		grid $::window(analog_nb1).l_lf_freqtable -in $::window(analog_nb1).lf_video_standard -row 2 -column 0 -pady "0 3" -padx 7
+		grid $::window(analog_nb1).mb_lf_freqtable -in $::window(analog_nb1).lf_video_standard -row 2 -column 1 -sticky ew -pady "0 3"
 		grid $::window(analog_nb1).lf_video_input -in $::window(analog_nb1) -row 5 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(analog_nb1).mb_lf_video_input -in $::window(analog_nb1).lf_video_input -row 0 -column 0 -sticky ew -padx 7 -pady 3
 		

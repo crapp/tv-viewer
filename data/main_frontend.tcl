@@ -33,29 +33,35 @@ proc main_frontendExitViewer {} {
 	set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
 	foreach {okey oelem} [array get ::mem] {
 		if {$::option(window_remGeom)} {
-			if {"$okey" == "mainwidth"} {
-				set width [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 0]
-				puts $wconfig_mem "mainwidth $width"
-				set ::mem(mainwidth) $width
-				continue
-			}
-			if {"$okey" == "mainheight"} {
-				set height [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 1]
-				puts $wconfig_mem "mainheight $height"
-				set ::mem(mainheight) $height
-				continue
-			}
-			if {"$okey" == "mainX"} {
-				set x [lindex [split [string trimleft [string range [wm geometry .] [string first + [wm geometry .]] end] +] +] 0]
-				puts $wconfig_mem "mainX $x"
-				set ::mem(mainX) $x
-				continue
-			}
-			if {"$okey" == "mainY"} {
-				set y [lindex [split [string trimleft [string range [wm geometry .] [string first + [wm geometry .]] end] +] +] 1]
-				puts $wconfig_mem "mainY $y"
-				set ::mem(mainY) $y
-				continue
+			if {[wm attributes . -fullscreen] == 0} {
+				if {"$okey" == "mainwidth"} {
+					set width [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 0]
+					if {$width < [expr [winfo screenwidth .] - 100]} {
+						puts $wconfig_mem "mainwidth $width"
+						set ::mem(mainwidth) $width
+						continue
+					}
+				}
+				if {"$okey" == "mainheight"} {
+					set height [lindex [split [string range [wm geometry .] 0 [expr [string first + [wm geometry .]] -1]] x] 1]
+					if {$height < [expr [winfo screenheight .] - 100]} {
+						puts $wconfig_mem "mainheight $height"
+						set ::mem(mainheight) $height
+						continue
+					}
+				}
+				if {"$okey" == "mainX"} {
+					set x [lindex [split [string trimleft [string range [wm geometry .] [string first + [wm geometry .]] end] +] +] 0]
+					puts $wconfig_mem "mainX $x"
+					set ::mem(mainX) $x
+					continue
+				}
+				if {"$okey" == "mainY"} {
+					set y [lindex [split [string trimleft [string range [wm geometry .] [string first + [wm geometry .]] end] +] +] 1]
+					puts $wconfig_mem "mainY $y"
+					set ::mem(mainY) $y
+					continue
+				}
 			}
 		}
 		if {$::option(volRem)} {
@@ -500,8 +506,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts [wm geometry .tray]}
-	bind . <Key-y> {puts [.tray bbox]}
+	bind . <Key-x> {puts "winfo class . [winfo class .]"}
+	bind . <Key-y> {puts "systrayMini $::option(systrayMini)"; puts "bind [bind .fvidBg]"}
 	
 	command_socket
 	
@@ -598,6 +604,9 @@ proc main_frontendUi {} {
 			settooltip .tray [mc "TV-Viewer idle"]
 		}
 	}
+	if {$::option(window_remGeom)} {
+		wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+[subst $::mem(mainX)]\+[subst $::mem(mainY)]
+	}
 	
 	#Do everything that needs to be done after . is visible
 	tkwait visibility .
@@ -613,21 +622,11 @@ proc main_frontendUi {} {
 	if {$::mem(compact)} {
 		vid_wmCompact
 	}
-	if {$::option(window_remGeom)} {
-		wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+$::mem(mainX)\+$::mem(mainY)
-	}
 	set ::vid(stayontop) $::mem(ontop)
 	vid_wmStayonTop $::vid(stayontop)
 	if {$::option(window_full)} {
 		after 500 {vid_wmFullscreen . .fvidBg.cont .fvidBg}
 	}
-	
-	#FIXME No longer close to tray, this needs to be reworked probably.
-	#~ if {$::option(systrayClose) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
-	#~ } else {
-		#~ wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
-	#~ }
 }
 
 proc main_frontendInfoVars {} {

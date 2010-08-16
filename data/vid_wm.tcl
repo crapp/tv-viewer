@@ -237,7 +237,7 @@ proc vid_wmPanscan {w direct} {
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	if {$direct == 1} {
-		if {$::data(panscan) == 100} returnyour
+		if {$::data(panscan) == 100} return
 		if {[string trim [place info $w]] == {}} return
 		place $w -relheight [expr {[dict get [place info $w] -relheight] + 0.05}]
 		log_writeOutTv 0 "Increasing zoom by 5%."

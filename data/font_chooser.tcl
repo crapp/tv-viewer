@@ -48,7 +48,7 @@ proc font_chooserUi {returnw cvar} {
 	ttk::button $mfcol.b_color -compound image -image $::icon_e(pick-color3) -command [list font_chooserUiCol $mfpre.f_prev.c_abc]
 	ttk::label $mfcol.l_align -text [mc "Display:"]
 	ttk::menubutton $mfcol.mb_align -menu $mfcol.mbAlign -textvariable font_chooser(mb_align)
-	menu $mfcol.mbAlign -tearoff 0 -background $::option(theme_$::option(use_theme))
+	menu $mfcol.mbAlign -tearoff 0
 	
 	ttk::label $mfpre.l_prev -text [mc "Preview:"]
 	ttk::frame $mfpre.f_prev -borderwidth 2 -relief groove

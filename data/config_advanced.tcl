@@ -41,7 +41,7 @@ proc option_screen_8 {} {
 		ttk::checkbutton $lf_aspect.cb_keepaspect -text [mc "Keep video aspect ratio"] -variable choice(cb_keepaspect)
 		ttk::radiobutton $lf_aspect.rb_moniaspect -text [mc "Monitor aspect"] -variable choice(rb_aspect) -value 0 -command [list config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect]
 		ttk::menubutton $lf_aspect.mb_moniaspect -menu $::window(advanced_nb1).mbMoniaspect -textvariable choice(mbMoniaspect)
-		menu $::window(advanced_nb1).mbMoniaspect -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(advanced_nb1).mbMoniaspect -tearoff 0
 		ttk::radiobutton $lf_aspect.rb_monipixaspect -text [mc "Monitor pixel aspect"] -variable choice(rb_aspect) -value 1 -command [list config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect]
 		spinbox $lf_aspect.sb_monipixaspect -from 0.2 -to 9.0 -increment 0.1 -width 3 -repeatinterval 50 -state readonly -textvariable choice(sb_monipixaspect)
 		set lf_shot $::window(advanced_nb1).lf_advanced_screenshot

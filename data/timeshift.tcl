@@ -132,7 +132,7 @@ proc timeshift_Save {tvw} {
 	set types {
 	{{Video Files}      {.mpeg}       }
 	}
-	set infile "[lindex $::station(last) 0]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
+	set infile "[string map {{/} {}} [lindex $::station(last) 0]]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
 	if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
 		log_writeOutTv 0 "Found timeshift mpeg file, opening file save dialog."
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
@@ -184,7 +184,6 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 	wm resizable $wtop 0 0
 	wm title $wtop [mc "Copying...       %%%" 0]
 	wm protocol $wtop WM_DELETE_WINDOW " "
-	wm protocol . WM_DELETE_WINDOW " "
 	wm iconphoto $wtop $::icon_b(floppy)
 	wm transient $wtop .
 	
@@ -212,11 +211,6 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		catch {after cancel $::timeshift(cp_id)}
 		unset -nocomplain ::timeshift(cp_id)
 		catch {exec kill $ofile}
-		#~ if {$::option(systrayClose) == 1} {
-			#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
-		#~ } else {
-			wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
-		#~ }
 		grab release .top_cp_progress
 		destroy .top_cp_progress
 		return
@@ -247,11 +241,6 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		log_writeOutTv 0 "Timesift video file copied. Output file:
 $ofile"
 		after 2000 {
-			#~ if {$::option(systrayClose) == 1} {
-				#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
-			#~ } else {
-				wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
-			#~ }
 			grab release .top_cp_progress
 			destroy .top_cp_progress
 		}

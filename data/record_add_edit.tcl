@@ -61,7 +61,7 @@ proc record_add_edit {tree com} {
 	ttk::label $recf.l_time_colon -text ":"
 	spinbox $recf.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %W} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
 	ttk::menubutton $recf.mbHourFormat -menu $recf.mbHourFormat.mHour -textvariable record(mbHourFormat) -state disabled -width 0
-	menu $recf.mbHourFormat.mHour -tearoff 0 -background $::option(theme_$::option(use_theme))
+	menu $recf.mbHourFormat.mHour -tearoff 0
 	
 	ttk::separator $recf.sep1 -orient vertical
 	
@@ -508,7 +508,7 @@ proc record_add_editDate {} {
 	ttk::label $fnavi.l_date_info
 	ttk::button $fnavi.b_month_forw -compound image -image $::icon_s(forward-small) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 1]
 	ttk::button $fnavi.b_year_forw -compound image -image $::icon_s(forward-last) -width 0 -command [list record_add_editDateYearMonth $fcho.calw_date_choose $fnavi.l_date_info 2]
-	calwid $fcho.calw_date_choose -background $::option(theme_$::option(use_theme)) -callback [list record_add_editDateCallback $fnavi.l_date_info]
+	calwid $fcho.calw_date_choose -callback [list record_add_editDateCallback $fnavi.l_date_info]
 	
 	ttk::button $bf.b_apply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply) -command [list record_add_editDateApply $w $fnavi.l_date_info]
 	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command "grab release $w; grab .record_wizard.add_edit; destroy $w; wm protocol .record_wizard.add_edit WM_DELETE_WINDOW {record_add_editExit .record_wizard.add_edit}"

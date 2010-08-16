@@ -46,14 +46,14 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuNav \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
 		set menubar .fvidBg.mContext
-		set mNav [menu $menubar.mNavigation -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mNavRew [menu $menubar.mNavigationRewind -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mNavForw [menu $menubar.mNavigationForward -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mNav [menu $menubar.mNavigation -tearoff 0]
+			set mNavRew [menu $menubar.mNavigationRewind -tearoff 0]
+			set mNavForw [menu $menubar.mNavigationForward -tearoff 0]
 		$menubar add cascade -label [mc "Navigation"] -compound left -image $::icon_men(placeholder) -menu $mNav
 	} else {
-		set mNav [menu $menubar.mbNavigation.mNavigation -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mNavRew [menu $menubar.mbNavigation.mNavigation.mNavigationRewind -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mNavForw [menu $menubar.mbNavigation.mNavigation.mNavigationForward -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mNav [menu $menubar.mbNavigation.mNavigation -tearoff 0]
+			set mNavRew [menu $menubar.mbNavigation.mNavigation.mNavigationRewind -tearoff 0 ]
+			set mNavForw [menu $menubar.mbNavigation.mNavigation.mNavigationForward -tearoff 0 ]
 	}
 	
 	#$mNav add separator
@@ -81,22 +81,22 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuView \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
 		set menubar .fvidBg.mContext
-		set mView [menu $menubar.mView -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewPan [menu $menubar.mViewPanScan -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewSize [menu $menubar.mViewSize -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewMove [menu $menubar.mViewMove -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewTop [menu $menubar.mViewTop -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewToolb [menu $menubar.mViewToolb -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewStatusb [menu $menubar.mViewStatusb -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mView [menu $menubar.mView -tearoff 0]
+			set mViewPan [menu $menubar.mViewPanScan -tearoff 0]
+			set mViewSize [menu $menubar.mViewSize -tearoff 0]
+			set mViewMove [menu $menubar.mViewMove -tearoff 0]
+			set mViewTop [menu $menubar.mViewTop -tearoff 0]
+			set mViewToolb [menu $menubar.mViewToolb -tearoff 0]
+			set mViewStatusb [menu $menubar.mViewStatusb -tearoff 0]
 		$menubar add cascade -label [mc "View"] -compound left -image $::icon_men(placeholder) -menu $mView
 	} else {
-		set mView [menu $menubar.mbView.mView -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewPan [menu $menubar.mbView.mView.mViewPanScan -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewSize [menu $menubar.mbView.mView.mViewSize -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewMove [menu $menubar.mbView.mView.mViewMove -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewTop [menu $menubar.mbView.mView.mViewTop -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewToolb [menu $menubar.mbView.mView.mViewToolb -tearoff 0 -background $::option(theme_$::option(use_theme))]
-			set mViewStatusb [menu $menubar.mbView.mView.mViewStatusb -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mView [menu $menubar.mbView.mView -tearoff 0]
+			set mViewPan [menu $menubar.mbView.mView.mViewPanScan -tearoff 0]
+			set mViewSize [menu $menubar.mbView.mView.mViewSize -tearoff 0]
+			set mViewMove [menu $menubar.mbView.mView.mViewMove -tearoff 0]
+			set mViewTop [menu $menubar.mbView.mView.mViewTop -tearoff 0]
+			set mViewToolb [menu $menubar.mbView.mView.mViewToolb -tearoff 0]
+			set mViewStatusb [menu $menubar.mbView.mView.mViewStatusb -tearoff 0]
 	}
 	
 	#$mView add separator
@@ -140,10 +140,10 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuAud \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
 	if {"$handler" == "context"} {
 		set menubar .fvidBg.mContext
-		set mAud [menu $menubar.mAudio -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mAud [menu $menubar.mAudio -tearoff 0]
 		$menubar add cascade -label [mc "Audio"] -compound left -image $::icon_men(placeholder) -menu $mAud
 	} else {
-		set mAud [menu $menubar.mbAudio.mAudio -tearoff 0 -background $::option(theme_$::option(use_theme))]
+		set mAud [menu $menubar.mbAudio.mAudio -tearoff 0]
 	}
 	
 	#$mAud add separator
@@ -158,7 +158,7 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
 
 proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuHelp \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
-	set mHelp [menu $menubar.mbHelp.mHelp -tearoff 0 -background $::option(theme_$::option(use_theme))]
+	set mHelp [menu $menubar.mbHelp.mHelp -tearoff 0]
 	
 	#Fill menu help
 	#$mHelp add separator
@@ -176,7 +176,7 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 
 proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuContext \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\}"
-	set mContext [menu $vidBg.mContext -tearoff 0 -background $::option(theme_$::option(use_theme))]
+	set mContext [menu $vidBg.mContext -tearoff 0]
 	#$mContext add separator
 	
 	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg context
@@ -187,8 +187,8 @@ proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
 
 proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuReFo \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
-	set mRew [menu $toolbPlay.mbRewChoose.mRewChoose -tearoff 0 -background $::option(theme_$::option(use_theme))]
-	set mForw [menu $toolbPlay.mbForwChoose.mForwChoose -tearoff 0 -background $::option(theme_$::option(use_theme))]
+	set mRew [menu $toolbPlay.mbRewChoose.mRewChoose -tearoff 0]
+	set mForw [menu $toolbPlay.mbForwChoose.mForwChoose -tearoff 0]
 	
 	#Fill menu rewind selector
 	$mRew add checkbutton -label [mc "-10 seconds"] -accelerator [mc "Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10s vid(check_rew_10s)] -variable tv(check_rew_10s)

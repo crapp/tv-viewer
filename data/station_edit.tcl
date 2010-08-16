@@ -167,13 +167,6 @@ proc station_editExit {handler} {
 	}
 	
 	grab release .station
-	#FIXME Close to tray deactivated
-	#~ if {$::option(systrayClose) == 1} {
-		#~ wm protocol . WM_DELETE_WINDOW {system_trayTogglePre}
-	#~ } else {
-		#~ 
-	#~ }
-	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	destroy .station
 }
 
@@ -183,7 +176,7 @@ proc station_editUi {} {
 		if {[winfo ismapped .] == 0} {
 			log_writeOutTv 1 "User attempted to start station editor while main is docked."
 			log_writeOutTv 1 "Will undock main."
-			 system_trayToggle
+			 system_trayToggle 0
 		}
 	}
 	
@@ -342,9 +335,6 @@ Deactivated stations will be marked red."]
 		if {$status_vid_Playback != 1} {
 			.station.top_buttons.b_station_preview state pressed
 		}
-		#~ if {$::option(systrayClose) == 1} {
-			#~ wm protocol . WM_DELETE_WINDOW {  }
-		#~ }
 		tkwait visibility $w
 		grab $w
 		wm minsize .station [winfo width .station] [winfo height .station]

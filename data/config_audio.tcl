@@ -38,10 +38,10 @@ proc option_screen_4 {} {
 		set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
 		ttk::label $lf_audioStnd.l_audio -text [mc "Audio output driver"]
 		ttk::menubutton $lf_audioStnd.mb_audio -menu $::window(audio_nb1).mbAudio -textvariable choice(mbAudio)
-		menu $::window(audio_nb1).mbAudio -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(audio_nb1).mbAudio -tearoff 0
 		ttk::label $lf_audioStnd.l_channels -text [mc "Audio channels"]
 		ttk::menubutton $lf_audioStnd.mb_channels -menu $::window(audio_nb1).mbAudio_channels -textvariable choice(mbAudio_channels)
-		menu $::window(audio_nb1).mbAudio_channels -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(audio_nb1).mbAudio_channels -tearoff 0
 		ttk::checkbutton $lf_audioStnd.cb_softvol -text [mc "Use software mixer"] -variable choice(cb_softvol)
 		ttk::checkbutton $lf_audioStnd.cb_remAudio -text [mc "Remember volume level"] -variable choice(cb_remAdio)
 		

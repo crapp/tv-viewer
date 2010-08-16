@@ -56,15 +56,15 @@ proc option_screen_3 {} {
 		ttk::labelframe $frame_nb1.lf_mplayer -text [mc "Video"]
 		ttk::label $frame_nb1.l_lf_vo -text [mc "Video output driver"]
 		ttk::menubutton $frame_nb1.mb_lf_vo -menu $::window(video_nb1).mbVo -textvariable choice(mbVo)
-		menu $::window(video_nb1).mbVo -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(video_nb1).mbVo -tearoff 0
 		ttk::label $frame_nb1.l_lf_deint -text [mc "Deinterlacing filter"]
 		ttk::menubutton $frame_nb1.mb_lf_deint -menu $::window(video_nb1).mbDeint -textvariable choice(mbDeint)
-		menu $::window(video_nb1).mbDeint -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(video_nb1).mbDeint -tearoff 0
 		ttk::label $frame_nb1.l_lf_autoq -text [mc "Postprocessing level"]
 		spinbox $frame_nb1.sb_lf_autoq -from 0 -to 6 -state readonly -textvariable choice(sb_autoq)
 		ttk::label $frame_nb1.l_lf_cache -text [mc "Cache size (kb)"]
 		ttk::menubutton $frame_nb1.mb_lf_cache -menu $::window(video_nb1).mbCache -textvariable choice(mbCache)
-		menu $::window(video_nb1).mbCache -tearoff 0 -background $::option(theme_$::option(use_theme))
+		menu $::window(video_nb1).mbCache -tearoff 0
 		ttk::label $frame_nb1.l_lf_threads -text [mc "Threads for decoding"]
 		spinbox $frame_nb1.sb_lf_threads -state readonly -from 1 -to 8 -textvariable choice(sb_threads)
 		

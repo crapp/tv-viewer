@@ -101,7 +101,7 @@ proc station_itemEdit {w} {
 	ttk::entry $wfe.e_freq -textvariable choice(entry_freq)
 	ttk::label $wfe.l_input -text [mc "Video input:"]
 	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable item(mbVinput)
-	menu $wfe.mbVinput -tearoff 0 -background $::option(theme_$::option(use_theme))
+	menu $wfe.mbVinput -tearoff 0
 	ttk::label $wfe.l_warning -justify left
 	ttk::button $wfb.b_apply -text [mc "Apply"] -command [list station_itemApplyEdit $wtop $wfe.l_warning $w] -compound left -image $::icon_s(dialog-ok-apply)
 	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemEditExit $wtop] -compound left -image $::icon_s(dialog-cancel)
@@ -215,7 +215,7 @@ proc station_itemAdd {w} {
 	ttk::entry $wfe.e_freq -textvariable choice(entry_freq_apply)
 	ttk::label $wfe.l_input -text [mc "Video input:"]
 	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable item(mbVinput)
-	menu $wfe.mbVinput -tearoff 0 -background $::option(theme_$::option(use_theme))
+	menu $wfe.mbVinput -tearoff 0
 	ttk::label $wfe.l_warning -justify left
 	ttk::button $wfb.b_apply -text [mc "Apply"] -command [list station_itemApplyAdd $wtop $wfe.l_warning $w] -compound left -image $::icon_s(dialog-ok-apply)
 	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemAddExit $wtop] -compound left -image $::icon_s(dialog-cancel)

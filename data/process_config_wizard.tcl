@@ -76,16 +76,6 @@ proc process_config_wizardRead {} {
 		#audio_v4l2_mult 655
 		audio_delay 0
 		use_theme "default"
-		theme_default #d9d9d9
-		theme_alt #d9d9d9
-		theme_clam #dcdad5
-		theme_black #626262
-		theme_classic #d9d9d9
-		theme_plastik #efefef
-		theme_keramik #cccccc
-		theme_keramik_alt #cccccc
-		theme_tilegtk #d9d9d9
-		theme_tileqt #d9d9d9
 		tooltips 1
 		tooltips_main 1
 		tooltips_wizard 1
@@ -100,6 +90,8 @@ proc process_config_wizardRead {} {
 		systray 0
 		systrayMini 0
 		systrayClose 0
+		systrayResize 0
+		systrayIcSize 22
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -174,16 +166,6 @@ proc process_config_wizardRead {} {
 		#audio_v4l2_value 90
 		#audio_v4l2_mult 655
 		use_theme "default"
-		theme_default #d9d9d9
-		theme_alt #d9d9d9
-		theme_clam #dcdad5
-		theme_black #626262
-		theme_classic #d9d9d9
-		theme_plastik #efefef
-		theme_keramik #cccccc
-		theme_keramik_alt #cccccc
-		theme_tilegtk #d9d9d9
-		theme_tileqt #d9d9d9
 		tooltips 1
 		tooltips_main 1
 		tooltips_wizard 1
@@ -198,6 +180,8 @@ proc process_config_wizardRead {} {
 		systray 0
 		systrayMini 0
 		systrayClose 0
+		systrayResize 0
+		systrayIcSize 22
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -286,6 +270,8 @@ proc process_config_wizardRead {} {
 		cb_systray systray
 		cb_systrayMini systrayMini
 		cb_systrayClose systrayClose
+		cb_systrayResize systrayResize
+		mb_systrayIcSize systrayIcSize
 		cb_remAdio volRem
 	}
 	array set ::opt_choiceOsd {

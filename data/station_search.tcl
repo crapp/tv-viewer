@@ -29,9 +29,9 @@ proc station_searchUi {tree} {
 	ttk::checkbutton $mf.cb_lf_search_append -text [mc "Append stations to existing list"] -variable search(append)
 	ttk::checkbutton $mf.cb_lf_search_full -text [mc "Perform a full frequency sweep"] -variable search(full) -command [list station_searchFull $mf]
 	ttk::menubutton $mf.mb_lf_search_full_dist -menu $mf.mbFull_dist -textvariable search(mbFull_dist)
-	menu $mf.mbFull_dist -tearoff 0 -background $::option(theme_$::option(use_theme))
+	menu $mf.mbFull_dist -tearoff 0
 	ttk::menubutton $mf.mb_lf_search_full_time -menu $mf.mbFull_time -textvariable search(mbFull_time)
-	menu $mf.mbFull_time -tearoff 0 -background $::option(theme_$::option(use_theme))
+	menu $mf.mbFull_time -tearoff 0
 	
 	ttk::button $bf.b_ok -text [mc "Start"] -compound left -image $::icon_s(dialog-ok-apply) -command "grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1; station_searchRequires $tree"
 	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command "unset -nocomplain ::search(mbVinput) ::search(mbVinput_nr); grab release $wtop; destroy $wtop; grab .station; wm protocol .station WM_DELETE_WINDOW {station_editExit cancel}; wm resizable .station 1 1"
