@@ -29,7 +29,7 @@ set main(debug_msg) [open /dev/null a]
 source $option(root)/data/release_version.tcl
 source $option(root)/data/agrep.tcl
 source $option(root)/data/process_config.tcl
-source $option(root)/data/main_read_station_file.tcl
+source $option(root)/data/process_station_file.tcl
 source $option(root)/data/log_viewer.tcl
 source $option(root)/data/command_socket.tcl
 source $option(root)/data/monitor.tcl
@@ -49,7 +49,7 @@ if {[file exists "$::option(home)/log/tvviewer.log"]} {
 	fconfigure $logf_tv_open_append -blocking no -buffering line
 }
 
-main_readStationFile
+process_StationFile
 command_socket
 
 proc record_externalExit {logw logc returnm returnc} {
@@ -74,7 +74,7 @@ foreach command_argument $argv {
 }
 
 if {[array size start_options] != 8} {
-	record_externalExit "External record scheduler received unknown command $argv" 2 "Received unknown command $argv" 1
+	record_externalExit "External record scheduler received unknown option $argv" 2 "Received unknown option $argv" 1
 }
 
 if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
@@ -104,13 +104,29 @@ proc record_externalTime {} {
 	if {$::start_options(start_time)} {
 		if {[info exists ::start_values(start_time)]} {
 			#FIXME - This check is not very robust have to integrate timevalidate
-			set status [catch {clock scan $::start_values(start_time) -format {%H:%M}} result]
-			if {$status == 0} {
-				set ::record(time_hour) [scan [clock format [clock scan $::start_values(start_time)] -format %H] %d]
-				set ::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %M]
-				set exit_now 0
+			if {$::option(rec_hour_format) == 24} {
+				set status [catch {clock scan $::start_values(start_time) -format {%H:%M}} result]
 			} else {
-				record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM (24 hours)." 1
+				set status [catch {clock scan $::start_values(start_time) -format {%I:%M %P}} result]
+			}
+			if {$status == 0} {
+				if {$::option(rec_hour_format) == 24} {
+					set ::record(time_hour) [scan [clock format [clock scan $::start_values(start_time)] -format %H] %d]
+					set ::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %M]
+					set ::record(time) "$::record(time_hour)\:$::record(time_min)"
+					set exit_now 0
+				} else {
+					set ::record(time_hour) [scan [clock format [clock scan $::start_values(start_time)] -format %I] %d]
+					set ::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %M]
+					set ::record(time) "$::record(time_hour)\:$::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %P]"
+					set exit_now 0
+				}
+			} else {
+				if {$::option(rec_hour_format) == 24} {
+					record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM (24-hours clock)." 1
+				} else {
+					record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM am/pm (12-hours clock)." 1
+				}
 			}
 		} else {
 			set exit_now 1
@@ -249,7 +265,7 @@ proc record_externalAdd {} {
 		set start 1
 	}
 	log_writeOutTv 0 "Adding new recording:"
-	log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+	log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 		set fh [open "$::option(home)/config/scheduled_recordings.conf" r]
 		while {[gets $fh line]!=-1} {
@@ -257,7 +273,7 @@ proc record_externalAdd {} {
 			lappend recordings $line
 		}
 		close $fh
-		set new_recording "$jobid \{$::record(lbcontent)\} $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
+		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
 		lappend recordings $new_recording
 		catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
 		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
@@ -267,11 +283,11 @@ proc record_externalAdd {} {
 		close $sched_rec
 	} else {
 		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
-		set new_recording "$jobid \{$::record(lbcontent)\} $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
+		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
 		puts $sched_rec $new_recording
 		close $sched_rec
 	}
-	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
+	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(time) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
@@ -298,8 +314,8 @@ proc record_externalDelete {} {
 		set recmatch 0
 		while {[gets $sched_rec line]!=-1} {
 			if {[string trim $line] == {} || [string match #* $line]} continue
-			if {"[lindex $line 1] [lindex $line 2] [lindex $line 3]" == "$::record(lbcontent) $::record(time_hour):$::record(time_min) $::record(date)"} {
-				log_writeOutTv 0 "Deleting recording $::record(lbcontent) $::record(time_hour):$::record(time_min) $::record(date)"
+			if {"[lindex $line 1] [lindex $line 2] [lindex $line 3]" == "$::record(lbcontent) $::record(time) $::record(date)"} {
+				log_writeOutTv 0 "Deleting recording $::record(lbcontent) $::record(time) $::record(date)"
 				set recmatch 1
 				continue
 			}

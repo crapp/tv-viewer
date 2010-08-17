@@ -66,6 +66,19 @@ proc error_interpUi {msg options} {
 		}
 	}
 	
+	foreach event {<KeyPress> <<PasteSelection>>} {
+		bind $mf.t_info $event break
+	}
+	bind $mf.t_info <Control-c> {event generate %W <<Copy>>}
+	bind $mf.t_info <Control-Key-a> {%W tag add sel 0.0 end; break}
+	bind $mf.t_info <ButtonPress-3> [list tk_popup $mf.t_info.mContext %X %Y]
+	
+	menu $mf.t_info.mContext -tearoff 0
+	
+	$mf.t_info.mContext add command -label [mc "Select everything"] -compound left -image $::icon_s(placeholder) -command [list $mf.t_info tag add sel 0.0 end] -accelerator [mc "Ctrl-A"]
+	$mf.t_info.mContext add separator
+	$mf.t_info.mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_s(clipboard) -command [list event generate $mf.t_info <<Copy>>] -accelerator [mc "Ctrl-C"]
+	
 	wm resizable $w 0 0
 	wm title $w [mc "TV-Viewer crashed"]
 	wm iconphoto $w $::icon_b(dialog-error)

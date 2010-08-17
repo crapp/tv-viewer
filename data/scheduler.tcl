@@ -160,14 +160,22 @@ proc scheduler_stations {} {
 		catch {array unset ::kanalid}
 		catch {array unset ::kanalcall}
 		catch {array unset ::kanalinput}
+		catch {array unset ::kanalext}
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
-			if {[llength $line] < 3} {
-				lassign $line ::kanalid($i) ::kanalcall($i)
-				set ::kanalinput($i) $::option(video_input)
+			if {[llength $line] < 4} {
+				if {[llength $line] == 2} {
+					lassign $line ::kanalid($i) ::kanalcall($i)
+					set ::kanalinput($i) $::option(video_input)
+					set ::kanalext($i) 0
+				}
+				if {[llength $line] == 3} {
+					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+					set ::kanalext($i) 0
+				}
 			} else {
-				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
 			}
 			set ::scheduler(max_stations) $i
 			incr i
@@ -369,7 +377,11 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 	set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
 	if {$status_grep_input == 0} {
 		if {$::kanalinput($snumber) == [lindex $resultat_grep_input 3]} {
-			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
+			if {$::kanalext($snumber) == 0} {
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
+			} else {
+				catch {exec {*}$::kanalext($snumber) &}
+			}
 			set status [monitor_partRunning 1]
 			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerStationMain {$::kanalid($snumber)} $snumber"

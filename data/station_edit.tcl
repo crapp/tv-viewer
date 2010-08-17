@@ -32,13 +32,17 @@ proc station_editPreview {w} {
 		if {$status_get_input == 0} {
 			if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
 				set freq [lindex [$w item [lindex [$w selection] end] -values] 1]
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
+				if {[lindex [$w item [lindex [$w selection] end] -values] 3] == 0} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
+				} else {
+					catch {exec {*}[lindex [$w item [lindex [$w selection] end] -values] 3] &}
+				}
 				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				vid_Playback .fvidBg .fvidBg.cont 0 0
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
-				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] 0 1 0]]
+				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
 				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
@@ -56,13 +60,17 @@ proc station_editZap {w} {
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$status_get_input == 0} {
 			if {[lindex [$w item [lindex [$w selection] end] -values] 2] == [lindex $resultat_get_input 3]} {
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 1]}
+				if {[lindex [$w item [lindex [$w selection] end] -values] 3] == 0} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 1]}
+				} else {
+					catch {exec {*}[lindex [$w item [lindex [$w selection] end] -values] 3] &}
+				}
 				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				return
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
-				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] 0 1 0]]
+				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
 				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
@@ -81,19 +89,19 @@ proc station_editSave {w} {
 		if {[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"] != 1} {
 			set open_sfile_write [open "$::option(home)/config/stations_$::option(frequency_table).conf" w]
 			if {"[$w item $sitem -tags]" == "disabled"} {
-				puts -nonewline $open_sfile_write "\#\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2]"
+				puts -nonewline $open_sfile_write "\#\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2] \{[lindex [$w item $sitem -values] 3]\}"
 			} else {
-				puts -nonewline $open_sfile_write "\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2]"
+				puts -nonewline $open_sfile_write "\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2] \{[lindex [$w item $sitem -values] 3]\}"
 			}
 			close $open_sfile_write
 		} else {
 			set open_sfile_append [open "$::option(home)/config/stations_$::option(frequency_table).conf" a]
 			if {"[$w item $sitem -tags]" == "disabled"} {
 				puts -nonewline $open_sfile_append "
-\#\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2]"
+\#\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2] \{[lindex [$w item $sitem -values] 3]\}"
 			} else {
 				puts -nonewline $open_sfile_append "
-\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2]"
+\{[lindex [$w item $sitem -values] 0]\} [string trim [lindex [$w item $sitem -values] 1]] [lindex [$w item $sitem -values] 2] \{[lindex [$w item $sitem -values] 3]\}"
 			}
 			close $open_sfile_append
 		}
@@ -107,6 +115,7 @@ proc station_editExit {handler} {
 		catch {array unset ::kanalid}
 		catch {array unset ::kanalcall}
 		catch {array unset ::kanalinput}
+		catch {array unset ::kanalext}
 		log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
 		if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 			set status_vid_Playback [vid_callbackMplayerRemote alive]
@@ -122,11 +131,18 @@ proc station_editExit {handler} {
 			set i 1
 			while {[gets $open_channel_file line]!=-1} {
 				if {[string match #* $line] || [string trim $line] == {} } continue
-				if {[llength $line] < 3} {
-					lassign $line ::kanalid($i) ::kanalcall($i)
-					set ::kanalinput($i) $::option(video_input)
+				if {[llength $line] < 4} {
+					if {[llength $line] == 2} {
+						lassign $line ::kanalid($i) ::kanalcall($i)
+						set ::kanalinput($i) $::option(video_input)
+						set ::kanalext($i) 0
+					}
+					if {[llength $line] == 3} {
+						lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+						set ::kanalext($i) 0
+					}
 				} else {
-					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
 				}
 				set ::station(max) $i
 				incr i
@@ -145,7 +161,12 @@ proc station_editExit {handler} {
 					lassign $open_lastchannel_read kanal channel sendernummer
 					set ::station(last) "\{$kanal\} $channel $sendernummer"
 					set ::station(old) "\{$kanal\} $channel $sendernummer"
-					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					if {$::kanalext([lindex $::station(last) 2]) == 0} {
+						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					} else {
+						catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
+						set resultat_v4l2ctl External
+					}
 					close $open_lastchannel
 					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 				} else {
@@ -155,7 +176,12 @@ proc station_editExit {handler} {
 					close $fileId
 					set ::station(last) "\{$::kanalid(1)\} $::kanalcall(1) 1"
 					set ::station(old) "\{$::kanalid(1)\} $::kanalcall(1) 1"
-					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					if {$::kanalext([lindex $::station(last) 2]) == 0} {
+						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+					} else {
+						catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
+						set resultat_v4l2ctl External
+					}
 					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 				}
 			}
@@ -197,16 +223,16 @@ proc station_editUi {} {
 		
 		ttk::button $wftop.b_station_search -text [mc "Station search"] -style Toolbutton -command [list station_searchUi $wfstation.tv_station]
 		ttk::separator $wftop.sr_1 -orient vertical
-		ttk::button $wftop.b_station_add -text [mc "Add"] -style Toolbutton -command [list station_itemAdd $wfstation.tv_station]
+		ttk::button $wftop.b_station_add -text [mc "Add"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 1]
 		ttk::button $wftop.b_station_delete -text [mc "Delete"] -style Toolbutton -command [list station_itemDelete $wfstation.tv_station]
 		ttk::button $wftop.b_station_activate -text [mc "(De)Activate"] -style Toolbutton -command [list station_itemDeactivate $wfstation.tv_station]
-		ttk::button $wftop.b_station_edit -text [mc "Edit"] -style Toolbutton -command [list station_itemEdit $wfstation.tv_station]
+		ttk::button $wftop.b_station_edit -text [mc "Edit"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 2]
 		ttk::separator $wftop.sr_2 -orient vertical
 		ttk::button $wftop.b_station_up -text [mc "Up"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station -1]
 		ttk::button $wftop.b_station_down -text [mc "Down"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station 1]
 		ttk::separator $wftop.sr_3 -orient vertical
 		ttk::button $wftop.b_station_preview -text [mc "Preview"] -style Toolbutton -command [list station_editPreview $wfstation.tv_station]
-		ttk::treeview $wfstation.tv_station -yscrollcommand [list $wfstation.sb_station set] -columns {station frequency input} -show headings
+		ttk::treeview $wfstation.tv_station -yscrollcommand [list $wfstation.sb_station set] -columns {station frequency input external} -show headings
 		ttk::scrollbar $wfstation.sb_station -orient vertical -command [list $wfstation.tv_station yview]
 		ttk::button $wfbottom.b_save -text [mc "Apply"] -command [list station_editSave $wfstation.tv_station] -compound left -image $::icon_s(dialog-ok-apply)
 		ttk::button $wfbottom.b_exit -text [mc "Cancel"] -command [list station_editExit cancel] -compound left -image $::icon_s(dialog-cancel)
@@ -259,9 +285,11 @@ proc station_editUi {} {
 		$wfstation.tv_station heading station -text [mc "Station"]
 		$wfstation.tv_station heading frequency -text [mc "Frequency"]
 		$wfstation.tv_station heading input -text [mc "Video input"]
-		$wfstation.tv_station column station -width [expr [font measure $font $name] + 380]
-		$wfstation.tv_station column frequency -width [expr [font measure $font $name] + 20] -stretch 0 -anchor center
-		$wfstation.tv_station column input -width [expr [font measure $font $name] + 60] -stretch 0 -anchor center
+		$wfstation.tv_station heading external -text [mc "External Tuner"]
+		$wfstation.tv_station column station -width [expr [font measure $font $name] + 300]
+		$wfstation.tv_station column frequency -width [expr [font measure $font $name] + 10] -stretch 0 -anchor center
+		$wfstation.tv_station column input -width [expr [font measure $font $name] + 10] -stretch 0 -anchor center
+		$wfstation.tv_station column input -width [expr [font measure $font $name] + 100] -stretch 0
 		$wfstation.tv_station tag configure disabled -foreground red
 		if {[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 			set file "$::option(home)/config/stations_$::option(frequency_table).conf"
@@ -271,20 +299,32 @@ proc station_editUi {} {
 				if {[string trim $line] == {} } continue
 					if {[string match #* $line]} {
 						set mapped [string map {"#" {}} $line]
-						if {[llength $mapped] < 3} {
-							lassign $mapped kanal channel
-							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input)] -tags disabled
+						if {[llength $mapped] < 4} {
+							if {[llength $mapped] == 2} {
+								lassign $mapped kanal channel
+								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input) 0] -tags disabled
+							}
+							if {[llength $mapped] == 3} {
+								lassign $mapped kanal channel input
+								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input 0] -tags disabled
+							}
 						} else {
-							lassign $mapped kanal channel input
-							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input] -tags disabled
+							lassign $mapped kanal channel input external
+							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input $external] -tags disabled
 						}
 					} else {
-						if {[llength $line] < 3} {
-							lassign $line kanal channel
-							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input)]
+						if {[llength $line] < 4} {
+							if {[llength $line] == 2} {
+								lassign $line kanal channel
+								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input) 0]
+							}
+							if {[llength $line] == 3} {
+								lassign $line kanal channel input
+								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input 0]
+							}
 						} else {
-							lassign $line kanal channel input
-							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input]
+							lassign $line kanal channel input external
+							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input $external]
 						}
 					}
 				incr i
@@ -306,7 +346,7 @@ proc station_editUi {} {
 		
 		bind $wfstation.tv_station <B1-Motion> break
 		bind $wfstation.tv_station <Motion> break
-		bind $wfstation.tv_station <Double-ButtonPress-1> [list station_itemEdit $wfstation.tv_station]
+		bind $wfstation.tv_station <Double-ButtonPress-1> [list station_itemAddEdit $wfstation.tv_station 2]
 		bind $wfstation.tv_station <<TreeviewSelect>> [list station_editZap $wfstation.tv_station]
 		bind $w <Control-Key-x> [list station_editExit cancel]
 		bind $w <Key-F1> [list info_helpHelp]

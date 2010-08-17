@@ -80,6 +80,10 @@ compact.png/gif
 Part of Silk Icons v1.3 - Creative Commons Attribution 3.0 License
 http://www.famfamfam.com/lab/icons/silk/
 ---------------------------------------
+clipboard.png/gif
+
+Part of xfce4-clipman-plugin - License GPL v2
+---------------------------------------
 arrow-d.gif
 logo-tv-viewer08x-noload.png/gif
 pick-color3.xbm

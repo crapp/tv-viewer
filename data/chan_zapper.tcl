@@ -226,7 +226,21 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 					after 0 [list vid_osd osd_group_f 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
 				}
-				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq} resultat_v4l2ctl
+				if {$snumber == 0} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq} resultat_v4l2ctl
+				} else {
+					if {[string is digit $snumber]} {
+						if {$::kanalext($snumber) == 0} {
+							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq} resultat_v4l2ctl
+						} else {
+							catch {exec {*}$::kanalext($snumber) &}
+							set resultat_v4l2ctl External
+						}
+					} else {
+						catch {exec {*}$snumber &}
+						set resultat_v4l2ctl External
+					}
+				}
 				if {$aftmsg == 1} {
 					if {$secs < 1000} {
 						after [expr 1000 - $secs] [list station_after_msg $snumber $resultat_v4l2ctl]
@@ -302,7 +316,12 @@ proc chan_zapperInputStart {tree lasts} {
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 	if {$status_get_input == 0} {
 		if {$::kanalinput([lindex $::station($lasts) 2]) == [lindex $resultat_get_input 3]} {
-			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station($lasts) 1]} resultat_v4l2ctl
+			if {$::kanalext([lindex $::station($lasts) 2]) == 0} {
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station($lasts) 1]} resultat_v4l2ctl
+			} else {
+				catch {exec {*}$::kanalext([lindex $::station($lasts) 2]) &}
+				set resultat_v4l2ctl External
+			}
 			after 1000 [list station_after_msg [lindex $::station($lasts) 2] $resultat_v4l2ctl]
 		} else {
 			set status_tv [vid_callbackMplayerRemote alive]

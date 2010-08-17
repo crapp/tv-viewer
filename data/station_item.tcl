@@ -80,145 +80,36 @@ proc station_itemDelete {w} {
 	}
 }
 
-proc station_itemEdit {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemEdit \033\[0m \{$w\}"
-	if {[string trim [$w selection]] == {}} return
-	if {[llength [$w selection]] > 1} {
-		log_writeOutTv 1 "You have selected mor then one item to edit. Can't open edit dialog."
-		return
-	}
-	
-	log_writeOutTv 0 "Editing item [$w selection]."
-	
-	set wtop [toplevel .station.top_edit]
-	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-	set wfe [ttk::frame $wtop.frame_entry]
-	set wfb [ttk::frame $wtop.frame_buttons -style TLabelframe]
-	
-	ttk::label $wfe.l_station -text [mc "Station:"]
-	ttk::entry $wfe.e_station -textvariable choice(entry_station)
-	ttk::label $wfe.l_freq -text [mc "Frequency:"]
-	ttk::entry $wfe.e_freq -textvariable choice(entry_freq)
-	ttk::label $wfe.l_input -text [mc "Video input:"]
-	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable item(mbVinput)
-	menu $wfe.mbVinput -tearoff 0
-	ttk::label $wfe.l_warning -justify left
-	ttk::button $wfb.b_apply -text [mc "Apply"] -command [list station_itemApplyEdit $wtop $wfe.l_warning $w] -compound left -image $::icon_s(dialog-ok-apply)
-	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemEditExit $wtop] -compound left -image $::icon_s(dialog-cancel)
-	
-	grid $wfe -in $wtop -row 0 -column 0 -sticky nesw
-	grid $wfb -in $wtop -row 1 -column 0 -sticky ew -padx 3 -pady 3
-	
-	grid anchor $wfb e
-	
-	grid $wfe.l_station -in $wfe -row 0 -column 0 -sticky w -padx 3 -pady "7 0"
-	grid $wfe.e_station -in $wfe -row 1 -column 0 -padx 3
-	grid $wfe.l_freq -in $wfe -row 0 -column 1 -sticky w -padx 3 -pady "7 0"
-	grid $wfe.e_freq -in $wfe -row 1 -column 1 -padx 3
-	grid $wfe.l_input -in $wfe -row 0 -column 2 -sticky w -padx 3 -pady "7 0"
-	grid $wfe.mb_input -in $wfe -row 1 -column 2 -sticky ew -padx 3
-	grid $wfe.l_warning -in $wfe -row 2 -column 0 -padx 3 -columnspan 2
-	
-	grid $wfb.b_apply -in $wfb -row 0 -column 0 -pady 7
-	grid $wfb.b_exit -in $wfb -row 0 -column 1 -padx 3
-	
-	grid columnconfigure $wfe 2 -minsize 120
-	
-	# Subprocs
-	
-	catch {exec v4l2-ctl --device=$::option(video_device) -n} read_vinputs
-	set status_vid_inputs [catch {agrep -m "$read_vinputs" name} resultat_vid_inputs]
-	if {$status_vid_inputs == 0} {
-		set i 0
-		foreach vi [split $resultat_vid_inputs \n] {
-			$wfe.mbVinput add radiobutton \
-			-variable item(mbVinput) \
-			-label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
-			-command [list station_itemVideoNumber $i $wfe.e_freq entry_freq]
-			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
-			incr i
-		}
-	} else {
-		log_writeOutTv 2 "Can't find any video inputs, please check the preferences (analog section)."
-		foreach window [winfo children .station.top_edit] {
-			destroy $window
-		}
-		destroy .station.top_edit
-		return
-	}
-	
-	proc station_itemEditExit {w} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemEditExit \033\[0m \{$w\}"
-		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
-		grab release $w
-		destroy $w
-		grab .station
-	}
-	
-	proc station_itemApplyEdit {w warn tree} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyEdit \033\[0m \{$w\} \{$warn\} \{$tree\}"
-		if {[info exists ::choice(entry_station)] == 0 || [info exists ::choice(entry_station)] == 0} {
-			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 2 "Please specify name and frequency for each station."
+proc station_itemAddEdit {tree handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAdd \033\[0m \{$tree\} \{$handler\}"
+	#handler 1 = add 2 = edit
+	if {$handler == 2} {
+		if {[string trim [$tree selection]] == {}} return
+		if {[llength [$tree selection]] > 1} {
+			log_writeOutTv 1 "You have selected more than one item to edit. Can't open edit dialog."
 			return
-		} else {
-			if {[string trim $::choice(entry_station)] == {} || [string trim $::choice(entry_freq)] == {}} {
-				$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-				log_writeOutTv 2 "Please specify name and frequency for each station."
-				return
-			}
-		}
-		$tree item [$tree selection] -values "{$::choice(entry_station)} [string trim $::choice(entry_freq)] $::item(mbVinput_nr)"
-		log_writeOutTv 0 "Edited station $::choice(entry_station) [string trim $::choice(entry_freq)] $::item(mbVinput_nr)."
-		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
-		grab release $w
-		destroy $w
-		grab .station
-	}
-	
-	# Additional Code
-	
-	wm geometry $wtop +[winfo x .station]+[winfo y .station]
-	wm resizable $wtop 0 0
-	wm title $wtop [mc "Edit Station / Frequency"]
-	wm protocol $wtop WM_DELETE_WINDOW [list station_itemEditExit $wtop]
-	wm iconphoto $wtop $::icon_b(seditor)
-	wm transient $wtop .station
-	if {$::option(tooltips) == 1} {
-		if {$::option(tooltips_editor) == 1} {
-			settooltip $wfe.e_station [mc "Provide a name for the television station."]
-			settooltip $wfe.e_freq [mc "Frequency for the station. E.g. 175.250"]
-			settooltip $wfb.b_apply [mc "Apply changes and close window."]
-			settooltip $wfb.b_exit [mc "Exit without changes."]
 		}
 	}
-	set ::choice(entry_station) [lindex [$w item [$w selection] -values] 0]
-	set ::choice(entry_freq) [lindex [$w item [$w selection] -values] 1]
-	set ::item(mbVinput) $vinput([lindex [$w item [$w selection] -values] 2])
-	set ::item(mbVinput_nr) [lindex [$w item [$w selection] -values] 2]
-	tkwait visibility $wtop
-	grab $wtop
-}
-
-proc station_itemAdd {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAdd \033\[0m \{$w\}"
-	log_writeOutTv 0 "Adding item"
+	log_writeOutTv 0 "Add/Edit Item"
 	
-	set wtop [toplevel .station.top_add]
+	
+	set wtop [toplevel .station.top_AddEdit]
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	set wfe [ttk::frame $wtop.frame_entry]
 	set wfb [ttk::frame $wtop.frame_buttons -style TLabelframe]
 	
 	ttk::label $wfe.l_station -text [mc "Station:"]
-	ttk::entry $wfe.e_station -textvariable choice(entry_station_apply)
+	ttk::entry $wfe.e_station -textvariable sitem(e_Station)
 	ttk::label $wfe.l_freq -text [mc "Frequency:"]
-	ttk::entry $wfe.e_freq -textvariable choice(entry_freq_apply)
+	ttk::entry $wfe.e_freq -textvariable sitem(e_Freq)
 	ttk::label $wfe.l_input -text [mc "Video input:"]
-	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable item(mbVinput)
+	ttk::menubutton $wfe.mb_input -menu $wfe.mbVinput -textvariable sitem(mbVinput)
 	menu $wfe.mbVinput -tearoff 0
+	ttk::checkbutton $wfe.cb_External -text [mc "External Tuner"] -variable sitem(cbExternal) -command [list station_itemAddEditExternal $wfe.e_External]
+	ttk::entry $wfe.e_External -textvariable sitem(eExternal) -state disabled
 	ttk::label $wfe.l_warning -justify left
-	ttk::button $wfb.b_apply -text [mc "Apply"] -command [list station_itemApplyAdd $wtop $wfe.l_warning $w] -compound left -image $::icon_s(dialog-ok-apply)
-	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemAddExit $wtop] -compound left -image $::icon_s(dialog-cancel)
+	ttk::button $wfb.b_apply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply)
+	ttk::button $wfb.b_exit -text [mc "Cancel"] -command [list station_itemAddEditExit $wtop] -compound left -image $::icon_s(dialog-cancel)
 	
 	grid $wfe -in $wtop -row 0 -column 0 -sticky nesw
 	grid $wfb -in $wtop -row 1 -column 0 -sticky ew -padx 3 -pady 3
@@ -231,7 +122,9 @@ proc station_itemAdd {w} {
 	grid $wfe.e_freq -in $wfe -row 1 -column 1 -padx 3
 	grid $wfe.l_input -in $wfe -row 0 -column 2 -sticky w -padx 3 -pady "7 0"
 	grid $wfe.mb_input -in $wfe -row 1 -column 2 -sticky ew -padx 3
-	grid $wfe.l_warning -in $wfe -row 2 -column 0 -padx 3 -columnspan 2
+	grid $wfe.cb_External -in $wfe -row 2 -column 0 -sticky w -padx 3 -pady "7 0"
+	grid $wfe.e_External -in $wfe -row 3 -column 0 -columnspan 2 -sticky ew -padx 3 -pady "7 0"
+	grid $wfe.l_warning -in $wfe -row 4 -column 0 -padx 3 -columnspan 2
 	
 	grid $wfb.b_apply -in $wfb -row 0 -column 0 -pady 7
 	grid $wfb.b_exit -in $wfb -row 0 -column 1 -padx 3
@@ -246,7 +139,7 @@ proc station_itemAdd {w} {
 		set i 0
 		foreach vi [split $resultat_vid_inputs \n] {
 			$wfe.mbVinput add radiobutton \
-			-variable item(mbVinput) \
+			-variable sitem(mbVinput) \
 			-label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
 			-command [list station_itemVideoNumber $i $wfe.e_freq entry_freq_apply]
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
@@ -254,54 +147,38 @@ proc station_itemAdd {w} {
 		}
 	} else {
 		log_writeOutTv 2 "Can't find any video inputs, please check the preferences (analog section)."
-		foreach window [winfo children .station.top_add] {
+		foreach window [winfo children .station.top_AddEdit] {
 			destroy $window
 		}
-		destroy .station.top_add
+		destroy .station.top_AddEdit
 		return
 	}
-	
-	proc station_itemAddExit {w} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAddExit \033\[0m \{$w\}"
-		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
-		grab release $w
-		destroy $w
-		grab .station
-	}
-	
-	proc station_itemApplyAdd {w warn tree} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyAdd \033\[0m \{$w\} \{$warn\} \{$tree\}"
-		if {[info exists ::choice(entry_station_apply)] == 0 || [info exists ::choice(entry_freq_apply)] == 0} {
-			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 2 "Please specify name and frequency for each station."
-			return
+	if {$handler == 1} {
+		$wfb.b_apply configure -command [list station_itemApplyAddEdit $wtop $wfe.l_warning $tree 1]
+		set ::sitem(mbVinput) $vinput($::option(video_input))
+		set ::sitem(mbVinput_nr) $::option(video_input)
+		set ::sitem(cbExternal) 0
+	} else {
+		$wfb.b_apply configure -command [list station_itemApplyAddEdit $wtop $wfe.l_warning $tree 2]
+		set ::sitem(e_Station) [lindex [$tree item [$tree selection] -values] 0]
+		set ::sitem(e_Freq) [lindex [$tree item [$tree selection] -values] 1]
+		set ::sitem(mbVinput) $vinput([lindex [$tree item [$tree selection] -values] 2])
+		set ::sitem(mbVinput_nr) [lindex [$tree item [$tree selection] -values] 2]
+		if {[lindex [$tree item [$tree selection] -values] 3] == 0} {
+			set ::sitem(cbExternal) 0
 		} else {
-			if {[string trim $::choice(entry_station_apply)] == {} || [string trim $::choice(entry_freq_apply)] == {}} {
-				$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-				log_writeOutTv 2 "Please specify name and frequency for each station."
-				return
-			}
+			set ::sitem(cbExternal) 1
+			set ::sitem(eExternal) [lindex [$tree item [$tree selection] -values] 3]
 		}
-		if {[string trim [$tree selection]] == {}} {
-			$tree insert {} end -values "{$::choice(entry_station_apply)} [string trim $::choice(entry_freq_apply)] $::item(mbVinput_nr)"
-			$tree see  [lindex [$tree children {}] end]
-		} else {
-			$tree insert {} [$tree index [$tree next [lindex [$tree selection] end]]] -values "{$::choice(entry_station_apply)} [string trim $::choice(entry_freq_apply)] $::item(mbVinput_nr)"
-		}
-		log_writeOutTv 0 "Adding item $::choice(entry_station_apply) [string trim $::choice(entry_freq_apply)] $::item(mbVinput_nr) to station list."
-		array unset ::choice entry_station_apply 
-		array unset ::choice entry_freq_apply
-		unset -nocomplain ::item(mbVinput_nr) ::item(mbVinput)
-		grab release $w
-		destroy $w
-		grab .station
 	}
-	
-	# Additional Code
 	
 	wm geometry $wtop +[winfo x .station]+[winfo y .station]
 	wm resizable $wtop 0 0
-	wm title $wtop [mc "Add a new station"]
+	if {$handler == 1} {
+		wm title $wtop [mc "Add a new station"]
+	} else {
+		wm title $wtop [mc "Edit Station / Frequency"]
+	}
 	wm protocol $wtop WM_DELETE_WINDOW [list station_itemAddExit $wtop]
 	wm iconphoto $wtop $::icon_b(seditor)
 	wm transient $wtop .station
@@ -313,11 +190,63 @@ proc station_itemAdd {w} {
 			settooltip $wfb.b_exit [mc "Exit without changes."]
 		}
 	}
-	set ::item(mbVinput) $vinput($::option(video_input))
-	set ::item(mbVinput_nr) $::option(video_input)
 	grab release .station
 	tkwait visibility $wtop
 	grab $wtop
+}
+
+proc station_itemAddEditExit {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAddEditExit \033\[0m \{$w\}"
+	unset -nocomplain ::sitem(mbVinput_nr) ::sitem(mbVinput)
+	grab release $w
+	destroy $w
+	grab .station
+}
+
+proc station_itemApplyAddEdit {w warn tree handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemApplyAddEdit \033\[0m \{$w\} \{$warn\} \{$tree\} \{$handler\}"
+	#handler 1 = add 2 = edit
+	if {[info exists ::sitem(e_Station)] == 0 || [info exists ::sitem(e_Freq)] == 0} {
+		$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
+		log_writeOutTv 2 "Please specify name and frequency for each station."
+		return
+	} else {
+		if {[string trim $::sitem(e_Station)] == {} || [string trim $::sitem(e_Freq)] == {}} {
+			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
+			log_writeOutTv 2 "Please specify name and frequency for each station."
+			return
+		}
+	}
+	if {$::sitem(cbExternal) == 0} {
+		set ext 0
+	} else {
+		set ext $::sitem(eExternal)
+	}
+	if {$handler == 1} {
+		if {[string trim [$tree selection]] == {}} {
+			$tree insert {} end -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}"
+			$tree see  [lindex [$tree children {}] end]
+		} else {
+			$tree insert {} [$tree index [$tree next [lindex [$tree selection] end]]] -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}"
+		}
+		log_writeOutTv 0 "Adding item $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} to station list."
+	} else {
+		$tree item [$tree selection] -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}"
+		log_writeOutTv 0 "Edited station $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}."
+	}
+	unset -nocomplain ::sitem(mbVinput_nr) ::sitem(mbVinput) ::sitem(e_Station) ::sitem(e_Freq) ::sitem(eExternal) ::sitem(cbExternal)
+	grab release $w
+	destroy $w
+	grab .station
+}
+
+proc station_itemAddEditExternal {entry} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDeactivate \033\[0m \{$entry\}"
+	if {$::sitem(cbExternal)} {
+		$entry state !disabled
+	} else {
+		$entry state disabled
+	}
 }
 
 proc station_itemDeactivate {w} {
@@ -349,7 +278,7 @@ proc station_itemDeactivate {w} {
 
 proc station_itemVideoNumber {vinputnr widget var} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemVideoNumber \033\[0m \{$vinputnr\} \{$widget\} \{$var\}"
-	set ::item(mbVinput_nr) $vinputnr
+	set ::sitem(mbVinput_nr) $vinputnr
 	if {[info exists ::choice($var)]} {
 		if {"[string trim $::choice($var)]" != {} && "$::choice($var)" != "xxx"} {
 			set ::item(last_freq) $::choice($var)

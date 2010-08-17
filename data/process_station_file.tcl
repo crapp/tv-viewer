@@ -1,4 +1,4 @@
-#       main_read_station_file.tcl
+#       process_station_file.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc main_readStationFile {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_readStationFile \033\[0m"
+proc process_StationFile {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: process_StationFile \033\[0m"
 	if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 		log_writeOutTv 1 "No valid stations_$::option(frequency_table).conf"
 		log_writeOutTv 1 "Please create one using the Station Editor."
@@ -29,11 +29,18 @@ proc main_readStationFile {} {
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
-			if {[llength $line] < 3} {
-				lassign $line ::kanalid($i) ::kanalcall($i)
-				set ::kanalinput($i) $::option(video_input)
+			if {[llength $line] < 4} {
+				if {[llength $line] == 2} {
+					lassign $line ::kanalid($i) ::kanalcall($i)
+					set ::kanalinput($i) $::option(video_input)
+					set ::kanalext($i) 0
+				}
+				if {[llength $line] == 3} {
+					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+					set ::kanalext($i) 0
+				}
 			} else {
-				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
+				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
 			}
 			set ::station(max) $i
 			incr i
@@ -66,7 +73,12 @@ proc main_readStationFile {} {
 					set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 					if {$status_get_input == 0} {
 						if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+							if {$::kanalext([lindex $::station(last) 2]) == 0} {
+								catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+							} else {
+								catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
+								set resultat_v4l2ctl External
+							}
 							after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 						} else {
 							set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] 0 1]]
@@ -89,7 +101,12 @@ proc main_readStationFile {} {
 					set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 					if {$status_get_input == 0} {
 						if {$::kanalinput([lindex $::station(last) 2]) == [lindex $resultat_get_input 3]} {
-							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+							if {$::kanalext([lindex $::station(last) 2]) == 0} {
+								catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+							} else {
+								catch {exec {*}$::kanalext([lindex $::station(last) 2] &}
+								set resultat_v4l2ctl External
+							}
 							after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 						} else {
 							set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 $::kanalinput([lindex $::station(last) 2]) [lindex $::station(last) 1] [lindex $::station(last) 2] 0 1]]

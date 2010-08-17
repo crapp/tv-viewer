@@ -214,25 +214,19 @@ proc record_add_edit {tree com} {
 				set ::record(time_hour) 1
 			}
 			if {$::record(time_hour) < 12 && $::record(time_hour) > 10 && $::record(time_HourOld) == 12} {
-				puts "trigger <12"
 				if {"$::record(rbAddEditHour)" == "pm"} {
-					puts "trigger pm <12"
 					set ::record(rbAddEditHour) am
 					set ::record(mbHourFormat) am
 				} else {
-					puts "trigger am <12"
 					set ::record(rbAddEditHour) pm
 					set ::record(mbHourFormat) pm
 				}
 			}
 			if {$::record(time_hour) > 11 && $::record(time_HourOld) == 11} {
-				puts "trigger >11"
 				if {"$::record(rbAddEditHour)" == "pm"} {
-					puts "trigger pm >11"
 					set ::record(rbAddEditHour) am
 					set ::record(mbHourFormat) am
 				} else {
-					puts "trigger am >11"
 					set ::record(rbAddEditHour) pm
 					set ::record(mbHourFormat) pm
 				}

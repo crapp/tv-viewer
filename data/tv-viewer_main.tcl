@@ -222,8 +222,8 @@ $option(home)/.tv-viewer/tmp/lockfile.tmp"
 unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid readpid status_greparg resultat_greparg readarg read_build
 
 #~ Experimental support for QT and GTK theme.
-#~ if {[file exists "/home/saedelaere/Downloads/tile-qt/library/libtileqt0.6.so"]} {
-	#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/tile-qt/library"]
+#~ if {[file exists "/home/saedelaere/Downloads/aweelka-uTileQt-851071c/library/libtileqt0.6.so"]} {
+	#~ set auto_path [linsert $auto_path 0 "/home/saedelaere/Downloads/aweelka-uTileQt-851071c/library"]
 	#~ package require ttk::theme::tileqt
 #~ }
 #~ package require ttk::theme::tileqt
@@ -317,9 +317,9 @@ source $::option(root)/data/station_after_msg.tcl
 #Source alle related functions for station changing.
 source $::option(root)/data/chan_zapper.tcl
 #Source reading station list
-source $::option(root)/data/main_read_station_file.tcl
+source $::option(root)/data/process_station_file.tcl
 #Execute reading of station list
-main_readStationFile
+process_StationFile
 #Source stream and picqual related stuff.
 source $::option(root)/data/main_picqual_stream.tcl
 #Source video related functions

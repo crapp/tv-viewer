@@ -506,7 +506,7 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "winfo class . [winfo class .]"}
+	bind . <Key-x> {testerrordialog}
 	bind . <Key-y> {puts "systrayMini $::option(systrayMini)"; puts "bind [bind .fvidBg]"}
 	
 	command_socket
@@ -605,7 +605,9 @@ proc main_frontendUi {} {
 		}
 	}
 	if {$::option(window_remGeom)} {
-		wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+[subst $::mem(mainX)]\+[subst $::mem(mainY)]
+		if {$::mem(compact) == 0} {
+			wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+[subst $::mem(mainX)]\+[subst $::mem(mainY)]
+		}
 	}
 	
 	#Do everything that needs to be done after . is visible
@@ -621,6 +623,9 @@ proc main_frontendUi {} {
 	wm minsize . 250 $height
 	if {$::mem(compact)} {
 		vid_wmCompact
+		if {$::option(window_remGeom)} {
+			wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+[subst $::mem(mainX)]\+[subst $::mem(mainY)]
+		}
 	}
 	set ::vid(stayontop) $::mem(ontop)
 	vid_wmStayonTop $::vid(stayontop)
