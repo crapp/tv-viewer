@@ -196,6 +196,39 @@ proc station_editExit {handler} {
 	destroy .station
 }
 
+proc station_editUiMenu {tree x y} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0m \{$tree\} \{$x\} \{$y\}"
+	if {[winfo exists $tree.mCont] == 0} {
+		menu $tree.mCont -tearoff 0
+		$tree.mCont add command -label [mc "Station search"] -command [list station_searchUi $tree] -image $::icon_men(search) -compound left
+		$tree.mCont add separator
+		$tree.mCont add command -label [mc "Add"] -command [list station_itemAddEdit $tree 1] -compound left -image $::icon_men(item-add)
+		$tree.mCont add command -label [mc "Delete"] -command [list station_itemDelete $tree] -compound left -image $::icon_men(item-remove)
+		$tree.mCont add command -label [mc "Edit"] -command [list station_itemAddEdit $tree 2] -compound left -image $::icon_men(seditor)
+		$tree.mCont add command -label [mc "Lock"] -command [list station_itemDeactivate $tree .station.top_buttons.b_station_activate 1] -compound left -image $::icon_men(locked)
+		$tree.mCont add separator
+		$tree.mCont add command -label [mc "Up"] -command [list station_itemMove $tree -1] -compound left -image $::icon_men(channel-up)
+		$tree.mCont add command -label [mc "Down"] -command [list station_itemMove $tree 1] -compound left -image $::icon_men(channel-down)
+		$tree.mCont add separator
+		$tree.mCont add command -label [mc "Preview"] -command [list station_editPreview $tree] -compound left -image $::icon_men(starttv)
+	}
+	log_writeOutTv 0 "Pop up context for record wizard"
+	if {[string trim [$tree selection]] == {}} {
+		$tree.mCont entryconfigure 3 -state disabled
+		$tree.mCont entryconfigure 4 -state disabled
+		$tree.mCont entryconfigure 5 -state disabled
+		$tree.mCont entryconfigure 7 -state disabled
+		$tree.mCont entryconfigure 8 -state disabled
+	} else {
+		$tree.mCont entryconfigure 3 -state normal
+		$tree.mCont entryconfigure 4 -state normal
+		$tree.mCont entryconfigure 5 -state normal
+		$tree.mCont entryconfigure 7 -state normal
+		$tree.mCont entryconfigure 8 -state normal
+	}
+	tk_popup $tree.mCont $x $y
+}
+
 proc station_editUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0m"
 	if {[winfo exists .tray] == 1} {
@@ -221,17 +254,17 @@ proc station_editUi {} {
 		set wfbottom [ttk::frame $w.bottom_buttons -style TLabelframe]
 		set wftop [ttk::frame $w.top_buttons] ; place [ttk::label $wftop.bg -style Toolbutton] -relwidth 1 -relheight 1
 		
-		ttk::button $wftop.b_station_search -text [mc "Station search"] -style Toolbutton -command [list station_searchUi $wfstation.tv_station]
+		ttk::button $wftop.b_station_search -text [mc "Station search"] -style Toolbutton -command [list station_searchUi $wfstation.tv_station] -compound top -image $::icon_m(search)
 		ttk::separator $wftop.sr_1 -orient vertical
-		ttk::button $wftop.b_station_add -text [mc "Add"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 1]
-		ttk::button $wftop.b_station_delete -text [mc "Delete"] -style Toolbutton -command [list station_itemDelete $wfstation.tv_station]
-		ttk::button $wftop.b_station_activate -text [mc "(De)Activate"] -style Toolbutton -command [list station_itemDeactivate $wfstation.tv_station]
-		ttk::button $wftop.b_station_edit -text [mc "Edit"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 2]
+		ttk::button $wftop.b_station_add -text [mc "Add"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 1] -compound top -image $::icon_m(item-add)
+		ttk::button $wftop.b_station_delete -text [mc "Delete"] -style Toolbutton -command [list station_itemDelete $wfstation.tv_station] -compound top -image $::icon_m(item-remove)
+		ttk::button $wftop.b_station_activate -text [mc "Lock"] -style Toolbutton -command [list station_itemDeactivate $wfstation.tv_station $wftop.b_station_activate 1] -compound top -image $::icon_m(locked)
+		ttk::button $wftop.b_station_edit -text [mc "Edit"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 2] -compound top -image $::icon_m(seditor)
 		ttk::separator $wftop.sr_2 -orient vertical
-		ttk::button $wftop.b_station_up -text [mc "Up"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station -1]
-		ttk::button $wftop.b_station_down -text [mc "Down"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station 1]
+		ttk::button $wftop.b_station_up -text [mc "Up"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station -1] -compound top -image $::icon_m(channel-up)
+		ttk::button $wftop.b_station_down -text [mc "Down"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station 1] -compound top -image $::icon_m(channel-down)
 		ttk::separator $wftop.sr_3 -orient vertical
-		ttk::button $wftop.b_station_preview -text [mc "Preview"] -style Toolbutton -command [list station_editPreview $wfstation.tv_station]
+		ttk::button $wftop.b_station_preview -text [mc "Preview"] -style Toolbutton -command [list station_editPreview $wfstation.tv_station] -compound top -image $::icon_m(starttv)
 		ttk::treeview $wfstation.tv_station -yscrollcommand [list $wfstation.sb_station set] -columns {station frequency input external} -show headings
 		ttk::scrollbar $wfstation.sb_station -orient vertical -command [list $wfstation.tv_station yview]
 		ttk::button $wfbottom.b_save -text [mc "Apply"] -command [list station_editSave $wfstation.tv_station] -compound left -image $::icon_s(dialog-ok-apply)
@@ -247,7 +280,7 @@ proc station_editUi {} {
 		grid $wftop.sr_1 -in $wftop -row 0 -column 1 -sticky ns
 		grid $wftop.b_station_add -in $wftop -row 0 -column 2 -pady 2 -padx 3
 		grid $wftop.b_station_delete -in $wftop -row 0 -column 3 -pady 2 -padx "0 3"
-		grid $wftop.b_station_activate -in $wftop -row 0 -column 5 -pady 2 -padx "0 3"
+		grid $wftop.b_station_activate -in $wftop -row 0 -column 5 -pady 2 -padx "0 3" -sticky ew
 		grid $wftop.b_station_edit -in $wftop -row 0 -column 4 -pady 2 -padx "0 3"
 		grid $wftop.sr_2 -in $wftop -row 0 -column 6 -sticky ns
 		grid $wftop.b_station_up -in $wftop -row 0 -column 7 -pady 2 -padx 3
@@ -264,15 +297,12 @@ proc station_editUi {} {
 		grid $wfbottom.b_exit -in $wfbottom -row 0 -column 1 -padx 3
 		
 		grid columnconfigure .station 0 -weight 1
+		grid columnconfigure $wftop 5 -minsize [expr [font measure TkDefaultFont [mc "Unlock"]] + 12]
 		grid columnconfigure $wfstation 0 -weight 1
 		grid rowconfigure .station 1 -weight 1
 		grid rowconfigure $wfstation 0 -weight 1
 		
 		autoscroll $wfstation.sb_station
-		
-		# Subprocs
-		
-		# Additional Code
 		
 		set font [ttk::style lookup [$wfstation.tv_station cget -style] -font]
 		if {[string trim $font] == {}} {
@@ -291,45 +321,55 @@ proc station_editUi {} {
 		$wfstation.tv_station column input -width [expr [font measure $font $name] + 10] -stretch 0 -anchor center
 		$wfstation.tv_station column input -width [expr [font measure $font $name] + 100] -stretch 0
 		$wfstation.tv_station tag configure disabled -foreground red
+		set seeElem 0
 		if {[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 			set file "$::option(home)/config/stations_$::option(frequency_table).conf"
 			set open_channels_file [open $file r]
 			set i 1
 			while {[gets $open_channels_file line]!=-1} {
 				if {[string trim $line] == {} } continue
-					if {[string match #* $line]} {
-						set mapped [string map {"#" {}} $line]
-						if {[llength $mapped] < 4} {
-							if {[llength $mapped] == 2} {
-								lassign $mapped kanal channel
-								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input) 0] -tags disabled
-							}
-							if {[llength $mapped] == 3} {
-								lassign $mapped kanal channel input
-								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input 0] -tags disabled
-							}
-						} else {
-							lassign $mapped kanal channel input external
-							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input $external] -tags disabled
+				if {[string match #* $line]} {
+					set mapped [string map {"#" {}} $line]
+					if {[llength $mapped] < 4} {
+						if {[llength $mapped] == 2} {
+							lassign $mapped kanal channel
+							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input) 0] -tags disabled
+						}
+						if {[llength $mapped] == 3} {
+							lassign $mapped kanal channel input
+							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input 0] -tags disabled
 						}
 					} else {
-						if {[llength $line] < 4} {
-							if {[llength $line] == 2} {
-								lassign $line kanal channel
-								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input) 0]
-							}
-							if {[llength $line] == 3} {
-								lassign $line kanal channel input
-								$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input 0]
-							}
-						} else {
-							lassign $line kanal channel input external
-							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input $external]
-						}
+						lassign $mapped kanal channel input external
+						$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input $external] -tags disabled
 					}
+				} else {
+					if {[llength $line] < 4} {
+						if {[llength $line] == 2} {
+							lassign $line kanal channel
+							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $::option(video_input) 0]
+						}
+						if {[llength $line] == 3} {
+							lassign $line kanal channel input
+							$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input 0]
+						}
+					} else {
+						lassign $line kanal channel input external
+						$wfstation.tv_station insert {} end -values [list "$kanal" [string trim $channel] $input $external]
+					}
+				}
 				incr i
 			}
 			close $open_channels_file
+			if {[info exists ::station(last)]} {
+				foreach elem [$wfstation.tv_station children {}] {
+					if {"[lindex [$wfstation.tv_station item $elem -values] 0]" == "[lindex $::station(last) 0]"} {
+						$wfstation.tv_station selection set $elem
+						set seeElem $elem
+						break
+					}
+				}
+			}
 		}
 		
 		if {[string trim [auto_execok "ivtv-tune"]] == {} || [string trim [auto_execok "v4l2-ctl"]] == {}} {
@@ -347,7 +387,9 @@ proc station_editUi {} {
 		bind $wfstation.tv_station <B1-Motion> break
 		bind $wfstation.tv_station <Motion> break
 		bind $wfstation.tv_station <Double-ButtonPress-1> [list station_itemAddEdit $wfstation.tv_station 2]
-		bind $wfstation.tv_station <<TreeviewSelect>> [list station_editZap $wfstation.tv_station]
+		bind $wfstation.tv_station <ButtonPress-3> [list station_editUiMenu $wfstation.tv_station %X %Y]
+		bind $wfstation.tv_station <Key-Delete> [list station_itemDelete $wfstation.tv_station]
+		bind $wfstation.tv_station <<TreeviewSelect>> {station_editZap .station.wfstation.tv_station; station_itemDeactivate .station.wfstation.tv_station .station.top_buttons.b_station_activate 0}
 		bind $w <Control-Key-x> [list station_editExit cancel]
 		bind $w <Key-F1> [list info_helpHelp]
 		
@@ -376,6 +418,9 @@ Deactivated stations will be marked red."]
 			.station.top_buttons.b_station_preview state pressed
 		}
 		tkwait visibility $w
+		if {$seeElem != 0} {
+			after 100 [list $wfstation.tv_station see $seeElem]
+		}
 		grab $w
 		wm minsize .station [winfo width .station] [winfo height .station]
 	}

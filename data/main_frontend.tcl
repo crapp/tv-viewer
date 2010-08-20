@@ -188,7 +188,6 @@ proc main_frontendChannelHandler {handler} {
 		}
 		main_frontendDisableTree .fstations.treeSlist 1
 		bind .fstations.treeSlist <<TreeviewSelect>> {}
-		.ftoolb_Top.lInput configure -text [mc "unknown"]
 		foreach widget [split [winfo children .ftoolb_Top]] {
 			catch {$widget state disabled}
 		}
@@ -217,13 +216,10 @@ proc main_frontendChannelHandler {handler} {
 	} else {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
-		if {$status_grep_input == 0} {
-			.ftoolb_Top.lInput configure -text [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]
-		} else {
+		if {$status_grep_input == 1} {
 			log_writeOutTv 2 "Can not read video input."
 			log_writeOutTv 2 "$resultat_grep_input."
 		}
-		.ftoolb_Top.lDevice configure -text $::option(video_device)
 		event_constr 1
 		
 		if {[array exists ::kanalitemID]} {
@@ -325,9 +321,6 @@ proc main_frontendUi {} {
 	ttk::button $toolbTop.bEpg -text EPG -style Toolbutton -command main_frontendEpg
 	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton
 	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command {event generate . <<teleview>>}
-	#FIXME Which foreground color in label
-	label $toolbTop.lInput -width 10 -background black -foreground #EB3939 -anchor center -relief sunken -borderwidth 2
-	label $toolbTop.lDevice -width 10 -background black -foreground #FF5757 -anchor center -relief sunken -borderwidth 2
 	
 	ttk::treeview $stations.treeSlist -yscrollcommand [list $stations.scrbSlist set] -columns {name number} -show headings -selectmode browse -takefocus 0
 	ttk::scrollbar $stations.scrbSlist -command [list $stations.treeSlist yview]
@@ -391,8 +384,6 @@ proc main_frontendUi {} {
 	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 -pady 1 -padx "2 0"
 	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 -pady 1 -padx "2 0"
 	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 -pady 1 -padx "2 0"
-	#~ grid $toolbTop.lInput -in $toolbTop -row 0 -column 5 -sticky e -padx 1
-	#~ grid $toolbTop.lDevice -in $toolbTop -row 0 -column 6 -padx "0 2"
 	
 	grid $toolbChanCtrl -in $stations -row 1 -column 0 -columnspan 2 -sticky ew
 	grid $stations.treeSlist -in $stations -row 0 -column 0 -sticky nesw
@@ -507,7 +498,7 @@ proc main_frontendUi {} {
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
 	bind . <Key-x> {testerrordialog}
-	bind . <Key-y> {puts "systrayMini $::option(systrayMini)"; puts "bind [bind .fvidBg]"}
+	bind . <Key-y> {puts "bind motion [bind .fvidBg.cont <Motion>]"}
 	
 	command_socket
 	
@@ -580,22 +571,7 @@ proc main_frontendUi {} {
 	
 	#FIXME Hide cursor in windowed mode?
 	
-	bind $vidCont <Motion> {
-		vid_wmCursorHide .fvidBg.cont 0
-		#~ vid_wmCursorPlaybar %Y
-		#~ vid_slistCursor %X %Y
-	}
-	bind $vidBg <Motion> {
-		vid_wmCursorHide .fvidBg 0
-		#~ vid_wmCursorPlaybar %Y
-		#~ vid_slistCursor %X %Y
-	}
-	bind . <ButtonPress-1> {.fvidBg.cont configure -cursor arrow
-							.fvidBg configure -cursor arrow}
-	set ::cursor($vidCont) ""
-	set ::cursor($vidBg) ""
-	vid_wmCursorHide $vidCont 0
-	vid_wmCursorHide $vidBg 0
+	vid_wmCursor 1
 	
 	if {$::option(systray) == 1} {
 		set ::menu(cbSystray) 1

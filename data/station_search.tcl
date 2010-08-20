@@ -280,7 +280,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 				set status_dict [catch {dict get $::freq_chan_pairs $::searchchannel($counter)} resultat_dict]
 				if { $status_dict == 0 } {
 					set trimmed_resultat_dict [string trim $resultat_dict]
-					$tree insert {} end -values [list Station($::searchchannel($counter)) $trimmed_resultat_dict $::search(mbVinput_nr)]
+					$tree insert {} end -values [list Station($::searchchannel($counter)) $trimmed_resultat_dict $::search(mbVinput_nr) 0]
 					$tree see [lindex [$tree children {}] end]
 					log_writeOutTv 0 "Signal detected on $trimmed_resultat_dict MHz."
 				} else {
@@ -319,7 +319,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 				if {[string length [lindex $splitf 1]] == 2} {
 					set freq "[lindex $splitf 0].[lindex $splitf 1]0"
 				}
-				$tree insert {} end -values [list Station($freq) $freq $::search(mbVinput_nr)]
+				$tree insert {} end -values [list Station($freq) $freq $::search(mbVinput_nr) 0]
 				$tree see [lindex [$tree children {}] end]
 				log_writeOutTv 0 "Signal detected on $freq MHz."
 			}

@@ -18,6 +18,22 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+
+########################################################################
+# record_external.tcl is part of TV-Viewer.
+# This script can be used to schedule recordings and/or delete them.
+# Options:
+# --start_time = Provide a start time in 12-hour or 24-hour format*
+# --start_date = Start date YYYY-MM-DD*
+# --duration = Specify the duration of the recording in seconds*
+# --title = Title for the recording*
+# --station_ext = Station to record. You need to provide the same as in TV-Viewer.*
+# --path = Output path
+# --resolution = Recording resolution.
+# --delete = Delete already scheduled recording. You need to provide start_time, start_date and station_ex
+# 
+# *These options are mandatory to schedule a recording
+
 package require Tcl 8.5
 
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
@@ -58,7 +74,7 @@ proc record_externalExit {logw logc returnm returnc} {
 	exit $returnc
 }
 
-array set start_options {duration 0 start_time 0 start_date 0 title 0 resolution 0 path 0 station_ext 0 delete 0}
+array set start_options {--duration 0 --start_time 0 --start_date 0 --title 0 --resolution 0 --path 0 --station_ext 0 --delete 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -73,8 +89,48 @@ foreach command_argument $argv {
 	}
 }
 
-if {[array size start_options] != 8} {
-	record_externalExit "External record scheduler received unknown option $argv" 2 "Received unknown option $argv" 1
+if {[array size start_options] != 9} {
+	record_externalExit "External record scheduler received unknown option $argv" 2 "Received unknown option $argv
+	
+Usage: tv-viewer_recext \[OPTION...\]
+
+  --help               show this help
+ 
+ Schedule recording:
+  --start_time=TIME    specify start time (HH:MM 24-hour clock, HH:MM am/pm 12-hour clock)
+  --start_date=DATE    provide start date (YYYY-MM-DD)
+  --duration=DURATION  duration of the recording in SECONDS
+  --title=NAME         name/title for the recording
+  --station_ext=NO     provide the station number as specified in TV-Viewer
+ 
+ Additional options:
+  --path=PATH          path where the recording should be stored
+  --resolution=RESOL   resoltion in which the recording should be performed
+   
+ Delete recording:
+  --delete             delete the recording with start_time, start_date and station_ext" 1
+}
+
+if {$::start_options(--help)} {
+	puts "Usage: tv-viewer_recext \[OPTION...\]
+
+  --help               show this help
+ 
+ Schedule recording:
+  --start_time=TIME    specify start time (HH:MM 24-hour clock, HH:MM am/pm 12-hour clock)
+  --start_date=DATE    provide start date (YYYY-MM-DD)
+  --duration=DURATION  duration of the recording in SECONDS
+  --title=NAME         name/title for the recording
+  --station_ext=NO     provide the station number as specified in TV-Viewer
+ 
+ Additional options:
+  --path=PATH          path where the recording should be stored
+  --resolution=RESOL   resoltion in which the recording should be performed
+   
+ Delete recording:
+  --delete             delete the recording with start_time, start_date and station_ext
+"
+	exit 0
 }
 
 if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
@@ -82,9 +138,9 @@ if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 }
 
 proc record_externalDuration {} {
-	if {$::start_options(duration)} {
-		if {[info exists ::start_values(duration)] && [string is integer $::start_values(duration)]} {
-			set seconds $::start_values(duration)
+	if {$::start_options(--duration)} {
+		if {[info exists ::start_values(--duration)] && [string is integer $::start_values(--duration)]} {
+			set seconds $::start_values(--duration)
 			set ::record(duration_hour) [expr $seconds / 3600]
 			set ::record(duration_min) [expr ($seconds - ($::record(duration_hour) * 3600)) / 60]
 			set ::record(duration_sec) [expr ($seconds - ($::record(duration_hour) * 3600) - ($::record(duration_min) * 60))]
@@ -101,24 +157,24 @@ proc record_externalDuration {} {
 }
 
 proc record_externalTime {} {
-	if {$::start_options(start_time)} {
-		if {[info exists ::start_values(start_time)]} {
+	if {$::start_options(--start_time)} {
+		if {[info exists ::start_values(--start_time)]} {
 			#FIXME - This check is not very robust have to integrate timevalidate
 			if {$::option(rec_hour_format) == 24} {
-				set status [catch {clock scan $::start_values(start_time) -format {%H:%M}} result]
+				set status [catch {clock scan $::start_values(--start_time) -format {%H:%M}} result]
 			} else {
-				set status [catch {clock scan $::start_values(start_time) -format {%I:%M %P}} result]
+				set status [catch {clock scan $::start_values(--start_time) -format {%I:%M %P}} result]
 			}
 			if {$status == 0} {
 				if {$::option(rec_hour_format) == 24} {
-					set ::record(time_hour) [scan [clock format [clock scan $::start_values(start_time)] -format %H] %d]
-					set ::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %M]
+					set ::record(time_hour) [scan [clock format [clock scan $::start_values(--start_time)] -format %H] %d]
+					set ::record(time_min) [clock format [clock scan $::start_values(--start_time)] -format %M]
 					set ::record(time) "$::record(time_hour)\:$::record(time_min)"
 					set exit_now 0
 				} else {
-					set ::record(time_hour) [scan [clock format [clock scan $::start_values(start_time)] -format %I] %d]
-					set ::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %M]
-					set ::record(time) "$::record(time_hour)\:$::record(time_min) [clock format [clock scan $::start_values(start_time)] -format %P]"
+					set ::record(time_hour) [scan [clock format [clock scan $::start_values(--start_time)] -format %I] %d]
+					set ::record(time_min) [clock format [clock scan $::start_values(--start_time)] -format %M]
+					set ::record(time) "$::record(time_hour)\:$::record(time_min) [clock format [clock scan $::start_values(--start_time)] -format %P]"
 					set exit_now 0
 				}
 			} else {
@@ -140,12 +196,12 @@ proc record_externalTime {} {
 }
 
 proc record_externalDate {} {
-	if {$::start_options(start_date)} {
-		if {[info exists ::start_values(start_date)]} {
+	if {$::start_options(--start_date)} {
+		if {[info exists ::start_values(--start_date)]} {
 			#FIXME - This check is not very robust have to integrate timevalidate
-			set status [catch {clock scan $::start_values(start_date) -format {%Y-%m-%d}} result]
+			set status [catch {clock scan $::start_values(--start_date) -format {%Y-%m-%d}} result]
 			if {$status == 0} {
-				set ::record(date) $::start_values(start_date)
+				set ::record(date) $::start_values(--start_date)
 				set exit_now 0
 			} else {
 				record_externalExit "External record scheduler: Date incorrect format." 2 "Date incorrect format, YYYY-MM-DD." 1
@@ -206,10 +262,10 @@ proc record_externalResolution {} {
 }
 
 proc record_externalStation {} {
-	if {$::start_options(station_ext)} {
-		if {[info exists ::start_values(station_ext)]} {
-			if {[string trim [array get ::kanalid $::start_values(station_ext)]] != {}} {
-				set ::record(lbcontent) $::kanalid($::start_values(station_ext))
+	if {$::start_options(--station_ext)} {
+		if {[info exists ::start_values(--station_ext)]} {
+			if {[string trim [array get ::kanalid $::start_values(--station_ext)]] != {}} {
+				set ::record(lbcontent) $::kanalid($::start_values(--station_ext))
 				set exit_now 0
 			} else {
 				record_externalExit "External record scheduler: Specified station does not exist" 2 "Specified station does not exist." 1
@@ -226,11 +282,15 @@ proc record_externalStation {} {
 }
 
 proc record_externalTitle {} {
-	if {$::start_options(title)} {
-		if {[info exists ::start_values(title)]} {
-			set title [string map {{ } {_}} "$::start_values(title)"]
-			set time [clock format [clock scan $::start_values(start_time)] -format {%H-%M}]
-			set ::record(file) "$::option(rec_default_path)/$title\_$::start_values(start_date)_${time}.mpeg"
+	if {$::start_options(--title)} {
+		if {[info exists ::start_values(--title)]} {
+			set title [string map {{ } {_}} "$::start_values(--title)"]
+			if {$::option(rec_hour_format) == 24} {
+				set time [clock format [clock scan $::start_values(--start_time)] -format {%H-%M}]
+			} else {
+				set time [clock format [clock scan $::start_values(--start_time)] -format {%I-%M %P}]
+			}
+			set ::record(file) "$::option(rec_default_path)/$title\_$::start_values(--start_date)_${time}.mpeg"
 			set exit_now 0
 		} else {
 			set exit_now 1
@@ -332,7 +392,7 @@ proc record_externalDelete {} {
 	} else {
 		record_externalExit "Config file for scheduled recordings is missing" 2 "Config file for scheduled recordings is missing" 1
 	}
-	if {$start} {
+	if {$start == 0} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
 		catch {exec "$::option(root)/data/scheduler.tcl" &}
@@ -348,7 +408,7 @@ proc record_externalDelete {} {
 	}
 }
 
-if {$start_options(delete) == 0} {
+if {$start_options(--delete) == 0} {
 	record_externalDuration
 	record_externalTime
 	record_externalDate
@@ -365,7 +425,7 @@ if {$start_options(delete) == 0} {
 		command_WritePipe 1 "tv-viewer_main record_linkerWizardReread"
 	}
 	puts "Successfully scheduled recording:
-[string map {{ } {_}} $::start_values(title)] $start_values(start_date) $start_values(start_time)"
+[string map {{ } {_}} $::start_values(--title)] $start_values(--start_date) $start_values(--start_time)"
 	flush stdout
 	exit 0
 } else {
@@ -379,10 +439,10 @@ if {$start_options(delete) == 0} {
 	}
 	if {$recmatch} {
 		puts "Successfully deleted recording:
-$::kanalid($::start_values(station_ext)) $start_values(start_date) $start_values(start_time)"
+$::kanalid($::start_values(--station_ext)) $start_values(--start_date) $start_values(--start_time)"
 	} else {
 		puts "Can not delete recording:
-$::kanalid($::start_values(station_ext)) $start_values(start_date) $start_values(start_time)
+$::kanalid($::start_values(--station_ext)) $start_values(--start_date) $start_values(--start_time)
 Not found in scheduled recordings file."
 	}
 	flush stdout

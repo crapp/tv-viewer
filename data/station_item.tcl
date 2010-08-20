@@ -55,29 +55,72 @@ proc station_itemMove {w direction} {
 	}
 }
 
-proc station_itemDelete {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDelete \033\[0m \{$w\}"
-	if {[string trim [$w selection]] == {}} return
-	log_writeOutTv 0 "Deleting item [$w selection]."
-	if {[llength [$w selection]] > 1} {
-		if {[$w next [lindex [$w selection] end]] == {}} {
-			set selitem [$w prev [lindex [$w selection] 0]]
-		} else {
-			set selitem [$w next [lindex [$w selection] end]]
-		}
-		foreach element [$w selection] {
-			$w delete $element
-		}
-		catch {$w selection set $selitem}
-	} else {
-		if {[$w next [$w selection]] == {}} {
-			set selitem [$w prev [$w selection]]
-		} else {
-			set selitem [$w next [$w selection]]
-		}
-		$w delete [$w selection]
-		catch {$w selection set $selitem}
+proc station_itemDelete {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDelete \033\[0m \{$tree\}"
+	if {[string trim [$tree selection]] == {}} return
+	set top [toplevel .station.delete]
+	place [ttk::frame $top.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+	set fMain [ttk::frame $top.f_delMain]
+	set fBut [ttk::frame $top.f_delBut -style TLabelframe]
+	
+	ttk::label $fMain.l_delMessage -text [mc "Do you really want to delete the selected station(s)?"] -image $::icon_b(dialog-warning) -compound left
+	ttk::checkbutton $fMain.cb_delAsk -text [mc "Don't ask next time"] -variable ::sitem(cbDelAsk)
+	
+	ttk::button $fBut.b_delCancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command {grab release .station.delete; destroy .station.delete; grab .station} -default active
+	ttk::button $fBut.b_delApply -text [mc "Delete"] -compound left -image $::icon_s(dialog-ok-apply) -command [list station_itemDeleteRun $tree $top]
+	
+	grid $fMain -in $top -row 0 -column 0 -sticky ew
+	grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady 3
+	
+	grid $fMain.l_delMessage -in $fMain -row 0 -column 0 -pady "3 7" -padx 5
+	grid $fMain.cb_delAsk -in $fMain -row 1 -column 0 -sticky w -pady "0 7" -padx 5
+	
+	grid $fBut.b_delCancel -in $fBut -row 0 -column 0 -padx "0 3" -pady 7
+	grid $fBut.b_delApply -in $fBut -row 0 -column 1 -padx "0 3" -pady 7
+	grid anchor $fBut e
+	
+	wm iconphoto $top $::icon_b(seditor)
+	wm resizable $top 0 0
+	wm transient $top .station
+	wm protocol $top WM_DELETE_WINDOW {grab release .station.delete; destroy .station.delete; grab .station}
+	wm title $top [mc "Delete stations"]
+	
+	if {[info exists ::sitem(cbDelAsk)] && $::sitem(cbDelAsk)} {
+		station_itemDeleteRun $tree $top
+		return
 	}
+	
+	grab release .station
+	tkwait visibility $top
+	grab $top
+	focus $fBut.b_delCancel
+}
+
+proc station_itemDeleteRun {tree top} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAdd \033\[0m \{$tree\} \{$top\}"
+	log_writeOutTv 0 "Deleting item [$tree selection]."
+	if {[llength [$tree selection]] > 1} {
+		if {[$tree next [lindex [$tree selection] end]] == {}} {
+			set selitem [$tree prev [lindex [$tree selection] 0]]
+		} else {
+			set selitem [$tree next [lindex [$tree selection] end]]
+		}
+		foreach element [$tree selection] {
+			$tree delete $element
+		}
+		catch {$tree selection set $selitem}
+	} else {
+		if {[$tree next [$tree selection]] == {}} {
+			set selitem [$tree prev [$tree selection]]
+		} else {
+			set selitem [$tree next [$tree selection]]
+		}
+		$tree delete [$tree selection]
+		catch {$tree selection set $selitem}
+	}
+	grab release $top
+	destroy $top
+	grab .station
 }
 
 proc station_itemAddEdit {tree handler} {
@@ -124,7 +167,7 @@ proc station_itemAddEdit {tree handler} {
 	grid $wfe.mb_input -in $wfe -row 1 -column 2 -sticky ew -padx 3
 	grid $wfe.cb_External -in $wfe -row 2 -column 0 -sticky w -padx 3 -pady "7 0"
 	grid $wfe.e_External -in $wfe -row 3 -column 0 -columnspan 2 -sticky ew -padx 3 -pady "7 0"
-	grid $wfe.l_warning -in $wfe -row 4 -column 0 -padx 3 -columnspan 2
+	grid $wfe.l_warning -in $wfe -row 4 -column 0 -padx 3 -pady 5 -columnspan 3
 	
 	grid $wfb.b_apply -in $wfb -row 0 -column 0 -pady 7
 	grid $wfb.b_exit -in $wfb -row 0 -column 1 -padx 3
@@ -141,7 +184,7 @@ proc station_itemAddEdit {tree handler} {
 			$wfe.mbVinput add radiobutton \
 			-variable sitem(mbVinput) \
 			-label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
-			-command [list station_itemVideoNumber $i $wfe.e_freq entry_freq_apply]
+			-command [list station_itemVideoNumber $i $wfe.e_freq e_Freq]
 			set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
 			incr i
 		}
@@ -155,6 +198,8 @@ proc station_itemAddEdit {tree handler} {
 	}
 	if {$handler == 1} {
 		$wfb.b_apply configure -command [list station_itemApplyAddEdit $wtop $wfe.l_warning $tree 1]
+		set ::sitem(e_Station) Name
+		set ::sitem(e_Freq) 175.000
 		set ::sitem(mbVinput) $vinput($::option(video_input))
 		set ::sitem(mbVinput_nr) $::option(video_input)
 		set ::sitem(cbExternal) 0
@@ -169,6 +214,7 @@ proc station_itemAddEdit {tree handler} {
 		} else {
 			set ::sitem(cbExternal) 1
 			set ::sitem(eExternal) [lindex [$tree item [$tree selection] -values] 3]
+			$wfe.e_External state !disabled
 		}
 	}
 	
@@ -186,6 +232,15 @@ proc station_itemAddEdit {tree handler} {
 		if {$::option(tooltips_editor) == 1} {
 			settooltip $wfe.e_station [mc "Provide a name for the television station."]
 			settooltip $wfe.e_freq [mc "Frequency for the station. E.g. 175.250"]
+			settooltip $wfe.mb_input [mc "Video input for this station. 
+Normally you want television input."]
+			settooltip $wfe.cb_External [mc "Use an external tuner"]
+			settooltip $wfe.e_External [mc "Specify a command for the external tuner.
+You may use this substitutions:
+
+%%F  Frequency
+%%S  Station name
+e.g. externalTune %%F %%S"]
 			settooltip $wfb.b_apply [mc "Apply changes and close window."]
 			settooltip $wfb.b_exit [mc "Exit without changes."]
 		}
@@ -220,18 +275,23 @@ proc station_itemApplyAddEdit {w warn tree handler} {
 	if {$::sitem(cbExternal) == 0} {
 		set ext 0
 	} else {
-		set ext $::sitem(eExternal)
+		# do some regsubs %F = Frequency %S = Stationname
+		set ext [regsub -all %F [regsub -all %S $::sitem(eExternal) \{$::sitem(e_Station)\}] $::sitem(e_Freq)]
 	}
 	if {$handler == 1} {
 		if {[string trim [$tree selection]] == {}} {
 			$tree insert {} end -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}"
 			$tree see  [lindex [$tree children {}] end]
+			$tree selection set [lindex [$tree children {}] end]
 		} else {
 			$tree insert {} [$tree index [$tree next [lindex [$tree selection] end]]] -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}"
+			$tree see [$tree next [$tree selection]]
+			$tree selection set [$tree next [$tree selection]]
 		}
 		log_writeOutTv 0 "Adding item $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} to station list."
 	} else {
 		$tree item [$tree selection] -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}"
+		$tree see [$tree selection]
 		log_writeOutTv 0 "Edited station $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext}."
 	}
 	unset -nocomplain ::sitem(mbVinput_nr) ::sitem(mbVinput) ::sitem(e_Station) ::sitem(e_Freq) ::sitem(eExternal) ::sitem(cbExternal)
@@ -249,29 +309,48 @@ proc station_itemAddEditExternal {entry} {
 	}
 }
 
-proc station_itemDeactivate {w} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDeactivate \033\[0m \{$w\}"
-	if {[string trim [$w selection]] == {}} return
-	$w tag configure disabled -foreground red
-	if {[llength [$w selection]] > 1} {
-		foreach element [$w selection] {
-			set selected_item [$w item $element -values]
-			if {"[$w item $element -tags]" == "disabled"} {
-				$w item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags ""
-				log_writeOutTv 0 "Enabling item $element."
+proc station_itemDeactivate {tree but com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemDeactivate \033\[0m \{$tree\} \{$com\}"
+	#com 0 just change button locked/unlocked - 1 really (de)activate item
+	if {[string trim [$tree selection]] == {}} return
+	if {$com } {
+		$tree tag configure disabled -foreground red
+		if {[llength [$tree selection]] > 1} {
+			foreach element [$tree selection] {
+				set selected_item [$tree item $element -values]
+				if {"[$tree item $element -tags]" == "disabled"} {
+					$tree item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]}" -tags ""
+					log_writeOutTv 0 "Enabling item $element."
+				} else {
+					$tree item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]}" -tags disabled
+					log_writeOutTv 0 "Disabling item $element."
+				}
+			}
+		} else {
+			set selected_item [$tree item [$tree selection] -values]
+			if {"[$tree item [$tree selection] -tags]" == "disabled"} {
+				$tree item [$tree selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]}" -tags ""
+				log_writeOutTv 0 "Enabling item [$tree selection]."
 			} else {
-				$w item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags disabled
-				log_writeOutTv 0 "Disabling item $element."
+				$tree item [$tree selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]}" -tags disabled
+				log_writeOutTv 0 "Disabling item [$tree selection]."
 			}
 		}
+	}
+	if {[llength [$tree selection]] > 1} {
+		set item [lindex [$tree selection] end]
 	} else {
-		set selected_item [$w item [$w selection] -values]
-		if {"[$w item [$w selection] -tags]" == "disabled"} {
-			$w item [$w selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags ""
-			log_writeOutTv 0 "Enabling item [$w selection]."
-		} else {
-			$w item [$w selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2]" -tags disabled
-			log_writeOutTv 0 "Disabling item [$w selection]."
+		set item [$tree selection]
+	}
+	if {"[$tree item $item -tags]" == "disabled"} {
+		$but configure -image $::icon_m(unlocked) -text [mc "Unlock"]
+		if {[winfo exists $tree.mCont]} {
+			$tree.mCont entryconfigure 5 -image $::icon_men(unlocked) -label [mc "Unlock"]
+		}
+	} else {
+		$but configure -image $::icon_m(locked) -text [mc "Lock"]
+		if {[winfo exists $tree.mCont]} {
+			$tree.mCont entryconfigure 5 -image $::icon_men(locked) -label [mc "Lock"]
 		}
 	}
 }
@@ -279,20 +358,18 @@ proc station_itemDeactivate {w} {
 proc station_itemVideoNumber {vinputnr widget var} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemVideoNumber \033\[0m \{$vinputnr\} \{$widget\} \{$var\}"
 	set ::sitem(mbVinput_nr) $vinputnr
-	if {[info exists ::choice($var)]} {
-		if {"[string trim $::choice($var)]" != {} && "$::choice($var)" != "xxx"} {
-			set ::item(last_freq) $::choice($var)
+	if {[info exists ::sitem($var)]} {
+		if {"[string trim $::sitem($var)]" != {} && "$::sitem($var)" != "0"} {
+			set ::sitem(last_freq) $::sitem($var)
 		}
 	}
 	if {$vinputnr != 0} {
-		set ::choice($var) xxx
-		$widget state disabled
+		set ::sitem($var) 0
 	} else {
-		$widget state !disabled
-		if {[info exists ::item(last_freq)]} {
-			set ::choice($var) $::item(last_freq)
+		if {[info exists s::sitem(last_freq)]} {
+			set ::sitem($var) $::sitem(last_freq)
 		} else {
-			set ::choice($var) {}
+			set ::sitem($var) {}
 		}
 	}
 }

@@ -274,7 +274,7 @@ proc colorm_mainUi {} {
 	if {[winfo exists .cm] == 0} {
 		log_writeOutTv 0 "Setting up Color Management."
 		# Setting up main Interface
-		set cm_w [toplevel .cm -class [winfo class .]]
+		set cm_w [toplevel .cm ]
 		place [ttk::frame $cm_w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 		
 		set wfscale [ttk::frame $cm_w.f_vscale]
@@ -408,5 +408,7 @@ proc colorm_mainUi {} {
 			}
 		}
 		colorm_readValues $wfscale
+	} else {
+		raise .cm
 	}
 }

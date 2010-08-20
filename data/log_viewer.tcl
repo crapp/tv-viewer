@@ -138,7 +138,7 @@ proc log_viewerUi {handler} {
 	if {[winfo exists .log_viewer_$ident(op\($handler\))] == 0} {
 		log_writeOutTv 0 "Launching log viewer for $ident(name\($handler\))."
 		
-		set w [toplevel .log_viewer_$ident(op\($handler\)) -class "TV-Viewer Log Viewer"]
+		set w [toplevel .log_viewer_$ident(op\($handler\))]
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 		set mf [ttk::frame $w.f_log_$ident(op\($handler\))]
 		set wfbottom [ttk::frame $w.f_log_$ident(op\($handler\))_buttons -style TLabelframe]
@@ -199,9 +199,9 @@ proc log_viewerUi {handler} {
 		
 		menu $mf.t_log_$ident(op\($handler\)).mContext -tearoff 0
 		
-		$mf.t_log_$ident(op\($handler\)).mContext add command -label [mc "Select everything"] -compound left -image $::icon_s(placeholder) -command [list $mf.t_log_$ident(op\($handler\)) tag add sel 0.0 end] -accelerator [mc "Ctrl-A"]
+		$mf.t_log_$ident(op\($handler\)).mContext add command -label [mc "Select everything"] -compound left -image $::icon_men(placeholder) -command [list $mf.t_log_$ident(op\($handler\)) tag add sel 0.0 end] -accelerator [mc "Ctrl-A"]
 		$mf.t_log_$ident(op\($handler\)).mContext add separator
-		$mf.t_log_$ident(op\($handler\)).mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_s(clipboard) -command [list event generate $mf.t_log_$ident(op\($handler\)) <<Copy>>] -accelerator [mc "Ctrl-C"]
+		$mf.t_log_$ident(op\($handler\)).mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_men(clipboard) -command [list event generate $mf.t_log_$ident(op\($handler\)) <<Copy>>] -accelerator [mc "Ctrl-C"]
 		
 		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
 			settooltip $ftop.b_save [mc "Save logfile to disk"]

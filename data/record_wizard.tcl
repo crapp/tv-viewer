@@ -61,6 +61,25 @@ proc record_wizardExecSchedulerCback {com} {
 	}
 }
 
+proc record_wizardUiMenu {tree x y} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUiMenu \033\[0m \{$tree\} \{$x\} \{$y\}"
+	if {[winfo exists $tree.mCont] == 0} {
+		menu $tree.mCont -tearoff 0
+		$tree.mCont add command -label [mc "New recording"] -command [list record_add_edit $tree 0] -image $::icon_men(item-add) -compound left
+		$tree.mCont add command -label [mc "Delete"] -command [list record_add_editDelete $tree] -image $::icon_men(item-remove) -compound left
+		$tree.mCont add command -label [mc "Edit"] -command [list record_add_edit $tree 1] -image $::icon_men(seditor) -compound left
+	}
+	log_writeOutTv 0 "Pop up context for record wizard"
+	if {[string trim [$tree selection]] == {}} {
+		$tree.mCont entryconfigure 1 -state disabled
+		$tree.mCont entryconfigure 2 -state disabled
+	} else {
+		$tree.mCont entryconfigure 1 -state normal
+		$tree.mCont entryconfigure 2 -state normal
+	}
+	tk_popup $tree.mCont $x $y
+}
+
 proc record_wizardUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0m"
 	if {[winfo exists .record_wizard] == 0} {
@@ -79,9 +98,9 @@ proc record_wizardUi {} {
 		set statf [ttk::frame $w.status_frame]
 		set bf [ttk::frame $w.button_frame -style TLabelframe]
 		
-		ttk::button $topf.b_add_rec -text [mc "New recording"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 0]
-		ttk::button $topf.b_delete_rec -text [mc "Delete"] -style Toolbutton -command [list record_add_editDelete $treef.tv_rec]
-		ttk::button $topf.b_edit_rec -text [mc "Edit"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 1]
+		ttk::button $topf.b_add_rec -text [mc "New recording"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 0] -image $::icon_m(item-add) -compound top
+		ttk::button $topf.b_delete_rec -text [mc "Delete"] -style Toolbutton -command [list record_add_editDelete $treef.tv_rec] -image $::icon_m(item-remove) -compound top
+		ttk::button $topf.b_edit_rec -text [mc "Edit"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 1] -image $::icon_m(seditor) -compound top
 		ttk::separator $topf.sep_1 -orient vertical
 		
 		ttk::treeview $treef.tv_rec -yscrollcommand [list $treef.sb_rec_vert set] -columns {jobid station time date duration resolution file} -show headings
@@ -160,6 +179,8 @@ proc record_wizardUi {} {
 		bind $treef.tv_rec <B1-Motion> break
 		bind $treef.tv_rec <Motion> break
 		bind $treef.tv_rec <Double-ButtonPress-1> [list record_add_edit $treef.tv_rec 1]
+		bind $treef.tv_rec <Key-Delete> [list record_add_editDelete $treef.tv_rec]
+		bind $treef.tv_rec <ButtonPress-3> [list record_wizardUiMenu $treef.tv_rec %X %Y]
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <Key-F1> [list info_helpHelp]
 		
@@ -220,5 +241,7 @@ click here to stop it."]
 		}
 		tkwait visibility $w
 		wm minsize .record_wizard [winfo reqwidth .record_wizard] [winfo reqheight .record_wizard]
+	} else {
+		raise .record_wizard
 	}
 }

@@ -333,6 +333,8 @@ source $::option(root)/data/vid_slist.tcl
 source $::option(root)/data/vid_wm.tcl
 #Source tv osd
 source $::option(root)/data/vid_osd.tcl
+#Source functions to calculate difftime
+source $::option(root)/data/difftime.tcl
 #Source newsreader ui and update checker.
 source $::option(root)/data/main_newsreader.tcl
 #Source system tray.

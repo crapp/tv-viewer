@@ -4,4 +4,4 @@ Version=1.0
 Name=TV-Viewer Scheduler
 Exec=tv-viewer_scheduler
 Icon=system-run
-Comment=Is part of TV-Viewer and needed to schedule recordings.
+Comment=Is part of TV-Viewer and needed to schedule recordings

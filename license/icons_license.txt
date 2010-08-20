@@ -37,7 +37,9 @@ volume.png/gif
 Part of "Crystal Diamond Icons for KDE 3.5 and KDE 4". Thanks for the permission Paolo. License GPL
 http://www.paolinoland.it/kde/PaolinoLandIcons/Crystal_Diamond_Icons.html
 ---------------------------------------
+locked.png/gif
 record.png/gif
+unlocked.png/gif
 
 Part of gnome-icon-theme 2.30.3 - Licenese GPL
 http://art.gnome.org/
@@ -60,11 +62,14 @@ dialog-warning.png/gif
 dialog-error.png/gif
 forward-last.png/gif
 forward-small.png/gif
+item-add.png/gif
+item-remove.png/gif
 playback-pause.png/gif
 playback-start.png/gif
 playback-stop.png/gif
 rewind-first.png/gif
 rewind-small.png/gif
+search.png/gif
 video.png/gif
 
 Part of "Tango icon theme". License public domain.

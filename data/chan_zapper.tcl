@@ -219,7 +219,6 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 		if {$status_grep_input == 0} {
 			if {$input == [lindex $resultat_grep_input 3]} {
 				log_writeOutTv 0 "Changed video input to $input."
-				.ftoolb_Top.lInput configure -text "[string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]"
 				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [list vid_osd osd_group_w 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
 				}
@@ -292,7 +291,6 @@ proc chan_zapperInputQuery {secs input restart} {
 			set ::data(after_id_input) [after 100 "chan_zapperInputQuery [expr $secs + 100] $input $restart"]
 		} else {
 			log_writeOutTv 0 "Changed video input to $input"
-			.ftoolb_Top.lInput configure -text "[string trim [string range $check_back_input [string first \( $check_back_input] end] ()]"
 			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list vid_osd osd_group_w 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}

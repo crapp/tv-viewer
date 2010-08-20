@@ -22,7 +22,7 @@ proc key_sequences {} {
 	if {[winfo exists .key] == 0} {
 		log_writeOutTv 0 "Launching key sequences screen..."
 		
-		set w [toplevel .key -class [winfo class .]] 
+		set w [toplevel .key]
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 		set mftop [ttk::frame $w.f_key_top]
 		set mftree [ttk::frame $w.f_key_treeview]
@@ -106,6 +106,8 @@ proc key_sequences {} {
 		wm protocol $w WM_DELETE_WINDOW [list destroy $w]
 		wm iconphoto $w $::icon_b(key-bindings)
 		tkwait visibility $w
+	} else {
+		raise .key
 	}
 }
 
@@ -123,7 +125,7 @@ proc key_sequencesEdit {tree} {
 		log_writeOutTv 0 "No item selected to edit the shortcut"
 		return
 	}
-	set w [toplevel $tree.w_keyEdit -class [winfo class .]]
+	set w [toplevel $tree.w_keyEdit]
 	set f [ttk::frame $w.f_edit]
 	ttk::label $f.l_Key -text [mc "Press the key combination you want to assign"]
 	ttk::entry $f.e_Key -textvariable key(entrySequence) -state readonly

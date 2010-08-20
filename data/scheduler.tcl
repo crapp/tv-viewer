@@ -52,7 +52,7 @@ source $option(root)/agrep.tcl
 source $option(root)/monitor.tcl
 source $option(root)/process_config.tcl
 source $option(root)/main_picqual_stream.tcl
-source $option(root)/main_newsreader.tcl
+source $option(root)/difftime.tcl
 source $option(root)/command_socket.tcl
 
 set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
@@ -232,7 +232,7 @@ proc scheduler_recordings {} {
 				scheduler_at [lindex $::recjob($i) 2] $i
 			} else {
 				set diffdate [string map {{-} {}} [lindex $::recjob($i) 3]]
-				set delta [main_newsreaderDifftimes [clock scan $diffdate] [clock scan [clock format [clock scan now] -format {%Y%m%d}]]]
+				set delta [difftime [clock scan $diffdate] [clock scan [clock format [clock scan now] -format {%Y%m%d}]]]
 				lassign $delta dy dm dd
 				if {$dy < 0 || $dm < 0 || $dd < 0} {
 					scheduler_logWriteOut 1 "Job $i expired."
@@ -286,6 +286,10 @@ proc scheduler_delete {args} {
 		puts $f_open "$::recjob($i)"
 	}
 	close $f_open
+	set status_main [monitor_partRunning 1]
+	if {[lindex $status_main 0]} {
+		command_WritePipe 0 "tv-viewer_main record_linkerWizardReread"
+	}
 	if {[llength $::recjob(delete)] == $::scheduler(max_recordings)} {
 		scheduler_exit
 	}

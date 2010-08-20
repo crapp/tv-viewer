@@ -498,6 +498,32 @@ proc vid_wmGivenSize {w size} {
 	}
 }
 
+proc vid_wmCursor {com} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursor \033\[0m \{$com\}"
+	#com 0 stop hiding cursor - 1 hide cursor
+	if {$com == 0} {
+		
+		
+		
+	}
+	if {$com} {
+		bind .fvidBg.cont <Motion> {
+			vid_wmCursorHide .fvidBg.cont 0
+			#~ vid_slistCursor %X %Y
+		}
+		bind .fvidBg <Motion> {
+			vid_wmCursorHide .fvidBg 0
+			#~ vid_slistCursor %X %Y
+		}
+		bind . <ButtonPress-1> {.fvidBg.cont configure -cursor arrow
+								.fvidBg configure -cursor arrow}
+		set ::cursor(.fvidBg.cont) ""
+		set ::cursor(.fvidBg) ""
+		vid_wmCursorHide .fvidBg.cont 0
+		vid_wmCursorHide .fvidBg 0
+	}
+}
+
 proc vid_wmCursorHide {w com} {
 	if {[info exists ::option(cursor_id\($w\))] == 1} {
 		foreach id [split $::option(cursor_id\($w\))] {

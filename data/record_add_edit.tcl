@@ -18,6 +18,7 @@
 
 proc record_add_edit {tree com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_edit \033\[0m \{$tree\} \{$com\}"
+	#com 0 add new station - 1 edit selected station
 	if {$com == 1} {
 		if {[string trim [$tree selection]] == {}} {
 			log_writeOutTv 1 "No recording selected to edit."
@@ -196,117 +197,6 @@ proc record_add_edit {tree com} {
 	grid $bf.b_apply -in $bf -row 0 -column 0 -pady 7 -padx 3
 	grid $bf.b_cancel -in $bf -row 0 -column 1 -pady 7 -padx "0 3"
 	
-	
-	proc record_add_editTimeHour {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHour \033\[0m"
-		if {$::option(rec_hour_format) == 24} {
-			if {$::record(time_hour) < 0} {
-				set ::record(time_hour) 23
-			}
-			if {$::record(time_hour) > 23} {
-				set ::record(time_hour) 0
-			}
-		} else {
-			if {$::record(time_hour) < 1} {
-				set ::record(time_hour) 12
-			}
-			if {$::record(time_hour) > 12} {
-				set ::record(time_hour) 1
-			}
-			if {$::record(time_hour) < 12 && $::record(time_hour) > 10 && $::record(time_HourOld) == 12} {
-				if {"$::record(rbAddEditHour)" == "pm"} {
-					set ::record(rbAddEditHour) am
-					set ::record(mbHourFormat) am
-				} else {
-					set ::record(rbAddEditHour) pm
-					set ::record(mbHourFormat) pm
-				}
-			}
-			if {$::record(time_hour) > 11 && $::record(time_HourOld) == 11} {
-				if {"$::record(rbAddEditHour)" == "pm"} {
-					set ::record(rbAddEditHour) am
-					set ::record(mbHourFormat) am
-				} else {
-					set ::record(rbAddEditHour) pm
-					set ::record(mbHourFormat) pm
-				}
-			}
-		}
-		set ::record(time_HourOld) $::record(time_hour)
-	}
-	proc record_add_editTimeMin {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMin \033\[0m"
-		if {$::record(time_min) >= 60} {
-			set ::record(time_min) 0
-			if {$::record(time_hour) < 24} {
-				set ::record(time_hour) [expr $::record(time_hour) + 1]
-				record_add_editTimeHour
-			}
-		}
-		if {$::record(time_min) <= -1} {
-			set ::record(time_min) 59
-			if {$::record(time_hour) > -1} {
-				set ::record(time_hour) [expr $::record(time_hour) - 1]
-				record_add_editTimeHour
-			}
-		}
-	}
-	
-	proc record_add_editDurHour {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHour \033\[0m"
-		if {$::record(duration_hour) > 98} {
-			set ::record(duration_hour) 0
-		}
-		if {$::record(duration_hour) < 0} {
-			set ::record(duration_hour) 98
-		}
-	}
-	proc record_add_editDurMin {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurMin \033\[0m"
-		if {$::record(duration_min) == 60} {
-			set ::record(duration_min) 0
-			set ::record(duration_hour) [expr $::record(duration_hour) + 1]
-			record_add_editDurHour
-		}
-		if {$::record(duration_min) < 0} {
-			set ::record(duration_min) 59
-			set ::record(duration_hour) [expr $::record(duration_hour) - 1]
-			record_add_editDurHour
-		}
-	}
-	proc record_add_editDurSec {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurSec\033\[0m"
-		if {$::record(duration_sec) >= 60} {
-			set ::record(duration_sec) 0
-			set ::record(duration_min) [expr $::record(duration_min) + 1]
-			record_add_editDurMin
-		}
-		if {$::record(duration_sec) < 0} {
-			set ::record(duration_sec) 59
-			set ::record(duration_min) [expr $::record(duration_min) - 1]
-			record_add_editDurMin
-		}
-	}
-	
-	proc record_add_editResolWidth {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidth \033\[0m"
-		if {$::record(resolution_width) > 720} {
-			set ::record(resolution_width) 100
-		}
-		if {$::record(resolution_width) < 100} {
-			set ::record(resolution_width) 720
-		}
-	}
-	proc record_add_editResolHeight {} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolHeight \033\[0m"
-		if {$::record(resolution_height) > $::record(resolution_height_max)} {
-			set ::record(resolution_height) 100
-		}
-		if {$::record(resolution_height) < 100} {
-			set ::record(resolution_height) $::record(resolution_height_max)
-		}
-	}
-	
 	wm resizable $w 0 0
 	if {$com == 0} {
 		wm title $w [mc "Add a new recording"]
@@ -366,9 +256,16 @@ proc record_add_edit {tree com} {
 			}
 		}
 		$bf.b_apply configure -command [list record_applyTimeDate $tree $lbf.lb_stations $w edit]
-		foreach {thour tmin} [split [lindex [$tree item [$tree selection] -values] 2] :] {
-			set ::record(time_hour) [scan $thour %d]
-			set ::record(time_min) [scan $tmin %d]
+		if {$::option(rec_hour_format) == 12} {
+			set ::record(time_hour) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %I] %d] 
+			set ::record(time_min) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %M] %d]
+			set ::record(mbHourFormat) [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %P]
+			set ::record(rbAddEditHour) [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %P]
+			$recf.mbHourFormat state !disabled
+		} else {
+			set ::record(time_hour) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %H] %d] 
+			set ::record(time_min) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %M] %d]
+			set ::record(mbHourFormat) [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %P]
 		}
 		set ::record(date) [lindex [$tree item [$tree selection] -values] 3]
 		foreach {dhour dmin dsec} [split [lindex [$tree item [$tree selection] -values] 4] :] {
@@ -388,6 +285,8 @@ proc record_add_edit {tree com} {
 			settooltip $lbf.lb_stations [mc "Choose station to record."]
 			settooltip $recf.sb_time_hour [mc "Time when recording should start. (Hour)"]
 			settooltip $recf.sb_time_min [mc "Time when recording should start. (Minute)"]
+			settooltip $recf.mbHourFormat [mc "Choose between before or after midday.
+You may change hour format in the preferences (Record)."]
 			settooltip $recf.ent_date [mc "Choose date on which recording should occur."]
 			settooltip $recf.b_date [mc "Choose date on which recording should occur."]
 			settooltip $recf.sb_duration_hour [mc "Duration for the recording. (Hours)"]
@@ -413,6 +312,120 @@ and store the file in the default record path."]
 	}
 	tkwait visibility $w
 	grab $w
+}
+
+proc record_add_editTimeHour {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHour \033\[0m"
+	if {$::option(rec_hour_format) == 24} {
+		if {$::record(time_hour) < 0} {
+			set ::record(time_hour) 23
+		}
+		if {$::record(time_hour) > 23} {
+			set ::record(time_hour) 0
+		}
+	} else {
+		if {$::record(time_hour) < 1} {
+			set ::record(time_hour) 12
+		}
+		if {$::record(time_hour) > 12} {
+			set ::record(time_hour) 1
+		}
+		if {$::record(time_hour) < 12 && $::record(time_hour) > 10 && $::record(time_HourOld) == 12} {
+			if {"$::record(rbAddEditHour)" == "pm"} {
+				set ::record(rbAddEditHour) am
+				set ::record(mbHourFormat) am
+			} else {
+				set ::record(rbAddEditHour) pm
+				set ::record(mbHourFormat) pm
+			}
+		}
+		if {$::record(time_hour) > 11 && $::record(time_HourOld) == 11} {
+			if {"$::record(rbAddEditHour)" == "pm"} {
+				set ::record(rbAddEditHour) am
+				set ::record(mbHourFormat) am
+			} else {
+				set ::record(rbAddEditHour) pm
+				set ::record(mbHourFormat) pm
+			}
+		}
+	}
+	set ::record(time_HourOld) $::record(time_hour)
+}
+
+proc record_add_editTimeMin {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMin \033\[0m"
+	if {$::record(time_min) >= 60} {
+		set ::record(time_min) 0
+		if {$::record(time_hour) < 24} {
+			set ::record(time_hour) [expr $::record(time_hour) + 1]
+			record_add_editTimeHour
+		}
+	}
+	if {$::record(time_min) <= -1} {
+		set ::record(time_min) 59
+		if {$::record(time_hour) > -1} {
+			set ::record(time_hour) [expr $::record(time_hour) - 1]
+			record_add_editTimeHour
+		}
+	}
+}
+
+proc record_add_editDurHour {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHour \033\[0m"
+	if {$::record(duration_hour) > 98} {
+		set ::record(duration_hour) 0
+	}
+	if {$::record(duration_hour) < 0} {
+		set ::record(duration_hour) 98
+	}
+}
+
+proc record_add_editDurMin {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurMin \033\[0m"
+	if {$::record(duration_min) == 60} {
+		set ::record(duration_min) 0
+		set ::record(duration_hour) [expr $::record(duration_hour) + 1]
+		record_add_editDurHour
+	}
+	if {$::record(duration_min) < 0} {
+		set ::record(duration_min) 59
+		set ::record(duration_hour) [expr $::record(duration_hour) - 1]
+		record_add_editDurHour
+	}
+}
+
+proc record_add_editDurSec {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurSec\033\[0m"
+	if {$::record(duration_sec) >= 60} {
+		set ::record(duration_sec) 0
+		set ::record(duration_min) [expr $::record(duration_min) + 1]
+		record_add_editDurMin
+	}
+	if {$::record(duration_sec) < 0} {
+		set ::record(duration_sec) 59
+		set ::record(duration_min) [expr $::record(duration_min) - 1]
+		record_add_editDurMin
+	}
+}
+
+proc record_add_editResolWidth {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidth \033\[0m"
+	if {$::record(resolution_width) > 720} {
+		set ::record(resolution_width) 100
+	}
+	if {$::record(resolution_width) < 100} {
+		set ::record(resolution_width) 720
+	}
+}
+
+proc record_add_editResolHeight {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolHeight \033\[0m"
+	if {$::record(resolution_height) > $::record(resolution_height_max)} {
+		set ::record(resolution_height) 100
+	}
+	if {$::record(resolution_height) < 100} {
+		set ::record(resolution_height) $::record(resolution_height_max)
+	}
 }
 
 proc record_add_editExit {w} {
@@ -451,10 +464,47 @@ proc record_add_editOfile {w} {
 	set ::record(file) "$ofile"
 }
 
-
 proc record_add_editDelete {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\}"
 	if {[string trim [$tree selection]] == {}} return
+	set top [toplevel .record_wizard.delete]
+	place [ttk::frame $top.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+	set fMain [ttk::frame $top.f_delMain]
+	set fBut [ttk::frame $top.f_delBut -style TLabelframe]
+	
+	ttk::label $fMain.l_delMessage -text [mc "Do you really want to delete the selected recording(s)?"] -image $::icon_b(dialog-warning) -compound left
+	ttk::checkbutton $fMain.cb_delAsk -text [mc "Don't ask next time"] -variable ::record(cbDelAsk)
+	
+	ttk::button $fBut.b_delCancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command {grab release .record_wizard.delete; destroy .record_wizard.delete} -default active
+	ttk::button $fBut.b_delApply -text [mc "Delete"] -compound left -image $::icon_s(dialog-ok-apply) -command [list record_add_editDeleteRun $tree $top]
+	
+	grid $fMain -in $top -row 0 -column 0 -sticky ew
+	grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady 3
+	
+	grid $fMain.l_delMessage -in $fMain -row 0 -column 0 -pady "3 7" -padx 5
+	grid $fMain.cb_delAsk -in $fMain -row 1 -column 0 -sticky w -pady "0 7" -padx 5
+	
+	grid $fBut.b_delCancel -in $fBut -row 0 -column 0 -padx "0 3" -pady 7
+	grid $fBut.b_delApply -in $fBut -row 0 -column 1 -padx "0 3" -pady 7
+	grid anchor $fBut e
+	
+	wm iconphoto $top $::icon_b(record)
+	wm resizable $top 0 0
+	wm transient $top .record_wizard
+	wm protocol $top WM_DELETE_WINDOW {grab release .record_wizard.delete; destroy .record_wizard.delete}
+	wm title $top [mc "Delete recordings"]
+	
+	if {[info exists ::record(cbDelAsk)] && $::record(cbDelAsk)} {
+		record_add_editDeleteRun $tree $top
+		return
+	}
+	tkwait visibility $top
+	grab $top
+	focus $fBut.b_delCancel
+}
+
+proc record_add_editDeleteRun {tree top} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDelete \033\[0m \{$tree\} \{$top\}"
 	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		set start 0
@@ -472,7 +522,7 @@ proc record_add_editDelete {tree} {
 	catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
 	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
 	foreach ritem [split [$tree children {}]] {
-		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} [lindex [$tree item $ritem -values] 2] [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
+		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} \{[lindex [$tree item $ritem -values] 2]\} [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
 	}
 	close $f_open
 	if {$start} {
@@ -487,6 +537,8 @@ proc record_add_editDelete {tree} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
 	}
+	grab release $top
+	destroy $top
 }
 
 proc record_add_editDate {} {

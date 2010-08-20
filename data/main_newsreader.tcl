@@ -84,7 +84,7 @@ proc main_newsreaderCheckUpdate {handler} {
 			set date_file [open "$::option(home)/config/last_update.date" w]
 			close $date_file
 			
-			set w [toplevel .top_newsreader -class [winfo class .]]
+			set w [toplevel .top_newsreader]
 			place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 			
 			set mf [ttk::frame $w.mf]
@@ -222,7 +222,7 @@ proc main_newsreaderAutomaticUpdate {} {
 	}
 	set actual_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
 	set last_update [clock scan [clock format [file mtime "$::option(home)/config/last_update.date"] -format "%Y%m%d"]]
-	foreach {years months days} [main_newsreaderDifftimes $actual_date $last_update] {}
+	foreach {years months days} [difftime $actual_date $last_update] {}
 	log_writeOutTv 0 "Newsreader started"
 	log_writeOutTv 0 "Last check: [clock format $last_update -format {%d.%m.%Y}]"
 	log_writeOutTv 0 "Offset: $years Year(s) $months Month(s) $days Day(s)"
@@ -245,59 +245,4 @@ proc main_newsreaderAutomaticUpdate {} {
 			}
 		}
 	}
-}
-
-proc main_newsreaderClockarith { seconds delta units } {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderClockarith \033\[0m \{$seconds\} \{$delta\} \{$units\}"}
-	set stamp [clock format $seconds -format "%Y%m%d"]
-	if { $delta < 0 } {
-		append stamp " " - [expr { - $delta }] " " $units
-	} else {
-		append stamp "+ " $delta " " $units
-	}
-	return [clock scan $stamp]
-}
-
-proc main_newsreaderDifftimes { s1 s2 } {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderDifftimes \033\[0m \{$s1\} \{$s2\}"}
-
-	set y1 [clock format $s1 -format %Y]
-	set y2 [clock format $s2 -format %Y]
-	set y [expr { $y1 - $y2 - 1 }]
-
-	set s2new $s2
-	set yOut $y
-
-	set s [main_newsreaderClockarith $s2 $y years]
-	while { $s <= $s1 } {
-		set s2new $s
-		set yOut $y
-		incr y
-		set s [main_newsreaderClockarith $s2 $y years]
-	}
-	set s2 $s2new
-
-	set m 0
-	set mOut 0
-	set s [main_newsreaderClockarith $s2 $m months]
-	while { $s <= $s1 } {
-		set s2new $s
-		set mOut $m
-		incr m
-		set s [main_newsreaderClockarith $s2 $m months]
-	}
-	set s2 $s2new
-
-	set d [expr { ( ( $s2 - $s1 ) / 86400 ) - 1 }]
-	set dOut $d
-	set s [main_newsreaderClockarith $s2 $d days]
-	while { $s <= $s1 } {
-		set s2new $s
-		set dOut $d
-		incr d
-		set s [main_newsreaderClockarith $s2 $d days]
-	}
-	set s2 $s2new
-
-	return [list $yOut $mOut $dOut]
 }
