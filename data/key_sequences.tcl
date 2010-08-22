@@ -131,7 +131,7 @@ proc key_sequencesEdit {tree} {
 	ttk::entry $f.e_Key -textvariable key(entrySequence) -state readonly
 	
 	ttk::button $f.b_KeyClear -text [mc "Clear"] -command {set ::key(entrySequence) ""; set ::key(sequenceList) ""}
-	ttk::button $f.b_KeyCancel -text [mc "Cancel"] -command {grab release .key.f_key_treeview.tv_key.w_keyEdit; destroy .key.f_key_treeview.tv_key.w_keyEdit}
+	ttk::button $f.b_KeyCancel -text [mc "Cancel"] -command {vid_wmCursor 1; grab release .key.f_key_treeview.tv_key.w_keyEdit; destroy .key.f_key_treeview.tv_key.w_keyEdit}
 	ttk::button $f.b_KeyApply -text [mc "Apply"] -command [list key_sequencesEditApply $tree]
 	
 	grid $f -in $w -row 0 -column 0 -sticky nesw
@@ -148,7 +148,7 @@ proc key_sequencesEdit {tree} {
 	wm resizable $w 0 0
 	wm transient $w .key
 	wm iconphoto $w $::icon_b(key-bindings)
-	wm protocol $w WM_DELETE_WINDOW {grab release .key.f_key_treeview.tv_key.w_keyEdit; destroy .key.f_key_treeview.tv_key.w_keyEdit}
+	wm protocol $w WM_DELETE_WINDOW {vid_wmCursor 1; grab release .key.f_key_treeview.tv_key.w_keyEdit; destroy .key.f_key_treeview.tv_key.w_keyEdit}
 	
 	bind $w <KeyPress> {key_sequencesProcess %K}
 	bind $w <KeyRelease> {set ::key(sequenceDone) 1}
@@ -158,6 +158,7 @@ proc key_sequencesEdit {tree} {
 	set ::key(entrySequence) [lindex [$tree item [$tree selection] -values] end]
 	
 	tkwait visibility $w
+	vid_wmCursor 0
 	grab $w
 }
 
@@ -242,6 +243,7 @@ proc key_sequencesProcess {key} {
 proc key_sequencesEditApply {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$tree\}"
 	$tree item [$tree selection] -values "[lrange [$tree item [$tree selection] -values] 0 end-1] $::key(entrySequence)"
+	vid_wmCursor 1
 	grab release $tree.w_keyEdit
 	destroy $tree.w_keyEdit
 }

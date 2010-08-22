@@ -85,11 +85,13 @@ proc error_interpUi {msg options} {
 	
 	::tk::PlaceWindow $w
 	raise $w
+	vid_wmCursor 0
 	::tk::SetFocusGrab $w
 
 	tkwait visibility $w
 	$mf.l_info configure -wraplength [winfo reqwidth $mf.t_info]
 	tkwait window $w
+	vid_wmCursor 1
 	::tk::RestoreFocusGrab $w destroy
 }
 
@@ -128,4 +130,9 @@ proc error_interpSdisk {msg options} {
 			log_writeOutTv 2 "Not a directory."
 		}
 	}
+}
+
+proc error_interpWarn {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpWarn \033\[0m"
+	
 }

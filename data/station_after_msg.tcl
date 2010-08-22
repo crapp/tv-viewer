@@ -43,6 +43,7 @@ proc station_after_msg {var0 var1} {
 	catch {exec v4l2-ctl --device=$::option(video_device) -T} read_signal
 	set status_grepvidstd [catch {agrep -m "$read_signal" signal} read_signal_strength]
 	if {$status_grepvidstd == 0} {
+		set regexp_signal_strength 0
 		regexp {^(\d+).*$} [string trim [lindex $read_signal_strength end]] -> regexp_signal_strength
 		if {[string is digit $regexp_signal_strength]} {
 			if {$regexp_signal_strength < 25 } {

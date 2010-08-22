@@ -50,6 +50,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 		wm iconphoto $wtop $::icon_e(tv-viewer_icon)
 		wm transient $wtop .
 		tkwait visibility $wtop
+		vid_wmCursor 0
 		grab $wtop
 		
 		$mf.pgb_diagnostic start 10
@@ -123,6 +124,7 @@ $::env(HOME)/tv-viewer_diag.out" hyper_file
 
 proc diag_UiExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_UiExit \033\[0m"
+	vid_wmCursor 1
 	grab release .top_diagnostic
 	destroy .top_diagnostic
 }

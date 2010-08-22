@@ -121,6 +121,7 @@ proc config_wizardMainUi {} {
 	$wfbox.listbox_clist activate $::mem(wizardSec)
 	
 	tkwait visibility $w
+	vid_wmCursor 0
 	grab $w
 }
 
@@ -203,6 +204,7 @@ proc config_wizardExit {lbox nbook} {
 	
 	tooltips .ftoolb_Top .fstations.ftoolb_ChanCtrl .ftoolb_Play main
 	
+	vid_wmCursor 1
 	grab release .config_wizard
 	destroy .config_wizard
 }

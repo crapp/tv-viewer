@@ -275,6 +275,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			.station.top_search.f_main.l_search_status configure -text [mc "Channel: %" $::searchchannel($counter)]
 			catch {exec v4l2-ctl --device=$::option(video_device) -T} read_signal
 			set status_grepvidstd [catch {agrep -m "$read_signal" signal} read_signal_strength]
+			set regexp_signal_strength 0
 			regexp {^(\d+).*$} [string trim [lindex $read_signal_strength end]] -> regexp_signal_strength
 			if {$regexp_signal_strength >= 25 } {
 				set status_dict [catch {dict get $::freq_chan_pairs $::searchchannel($counter)} resultat_dict]
@@ -310,6 +311,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			.station.top_search.f_main.l_search_status configure -text [mc "Frequency: %" $freq]
 			catch {exec v4l2-ctl --device=$::option(video_device) -T} read_signal
 			set status_grepvidstd [catch {agrep -m "$read_signal" signal} read_signal_strength]
+			set regexp_signal_strength 0
 			regexp {^(\d+).*$} [string trim [lindex $read_signal_strength end]] -> regexp_signal_strength
 			if {$regexp_signal_strength >= 25 } {
 				set splitf [split $freq "."]

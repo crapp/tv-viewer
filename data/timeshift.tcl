@@ -135,6 +135,7 @@ proc timeshift_Save {tvw} {
 	set infile "[string map {{/} {}} [lindex $::station(last) 0]]_[clock format [clock seconds] -format {%d-%m-%Y}]_[clock format [clock seconds] -format {%H:%M}].mpeg" 
 	if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
 		log_writeOutTv 0 "Found timeshift mpeg file, opening file save dialog."
+		vid_wmCursor 0
 		set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".mpeg" -initialfile "$infile" -initialdir "$::option(rec_default_path)" -hidden 0 -title [mc "Choose name and location"] -parent $tvw]
 		if {[string trim $ofile] != {}} {
 			if {[file isdirectory [file dirname "$ofile"]]} {
@@ -143,7 +144,10 @@ proc timeshift_Save {tvw} {
 				log_writeOutTv 2 "Can not save timeshift video file."
 				log_writeOutTv 2 "[file dirname $ofile]"
 				log_writeOutTv 2 "Not a directory."
+				vid_wmCursor 1
 			}
+		} else {
+			vid_wmCursor 1
 		}
 	} else {
 		log_writeOutTv 2 "Can not find timeshift.mpeg in"
@@ -203,6 +207,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 	$bf.b_cancel configure -command [list timeshift_CopyBarProgr cancel $cp_pid 0 0 0 0 0 0]
 	
 	tkwait visibility $wtop
+	vid_wmCursor 0
 	grab $wtop
 }
 
@@ -211,6 +216,7 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		catch {after cancel $::timeshift(cp_id)}
 		unset -nocomplain ::timeshift(cp_id)
 		catch {exec kill $ofile}
+		vid_wmCursor 1
 		grab release .top_cp_progress
 		destroy .top_cp_progress
 		return
@@ -241,6 +247,7 @@ proc timeshift_CopyBarProgr {sfile ofile counter file_size old_size file_size_s 
 		log_writeOutTv 0 "Timesift video file copied. Output file:
 $ofile"
 		after 2000 {
+			vid_wmCursor 1
 			grab release .top_cp_progress
 			destroy .top_cp_progress
 		}

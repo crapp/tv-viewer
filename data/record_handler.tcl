@@ -203,6 +203,7 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 		}
 	}
 	log_writeOutTv 0 "Exiting 'add/edit recording'."
+	vid_wmCursor 1
 	grab release $w
 	destroy $w
 }

@@ -311,6 +311,7 @@ and store the file in the default record path."]
 		}
 	}
 	tkwait visibility $w
+	vid_wmCursor 0
 	grab $w
 }
 
@@ -432,6 +433,7 @@ proc record_add_editExit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editExit \033\[0m \{$w\}"
 	log_writeOutTv 0 "Exiting 'add/edit recording'."
 	unset -nocomplain ::record(time_hour) ::record(time_HourOld) ::record(time_min) set ::record(rbAddEditHour) ::record(mbHourFormat) ::record(date) ::record(duration) ::record(resolution) ::record(file)
+	vid_wmCursor 1
 	grab release $w
 	destroy $w
 }
@@ -475,7 +477,7 @@ proc record_add_editDelete {tree} {
 	ttk::label $fMain.l_delMessage -text [mc "Do you really want to delete the selected recording(s)?"] -image $::icon_b(dialog-warning) -compound left
 	ttk::checkbutton $fMain.cb_delAsk -text [mc "Don't ask next time"] -variable ::record(cbDelAsk)
 	
-	ttk::button $fBut.b_delCancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command {grab release .record_wizard.delete; destroy .record_wizard.delete} -default active
+	ttk::button $fBut.b_delCancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command {vid_wmCursor 1; grab release .record_wizard.delete; destroy .record_wizard.delete} -default active
 	ttk::button $fBut.b_delApply -text [mc "Delete"] -compound left -image $::icon_s(dialog-ok-apply) -command [list record_add_editDeleteRun $tree $top]
 	
 	grid $fMain -in $top -row 0 -column 0 -sticky ew
@@ -491,7 +493,7 @@ proc record_add_editDelete {tree} {
 	wm iconphoto $top $::icon_b(record)
 	wm resizable $top 0 0
 	wm transient $top .record_wizard
-	wm protocol $top WM_DELETE_WINDOW {grab release .record_wizard.delete; destroy .record_wizard.delete}
+	wm protocol $top WM_DELETE_WINDOW {vid_wmCursor 1; grab release .record_wizard.delete; destroy .record_wizard.delete}
 	wm title $top [mc "Delete recordings"]
 	
 	if {[info exists ::record(cbDelAsk)] && $::record(cbDelAsk)} {
@@ -499,6 +501,7 @@ proc record_add_editDelete {tree} {
 		return
 	}
 	tkwait visibility $top
+	vid_wmCursor 0
 	grab $top
 	focus $fBut.b_delCancel
 }
@@ -537,6 +540,7 @@ proc record_add_editDeleteRun {tree top} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
 	}
+	vid_wmCursor 1
 	grab release $top
 	destroy $top
 }

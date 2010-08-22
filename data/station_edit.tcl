@@ -191,7 +191,7 @@ proc station_editExit {handler} {
 	} else {
 		log_writeOutTv 0 "Exiting station editor without any changes."
 	}
-	
+	vid_wmCursor 1
 	grab release .station
 	destroy .station
 }
@@ -421,6 +421,7 @@ Deactivated stations will be marked red."]
 		if {$seeElem != 0} {
 			after 100 [list $wfstation.tv_station see $seeElem]
 		}
+		vid_wmCursor 0
 		grab $w
 		wm minsize .station [winfo width .station] [winfo height .station]
 	}

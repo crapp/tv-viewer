@@ -98,16 +98,20 @@ proc log_viewerSaveLog {handler parent} {
 		type(sched) scheduler
 	}
 	
+	vid_wmCursor 0
 	set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".log" -initialdir "$::env(HOME)" -initialfile "[subst $sofile(type\($handler\))]" -hidden 0 -title [mc "Choose output file"] -parent $parent]
 	if {[string trim $ofile] == {}} {
+		vid_wmCursor 1
 		return
 	}
 	if {[file isdirectory [file dirname "$ofile"]] == 0} {
 		log_writeOutTv 2 "Can not save logfile"
 		log_writeOutTv 2 "$ofile"
 		log_writeOutTv 2 "Not a directory"
+		vid_wmCursor 1
 		return
 	}
+	vid_wmCursor 1
 	file copy -force "$::option(home)/log/$sofile(type\($handler\)).log" "$ofile"
 }
 

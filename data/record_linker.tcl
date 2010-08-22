@@ -42,12 +42,14 @@ proc record_linkerPrestart {handler} {
 			grab release .station.top_search
 			destroy .station.top_search
 		}
+		vid_wmCursor 1
 		grab release .station
 		destroy .station
 	}
 	if {[winfo exists .config_wizard]} {
 		log_writeOutTv 1 "A recording or timeshift was started while the configuration dialog is open."
 		log_writeOutTv 1 "Will close it now, you will loose all your changes."
+		vid_wmCursor 1
 		grab release .config_wizard
 		destroy .config_wizard
 	}
@@ -106,7 +108,7 @@ proc record_linkerPrestartCancel {handler} {
 	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{3 normal} {5 normal} {7 normal} {10 normal} {11 normal}}
 	vid_pmhandlerMenuNav {{0 normal} {1 normal} {2 normal}} {{0 normal} {1 normal} {2 normal}}
 	vid_pmhandlerMenuHelp {{7 normal}}
-	vid_pmhandlerTray {{2 normal} {4 normal} {5 normal} {8 normal} {9 normal} {11 normal} {12 normal} {13 normal}}
+	vid_pmhandlerMenuTray {{2 normal} {4 normal} {5 normal} {8 normal} {9 normal} {11 normal} {12 normal} {13 normal}}
 	if {[winfo exists .fstations] == 1} {
 		main_frontendDisableTree .fstations.treeSlist 0
 	}

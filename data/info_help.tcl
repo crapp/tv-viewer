@@ -140,6 +140,7 @@ Christian Rapp"] -justify center
 		
 		proc info_helpExitAbout {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpExitAbout \033\[0m \{$w\}"
+			vid_wmCursor 1
 			grab release $w
 			destroy $w
 		}
@@ -298,6 +299,7 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb4.t_changelog configure -state disabled
 		
 		tkwait visibility $w
+		vid_wmCursor 0
 		grab $w
 	}
 }

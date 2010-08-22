@@ -502,9 +502,19 @@ proc vid_wmCursor {com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursor \033\[0m \{$com\}"
 	#com 0 stop hiding cursor - 1 hide cursor
 	if {$com == 0} {
-		
-		
-		
+		bind .fvidBg.cont <Motion> {
+			#~ vid_slistCursor %X %Y
+		}
+		bind .fvidBg <Motion> {
+			#~ vid_slistCursor %X %Y
+		}
+		bind . <ButtonPress-1> {}
+		vid_wmCursorHide .fvidBg.cont 1
+		vid_wmCursorHide .fvidBg 1
+		set ::cursor(.fvidBg.cont) ""
+		set ::cursor(.fvidBg) ""
+		.fvidBg configure -cursor $::cursor(old_.fvidBg)
+		.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont)
 	}
 	if {$com} {
 		bind .fvidBg.cont <Motion> {
@@ -515,8 +525,7 @@ proc vid_wmCursor {com} {
 			vid_wmCursorHide .fvidBg 0
 			#~ vid_slistCursor %X %Y
 		}
-		bind . <ButtonPress-1> {.fvidBg.cont configure -cursor arrow
-								.fvidBg configure -cursor arrow}
+		bind . <ButtonPress-1> {.fvidBg.cont configure -cursor arrow; .fvidBg configure -cursor arrow}
 		set ::cursor(.fvidBg.cont) ""
 		set ::cursor(.fvidBg) ""
 		vid_wmCursorHide .fvidBg.cont 0
@@ -534,8 +543,9 @@ proc vid_wmCursorHide {w com} {
 	if {$com == 1} return
 	if {"$::cursor($w)" == "none"} {
 		set ::cursor($w) ""
-		$w configure -cursor arrow
+		$w configure -cursor $::cursor(old_$w)
 	} else {
+		set ::cursor(old_$w) [$w cget -cursor]
 		lappend ::option(cursor_id\($w\)) [after 1500 "$w configure -cursor none; set ::cursor($w) none"]
 	}
 }
