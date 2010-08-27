@@ -514,7 +514,7 @@ proc main_frontendUi {} {
 				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
 				event_deleSedit nomplay
 			}
@@ -529,7 +529,7 @@ proc main_frontendUi {} {
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
 				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
 				event_deleSedit nomplay
 			}
@@ -546,7 +546,7 @@ proc main_frontendUi {} {
 				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
 				after 1500 {wm deiconify .}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
 				event_deleSedit nomplay
 			}
@@ -556,7 +556,7 @@ proc main_frontendUi {} {
 				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
 				after 1500 {wm deiconify .}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{5 disabled} {7 disabled} {8 disabled} {10 disabled} {11 disabled}}
+				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
 				event_deleSedit nomplay
 			} else {

@@ -158,11 +158,17 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
 
 proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuHelp \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
-	set mHelp [menu $menubar.mbHelp.mHelp -tearoff 0]
+	if {"$handler" == "context"} {
+		set menubar .fvidBg.mContext
+		set mHelp [menu $menubar.mHelp -tearoff 0]
+		$menubar add cascade -label [mc "Help"] -compound left -image $::icon_men(placeholder) -menu $mHelp
+	} else {
+		set mHelp [menu $menubar.mbHelp.mHelp -tearoff 0]
+	}
 	
 	#Fill menu help
 	#$mHelp add separator
-	$mHelp add command -command info_helpHelp -compound left -image $::icon_men(help) -label [mc "User Guide"] -accelerator F1
+	$mHelp add command -command info_helpHelp -compound left -image $::icon_men(help) -label [mc "User Guide"] -accelerator [dict get $::keyseq help name]
 	$mHelp add command -command key_sequences -compound left -image $::icon_men(key-bindings) -label [mc "Key Sequences"]
 	$mHelp add separator
 	$mHelp add checkbutton -command [list log_viewerUi 2] -label [mc "MPlayer Log"] -variable choice(cb_log_mpl_main)
@@ -182,6 +188,7 @@ proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
 	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg context
 	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg context
 	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg context
+	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $vidBg context
 	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg context
 }
 

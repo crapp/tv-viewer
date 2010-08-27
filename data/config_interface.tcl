@@ -52,7 +52,6 @@ proc option_screen_6 {} {
 		-variable choice(cb_tooltip_wizard)
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_station -text [mc "Station Editor"] -variable choice(cb_tooltip_station)
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_videocard -text [mc "Color Management"] -variable choice(cb_tooltip_colorm)
-		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_player -text [mc "Video player"] -variable choice(cb_tooltip_player)
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_record -text [mc "Record Wizard"] -variable choice(cb_tooltip_record)
 		
 		ttk::labelframe $::window(interface_nb1).lf_splash -text [mc "Splash Screen"]
@@ -113,12 +112,11 @@ proc option_screen_6 {} {
 		grid $::window(interface_nb1).lf_theme -in $::window(interface_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb1).mb_lf_theme -in $::window(interface_nb1).lf_theme -row 0 -column 0 -sticky ew -padx 7 -pady 3
 		grid $::window(interface_nb1).lf_tooltip -in $::window(interface_nb1) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(interface_nb1).cb_lf_tooltip_main -in $::window(interface_nb1).lf_tooltip -row 0 -column 0 -sticky ew -padx 7 -pady 3
-		grid $::window(interface_nb1).cb_lf_tooltip_wizard -in $::window(interface_nb1).lf_tooltip -row 0 -column 1 -sticky ew -pady 3
-		grid $::window(interface_nb1).cb_lf_tooltip_station -in $::window(interface_nb1).lf_tooltip -row 0 -column 2 -sticky ew -padx "7 0" -pady 3
-		grid $::window(interface_nb1).cb_lf_tooltip_videocard -in $::window(interface_nb1).lf_tooltip -row 1 -column 0 -sticky ew -padx 7 -pady "0 3"
-		grid $::window(interface_nb1).cb_lf_tooltip_player -in $::window(interface_nb1).lf_tooltip -row 1 -column 1 -sticky ew -pady "0 3"
-		grid $::window(interface_nb1).cb_lf_tooltip_record -in $::window(interface_nb1).lf_tooltip -row 1 -column 2 -sticky ew -padx "7 0" -pady "0 3"
+		grid $::window(interface_nb1).cb_lf_tooltip_main -in $::window(interface_nb1).lf_tooltip -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $::window(interface_nb1).cb_lf_tooltip_wizard -in $::window(interface_nb1).lf_tooltip -row 0 -column 1 -sticky w -pady 3
+		grid $::window(interface_nb1).cb_lf_tooltip_station -in $::window(interface_nb1).lf_tooltip -row 0 -column 2 -sticky w -padx "7 0" -pady 3
+		grid $::window(interface_nb1).cb_lf_tooltip_videocard -in $::window(interface_nb1).lf_tooltip -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $::window(interface_nb1).cb_lf_tooltip_record -in $::window(interface_nb1).lf_tooltip -row 1 -column 1 -sticky w -pady "0 3"
 		grid $::window(interface_nb1).lf_splash -in $::window(interface_nb1) -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb1).cb_lf_splash -in $::window(interface_nb1).lf_splash -row 0 -column 0 -padx 7 -pady 3
 		
@@ -203,14 +201,12 @@ proc option_screen_6 {} {
 				$w.cb_lf_tooltip_wizard state !disabled
 				$w.cb_lf_tooltip_station state !disabled
 				$w.cb_lf_tooltip_videocard state !disabled
-				$w.cb_lf_tooltip_player state !disabled
 				$w.cb_lf_tooltip_record state !disabled
 			} else {
 				$w.cb_lf_tooltip_main state disabled
 				$w.cb_lf_tooltip_wizard state disabled
 				$w.cb_lf_tooltip_station state disabled
 				$w.cb_lf_tooltip_videocard state disabled
-				$w.cb_lf_tooltip_player state disabled
 				$w.cb_lf_tooltip_record state disabled
 			}
 		}
@@ -235,7 +231,6 @@ proc option_screen_6 {} {
 			set ::choice(cb_tooltip_wizard) $::option(tooltips_wizard)
 			set ::choice(cb_tooltip_station) $::option(tooltips_editor)
 			set ::choice(cb_tooltip_colorm) $::option(tooltips_colorm)
-			set ::choice(cb_tooltip_player) $::option(tooltips_player)
 			set ::choice(cb_tooltip_record) $::option(tooltips_record)
 			set ::choice(cb_splash) $::option(show_splash)
 			set ::choice(cb_fullscr) $::option(window_full)
@@ -303,7 +298,6 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb1).cb_lf_tooltip_wizard [mc "Tooltips for the preferences."]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_station [mc "Tooltips for the Station Editor."]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_videocard [mc "Tooltips for the Color Management."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip_player [mc "Tooltips for the Video Player."]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record [mc "Tooltips for the Record Wizard."]
 					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer."]
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode."]

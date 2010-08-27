@@ -81,7 +81,6 @@ proc process_config_wizardRead {} {
 		tooltips_wizard 1
 		tooltips_editor 1
 		tooltips_colorm 1
-		tooltips_player 1
 		tooltips_record 1
 		show_splash 1
 		window_full 0
@@ -171,7 +170,6 @@ proc process_config_wizardRead {} {
 		tooltips_wizard 1
 		tooltips_editor 1
 		tooltips_colorm 1
-		tooltips_player 1
 		tooltips_record 1
 		show_splash 1
 		window_full 0
@@ -262,7 +260,6 @@ proc process_config_wizardRead {} {
 		cb_tooltip_wizard tooltips_wizard
 		cb_tooltip_station tooltips_editor
 		cb_tooltip_colorm tooltips_colorm
-		cb_tooltip_player tooltips_player
 		cb_tooltip_record tooltips_record
 		cb_splash show_splash
 		cb_fullscr window_full

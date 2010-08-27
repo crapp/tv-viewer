@@ -88,7 +88,7 @@ proc record_linkerPrestart {handler} {
 	}
 	event_recordStart $handler
 	vid_pmhandlerButton {{4 disabled} {5 disabled}} {100 0} {100 0}
-	vid_pmhandlerMenuTv {{0 disabled} {2 disabled} {7 disabled} {8 disabled}} {{3 disabled} {5 disabled} {10 disabled} {11 disabled}}
+	vid_pmhandlerMenuTv {{0 disabled} {2 disabled} {7 disabled} {8 disabled}} {{4 disabled} {6 disabled} {11 disabled} {12 disabled}}
 	vid_pmhandlerMenuHelp {{7 disabled}} 
 	vid_pmhandlerMenuTray {{2 disabled} {4 disabled} {8 disabled} {9 disabled}}
 }
@@ -105,7 +105,7 @@ proc record_linkerPrestartCancel {handler} {
 		.record_wizard configure -cursor arrow
 	}
 	vid_pmhandlerButton {{1 !disabled} {1 !pressed} {4 !disabled} {5 !disabled}} {{1 !disabled} {2 !disabled} {3 !disabled}} {100 0}
-	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{3 normal} {5 normal} {7 normal} {10 normal} {11 normal}}
+	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{4 normal} {6 normal} {8 normal} {11 normal} {12 normal}}
 	vid_pmhandlerMenuNav {{0 normal} {1 normal} {2 normal}} {{0 normal} {1 normal} {2 normal}}
 	vid_pmhandlerMenuHelp {{7 normal}}
 	vid_pmhandlerMenuTray {{2 normal} {4 normal} {5 normal} {8 normal} {9 normal} {11 normal} {12 normal} {13 normal}}
@@ -236,7 +236,7 @@ proc record_linkerPreStop {handler} {
 		log_writeOutTv 0 "Prestop sequence for timeshift initiated."
 	}
 	vid_pmhandlerButton {{1 !disabled} {4 !disabled} {5 !disabled}} {{1 !disabled} {2 !disabled} {3 !disabled}} {100 0}
-	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{3 normal} {5 normal} {7 normal} {10 normal} {11 normal}}
+	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{4 normal} {6 normal} {8 normal} {11 normal} {12 normal}}
 	vid_pmhandlerMenuNav {{0 normal} {1 normal} {2 normal}} {{0 normal} {1 normal} {2 normal}}
 	vid_pmhandlerMenuHelp {{7 normal}}
 	vid_pmhandlerMenuTray {{2 normal} {4 normal} {5 normal} {8 normal} {9 normal} {11 normal} {12 normal} {13 normal}}

@@ -197,6 +197,10 @@ proc vid_wmViewToolb {bar} {
 		main .ftoolb_Top
 		station .fstations
 	}
+	if {$::main(compactMode)} {
+		#Do nothing now because we are in compact mode
+		return
+	}
 	if {[string trim [grid info $barrem($bar)]] == {}} {
 		if {"$bar" == "station"} {
 			grid .fvidBg -in . -row 3 -column 1 -sticky nesw

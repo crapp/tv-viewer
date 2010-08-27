@@ -164,8 +164,8 @@ proc vid_callbackVidData {} {
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
-					bind . <<input_up>> "chan_zapperInput 1 1"
-					bind . <<input_down>> "chan_zapperInput 1 -1"
+					bind . <<input_next>> "chan_zapperInput 1 1"
+					bind . <<input_prior>> "chan_zapperInput 1 -1"
 					bind . <<teleview>> {vid_playbackRendering}
 					if {$::vid(pbMode)} {
 						.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)

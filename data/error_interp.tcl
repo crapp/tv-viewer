@@ -75,9 +75,9 @@ proc error_interpUi {msg options} {
 	
 	menu $mf.t_info.mContext -tearoff 0
 	
-	$mf.t_info.mContext add command -label [mc "Select everything"] -compound left -image $::icon_men(placeholder) -command [list $mf.t_info tag add sel 0.0 end] -accelerator [mc "Ctrl-A"]
+	$mf.t_info.mContext add command -label [mc "Select everything"] -compound left -image $::icon_men(placeholder) -command [list $mf.t_info tag add sel 0.0 end] -accelerator [mc "Ctrl+A"]
 	$mf.t_info.mContext add separator
-	$mf.t_info.mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_men(clipboard) -command [list event generate $mf.t_info <<Copy>>] -accelerator [mc "Ctrl-C"]
+	$mf.t_info.mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_men(clipboard) -command [list event generate $mf.t_info <<Copy>>] -accelerator [mc "Ctrl+C"]
 	
 	wm resizable $w 0 0
 	wm title $w [mc "TV-Viewer crashed"]

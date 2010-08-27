@@ -391,7 +391,7 @@ proc station_editUi {} {
 		bind $wfstation.tv_station <Key-Delete> [list station_itemDelete $wfstation.tv_station]
 		bind $wfstation.tv_station <<TreeviewSelect>> {station_editZap .station.wfstation.tv_station; station_itemDeactivate .station.wfstation.tv_station .station.top_buttons.b_station_activate 0}
 		bind $w <Control-Key-x> [list station_editExit cancel]
-		bind $w <Key-F1> [list info_helpHelp]
+		bind $w <<help>> [list info_helpHelp]
 		
 		wm title $w [mc "Station Editor"]
 		wm protocol $w WM_DELETE_WINDOW [list station_editExit cancel]

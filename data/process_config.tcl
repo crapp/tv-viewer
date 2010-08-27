@@ -19,7 +19,7 @@
 proc process_configRead {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configRead \033\[0m"}
 	array set ::option {
-		#FIXME Remove theme black if it does not work properly.
+		#FIXME Remove theme black if it does not work properly
 		language Autodetect
 		language_value 0
 		starttv_startup 0
@@ -80,7 +80,6 @@ proc process_configRead {} {
 		tooltips_wizard 1
 		tooltips_editor 1
 		tooltips_colorm 1
-		tooltips_player 1
 		tooltips_record 1
 		show_splash 1
 		window_full 0

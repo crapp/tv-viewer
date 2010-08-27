@@ -102,7 +102,7 @@ $::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
 	foreach {station_file} [split "$get_channels"] {
 		catch {file copy -force "$station_file" "$::option(home)/config/"}
 	}
-	set confFiles {tv-viewer scheduler scheduled_recordings last_read}
+	set confFiles {tv-viewer scheduler scheduled_recordings}
 	foreach conf $confFiles {
 		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf"] == 0} continue
 		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf" "$::option(home)/config/"}
@@ -267,12 +267,15 @@ source $::option(root)/extensions/callib/callib.tcl
 set auto_path [linsert $auto_path 0 "$::option(root)/extensions/fsdialog"]
 #Source read_config to read all config values
 source $::option(root)/data/process_config.tcl
+#Source all key sequences
+source $::option(root)/data/process_key_file.tcl
 #Source start options
 source $::option(root)/data/main_command_line_options.tcl
 start_options
 #It is time to load all config values
 process_configRead
 process_configMem
+process_KeyFile
 #Source additional ttk themes, plastik and keramik
 source "$option(root)/themes/plastik/plastik.tcl"
 source "$option(root)/themes/keramik/keramik.tcl"

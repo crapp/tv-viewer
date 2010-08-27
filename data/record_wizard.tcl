@@ -182,7 +182,7 @@ proc record_wizardUi {} {
 		bind $treef.tv_rec <Key-Delete> [list record_add_editDelete $treef.tv_rec]
 		bind $treef.tv_rec <ButtonPress-3> [list record_wizardUiMenu $treef.tv_rec %X %Y]
 		bind $w <Control-Key-x> {record_wizardExit}
-		bind $w <Key-F1> [list info_helpHelp]
+		bind $w <<help>> [list info_helpHelp]
 		
 		set status_record [monitor_partRunning 3]
 		if {[lindex $status_record 0] == 1} {

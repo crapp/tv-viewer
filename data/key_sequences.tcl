@@ -18,7 +18,6 @@
 
 proc key_sequences {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0m"
-	#FIXME Make key sequences editable 
 	if {[winfo exists .key] == 0} {
 		log_writeOutTv 0 "Launching key sequences screen..."
 		
@@ -30,12 +29,12 @@ proc key_sequences {} {
 		
 		ttk::label $mftop.l_key_msg -text [mc "Available Key Sequences"]
 		
-		ttk::treeview $mftree.tv_key -yscrollcommand [list $mftree.sb_key set] -columns {action key} -show headings
+		ttk::treeview $mftree.tv_key -yscrollcommand [list $mftree.sb_key set] -columns {action key} -show headings -selectmode browse
 		ttk::scrollbar $mftree.sb_key -orient vertical -command [list $mftree.tv_key yview]
 		ttk::button $mftree.b_ChangeKey -command [list key_sequencesEdit $mftree.tv_key] -text [mc "Change shortcut"]
-		ttk::button $mfbottom.b_save -text [mc "Apply"] -command "" -compound left -image $::icon_s(dialog-ok-apply)
-		ttk::button $mfbottom.b_default -text [mc "Default"]
-		ttk::button $mfbottom.b_quit -text [mc "Cancel"] -command "" -compound left -image $::icon_s(dialog-cancel)
+		ttk::button $mfbottom.b_save -text [mc "Apply"] -command [list key_sequencesApply $w $mftree.tv_key] -compound left -image $::icon_s(dialog-ok-apply)
+		ttk::button $mfbottom.b_default -text [mc "Default"] -command [list key_sequencesRead $mftree.tv_key]
+		ttk::button $mfbottom.b_quit -text [mc "Cancel"] -command [list destroy $w] -compound left -image $::icon_s(dialog-cancel)
 		
 		grid $mftop -in $w -row 0 -column 0
 		grid $mftree -in $w -row 1 -column 0
@@ -47,56 +46,18 @@ proc key_sequences {} {
 		grid $mftree.sb_key -in $mftree -row 0 -column 1 -sticky ns -pady 5
 		grid $mftree.b_ChangeKey -in $mftree -row 1 -column 0 -sticky e -padx 3 -pady "7 7"
 		grid $mfbottom.b_save -in $mfbottom -row 0 -column 0 -pady 7 -padx "0 3"
-		grid $mfbottom.b_default -in $mfbottom -row 0 -column 1 -pady 7 -padx "0 3"
+		grid $mfbottom.b_default -in $mfbottom -row 0 -column 1 -pady 7 -padx "0 3" -sticky ns
 		grid $mfbottom.b_quit -in $mfbottom -row 0 -column 2 -pady 7 -padx "0 3"
 		
+		foreach col {action key} name {"Action" "Key Sequence"} {
+			$mftree.tv_key heading $col -text $name
+		}
 		set font [ttk::style lookup [$mftree.tv_key cget -style] -font]
 		if {[string trim $font] == {}} {
 			set font TkDefaultFont
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0;1;31m::font:: \033\[0m"
 		}
-		foreach col {action key} name {"Action" "Key Sequence"} {
-			$mftree.tv_key heading $col -text $name
-		}
-		$mftree.tv_key heading action -text [mc "Action"]
-		$mftree.tv_key heading key -text [mc "Key Sequence"]
-		$mftree.tv_key tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $mftree.tv_key -size] bold"
-		$mftree.tv_key tag configure small -font "TkTextFont 1"
-		
-		if {$::option(language_value) != 0} {
-			set keseq "$::option(root)/shortcuts/keysequ_$::option(language_value).conf"
-		} else {
-			set locale_split [lindex [split $::env(LANG) _] 0]
-			set keseq "$::option(root)/shortcuts/keysequ_$locale_split.conf"
-			if {[file exists "$keseq"] == 0} {
-				log_writeOutTv 1 "No translated Key Sequences for $::env(LANG)"
-				log_writeOutTv 1 "Switching back to english."
-				set keseq "$::option(root)/shortcuts/keysequ_en.conf"
-			}
-		}
-		if {[file exists "$keseq"]} {
-			set open_keyseq [open "$keseq" r]
-			set line_length 0
-			while {[gets $open_keyseq line]!=-1} {
-				if {[string trim $line] == {} } continue
-				if {[string match #* $line]} {
-					if {[llength [$mftree.tv_key children {}]] != 0} {
-						$mftree.tv_key insert {} end -values " " -tags small
-						$mftree.tv_key insert {} end -values [list [lindex $line 1] [lindex $line end]] -tags fat
-					} else {
-						$mftree.tv_key insert {} end -values [list [lindex $line 1] [lindex $line end]] -tags fat
-					}
-				} else {
-					$mftree.tv_key insert {} end -values [list [lindex $line 0] [lindex $line end]]
-				}
-				if {[font measure $font "[lindex $line 0]"] > $line_length} {
-					set line_length [font measure $font "[lindex $line 0]"]
-				}
-			}
-			close $open_keyseq
-		}
-		$mftree.tv_key column action -width [expr $line_length + 40]
-		$mftree.tv_key column key -width [expr [font measure $font [mc "Key Sequence"]] + 25]
+		key_sequencesRead $mftree.tv_key
 		bind $mftree.tv_key <B1-Motion> break
 		bind $mftree.tv_key <Motion> break
 		bind $mftree.tv_key <Double-ButtonPress-1> [list key_sequencesEdit $mftree.tv_key]
@@ -111,6 +72,69 @@ proc key_sequences {} {
 	}
 }
 
+proc key_sequencesRead {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesRead \033\[0m \{$tree\}"
+	foreach child [$tree children {}] {
+		$tree delete $child
+	}
+	set font [ttk::style lookup [$tree cget -style] -font]
+	if {[string trim $font] == {}} {
+		set font TkDefaultFont
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0;1;31m::font:: \033\[0m"
+	}
+	if {$::option(language_value) != 0} {
+		set keseq "$::option(root)/shortcuts/keysequ_$::option(language_value).conf"
+	} else {
+		set locale_split [lindex [split $::env(LANG) _] 0]
+		set keseq "$::option(root)/shortcuts/keysequ_$locale_split.conf"
+		if {[file exists "$keseq"] == 0} {
+			log_writeOutTv 1 "No translated Key Sequences for $::env(LANG)"
+			log_writeOutTv 1 "Switching back to english."
+			set keseq "$::option(root)/shortcuts/keysequ_en.conf"
+		}
+	}
+	$tree heading action -text [mc "Action"]
+	$tree heading key -text [mc "Key Sequence"]
+	$tree tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $tree -size] bold"
+	$tree tag configure small -font "TkTextFont 1"
+	if {[file exists "$keseq"]} {
+		set open_keyseq [open "$keseq" r]
+		set line_length 0
+		while {[gets $open_keyseq line]!=-1} {
+			if {[string trim $line] == {} } continue
+			if {[string match #* $line]} {
+				if {[llength [$tree children {}]] != 0} {
+					$tree insert {} end -values " " -tags {small noedit}
+					$tree insert {} end -values [list [lindex $line 1] [lindex $line end]] -tags {fat noedit}
+				} else {
+					$tree insert {} end -values [list [lindex $line 1] [lindex $line end]] -tags {fat noedit}
+				}
+			} else {
+				if {[llength [$tree children {}]] > 10} {
+					$tree insert {} end -values [list [lindex $line 0] [lindex $line end]]
+				} else {
+					$tree insert {} end -values [list [lindex $line 0] [lindex $line end]] -tags {noedit}
+				}
+			}
+			if {[font measure $font "[lindex $line 0]"] > $line_length} {
+				set line_length [font measure $font "[lindex $line 0]"]
+			}
+		}
+		close $open_keyseq
+	}
+	$tree column action -width [expr $line_length + 40]
+	$tree column key -width [expr [font measure $font [mc "Key Sequence"]] + 25]
+}
+
+proc key_sequencesApply {top tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApply \033\[0m \{$top\} \{$tree\}"
+	#First write new values to extra file
+	#Second reread file and create keysequences array
+	#Destroy all menus and rebuild with new accelerators
+	#Delete all events and keybindings and recreate with new ones.
+	
+}
+
 proc key_sequencesEdit {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesEdit \033\[0m"
 	if {[winfo exists $tree.w_keyEdit]} {
@@ -121,25 +145,29 @@ proc key_sequencesEdit {tree} {
 		log_writeOutTv 0 "No item selected to edit the shortcut"
 		return
 	}
-	if {[string trim [lindex [$tree item [$tree selection] -values] end]] == {}} {
-		log_writeOutTv 0 "No item selected to edit the shortcut"
-		return
+	if {[llength [$tree item [$tree selection] -tags]] > 1} {
+		set tag [lindex [$tree item [$tree selection] -tags] 1]
+	} else {
+		set tag [$tree item [$tree selection] -tags]
 	}
 	set w [toplevel $tree.w_keyEdit]
 	set f [ttk::frame $w.f_edit]
 	ttk::label $f.l_Key -text [mc "Press the key combination you want to assign"]
 	ttk::entry $f.e_Key -textvariable key(entrySequence) -state readonly
+	ttk::label $f.l_KeyWarn
 	
 	ttk::button $f.b_KeyClear -text [mc "Clear"] -command {set ::key(entrySequence) ""; set ::key(sequenceList) ""}
 	ttk::button $f.b_KeyCancel -text [mc "Cancel"] -command {vid_wmCursor 1; grab release .key.f_key_treeview.tv_key.w_keyEdit; destroy .key.f_key_treeview.tv_key.w_keyEdit}
-	ttk::button $f.b_KeyApply -text [mc "Apply"] -command [list key_sequencesEditApply $tree]
+	ttk::button $f.b_KeyApply -text [mc "Apply"] -command [list key_sequencesEditApply $tree $f.l_KeyWarn]
+	
 	
 	grid $f -in $w -row 0 -column 0 -sticky nesw
 	grid $f.l_Key -in $f -row 0 -column 0 -sticky w -pady 3
 	grid $f.e_Key -in $f -row 1 -column 0 -columnspan 3 -sticky ew
-	grid $f.b_KeyClear -in $f -row 2 -column 0 -sticky w -padx 3 -pady "3 5"
-	grid $f.b_KeyCancel -in $f -row 2 -column 1 -sticky e -padx "0 3" -pady "3 5"
-	grid $f.b_KeyApply -in $f -row 2 -column 2 -sticky e -padx "0 3" -pady "3 5"
+	grid $f.l_KeyWarn -in $f -row 2 -column 0 -sticky w -pady 3
+	grid $f.b_KeyClear -in $f -row 3 -column 0 -sticky w -padx 3 -pady "3 5"
+	grid $f.b_KeyCancel -in $f -row 3 -column 1 -sticky e -padx "0 3" -pady "3 5"
+	grid $f.b_KeyApply -in $f -row 3 -column 2 -sticky e -padx "0 3" -pady "3 5"
 	
 	grid rowconfigure $w 0 -weight 1
 	grid columnconfigure $w 0 -weight 1
@@ -156,6 +184,13 @@ proc key_sequencesEdit {tree} {
 	set ::key(sequenceList) ""
 	set ::key(sequenceDone) 0
 	set ::key(entrySequence) [lindex [$tree item [$tree selection] -values] end]
+	if {"$tag" == "noedit"} {
+		log_writeOutTv 1 "Key sequence \"[lindex [$tree item [$tree selection] -values] 0]\" can not be edited"
+		$f.b_KeyApply state disabled
+		$f.b_KeyClear state disabled
+		$f.e_Key state disabled
+		$f.l_KeyWarn configure -text [mc "It is not possible to edit this shortcut"] -image $::icon_m(dialog-warning) -compound left
+	}
 	
 	tkwait visibility $w
 	vid_wmCursor 0
@@ -240,9 +275,20 @@ proc key_sequencesProcess {key} {
 	}
 }
 
-proc key_sequencesEditApply {tree} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$tree\}"
+proc key_sequencesEditApply {tree lbl} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$tree\} \{$lbl\}"
+	set end 0
+	foreach child [$tree children {}] {
+		if {"[lindex [$tree item $child -values] 1]" == "$::key(entrySequence)" && "[$tree selection]" != "$child"} {
+			$lbl configure -text [mc "Conflict detected with \"[lindex [$tree item $child -values] 0]\""] -image $::icon_m(dialog-warning) -compound left
+			log_writeOutTv 1 "Conflict detected with \"[lindex [$tree item $child -values] 0]\""
+			set end 1
+			break
+		}
+	}
+	if {$end} return
 	$tree item [$tree selection] -values "[lrange [$tree item [$tree selection] -values] 0 end-1] $::key(entrySequence)"
+	log_writeOutTv 0 "Changing key sequence for \"[lindex [$tree item [$tree selection] -values] 0]\" to \"$::key(entrySequence)\""
 	vid_wmCursor 1
 	grab release $tree.w_keyEdit
 	destroy $tree.w_keyEdit

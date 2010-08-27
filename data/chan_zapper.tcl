@@ -137,8 +137,8 @@ proc chan_zapperInput {com direct} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInput \033\[0m \{$com\} \{$direct\}"
 	if {$com == 1} {
 		chan_zapperInputQuery cancel 0 0
-		bind . <<input_up>> {}
-		bind . <<input_down>> {}
+		bind . <<input_next>> {}
+		bind . <<input_prior>> {}
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_query_input [catch {agrep -m "$read_vinput" video} resultat_query_input]
 		catch {exec v4l2-ctl --device=$::option(video_device) --list-input} read_vinputs
@@ -300,8 +300,8 @@ proc chan_zapperInputQuery {secs input restart} {
 			if {$restart == 1} {
 				vid_Playback .fvidBg .fvidBg.cont 0 0
 			} else {
-				bind . <<input_up>> "chan_zapperInput 1 1"
-				bind . <<input_down>> "chan_zapperInput 1 -1"
+				bind . <<input_next>> "chan_zapperInput 1 1"
+				bind . <<input_prior>> "chan_zapperInput 1 -1"
 			}
 			return
 		}

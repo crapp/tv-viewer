@@ -19,26 +19,35 @@
 proc event_constr {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
 	#Construct events and make necessary bindings
-	bind . <Key-m> [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
-	bind . <Key-F1> [list info_helpHelp]
-	bind . <Alt-Key-t> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
-	bind . <Alt-Key-n> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
-	bind . <Alt-Key-v> [list event generate .foptions_bar.mbView <<Invoke>>]
-	bind . <Alt-Key-a> [list event generate .foptions_bar.mbAudio <<Invoke>>]
-	bind . <Alt-Key-h> [list event generate .foptions_bar.mbHelp <<Invoke>>]
-	bind . <Control-Key-p> {config_wizardMainUi}
-	bind . <Control-Key-m> {colorm_mainUi}
-	bind . <Control-Key-e> {station_editUi}
+	event add <<menuTv>> <[dict get $::keyseq mTv seq]>
+	bind . <<menuTv>> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
+	event add <<menuNav>> <[dict get $::keyseq mNav seq]>
+	bind . <<menuNav>> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
+	event add <<menuView>> <[dict get $::keyseq mView seq]>
+	bind . <<menuView>> [list event generate .foptions_bar.mbView <<Invoke>>]
+	event add <<menuAudio>> <[dict get $::keyseq mAudio seq]>
+	bind . <<menuAudio>> [list event generate .foptions_bar.mbAudio <<Invoke>>]
+	event add <<menuHelp>> <[dict get $::keyseq mHelp seq]>
+	bind . <<menuHelp>> [list event generate .foptions_bar.mbHelp <<Invoke>>]
+	event add <<prefs>> <[dict get $::keyseq preferences seq]>
+	bind . <<prefs>> {config_wizardMainUi}
+	event add <<colorm>> <[dict get $::keyseq colorm seq]>
+	bind . <<colorm>> {colorm_mainUi}
+	event add <<sedit>> <[dict get $::keyseq sedit seq]>
+	bind . <<sedit>> {station_editUi}
+	event add <<help>> <[dict get $::keyseq help seq]>
+	bind . <<help>> [list info_helpHelp]
 	event add <<exit>> <Control-Key-x>
 	bind . <<exit>> {main_frontendExitViewer}
-	event add <<input_up>> <Control-Key-i>
-	event add <<input_down>> <Control-Alt-Key-i>
-	bind . <<input_up>> [list chan_zapperInput 1 1]
-	bind . <<input_down>> [list chan_zapperInput 1 -1]
-	event add <<volume_incr>> <Key-plus> <Key-KP_Add>
-	event add <<volume_decr>> <Key-minus> <Key-KP_Subtract>
+	event add <<input_next>> [list [dict get $::keyseq vinputNext seq]]
+	event add <<input_prior>> [list [dict get $::keyseq vinputPrior seq]]
+	bind . <<input_next>> [list chan_zapperInput 1 1]
+	bind . <<input_prior>> [list chan_zapperInput 1 -1]
+	event add <<volume_incr>> [list [dict get $::keyseq volInc seq]]
+	event add <<volume_decr>> [list [dict get $::keyseq volDec seq]]
 	bind . <<volume_decr>> {vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
 	bind . <<volume_incr>> {vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
+	bind . <Key-m> [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
 	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
 	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
 	bind . <<delay_incr>> {vid_playerAudioDelay incr}
@@ -127,8 +136,8 @@ proc event_recordStart {handler} {
 		bind . <<station_key>> {}
 		bind . <<station_key_lirc>> {}
 		bind . <<station_key_ext>> {}
-		bind . <<input_up>> {}
-		bind . <<input_down>> {}
+		bind . <<input_next>> {}
+		bind . <<input_prior>> {}
 	}
 	bind . <<stop>> {vid_playbackStop 1 pic}
 	bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
@@ -144,7 +153,7 @@ proc event_recordStart {handler} {
 	bind . <Control-Key-e> {}
 	if {"$handler" != "timeshift"} {
 		vid_pmhandlerButton {{1 disabled}} {100 0} {100 0}
-		vid_pmhandlerMenuTv {{4 disabled}} {{7 disabled}} 
+		vid_pmhandlerMenuTv {{4 disabled}} {{8 disabled}} 
 		vid_pmhandlerMenuTray {{7 disabled}}
 		bind . <<timeshift>> {}
 	}
@@ -159,8 +168,8 @@ proc event_recordStop {} {
 	bind . <<station_key>> [list chan_zapperStationNrKeys %A]
 	bind . <<station_key_lirc>> [list chan_zapperStationNrKeys %d]
 	bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]
-	bind . <<input_up>> [list chan_zapperInput 1 1]
-	bind . <<input_down>> [list chan_zapperInput 1 -1]
+	bind . <<input_next>> [list chan_zapperInput 1 1]
+	bind . <<input_prior>> [list chan_zapperInput 1 -1]
 	bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
 	bind . <Control-Key-m> {colorm_mainUi}
 	bind . <Control-Key-e> {station_editUi}
