@@ -152,7 +152,7 @@ proc vid_callbackVidData {} {
 					set ::vid(id_panscanAuto) [after 500 {
 						catch {after cancel $::vid(id_panscanAuto)}
 						set ::data(panscanAuto) 0
-						vid_wmPanscanAuto
+						event generate . <<wmZoomAuto>>
 					}]
 				} else {
 					if {$::data(panscan) != 0} {

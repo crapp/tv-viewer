@@ -141,22 +141,22 @@ proc system_trayMenu {x y} {
 		.tray.mTray add command -label [mc "Hide"] -compound left -image $::icon_men(placeholder) -command system_trayToggle
 		.tray.mTray add separator
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 0 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [mc "Ctrl+M"] -state disabled
+			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator {*}[dict get $::keyseq colorm name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [mc "Ctrl+M"]
+			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator {*}[dict get $::keyseq colorm name]
 		}
-		.tray.mTray add command -label [mc "Preferences"] -compound left -image $::icon_men(settings) -accelerator [mc "Ctrl+P"] -command {config_wizardMainUi}
+		.tray.mTray add command -label [mc "Preferences"] -compound left -image $::icon_men(settings) -accelerator {*}[dict get $::keyseq preferences name] -command {config_wizardMainUi}
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 2 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator [mc "Ctrl+E"] -state disabled
+			.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator {*}[dict get $::keyseq sedit name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator [mc "Ctrl+E"]
+			.tray.mTray add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator {*}[dict get $::keyseq sedit name]
 		}
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 4 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator "T" -state disabled
+			.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator {*}[dict get $::keyseq recTime name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator "T"
+			.tray.mTray add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator {*}[dict get $::keyseq recTime name]
 		}
-		.tray.mTray add command -label [mc "Record Wizard"] -compound left -image $::icon_men(record) -command {event generate . <<record>>} -accelerator "R"
+		.tray.mTray add command -label [mc "Record Wizard"] -compound left -image $::icon_men(record) -command {event generate . <<record>>} -accelerator {*}[dict get $::keyseq recWizard name]
 		.tray.mTray add command -label [mc "EPG"] -compound left -image $::icon_men(placeholder) -command main_frontendEpg -accelerator ""
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 7 -state]" == "disabled"} {
 			.tray.mTray add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator "" -state disabled
@@ -164,44 +164,44 @@ proc system_trayMenu {x y} {
 			.tray.mTray add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator ""
 		}
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 8 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator "S" -state disabled
+			.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator {*}[dict get $::keyseq startTv name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator "S"
+			.tray.mTray add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator {*}[dict get $::keyseq startTv name]
 		}
 		.tray.mTray add separator
 		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 0 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-up) -command [list chan_zapperUp .fstations.treeSlist] -accelerator [mc "PageDOWN"] -state disabled
+			.tray.mTray add command -label [mc "Prior station"] -compound left -image $::icon_men(channel-prior) -command [list chan_zapperPrior .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationPrior name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-up) -command [list chan_zapperUp .fstations.treeSlist] -accelerator [mc "PageDOWN"]
+			.tray.mTray add command -label [mc "Prior station"] -compound left -image $::icon_men(channel-prior) -command [list chan_zapperPrior .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationPrior name]
 		}
 		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 1 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Previous station"] -compound left -image $::icon_men(channel-down) -command [list chan_zapperDown .fstations.treeSlist] -accelerator [mc "PageUP"] -state disabled
+			.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-next) -command [list chan_zapperNext .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationNext name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Previous station"] -compound left -image $::icon_men(channel-down) -command [list chan_zapperDown .fstations.treeSlist] -accelerator [mc "PageUP"]
+			.tray.mTray add command -label [mc "Next station"] -compound left -image $::icon_men(channel-next) -command [list chan_zapperNext .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationNext name]
 		}
 		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 2 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator J -state disabled
+			.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationJump name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator J
+			.tray.mTray add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationJump name]
 		}
 		.tray.mTray add separator
 		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 4 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator [mc "Shift+P"] -state disabled
+			.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator {*}[dict get $::keyseq filePlay name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator [mc "Shift+P"]
+			.tray.mTray add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator {*}[dict get $::keyseq filePlay name]
 		}
 		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 5 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -accelerator P -state disabled
+			.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -accelerator {*}[dict get $::keyseq filePause name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -state normal -accelerator P
+			.tray.mTray add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -state normal -accelerator {*}[dict get $::keyseq filePause name]
 		}
 		if {"[.foptions_bar.mbNavigation.mNavigation entrycget 6 -state]" == "disabled"} {
-			.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -accelerator [mc "Shift+S"] -state disabled
+			.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -accelerator {*}[dict get $::keyseq fileStop name] -state disabled
 		} else {
-			.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -state normal -accelerator [mc "Shift+S"]
+			.tray.mTray add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -state normal -accelerator {*}[dict get $::keyseq fileStop name]
 		}
 		.tray.mTray add separator
-		.tray.mTray add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator [mc "Ctrl+X"]
+		.tray.mTray add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator "Ctrl+X"
 		if {$y < 200} {
 			tk_popup .tray.mTray $x [expr $y + 15]
 		}

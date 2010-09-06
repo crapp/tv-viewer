@@ -26,20 +26,20 @@ proc main_menuTvview {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	
 	#Fill menu TV-Viewer
 	#$mTv add separator
-	$mTv add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [mc "Ctrl+M"]
-	$mTv add command -label [mc "Preferences"] -compound left -image $::icon_men(settings) -accelerator [mc "Ctrl+P"] -command {config_wizardMainUi}
-	$mTv add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator [mc "Ctrl+E"]
+	$mTv add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator {*}[dict get $::keyseq colorm name]
+	$mTv add command -label [mc "Preferences"] -compound left -image $::icon_men(settings) -accelerator {*}[dict get $::keyseq preferences name] -command {config_wizardMainUi}
+	$mTv add command -label [mc "Station Editor"] -compound left -image $::icon_men(seditor) -command {station_editUi} -accelerator {*}[dict get $::keyseq sedit name]
 	$mTv add separator
-	$mTv add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator "T"
-	$mTv add command -label [mc "Record Wizard"] -compound left -image $::icon_men(record) -command {event generate . <<record>>} -accelerator "R"
+	$mTv add command -label [mc "Timeshift"] -compound left -image $::icon_men(timeshift) -command {event generate . <<timeshift>>} -accelerator {*}[dict get $::keyseq recTime name]
+	$mTv add command -label [mc "Record Wizard"] -compound left -image $::icon_men(record) -command {event generate . <<record>>} -accelerator {*}[dict get $::keyseq recWizard name]
 	$mTv add command -label [mc "EPG"] -compound left -image $::icon_men(placeholder) -command main_frontendEpg -accelerator ""
 	$mTv add command -label [mc "Radio"] -compound left -image $::icon_men(radio) -command "" -accelerator ""
-	$mTv add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator "S"
+	$mTv add command -label [mc "TV"] -compound left -image $::icon_men(starttv) -command {event generate . <<teleview>>} -accelerator {*}[dict get $::keyseq startTv name]
 	$mTv add separator
 	$mTv add command -label [mc "Newsreader"] -compound left -image $::icon_men(newsreader) -command [list main_newsreaderCheckUpdate 0]
 	$mTv add checkbutton -label [mc "System Tray"] -command {system_trayActivate 0} -variable menu(cbSystray)
 	$mTv add separator
-	$mTv add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator [mc "Ctrl+X"]
+	$mTv add command -label [mc "Exit"] -compound left -image $::icon_men(dialog-close) -command [list event generate . <<exit>>] -accelerator "Ctrl+X"
 }
 
 proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
@@ -57,24 +57,24 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	}
 	
 	#$mNav add separator
-	$mNav add command -label [mc "Next station"] -compound left -image $::icon_men(channel-up) -command [list chan_zapperUp .fstations.treeSlist] -accelerator [mc "PageDOWN"]
-	$mNav add command -label [mc "Previous station"] -compound left -image $::icon_men(channel-down) -command [list chan_zapperDown .fstations.treeSlist] -accelerator [mc "PageUP"]
-	$mNav add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator J
+	$mNav add command -label [mc "Prior station"] -compound left -image $::icon_men(channel-prior) -command [list chan_zapperPrior .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationPrior name]
+	$mNav add command -label [mc "Next station"] -compound left -image $::icon_men(channel-next) -command [list chan_zapperNext .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationNext name]
+	$mNav add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationJump name]
 	$mNav add separator
-	$mNav add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator [mc "Shift+P"]
-	$mNav add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -state disabled -accelerator P
-	$mNav add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -state disabled -accelerator [mc "Shift+S"]
+	$mNav add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator {*}[dict get $::keyseq filePlay name]
+	$mNav add command -label [mc "Pause"] -compound left -image $::icon_men(playback-pause) -command {event generate . <<pause>>} -state disabled -accelerator {*}[dict get $::keyseq filePause name]
+	$mNav add command -label [mc "Stop"] -compound left -image $::icon_men(playback-stop) -command {event generate . <<stop>>} -state disabled -accelerator {*}[dict get $::keyseq fileStop name]
 	$mNav add separator
 	$mNav add cascade -label [mc "Rewind"] -compound left -image $::icon_men(rewind-small) -state disabled -menu $mNavRew
-		$mNavRew add command -label [mc "-10 seconds"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10s>>} -accelerator [mc "Left"]
-		$mNavRew add command -label [mc "-1 minute"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_1m>>} -accelerator [mc "Shift+Left"]
-		$mNavRew add command -label [mc "-10 minute"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10m>>} -accelerator [mc "Ctrl+Shift+Left"]
-		$mNavRew add command -label [mc "Rewind start"] -compound left -image $::icon_men(rewind-first) -command {event generate . <<rewind_start>>} -accelerator [mc "Home"]
+		$mNavRew add command -label [mc "-10 seconds"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10s>>} -accelerator {*}[dict get $::keyseq fileRew10s name]
+		$mNavRew add command -label [mc "-1 minute"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_1m>>} -accelerator {*}[dict get $::keyseq fileRew1m name]
+		$mNavRew add command -label [mc "-10 minute"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10m>>} -accelerator {*}[dict get $::keyseq fileRew10m name]
+		$mNavRew add command -label [mc "File beginning"] -compound left -image $::icon_men(rewind-first) -command {event generate . <<rewind_start>>} -accelerator {*}[dict get $::keyseq fileHome name]
 	$mNav add cascade -label [mc "Forward"] -compound left -image $::icon_men(forward-small) -state disabled -menu $mNavForw
-		$mNavForw add command -label [mc "+10 seconds"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_10s>>} -accelerator [mc "Right"]
-		$mNavForw add command -label [mc "+1 minute"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_1m>>} -accelerator [mc "Shift+Right"]
-		$mNavForw add command -label [mc "+10 minutes"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_10m>>} -accelerator [mc "Ctrl+Shift+Right"]
-		$mNavForw add command -label [mc "Forward end"] -compound left -image $::icon_men(forward-last) -command {event generate . <<forward_end>>} -accelerator [mc "End"]
+		$mNavForw add command -label [mc "+10 seconds"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_10s>>} -accelerator {*}[dict get $::keyseq fileFow10s name]
+		$mNavForw add command -label [mc "+1 minute"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_1m>>} -accelerator {*}[dict get $::keyseq fileFow1m name]
+		$mNavForw add command -label [mc "+10 minutes"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_10m>>} -accelerator {*}[dict get $::keyseq fileFow10m name]
+		$mNavForw add command -label [mc "File end"] -compound left -image $::icon_men(forward-last) -command {event generate . <<forward_end>>} -accelerator {*}[dict get $::keyseq fileEnd name]
 }
 
 proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
@@ -101,23 +101,23 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	
 	#$mView add separator
 	$mView add cascade -label [mc "Pan&Scan"] -compound left -image $::icon_men(placeholder) -menu $mViewPan
-		$mViewPan add command -label [mc "Zoom +"] -compound left -image $::icon_men(placeholder) -command [list vid_wmPanscan .fvidBg.cont 1] -accelerator "E"
-		$mViewPan add command -label [mc "Zoom -"] -compound left -image $::icon_men(placeholder) -command [list vid_wmPanscan .fvidBg.cont -1] -accelerator "W"
-		$mViewPan add command -label [mc "Pan&Scan (16:9 / 4:3)"] -compound left -image $::icon_men(placeholder) -command {vid_wmPanscanAuto} -accelerator "Shift+W"
+		$mViewPan add command -label [mc "Zoom +"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomInc>>} -accelerator {*}[dict get $::keyseq wmZoomInc name]
+		$mViewPan add command -label [mc "Zoom -"] -compound left -image $::icon_men(placeholder) -command {event geenrate . <<wmZoomDec>>} -accelerator {*}[dict get $::keyseq wmZoomDec name]
+		$mViewPan add command -label [mc "Pan&Scan (16:9 / 4:3)"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomAuto>>} -accelerator {*}[dict get $::keyseq wmZoomAuto name]
 		$mViewPan add separator
-		$mViewPan add command -label [mc "Move up"] -compound left -image $::icon_men(placeholder) -command [list vid_wmMoveVideo 3] -accelerator "Alt+Up"
-		$mViewPan add command -label [mc "Move down"] -compound left -image $::icon_men(placeholder) -command [list vid_wmMoveVideo 1] -accelerator "Alt+Down"
-		$mViewPan add command -label [mc "Move left"] -compound left -image $::icon_men(placeholder) -command [list vid_wmMoveVideo 2] -accelerator "Alt+Left"
-		$mViewPan add command -label [mc "Move right"] -compound left -image $::icon_men(placeholder) -command [list vid_wmMoveVideo 0] -accelerator "Alt+Right"
-		$mViewPan add command -label [mc "Center video"] -compound left -image $::icon_men(placeholder) -command [list vid_wmMoveVideo 4] -accelerator "Alt+C"
+		$mViewPan add command -label [mc "Move up"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveUp>>} -accelerator {*}[dict get $::keyseq wmMoveUp name]
+		$mViewPan add command -label [mc "Move down"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveDown>>} -accelerator {*}[dict get $::keyseq wmMoveDown name]
+		$mViewPan add command -label [mc "Move left"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveLeft>>} -accelerator {*}[dict get $::keyseq wmMoveLeft name]
+		$mViewPan add command -label [mc "Move right"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveRight>>} -accelerator {*}[dict get $::keyseq wmMoveRight name]
+		$mViewPan add command -label [mc "Center video"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveCenter>>} -accelerator {*}[dict get $::keyseq wmMoveCenter name]
 	$mView add cascade -label [mc "Size"] -compound left -image $::icon_men(placeholder) -menu $mViewSize
 		$mViewSize add command -label "50%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 0.5]
 		$mViewSize add command -label "75%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 0.75]
-		$mViewSize add command -label "100%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 1.0] -accelerator [mc "Ctrl+1"]
+		$mViewSize add command -label "100%" -compound left -image $::icon_men(placeholder) -command {event generate . <<wmSize1>>} -accelerator {*}[dict get $::keyseq wmSize1 name]
 		$mViewSize add command -label "125%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 1.25]
 		$mViewSize add command -label "150%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 1.5]
 		$mViewSize add command -label "175%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 1.75]
-		$mViewSize add command -label "200%" -compound left -image $::icon_men(placeholder) -command [list vid_wmGivenSize .fvidBg 2.0] -accelerator [mc "Ctrl+2"]
+		$mViewSize add command -label "200%" -compound left -image $::icon_men(placeholder) -command {event generate . <<wmSize2>>} -accelerator {*}[dict get $::keyseq wmSize2 name]
 	$mView add cascade -label [mc "Stay on top"] -compound left -image $::icon_men(placeholder) -menu $mViewTop
 		$mViewTop add radiobutton -label [mc "Never"] -variable vid(stayontop) -value 0 -command [list vid_wmStayonTop 0]
 		$mViewTop add radiobutton -label [mc "Always"] -variable vid(stayontop) -value 1 -command [list vid_wmStayonTop 1]
@@ -128,8 +128,8 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	$mView add cascade -label [mc "Statusbar"] -compound left -image $::icon_men(placeholder) -menu $mViewStatusb
 		$mViewStatusb add checkbutton -label [mc "Show status messages"] -variable menu(cbViewStatusm) -command {vid_wmViewStatus ltxt}
 		$mViewStatusb add checkbutton -label [mc "Show playback time"] -variable menu(cbViewStatust) -command {vid_wmViewStatus ltm}
-	$mView add command -command vid_wmCompact -compound left -image $::icon_men(compact) -label [mc "Compact mode"] -accelerator [mc "Ctrl+C"]
-	$mView add command -command [list vid_wmFullscreen . .fvidBg .fvidBg.cont] -compound left -image $::icon_men(fullscreen) -label [mc "Fullscreen"] -accelerator F
+	$mView add command -command {event generate . <<wmCompact>>} -compound left -image $::icon_men(compact) -label [mc "Compact mode"] -accelerator {*}[dict get $::keyseq wmCompact name]
+	$mView add command -command {event generate . <<wmFull>>} -compound left -image $::icon_men(fullscreen) -label [mc "Fullscreen"] -accelerator {*}[dict get $::keyseq wmFull name]
 	set ::menu(cbViewMainToolbar) $::mem(toolbMain)
 	set ::menu(cbViewStationl) $::mem(toolbStation)
 	set ::menu(cbViewStatusm) $::mem(sbarStatus)
@@ -147,12 +147,12 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	}
 	
 	#$mAud add separator
-	$mAud add command -compound left -image $::icon_men(volume) -label [mc "Volume +"] -command {event generate . <<volume_incr>>} -accelerator +
-	$mAud add command -compound left -image $::icon_men(volume) -label [mc "Volume -"] -command {event generate . <<volume_decr>>} -accelerator -
-	$mAud add command -compound left -image $::icon_men(volume-error) -label [mc "Mute"] -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	$mAud add command -compound left -image $::icon_men(volume) -label [mc "Volume +"] -command {event generate . <<volume_incr>>} -accelerator {*}[dict get $::keyseq volInc name]
+	$mAud add command -compound left -image $::icon_men(volume) -label [mc "Volume -"] -command {event generate . <<volume_decr>>} -accelerator {*}[dict get $::keyseq volDec name]
+	$mAud add command -compound left -image $::icon_men(volume-error) -label [mc "Mute"] -command {event generate . <<mute>>} -accelerator {*}[dict get $::keyseq volMute name]
 	$mAud add separator
-	$mAud add command -compound left -image $::icon_men(placeholder) -label [mc "Delay +"] -command {event generate . <<delay_incr>>} -accelerator [mc "Alt++"]
-	$mAud add command -compound left -image $::icon_men(placeholder) -label [mc "Delay -"] -command {event generate . <<delay_decr>>} -accelerator [mc "Alt+-"]
+	$mAud add command -compound left -image $::icon_men(placeholder) -label [mc "Delay +"] -command {event generate . <<delay_incr>>} -accelerator {*}[dict get $::keyseq delayInc name]
+	$mAud add command -compound left -image $::icon_men(placeholder) -label [mc "Delay -"] -command {event generate . <<delay_decr>>} -accelerator {*}[dict get $::keyseq delayDec name]
 }
 
 
@@ -168,7 +168,7 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	
 	#Fill menu help
 	#$mHelp add separator
-	$mHelp add command -command info_helpHelp -compound left -image $::icon_men(help) -label [mc "User Guide"] -accelerator [dict get $::keyseq help name]
+	$mHelp add command -command info_helpHelp -compound left -image $::icon_men(help) -label [mc "User Guide"] -accelerator {*}[dict get $::keyseq help name]
 	$mHelp add command -command key_sequences -compound left -image $::icon_men(key-bindings) -label [mc "Key Sequences"]
 	$mHelp add separator
 	$mHelp add checkbutton -command [list log_viewerUi 2] -label [mc "MPlayer Log"] -variable choice(cb_log_mpl_main)
@@ -198,12 +198,12 @@ proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	set mForw [menu $toolbPlay.mbForwChoose.mForwChoose -tearoff 0]
 	
 	#Fill menu rewind selector
-	$mRew add checkbutton -label [mc "-10 seconds"] -accelerator [mc "Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10s vid(check_rew_10s)] -variable tv(check_rew_10s)
-	$mRew add checkbutton -label [mc "-1 minute"] -accelerator [mc "Shift+Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -1m vid(check_rew_1m)] -variable tv(check_rew_1m)
-	$mRew add checkbutton -label [mc "-10 minutes"] -accelerator [mc "Ctrl+Shift+Left"] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10m vid(check_rew_10m)] -variable tv(check_rew_10m)
+	$mRew add checkbutton -label [mc "-10 seconds"] -accelerator {*}[dict get $::keyseq fileRew10s name] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10s vid(check_rew_10s)] -variable tv(check_rew_10s)
+	$mRew add checkbutton -label [mc "-1 minute"] -accelerator {*}[dict get $::keyseq fileRew1m name] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -1m vid(check_rew_1m)] -variable tv(check_rew_1m)
+	$mRew add checkbutton -label [mc "-10 minutes"] -accelerator {*}[dict get $::keyseq fileRew10m name] -command [list vid_seekSwitch .ftoolb_Play.bRewSmall -1 -10m vid(check_rew_10m)] -variable tv(check_rew_10m)
 	
 	#Fill menu forward selector
-	$mForw add checkbutton -label [mc "+10 seconds"] -accelerator [mc "Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s vid(check_fow_10s)] -variable tv(check_fow_10s)
-	$mForw add checkbutton -label [mc "+1 minute"] -accelerator [mc "Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m vid(check_fow_1m)] -variable tv(check_fow_1m)
-	$mForw add checkbutton -label [mc "+10 minutes"] -accelerator [mc "Ctrl+Shift+Right"] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m vid(check_fow_10m)] -variable tv(check_fow_10m)
+	$mForw add checkbutton -label [mc "+10 seconds"] -accelerator {*}[dict get $::keyseq fileFow10s name] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s vid(check_fow_10s)] -variable tv(check_fow_10s)
+	$mForw add checkbutton -label [mc "+1 minute"] -accelerator {*}[dict get $::keyseq fileFow1m name] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m vid(check_fow_1m)] -variable tv(check_fow_1m)
+	$mForw add checkbutton -label [mc "+10 minutes"] -accelerator {*}[dict get $::keyseq fileFow10m name] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m vid(check_fow_10m)] -variable tv(check_fow_10m)
 }

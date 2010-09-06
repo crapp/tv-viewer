@@ -28,7 +28,7 @@ proc config_wizardMainUi {} {
 	}
 	
 	if {[wm attributes . -fullscreen] == 1} {
-		vid_wmFullscreen . .fvidBg.cont .fvidBg
+		event generate . <<wmFull>>
 	}
 	vid_playbackStop 1 pic
 	log_writeOutTv 0 "Starting preferences..."

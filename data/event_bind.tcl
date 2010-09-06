@@ -19,83 +19,104 @@
 proc event_constr {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
 	#Construct events and make necessary bindings
-	event add <<menuTv>> <[dict get $::keyseq mTv seq]>
+	event add <<menuTv>> {*}[dict get $::keyseq mTv seq]
 	bind . <<menuTv>> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
-	event add <<menuNav>> <[dict get $::keyseq mNav seq]>
+	event add <<menuNav>> {*}[dict get $::keyseq mNav seq]
 	bind . <<menuNav>> [list event generate .foptions_bar.mbNavigation <<Invoke>>]
-	event add <<menuView>> <[dict get $::keyseq mView seq]>
+	event add <<menuView>> {*}[dict get $::keyseq mView seq]
 	bind . <<menuView>> [list event generate .foptions_bar.mbView <<Invoke>>]
-	event add <<menuAudio>> <[dict get $::keyseq mAudio seq]>
+	event add <<menuAudio>> {*}[dict get $::keyseq mAudio seq]
 	bind . <<menuAudio>> [list event generate .foptions_bar.mbAudio <<Invoke>>]
-	event add <<menuHelp>> <[dict get $::keyseq mHelp seq]>
+	event add <<menuHelp>> {*}[dict get $::keyseq mHelp seq]
 	bind . <<menuHelp>> [list event generate .foptions_bar.mbHelp <<Invoke>>]
-	event add <<prefs>> <[dict get $::keyseq preferences seq]>
+	
+	event add <<prefs>> {*}[dict get $::keyseq preferences seq]
 	bind . <<prefs>> {config_wizardMainUi}
-	event add <<colorm>> <[dict get $::keyseq colorm seq]>
+	event add <<colorm>> {*}[dict get $::keyseq colorm seq]
 	bind . <<colorm>> {colorm_mainUi}
-	event add <<sedit>> <[dict get $::keyseq sedit seq]>
+	event add <<sedit>> {*}[dict get $::keyseq sedit seq]
 	bind . <<sedit>> {station_editUi}
-	event add <<help>> <[dict get $::keyseq help seq]>
+	event add <<help>> {*}[dict get $::keyseq help seq]
 	bind . <<help>> [list info_helpHelp]
 	event add <<exit>> <Control-Key-x>
 	bind . <<exit>> {main_frontendExitViewer}
-	event add <<input_next>> [list [dict get $::keyseq vinputNext seq]]
-	event add <<input_prior>> [list [dict get $::keyseq vinputPrior seq]]
+	
+	event add <<input_next>> {*}[dict get $::keyseq vinputNext seq]
+	event add <<input_prior>> {*}[dict get $::keyseq vinputPrior seq]
 	bind . <<input_next>> [list chan_zapperInput 1 1]
 	bind . <<input_prior>> [list chan_zapperInput 1 -1]
-	event add <<volume_incr>> [list [dict get $::keyseq volInc seq]]
-	event add <<volume_decr>> [list [dict get $::keyseq volDec seq]]
+	event add <<volume_incr>> {*}[dict get $::keyseq volInc seq]
+	event add <<volume_decr>> {*}[dict get $::keyseq volDec seq]
 	bind . <<volume_decr>> {vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) - 3]}
 	bind . <<volume_incr>> {vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute [expr $::main(volume_scale) + 3]}
-	bind . <Key-m> [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
-	event add <<delay_incr>> <Alt-Key-plus> <Alt-Key-KP_Add>
-	event add <<delay_decr>> <Alt-Key-minus> <Alt-Key-KP_Subtract>
+	event add <<delay_incr>> {*}[dict get $::keyseq delayInc seq]
+	event add <<delay_decr>> {*}[dict get $::keyseq delayDec seq]
 	bind . <<delay_incr>> {vid_playerAudioDelay incr}
 	bind . <<delay_decr>> {vid_playerAudioDelay decr}
-	event add <<forward_end>> <Key-End>
-	event add <<forward_10s>> <Key-Right>
-	event add <<forward_1m>> <Shift-Key-Right>
-	event add <<forward_10m>> <Control-Shift-Key-Right>
-	event add <<rewind_start>> <Key-Home>
-	event add <<rewind_10s>> <Key-Left>
-	event add <<rewind_1m>> <Shift-Key-Left>
-	event add <<rewind_10m>> <Control-Shift-Key-Left>
-	event add <<pause>> <Key-p>
-	event add <<start>> <Shift-Key-P>
-	event add <<stop>> <Shift-Key-S>
-	bind . <Key-f> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
-	bind . <Control-Key-c> vid_wmCompact
-	bind .fvidBg.cont <Double-ButtonPress-1> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
-	bind .fvidBg <Double-ButtonPress-1> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
-	bind . <Control-Key-1> [list vid_wmGivenSize .fvidBg 1]
-	bind . <Control-Key-2> [list vid_wmGivenSize .fvidBg 2]
-	bind . <Key-e> [list vid_wmPanscan .fvidBg.cont 1]
-	bind . <Key-w> [list vid_wmPanscan .fvidBg.cont -1]
-	bind . <Shift-Key-W> {vid_wmPanscanAuto}
-	bind . <Alt-Key-Right> [list vid_wmMoveVideo 0]
-	bind . <Alt-Key-Down> [list vid_wmMoveVideo 1]
-	bind . <Alt-Key-Left> [list vid_wmMoveVideo 2]
-	bind . <Alt-Key-Up> [list vid_wmMoveVideo 3]
-	bind . <Key-c> [list vid_wmMoveVideo 4]
+	event add <<mute>> {*}[dict get $::keyseq volMute seq]
+	bind . <<mute>> [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	
+	event add <<forward_end>> {*}[dict get $::keyseq fileEnd seq]
+	event add <<forward_10s>> {*}[dict get $::keyseq fileFow10s seq]
+	event add <<forward_1m>> {*}[dict get $::keyseq fileFow1m seq]
+	event add <<forward_10m>> {*}[dict get $::keyseq fileFow10m seq]
+	event add <<rewind_start>> {*}[dict get $::keyseq fileHome seq]
+	event add <<rewind_10s>> {*}[dict get $::keyseq fileRew10s seq]
+	event add <<rewind_1m>> {*}[dict get $::keyseq fileRew1m seq]
+	event add <<rewind_10m>> {*}[dict get $::keyseq fileRew10m seq]
+	event add <<pause>> {*}[dict get $::keyseq filePause seq]
+	event add <<start>> {*}[dict get $::keyseq filePlay seq]
+	event add <<stop>> {*}[dict get $::keyseq fileStop seq]
+	
+	event add <<wmFull>> {*}[dict get $::keyseq wmFull seq]
+	bind . <<wmFull>> [list vid_wmFullscreen . .fvidBg .fvidBg.cont]
+	bind .fvidBg.cont <Double-ButtonPress-1> {event generate . <<wmFull>>}
+	bind .fvidBg <Double-ButtonPress-1> {event generate . <<wmFull>>}
+	event add <<wmCompact>> {*}[dict get $::keyseq wmCompact seq]
+	bind . <<wmCompact>> vid_wmCompact
+	event add <<wmZoomInc>> {*}[dict get $::keyseq wmZoomInc seq]
+	bind . <<wmZoomInc>> [list vid_wmPanscan .fvidBg.cont 1]
+	event add <<wmZoomDec>> {*}[dict get $::keyseq wmZoomDec seq]
+	bind . <<wmZoomDec>> [list vid_wmPanscan .fvidBg.cont -1]
+	event add <<wmZoomAuto>> {*}[dict get $::keyseq wmZoomAuto seq]
+	bind . <<wmZoomAuto>> {vid_wmPanscanAuto}
+	event add <<wmMoveRight>> {*}[dict get $::keyseq wmMoveRight seq]
+	event add <<wmMoveDown>> {*}[dict get $::keyseq wmMoveDown seq]
+	event add <<wmMoveLeft>> {*}[dict get $::keyseq wmMoveLeft seq]
+	event add <<wmMoveUp>> {*}[dict get $::keyseq wmMoveUp seq]
+	event add <<wmMoveCenter>> {*}[dict get $::keyseq wmMoveCenter seq]
+	bind . <<wmMoveRight>> [list vid_wmMoveVideo 0]
+	bind . <<wmMoveDown>> [list vid_wmMoveVideo 1]
+	bind . <<wmMoveLeft>> [list vid_wmMoveVideo 2]
+	bind . <<wmMoveUp>> [list vid_wmMoveVideo 3]
+	bind . <<wmMoveCenter>> [list vid_wmMoveVideo 4]
+	event add <<wmSize1>> {*}[dict get $::keyseq wmSize1 seq]
+	bind . <<wmSize1>> [list vid_wmGivenSize .fvidBg 1.0]
+	event add <<wmSize2>> {*}[dict get $::keyseq wmSize2 seq]
+	bind . <<wmSize2>> [list vid_wmGivenSize .fvidBg 2.0]
+	
 	bind .fvidBg <Button-3> [list tk_popup .fvidBg.mContext %X %Y]
 	bind .fvidBg.cont <Button-3> [list tk_popup .fvidBg.mContext %X %Y]
-	bind . <Mod4-Key-s> [list vid_callbackMplayerRemote "screenshot 0"]
+	
+	event add <<scrshot>> {*}[dict get $::keyseq scrshot seq]
+	bind . <<scrshot>> [list vid_callbackMplayerRemote "screenshot 0"]
+	
 	if {$handler} {
-		event add <<record>> <Key-r>
+		event add <<record>> {*}[dict get $::keyseq recWizard seq]
 		bind . <<record>> [list record_wizardUi]
-		event add <<timeshift>> <Key-t>
+		event add <<timeshift>> {*}[dict get $::keyseq recTime seq]
 		bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
-		event add <<teleview>> <Key-s>
+		event add <<teleview>> {*}[dict get $::keyseq startTv seq]
 		bind . <<teleview>> {vid_playbackRendering}
-		event add <<station_up>> <Key-Prior>
-		event add <<station_down>> <Key-Next>
-		event add <<station_jump>> <Key-j>
+		event add <<stationPrior>> {*}[dict get $::keyseq stationPrior seq]
+		event add <<stationNext>> {*}[dict get $::keyseq stationNext seq]
+		event add <<stationJump>> {*}[dict get $::keyseq stationJump seq]
 		event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
 		event add <<station_key_lirc>> station_key_lirc
 		event add <<station_key_ext>> station_key_ext
-		bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
-		bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
-		bind . <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
+		bind . <<stationPrior>> [list chan_zapperPrior .fstations.treeSlist]
+		bind . <<stationNext>> [list chan_zapperNext .fstations.treeSlist]
+		bind . <<stationJump>> [list chan_zapperJump .fstations.treeSlist]
 		bind . <<station_key>> [list chan_zapperStationNrKeys %A]
 		bind . <<station_key_lirc>> [list chan_zapperStationNrKeys %d]
 		bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]
@@ -112,15 +133,15 @@ proc event_deleSedit {handler} {
 	event delete <<teleview>>
 	bind . <<teleview>> {}
 	if {"$handler" == "nokanal"} {
-		event delete <<station_up>>
-		event delete <<station_down>>
-		event delete <<station_jump>>
+		event delete <<stationPrior>>
+		event delete <<stationNext>>
+		event delete <<stationJump>>
 		event delete <<station_key>>
 		event delete <<station_key_lirc>>
 		event delete <<station_key_ext>>
-		bind . <<station_up>> {}
-		bind . <<station_down>> {}
-		bind . <<station_jump>> {}
+		bind . <<stationPrior>> {}
+		bind . <<stationNext>> {}
+		bind . <<stationJump>> {}
 		bind . <<station_key>> {}
 		bind . <<station_key_lirc>> {}
 		bind . <<station_key_ext>> {}
@@ -130,9 +151,9 @@ proc event_deleSedit {handler} {
 proc event_recordStart {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStart \033\[0m \{$handler\}"
 	if {$::option(rec_allow_sta_change) == 0} {
-		bind . <<station_up>> {}
-		bind . <<station_down>> {}
-		bind . <<station_jump>> {}
+		bind . <<stationPrior>> {}
+		bind . <<stationNext>> {}
+		bind . <<<stationJump>> {}
 		bind . <<station_key>> {}
 		bind . <<station_key_lirc>> {}
 		bind . <<station_key_ext>> {}
@@ -162,9 +183,9 @@ proc event_recordStart {handler} {
 proc event_recordStop {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStop \033\[0m"
 	bind . <<teleview>> {vid_playbackRendering}
-	bind . <<station_up>> [list chan_zapperUp .fstations.treeSlist]
-	bind . <<station_down>> [list chan_zapperDown .fstations.treeSlist]
-	bind . <<station_jump>> [list chan_zapperJump .fstations.treeSlist]
+	bind . <<stationPrior>> [list chan_zapperPrior .fstations.treeSlist]
+	bind . <<stationNext>> [list chan_zapperNext .fstations.treeSlist]
+	bind . <<stationJump>> [list chan_zapperJump .fstations.treeSlist]
 	bind . <<station_key>> [list chan_zapperStationNrKeys %A]
 	bind . <<station_key_lirc>> [list chan_zapperStationNrKeys %d]
 	bind . <<station_key_ext>> [list chan_zapperStationNr .fstations.treeSlist %d]

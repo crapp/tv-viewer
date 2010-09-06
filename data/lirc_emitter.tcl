@@ -79,17 +79,17 @@ if {$start_options(teleview)} {
 	exit 0
 }
 if {$start_options(station_up)} {
-	command_WritePipe 0 "tv-viewer_main event generate . <<station_up>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<stationPrior>>"
 	log_writeOutTv 0 "Lirc emitter received Signal station_up"
 	exit 0
 }
 if {$start_options(station_down)} {
-	command_WritePipe 0 "tv-viewer_main event generate . <<station_down>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<stationNext>>"
 	log_writeOutTv 0 "Lirc emitter received Signal station_down"
 	exit 0
 }
 if {$start_options(station_jump)} {
-	command_WritePipe 0 "tv-viewer_main event generate . <<station_jump>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<stationJump>>"
 	log_writeOutTv 0 "Lirc emitter received Signal station_jump"
 	exit 0
 }
@@ -165,7 +165,7 @@ if {$start_options(slist_osd_down)} {
 	exit 0
 }
 if {$start_options(fullscreen)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmFullscreen . .fvidBg .fvidBg.cont"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmFull>>"
 	log_writeOutTv 0 "Lirc emitter received Signal fullscreen"
 	exit 0
 }
@@ -175,52 +175,52 @@ if {$start_options(quit)} {
 	exit 0
 }
 if {$start_options(zoom_incr)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .fvidBg.cont 1"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomInc>>"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr"
 	exit 0
 }
 if {$start_options(zoom_decr)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmPanscan .fvidBg.cont -1"
+	command_WritePipe 0 "tv-viewer_main event geenrate . <<wmZoomDec>>"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr"
 	exit 0
 }
 if {$start_options(zoom_auto)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmPanscanAuto"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomAuto>>"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_auto"
 	exit 0
 }
 if {$start_options(size_stnd)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .fvidBg 1"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmSize1>>"
 	log_writeOutTv 0 "Lirc emitter received Signal size_stnd"
 	exit 0
 }
 if {$start_options(size_double)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmGivenSize .fvidBg 2"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmSize2>>"
 	log_writeOutTv 0 "Lirc emitter received Signal size_double"
 	exit 0
 }
 if {$start_options(move_right)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 0"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmMoveRight>>"
 	log_writeOutTv 0 "Lirc emitter received Signal move_right"
 	exit 0
 }
 if {$start_options(move_down)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 1"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmMoveDown>>"
 	log_writeOutTv 0 "Lirc emitter received Signal move_down"
 	exit 0
 }
 if {$start_options(move_left)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 2"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmMoveLeft>>"
 	log_writeOutTv 0 "Lirc emitter received Signal move_left"
 	exit 0
 }
 if {$start_options(move_up)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 3"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmMoveUp>>"
 	log_writeOutTv 0 "Lirc emitter received Signal move_up"
 	exit 0
 }
 if {$start_options(move_center)} {
-	command_WritePipe 0 "tv-viewer_main vid_wmMoveVideo 4"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmMoveCenter>>"
 	log_writeOutTv 0 "Lirc emitter received Signal move_center"
 	exit 0
 }
@@ -245,7 +245,7 @@ if {$start_options(volume_decr)} {
 	exit 0
 }
 if {$start_options(mute)} {
-	command_WritePipe 0 "tv-viewer_main vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute"
+	command_WritePipe 0 "tv-viewer_main event generate . <<mute>>"
 	log_writeOutTv 0 "Lirc emitter received Signal mute"
 	exit 0
 }

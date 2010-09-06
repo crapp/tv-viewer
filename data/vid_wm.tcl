@@ -38,8 +38,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			vid_wmCursorPlaybar %Y
 			#~ vid_slistCursor %X %Y
 		}
-		bind $mw <ButtonPress-1> {.fvidBg.cont configure -cursor arrow
-								  .fvidBg configure -cursor arrow}
+		bind $mw <ButtonPress-1> {.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont); .fvidBg configure -cursor $::cursor(old_.fvidBg)}
 		set ::cursor($vid_cont) ""
 		set ::cursor($vid_bg) ""
 		vid_wmCursorHide $vid_cont 0
@@ -49,7 +48,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			set ::vid(id_panscanAuto) [after 500 {
 				catch {after cancel $::vid(id_panscanAuto)}
 				set ::data(panscanAuto) 0
-				vid_wmPanscanAuto
+				event generate . <<wmZoomAuto>>
 			}]
 		}
 		log_writeOutTv 0 "Going to full-screen mode."
@@ -85,8 +84,8 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		#~ set ::cursor($vid_bg) ""
 		#~ vid_wmCursorHide $vid_bg 1
 		#~ vid_wmCursorHide $vid_cont 1
-		#~ $vid_cont configure -cursor arrow
-		#~ $vid_bg configure -cursor arrow
+		#~ $vid_cont configure -cursor $::cursor(old_.fvidBg.cont)
+		#~ $vid_bg configure -cursor $::cursor(old_.fvidBg)
 		if {$::main(compactMode) == 0} {
 			grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
 			grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
@@ -109,7 +108,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			set ::vid(id_panscanAuto) [after 500 {
 				catch {after cancel $::vid(id_panscanAuto)}
 				set ::data(panscanAuto) 0
-				vid_wmPanscanAuto
+				event generate . <<wmZoomAuto>>
 			}]
 		}
 	}
@@ -529,7 +528,7 @@ proc vid_wmCursor {com} {
 			vid_wmCursorHide .fvidBg 0
 			#~ vid_slistCursor %X %Y
 		}
-		bind . <ButtonPress-1> {.fvidBg.cont configure -cursor arrow; .fvidBg configure -cursor arrow}
+		bind . <ButtonPress-1> {.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont); .fvidBg configure -cursor $::cursor(old_.fvidBg)}
 		set ::cursor(.fvidBg.cont) ""
 		set ::cursor(.fvidBg) ""
 		vid_wmCursorHide .fvidBg.cont 0
@@ -539,7 +538,7 @@ proc vid_wmCursor {com} {
 
 proc vid_wmCursorHide {w com} {
 	if {[info exists ::option(cursor_id\($w\))] == 1} {
-		foreach id [split $::option(cursor_id\($w\))] {
+		foreach id $::option(cursor_id\($w\)) {
 			catch {after cancel $id}
 		}
 		unset -nocomplain ::option(cursor_id\($w\))
@@ -576,8 +575,8 @@ proc vid_wmCursorPlaybar {ypos} {
 				grid remove .ftoolb_Play
 				grid remove .ftoolb_Disp
 				log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
-				.fvidBg configure -cursor arrow
-				.fvidBg.cont configure -cursor arrow
+				.fvidBg configure -cursor $::cursor(old_.fvidBg)
+				.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont)
 				vid_wmCursorHide .fvidBg 1
 				vid_wmCursorHide .fvidBg.cont 1
 			}

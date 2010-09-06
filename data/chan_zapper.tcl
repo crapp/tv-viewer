@@ -16,14 +16,14 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc chan_zapperDown {tree} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperDown \033\[0m \{$tree\}"
+proc chan_zapperNext {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperNext \033\[0m \{$tree\}"
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {[string match $::kanalid($i) [lindex $::station(last) 0]]} {
-			set calculation [expr {($i == 1) ? $::station(max) : ($i - 1)}]
+			set calculation [expr {($i == $::station(max)) ? 1 : ($i + 1)}]
 			set ::station(last) "\{$::kanalid($calculation)\} $::kanalcall($calculation) $calculation"
 			set ::station(old) "\{$::kanalid($i)\} $::kanalcall($i) $i"
-			log_writeOutTv 0 "Station prior $::kanalid($calculation)."
+			log_writeOutTv 0 "Station next $::kanalid($calculation)."
 			bind $tree <<TreeviewSelect>> {}
 			$tree selection set $::kanalitemID([lindex $::station(last) 2])
 			$tree see [$tree selection]
@@ -34,14 +34,14 @@ proc chan_zapperDown {tree} {
 	}
 }
 
-proc chan_zapperUp {tree} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperUp \033\[0m \{$tree\}"
+proc chan_zapperPrior {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperPrior \033\[0m \{$tree\}"
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {[string match $::kanalid($i) [lindex $::station(last) 0]]} {
-			set calculation [expr {($i == $::station(max)) ? 1 : ($i + 1)}]
+			set calculation [expr {($i == 1) ? $::station(max) : ($i - 1)}]
 			set ::station(last) "\{$::kanalid($calculation)\} $::kanalcall($calculation) $calculation"
 			set ::station(old) "\{$::kanalid($i)\} $::kanalcall($i) $i"
-			log_writeOutTv 0 "Station next $::kanalid($calculation)."
+			log_writeOutTv 0 "Station prior $::kanalid($calculation)."
 			bind $tree <<TreeviewSelect>> {}
 			$tree selection set $::kanalitemID([lindex $::station(last) 2])
 			$tree see [$tree selection]

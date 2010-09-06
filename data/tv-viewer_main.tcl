@@ -276,6 +276,16 @@ start_options
 process_configRead
 process_configMem
 process_KeyFile
+#Sourcing logfile and launching log process
+source $::option(root)/data/log_viewer.tcl
+log_viewerCheck
+log_writeOutTv 0 "TV-Viewer process PID [pid]"
+#Source splash screen
+source $::option(root)/data/launch_splash.tcl
+#Launching splash screen if wanted.
+if {$::option(show_splash) == 1} {
+	launch_splash_screen
+}
 #Source additional ttk themes, plastik and keramik
 source "$option(root)/themes/plastik/plastik.tcl"
 source "$option(root)/themes/keramik/keramik.tcl"
@@ -297,10 +307,6 @@ if {[msgcat::mcload $option(root)/msgs] != 1} {
 }
 #Source monitor procs
 source $::option(root)/data/monitor.tcl
-#Sourcing logfile and launching log process
-source $::option(root)/data/log_viewer.tcl
-log_viewerCheck
-log_writeOutTv 0 "TV-Viewer process PID [pid]"
 #Source create icons
 source $::option(root)/data/create_icons.tcl
 #Create all icons for app.
@@ -309,12 +315,8 @@ create_icons
 source $::option(root)/data/error_interp.tcl
 #Tell tk to use new error handler
 interp bgerror {} [namespace which error_interpUi]
-#Source splash screen
-source $::option(root)/data/launch_splash.tcl
-#Launching splash screen if wanted.
-if {$::option(show_splash) == 1} {
-	launch_splash_screen
-}
+
+
 #Source station after message.
 source $::option(root)/data/station_after_msg.tcl
 #Source alle related functions for station changing.

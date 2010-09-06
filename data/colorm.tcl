@@ -268,7 +268,7 @@ proc colorm_exit {w} {
 proc colorm_mainUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_mainUi \033\[0m"
 	if {[wm attributes . -fullscreen] == 1} {
-		vid_wmFullscreen . .fvidBg.cont .fvidBg
+		event generate . <<wmFull>>
 	}
 	
 	if {[winfo exists .cm] == 0} {

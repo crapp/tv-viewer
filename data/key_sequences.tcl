@@ -82,45 +82,83 @@ proc key_sequencesRead {tree} {
 		set font TkDefaultFont
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0;1;31m::font:: \033\[0m"
 	}
-	if {$::option(language_value) != 0} {
-		set keseq "$::option(root)/shortcuts/keysequ_$::option(language_value).conf"
-	} else {
-		set locale_split [lindex [split $::env(LANG) _] 0]
-		set keseq "$::option(root)/shortcuts/keysequ_$locale_split.conf"
-		if {[file exists "$keseq"] == 0} {
-			log_writeOutTv 1 "No translated Key Sequences for $::env(LANG)"
-			log_writeOutTv 1 "Switching back to english."
-			set keseq "$::option(root)/shortcuts/keysequ_en.conf"
-		}
-	}
 	$tree heading action -text [mc "Action"]
 	$tree heading key -text [mc "Key Sequence"]
 	$tree tag configure fat -font "TkTextFont [font actual TkTextFont -displayof $tree -size] bold"
 	$tree tag configure small -font "TkTextFont 1"
-	if {[file exists "$keseq"]} {
-		set open_keyseq [open "$keseq" r]
-		set line_length 0
-		while {[gets $open_keyseq line]!=-1} {
-			if {[string trim $line] == {} } continue
-			if {[string match #* $line]} {
-				if {[llength [$tree children {}]] != 0} {
-					$tree insert {} end -values " " -tags {small noedit}
-					$tree insert {} end -values [list [lindex $line 1] [lindex $line end]] -tags {fat noedit}
-				} else {
-					$tree insert {} end -values [list [lindex $line 1] [lindex $line end]] -tags {fat noedit}
-				}
-			} else {
-				if {[llength [$tree children {}]] > 10} {
-					$tree insert {} end -values [list [lindex $line 0] [lindex $line end]]
-				} else {
-					$tree insert {} end -values [list [lindex $line 0] [lindex $line end]] -tags {noedit}
-				}
-			}
-			if {[font measure $font "[lindex $line 0]"] > $line_length} {
-				set line_length [font measure $font "[lindex $line 0]"]
-			}
+	array set keyTags {
+		1 noedit
+		2 noedit
+		3 noedit
+		4 noedit
+		5 noedit
+		6 noedit
+		7 noedit
+		8 noedit
+		9 noedit
+		10 noedit
+		11 {}
+		12 {}
+		13 {}
+		14 {}
+		15 noedit
+		16 {}
+		17 {}
+		18 {}
+		19 {}
+		20 {}
+		21 {}
+		22 {}
+		23 {}
+		24 {}
+		25 {}
+		26 {}
+		27 {}
+		28 {}
+		29 {}
+		30 {}
+		31 {}
+		32 {}
+		33 {}
+		34 {}
+		35 {}
+		36 noedit
+		37 noedit
+		38 {}
+		39 {}
+		40 {}
+		41 {}
+		42 {}
+		43 {}
+		44 {}
+		45 {}
+		46 {}
+		47 {}
+		48 {}
+	}
+	set line_length 0
+	set i 1
+	foreach id [dict keys $::keyseq] {
+		if {$i == 1} {
+			$tree insert {} end -values [list [mc "General"]] -tags {fat noedit}
 		}
-		close $open_keyseq
+		if {$i == 11} {
+			$tree insert {} end -values " " -tags {small noedit}
+			$tree insert {} end -values [list [mc "Television"]] -tags {fat noedit}
+		}
+		if {$i == 23} {
+			$tree insert {} end -values " " -tags {small noedit}
+			$tree insert {} end -values [list [mc "Window management"]] -tags {fat noedit}
+		}
+		if {$i == 36} {
+			$tree insert {} end -values " " -tags {small noedit}
+			$tree insert {} end -values [list [mc "Recording / File playback"]] -tags {fat noedit}
+		}
+		$tree insert {} end -values [list "[dict get $::keyseq $id label]" "[dict get $::keyseq $id name]"] -tags $keyTags($i)
+		if {[font measure $font "[dict get $::keyseq $id label]"] > $line_length} {
+			set line_length [font measure $font "[dict get $::keyseq $id label]"]
+		}
+		incr i
 	}
 	$tree column action -width [expr $line_length + 40]
 	$tree column key -width [expr [font measure $font [mc "Key Sequence"]] + 25]
@@ -128,11 +166,20 @@ proc key_sequencesRead {tree} {
 
 proc key_sequencesApply {top tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApply \033\[0m \{$top\} \{$tree\}"
+	catch {file delete $::option(home)/config/key-sequences.key}
+	set keyf [open $::option(home)/config/key-sequences.key w+]
+	foreach child [$tree children {}] {
+		if {[string match *fat* [$tree item $child -tags]] || [string match *small* [$tree item $child -tags]] || [string trim [$tree item $child -values]] == {}} continue
+		lappend setKeys [lindex [$tree item $child -values] 1]
+	}
+	foreach key [dict keys $::keyseq] children $setKeys {
+		puts $keyf [list $key $children]
+	}
+	close $keyf
 	#First write new values to extra file
-	#Second reread file and create keysequences array
+	#Second reread file and recreate keysequences dict
 	#Destroy all menus and rebuild with new accelerators
 	#Delete all events and keybindings and recreate with new ones.
-	
 }
 
 proc key_sequencesEdit {tree} {
@@ -279,6 +326,12 @@ proc key_sequencesEditApply {tree lbl} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$tree\} \{$lbl\}"
 	set end 0
 	foreach child [$tree children {}] {
+		if {[string is integer "$::key(entrySequence)"]} {
+			$lbl configure -text [mc "Conflict detected with station by number \[0-9\]"] -image $::icon_m(dialog-warning) -compound left
+			log_writeOutTv 1 "Conflict detected with station by number \[0-9\]"
+			set end 1
+			break
+		}
 		if {"[lindex [$tree item $child -values] 1]" == "$::key(entrySequence)" && "[$tree selection]" != "$child"} {
 			$lbl configure -text [mc "Conflict detected with \"[lindex [$tree item $child -values] 0]\""] -image $::icon_m(dialog-warning) -compound left
 			log_writeOutTv 1 "Conflict detected with \"[lindex [$tree item $child -values] 0]\""

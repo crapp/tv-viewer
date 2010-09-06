@@ -86,7 +86,7 @@ proc record_wizardUi {} {
 		log_writeOutTv 0 "Starting Record Wizard."
 		
 		if {[wm attributes . -fullscreen] == 1} {
-			vid_wmFullscreen . .fvidBg .fvidBg.cont
+			event generate . <<wmFull>>
 		}
 		
 		set w [toplevel .record_wizard]

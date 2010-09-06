@@ -19,7 +19,7 @@
 proc info_helpHelp {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHelp \033\[0m"
 	if {[wm attributes . -fullscreen] == 1} {
-		vid_wmFullscreen . .fvidBg.cont .fvidBg
+		event generate . <<wmFull>>
 	}
 	if {$::option(language_value) != 0} {
 		if {[string match *en* $::option(language_value)]} {
@@ -62,6 +62,30 @@ proc info_helpMplayerRev {first strg} {
 	}
 }
 
+proc info_helpExitAbout {w} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpExitAbout \033\[0m \{$w\}"
+	vid_wmCursor 1
+	grab release $w
+	destroy $w
+}
+
+proc info_helpWebpage {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHomepage \033\[0m \{$handler\}"
+	#handler 0 = homepage; 1 = forum; 2 = IRC
+	array set webs {
+		0 http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page
+		1 http://sourceforge.net/projects/tv-viewer/forums
+		2 http://webchat.freenode.net/?channels=tv-viewer
+	}
+	array set websName {
+		0 Homepage
+		1 Forum
+		2 IRC
+	}
+	log_writeOutTv 0 "Executing your favorite internet browser and open $websName($handler)"
+	catch {exec sh -c "xdg-open $webs($handler)" &}
+}
+
 proc info_helpAbout {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpAbout \033\[0m"
 	if {[winfo exists .top_about] == 0} {
@@ -88,7 +112,9 @@ proc info_helpAbout {} {
 		set nb1 [ttk::frame $mf.nb.f_info]
 		$mf.nb add $nb1 -text [mc "Info"] -padding 2
 		ttk::label $nb1.l_desc -text [mc "A small and simple frontend to watch and record television."] -justify center -font "systemfont 12 bold"
-		ttk::button $nb1.b_homepage -text [mc "Homepage"] -command info_helpHomepage -style Toolbutton
+		ttk::button $nb1.b_homepage -text [mc "http://tv-viewer.sourceforge.net"] -command [list info_helpWebpage 0]  -style Toolbutton
+		ttk::button $nb1.b_forum -text [mc "http://sourceforge.net/.../forums"] -command [list info_helpWebpage 1] -style Toolbutton
+		ttk::button $nb1.b_irc -text [mc "http://webchat.freenode.net/"] -command [list info_helpWebpage 2] -style Toolbutton
 		ttk::label $nb1.l_version
 		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2010
 Christian Rapp"] -justify center
@@ -117,9 +143,11 @@ Christian Rapp"] -justify center
 		grid anchor $btnf e
 		grid anchor $nb1 center
 		grid $nb1.l_desc -in $nb1 -row 0 -column 0 -pady 10
-		grid $nb1.b_homepage -in $nb1 -row 1 -column 0 -pady "0 10"
-		grid $nb1.l_version -in $nb1 -row 2 -column 0 -pady "0 10"
-		grid $nb1.l_copy -in $nb1 -row 3 -column 0 -pady "0 10"
+		grid $nb1.b_homepage -in $nb1 -row 1 -column 0 -pady "0 3"
+		grid $nb1.b_forum -in $nb1 -row 2 -column 0 -pady "0 3"
+		grid $nb1.b_irc -in $nb1 -row 3 -column 0 -pady "0 10"
+		grid $nb1.l_version -in $nb1 -row 4 -column 0 -pady "0 10"
+		grid $nb1.l_copy -in $nb1 -row 5 -column 0 -pady "0 10"
 		grid $nb2.t_credits -in $nb2 -row 0 -column 0 -sticky nesw
 		grid $nb2.scrollb_credits -in $nb2 -row 0 -column 1 -sticky ns -pady 10
 		grid $nb3.t_license -in $nb3 -row 0 -column 0 -sticky nesw
@@ -135,21 +163,6 @@ Christian Rapp"] -justify center
 		grid columnconfigure $nb2 0 -weight 1
 		grid columnconfigure $nb3 0 -weight 1
 		grid columnconfigure $nb4 0 -weight 1
-		
-		#Subprocs 
-		
-		proc info_helpExitAbout {w} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpExitAbout \033\[0m \{$w\}"
-			vid_wmCursor 1
-			grab release $w
-			destroy $w
-		}
-		
-		proc info_helpHomepage {} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHomepage \033\[0m"
-			log_writeOutTv 0 "Executing your favorite internet browser."
-			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page" &}
-		}
 		
 		# Additional Code
 		

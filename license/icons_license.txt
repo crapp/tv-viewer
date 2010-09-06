@@ -55,9 +55,9 @@ color-management.png/gif
 Part of "The Gimp 2.x" shipped with openSUSE 11.0. License GPL
 http://www.gimp.org/
 ---------------------------------------
-channel-down.png/gif
 channel-jump.png/gif
-channel-up.png/gif
+channel-next.png/gif
+channel-prior.png/gif
 dialog-warning.png/gif
 dialog-error.png/gif
 forward-last.png/gif

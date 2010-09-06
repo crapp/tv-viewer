@@ -325,8 +325,8 @@ proc main_frontendUi {} {
 	ttk::treeview $stations.treeSlist -yscrollcommand [list $stations.scrbSlist set] -columns {name number} -show headings -selectmode browse -takefocus 0
 	ttk::scrollbar $stations.scrbSlist -command [list $stations.treeSlist yview]
 	
-	ttk::button $toolbChanCtrl.bChanDown -image $::icon_m(channel-down) -style Toolbutton -command [list chan_zapperDown $stations.treeSlist]
-	ttk::button $toolbChanCtrl.bChanUp -image $::icon_m(channel-up) -style Toolbutton -command [list chan_zapperUp $stations.treeSlist]
+	ttk::button $toolbChanCtrl.bChanDown -image $::icon_m(channel-next) -style Toolbutton -command [list chan_zapperNext $stations.treeSlist]
+	ttk::button $toolbChanCtrl.bChanUp -image $::icon_m(channel-prior) -style Toolbutton -command [list chan_zapperPrior $stations.treeSlist]
 	ttk::button $toolbChanCtrl.bChanJump -image $::icon_m(channel-jump) -style Toolbutton -command [list chan_zapperJump $stations.treeSlist]
 	
 	ttk::button $toolbPlay.bPlay -image $::icon_m(playback-start) -style Toolbutton -state disabled -command {event generate . <<start>>}
@@ -348,7 +348,7 @@ proc main_frontendUi {} {
 	
 	ttk::label $toolbPlay.lFillSpace
 	
-	ttk::button $toolbPlay.bVolMute -style Toolbutton -image $::icon_m(volume) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute mute]
+	ttk::button $toolbPlay.bVolMute -style Toolbutton -image $::icon_m(volume) -command {event generate . <<mute>>}
 	ttk::scale $toolbPlay.scVolume -orient horizontal -from 0 -to 100 -variable main(volume_scale) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute]
 	
 	label $toolbDispIcTxt.lDispIcon -compound center -background black -foreground white -image $::icon_s(starttv)
@@ -497,7 +497,7 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {testerrordialog}
+	bind . <Key-x> {puts "dict get volInc {*}[dict get $::keyseq volInc seq]"}
 	bind . <Key-y> {puts "bind motion [bind .fvidBg.cont <Motion>]"}
 	
 	command_socket
@@ -598,7 +598,7 @@ proc main_frontendUi {} {
 	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
 	wm minsize . 250 $height
 	if {$::mem(compact)} {
-		vid_wmCompact
+		event generate . <<wmCompact>>
 		if {$::option(window_remGeom)} {
 			wm geometry . $::mem(mainwidth)\x$::mem(mainheight)\+[subst $::mem(mainX)]\+[subst $::mem(mainY)]
 		}
@@ -606,7 +606,7 @@ proc main_frontendUi {} {
 	set ::vid(stayontop) $::mem(ontop)
 	vid_wmStayonTop $::vid(stayontop)
 	if {$::option(window_full)} {
-		after 500 {vid_wmFullscreen . .fvidBg.cont .fvidBg}
+		after 500 {event generate . <<wmFull>>}
 	}
 }
 
