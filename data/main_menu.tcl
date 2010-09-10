@@ -102,7 +102,7 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	#$mView add separator
 	$mView add cascade -label [mc "Pan&Scan"] -compound left -image $::icon_men(placeholder) -menu $mViewPan
 		$mViewPan add command -label [mc "Zoom +"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomInc>>} -accelerator {*}[dict get $::keyseq wmZoomInc name]
-		$mViewPan add command -label [mc "Zoom -"] -compound left -image $::icon_men(placeholder) -command {event geenrate . <<wmZoomDec>>} -accelerator {*}[dict get $::keyseq wmZoomDec name]
+		$mViewPan add command -label [mc "Zoom -"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomDec>>} -accelerator {*}[dict get $::keyseq wmZoomDec name]
 		$mViewPan add command -label [mc "Pan&Scan (16:9 / 4:3)"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomAuto>>} -accelerator {*}[dict get $::keyseq wmZoomAuto name]
 		$mViewPan add separator
 		$mViewPan add command -label [mc "Move up"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveUp>>} -accelerator {*}[dict get $::keyseq wmMoveUp name]
@@ -183,7 +183,6 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 proc main_menuContext {menubar toolbChanCtrl toolbPlay vidBg} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuContext \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\}"
 	set mContext [menu $vidBg.mContext -tearoff 0]
-	#$mContext add separator
 	
 	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg context
 	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg context
@@ -206,4 +205,23 @@ proc main_menuReFo {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	$mForw add checkbutton -label [mc "+10 seconds"] -accelerator {*}[dict get $::keyseq fileFow10s name] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10s vid(check_fow_10s)] -variable tv(check_fow_10s)
 	$mForw add checkbutton -label [mc "+1 minute"] -accelerator {*}[dict get $::keyseq fileFow1m name] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +1m vid(check_fow_1m)] -variable tv(check_fow_1m)
 	$mForw add checkbutton -label [mc "+10 minutes"] -accelerator {*}[dict get $::keyseq fileFow10m name] -command [list vid_seekSwitch .ftoolb_Play.bForwSmall 1 +10m vid(check_fow_10m)] -variable tv(check_fow_10m)
+}
+
+proc main_menuDestroy {menubar toolbChanCtrl toolbPlay vidBg handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuDestroy \033\[0m \{$menubar\} \{$toolbChanCtrl\} \{$toolbPlay\} \{$vidBg\} \{$handler\}"
+	destroy $menubar.mbTvviewer.mTvviewer
+	destroy $menubar.mbNavigation.mNavigation
+	destroy $menubar.mbView.mView
+	destroy $menubar.mbAudio.mAudio
+	destroy $menubar.mbHelp.mHelp
+	destroy $toolbPlay.mbRewChoose.mRewChoose
+	destroy $toolbPlay.mbForwChoose.mForwChoose
+	destroy .fvidBg.mContext
+	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuReFo $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	main_menuContext $menubar $toolbChanCtrl $toolbPlay $vidBg
 }

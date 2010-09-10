@@ -168,18 +168,172 @@ proc key_sequencesApply {top tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApply \033\[0m \{$top\} \{$tree\}"
 	catch {file delete $::option(home)/config/key-sequences.key}
 	set keyf [open $::option(home)/config/key-sequences.key w+]
+	#FIXME if +,-,[0-9],Enter,/,*,, need to add a keypad sequence
 	foreach child [$tree children {}] {
 		if {[string match *fat* [$tree item $child -tags]] || [string match *small* [$tree item $child -tags]] || [string trim [$tree item $child -values]] == {}} continue
 		lappend setKeys [lindex [$tree item $child -values] 1]
 	}
 	foreach key [dict keys $::keyseq] children $setKeys {
-		puts $keyf [list $key $children]
+		puts $keyf [list $key name $children]
+		set i 1
+		set doResidue 1
+		if {[string match "+" $children] || [string match "-" $children]} {
+			set keySeq [regsub -all {^\+} $children <Key-plus]
+			if {"$keySeq" == "<Key-plus"} {
+				append childSeqKP "<Key-KP_Add"
+			}
+			set keySeq [regsub -all {^\-} $keySeq <Key-minus]
+			if {"$keySeq" == "<Key-minus"} {
+				append childSeqKP "<Key-KP_Subtract"
+			}
+			append childSeq "$keySeq"
+			unset -nocomplain keySeq
+			set doResidue 0
+		}
+		if {[string match "*++" $children] || [string match "*+-" $children]} {
+			set children [regsub -all {\+\-} $children +Key-minus]
+			set children [regsub -all {\+\+} $children +Key-plus]
+			set doResidue 1
+		}
+		if {$doResidue} {
+			set returnValue [key_sequencesApplyManString $children $i]
+			if {[llength $returnValue] > 1} {
+				set childSeq [lindex $returnValue 0]
+				set childSeqKP [lindex $returnValue 1]
+			} else {
+				set childSeq $returnValue
+			}
+		}
+		if {[info exists childSeqKP]} {
+			append childSeq ">"
+			append childSeqKP ">"
+			puts $keyf [list $key seq "$childSeq $childSeqKP"]
+		} else {
+			append childSeq ">"
+			puts $keyf [list $key seq $childSeq]
+		}
+		unset -nocomplain childSeq childSeqKP
 	}
+	log_writeOutTv 0 "Writing new shortcuts to"
+	log_writeOutTv 0 "$::option(home)/config/key-sequences.key"
 	close $keyf
-	#First write new values to extra file
-	#Second reread file and recreate keysequences dict
-	#Destroy all menus and rebuild with new accelerators
-	#Delete all events and keybindings and recreate with new ones.
+	destroy .key
+	process_KeyFile
+	#FIXME What happens with menus if we recreate them while in file playback mode, much better would be only to change accelerator?
+	main_menuDestroy .foptions_bar .fstations.ftoolb_ChanCtrl .ftoolb_Play .fvidBg standard
+	event_delete all
+	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
+		event_constr 0
+	} else {
+		event_constr 1
+	}
+}
+
+proc key_sequencesApplyManString {children i} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApplyManString \033\[0m \{$children\}"
+	foreach elem [split $children "+"] {
+		if {[string match "Ctrl" [string trim $elem]]} {
+			if {$i == 1} {
+				append childSeq "<Control"
+			} else {
+				append childSeq "-Control"
+			}
+			incr i
+			continue
+		}
+		if {[string match {[A-Z]} $elem]} {
+			if {$i == 1} {
+				append childSeq "<Key-[string tolower $elem]"
+			} else {
+				if {[string match "*Shift*" $childSeq]} {
+					append childSeq "-Key-$elem"
+				} else {
+					append childSeq "-Key-[string tolower $elem]"
+				}
+			}
+			incr i
+			continue
+		}
+		if {[regexp {[^A-Za-z]*} $elem] && [string match "*Shift*" $elem] != 1 && [string match "*Alt" $elem] != 1 && [string match "*Ctrl*" $elem] != 1 && [string match "*Key-*" $elem] != 1} {
+			if {[string match "Super" $elem]} {
+				if {$i == 1} {
+					append childSeq "<Mod4"
+				} else {
+					append childSeq "-Mod4"
+				}
+				incr i
+				continue
+			}
+			if {[string match "Return" $elem]} {
+				if {$i == 1} {
+					append childSeq "<Key-$elem"
+					append childSeqKP "<Key-KP_Enter"
+				} else {
+					append childSeq "-Key-$elem"
+					append childSeqKP "$childSeq\-Key-KP_Enter"
+				}
+				incr i
+				continue
+			}
+			if {[string match "asterisk" $elem]} {
+				if {$i == 1} {
+					append childSeq "<Key-$elem"
+					append childSeqKP "<Key-KP_Multiply"
+				} else {
+					append childSeq "-Key-$elem"
+					append childSeqKP "$childSeq\-Key-KP_Multiply"
+				}
+				incr i
+				continue
+			}
+			if {[string match "slash" $elem]} {
+				if {$i == 1} {
+					append childSeq "<Key-$elem"
+					append childSeqKP "<Key-KP_Divide"
+				} else {
+					append childSeq "-Key-$elem"
+					append childSeqKP "$childSeq\-Key-KP_Divide"
+				}
+				incr i
+				continue
+			}
+			if {[string match "comma" $elem]} {
+				if {$i == 1} {
+					append childSeq "<Key-$elem"
+					append childSeqKP "<Key-KP_Delete"
+				} else {
+					append childSeq "-Key-$elem"
+					append childSeqKP "$childSeq\-Key-KP_Delete"
+				}
+				incr i
+				continue
+			}
+			if {$i == 1} {
+				append childSeq "<Key-$elem"
+			} else {
+				append childSeq "-Key-$elem"
+			}
+			incr i
+			continue
+		}
+		if {[string match "*Key-minus*" $elem]} {
+			append childSeqKP "$childSeq-Key-KP_Subtract"
+		}
+		if {[string match "*Key-plus*" $elem]} {
+			append childSeqKP "$childSeq-Key-KP_Add"
+		}
+		if {$i == 1} {
+			append childSeq "<$elem"
+		} else {
+			append childSeq "-$elem"
+		}
+		incr i
+	}
+	if {[info exists childSeqKP]} {
+		return [list $childSeq $childSeqKP]
+	} else {
+		return [list $childSeq]
+	}
 }
 
 proc key_sequencesEdit {tree} {
@@ -246,17 +400,17 @@ proc key_sequencesEdit {tree} {
 
 proc key_sequencesProcess {key} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$key\}"
-	set noKey {Num_Lock Print Scroll_Lock Pause Menu ISO_Level3_Shift Tab Caps_Lock}
+	set noKey {Num_Lock Print Scroll_Lock Pause Menu ISO_Level3_Shift Tab Caps_Lock ?? Meta_L Meta_R}
 	foreach k $noKey {
-		if {[string match $k $key]} {
+		if {"$k" == "$key"} {
 			log_writeOutTv 1 "It is not possible to use $key for a shortcut"
 			return
 		}
 	}
 	if {[string match KP_* $key]} {
 		array set kpKey {
-			KP_Divide "/"
-			KP_Multiply "*"
+			KP_Divide "slash"
+			KP_Multiply "asterisk"
 			KP_Subtract "-"
 			KP_Home 7
 			KP_Up 8
@@ -270,7 +424,7 @@ proc key_sequencesProcess {key} {
 			KP_Down 2
 			KP_Next 3
 			KP_Insert 0
-			KP_Delete ","
+			KP_Delete "comma"
 		}
 		foreach kp [array get kpKey] {
 			if {"$kp" == "$key"} {
@@ -278,6 +432,9 @@ proc key_sequencesProcess {key} {
 				break
 			}
 		}
+	}
+	if {[string match Enter $key]} {
+		set key Return
 	}
 	if {[string match Control_* $key]} {
 		set key Ctrl
@@ -300,7 +457,30 @@ proc key_sequencesProcess {key} {
 	if {[string length $key] == 1 && [regexp {[a-z]} $key]} {
 		set key [string toupper $key]
 	}
-	if {"[lindex $::key(sequenceList) end]" == "$key"} return
+	if {"[lindex $::key(sequenceList) end]" == "$key" && [llength $::key(sequenceList)] == 1} return
+	set goOn 1
+	if {[llength $::key(sequenceList)] >= 1 && $::key(sequenceDone) == 0} {
+		set lastKey {Ctrl Shift Super Alt}
+		set goOn 0
+		foreach k $lastKey {
+			if {"[lindex $::key(sequenceList) end]" == "$k"} {
+				set goOn 1
+				break
+			}
+		}
+	}
+	puts "goOn $goOn"
+	puts "key $key"
+	puts "::key(sequenceDone) $::key(sequenceDone)"
+	puts "llength ::key(sequenceList) [llength $::key(sequenceList)]"
+	if {$goOn == 0} {
+		log_writeOutTv 1 "It is only allowed to use several modifier keys"
+		if {$::key(sequenceDone)} {
+			set ::key(sequenceList) ""
+			set ::key(sequenceDone) 0
+		}
+		return
+	}
 	if {$::key(sequenceDone)} {
 		set ::key(sequenceList) ""
 		set ::key(sequenceDone) 0
@@ -326,7 +506,7 @@ proc key_sequencesEditApply {tree lbl} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$tree\} \{$lbl\}"
 	set end 0
 	foreach child [$tree children {}] {
-		if {[string is integer "$::key(entrySequence)"]} {
+		if {[string trim $::key(entrySequence)] != {} && [string is integer "$::key(entrySequence)"]} {
 			$lbl configure -text [mc "Conflict detected with station by number \[0-9\]"] -image $::icon_m(dialog-warning) -compound left
 			log_writeOutTv 1 "Conflict detected with station by number \[0-9\]"
 			set end 1

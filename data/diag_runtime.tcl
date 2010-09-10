@@ -32,7 +32,7 @@ might not point to the correct location.
 exit 1
 }
 
-#FIXME Reword whole diag runtime
+#FIXME Rework whole diag runtime - use procs
 
 after 200
 

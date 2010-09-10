@@ -128,7 +128,7 @@ proc process_KeyFile {} {
 	dict set ::keyseq wmSize2 seq <Control-Key-2>
 	dict set ::keyseq wmSize2 label [mc "Double window size"]
 	
-	dict set ::keyseq scrshot name {Win Key+S}
+	dict set ::keyseq scrshot name Super+S
 	dict set ::keyseq scrshot seq <Mod4-Key-s>
 	dict set ::keyseq scrshot label [mc "Take a screenshot"]
 	
@@ -172,4 +172,15 @@ proc process_KeyFile {} {
 	dict set ::keyseq fileEnd name End
 	dict set ::keyseq fileEnd seq <Key-End>
 	dict set ::keyseq fileEnd label [mc "File end"]
+	
+	if {[file exists "$::option(home)/config/key-sequences.key"]} {
+		set open_key_file [open "$::option(home)/config/key-sequences.key" r]
+		while {[gets $open_key_file line]!=-1} {
+			if {[string match #* $line] || [string trim $line] == {}} continue
+			puts "line proc_key_file $line"
+			dict set ::keyseq {*}$line
+		}
+	} else {
+		catch {log_writeOutTv 0 "Using standard key sequences"}
+	}
 }

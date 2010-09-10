@@ -180,7 +180,7 @@ if {$start_options(zoom_incr)} {
 	exit 0
 }
 if {$start_options(zoom_decr)} {
-	command_WritePipe 0 "tv-viewer_main event geenrate . <<wmZoomDec>>"
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomDec>>"
 	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr"
 	exit 0
 }

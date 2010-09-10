@@ -19,6 +19,7 @@
 proc event_constr {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_constr \033\[0m \{$handler\}"
 	#Construct events and make necessary bindings
+	#handler 0 == nokanal; 1 == existing stations
 	event add <<menuTv>> {*}[dict get $::keyseq mTv seq]
 	bind . <<menuTv>> [list event generate .foptions_bar.mbTvviewer <<Invoke>>]
 	event add <<menuNav>> {*}[dict get $::keyseq mNav seq]
@@ -124,15 +125,40 @@ proc event_constr {handler} {
 	}
 }
 
-proc event_deleSedit {handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_deleSedit \033\[0m \{$handler\}"
-	event delete <<record>>
-	bind . <<record>> {}
-	event delete <<timeshift>>
-	bind . <<timeshift>> {}
-	event delete <<teleview>>
-	bind . <<teleview>> {}
+proc event_delete {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_delete \033\[0m \{$handler\}"
+	#handler all = delete all virtual events; nomplay = no mplayer installed; nokanal = no station config file
+	if {"$handler" == "all"} {
+		set baseEvents {<<Undo>> <<PasteSelection>> <<Copy>> <<Cut>> <<PrevWindow>> <<Redo>> <<Paste>>}
+		foreach event [event info] {
+			set doDel 1
+			foreach baseEvent $baseEvents {
+				if {"$event" == "$baseEvent"} {
+					set doDel 0
+					break
+				}
+			}
+			if {$doDel == 0} {
+				continue
+			}
+			event delete $event
+		}
+	}
+	if {"$handler" == "nomplay"} {
+		event delete <<record>>
+		bind . <<record>> {}
+		event delete <<timeshift>>
+		bind . <<timeshift>> {}
+		event delete <<teleview>>
+		bind . <<teleview>> {}
+	}
 	if {"$handler" == "nokanal"} {
+		event delete <<record>>
+		bind . <<record>> {}
+		event delete <<timeshift>>
+		bind . <<timeshift>> {}
+		event delete <<teleview>>
+		bind . <<teleview>> {}
 		event delete <<stationPrior>>
 		event delete <<stationNext>>
 		event delete <<stationJump>>

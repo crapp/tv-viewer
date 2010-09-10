@@ -180,6 +180,7 @@ proc main_frontendDisableTree {tree com} {
 
 proc main_frontendChannelHandler {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendChannelHandler \033\[0m \{$handler\}"
+	#handler main; sedit
 	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 		log_writeOutTv 2 "There are no stations to insert into station list."
 		set status_vid_Playback [vid_callbackMplayerRemote alive]
@@ -207,7 +208,7 @@ proc main_frontendChannelHandler {handler} {
 				}
 			}
 			catch {array unset ::kanalitemID}
-			event_deleSedit nokanal
+			event_delete nokanal
 			set status [monitor_partRunning 2]
 			if {[lindex $status 0] == 1} {
 				command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
@@ -497,7 +498,7 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "dict get volInc {*}[dict get $::keyseq volInc seq]"}
+	bind . <Key-x> {puts "event info [event info] \n"}
 	bind . <Key-y> {puts "bind motion [bind .fvidBg.cont <Motion>]"}
 	
 	command_socket
@@ -516,7 +517,7 @@ proc main_frontendUi {} {
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_deleSedit nomplay
+				event_delete nomplay
 			}
 		} else {
 			if {[string trim [auto_execok mplayer]] != {}} {
@@ -531,7 +532,7 @@ proc main_frontendUi {} {
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_deleSedit nomplay
+				event_delete nomplay
 			}
 		}
 	} else {
@@ -548,7 +549,7 @@ proc main_frontendUi {} {
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_deleSedit nomplay
+				event_delete nomplay
 			}
 		} else {
 			if {[string trim [auto_execok mplayer]] == {}} {
@@ -558,7 +559,7 @@ proc main_frontendUi {} {
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_deleSedit nomplay
+				event_delete nomplay
 			} else {
 				if {$::main(running_recording) == 1} {
 					after 1500 {wm deiconify . ; record_linkerPrestart record ; record_linkerRec record}
