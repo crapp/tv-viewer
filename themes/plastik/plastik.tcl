@@ -5,14 +5,14 @@
 #  Copyright (c) 2004 Googie
 #  Copyright (c) 2005 Pat Thoyts <patthoyts@users.sourceforge.net>
 #
-# $Id: plastik.tcl,v 1.11 2010/02/16 21:14:55 sbron Exp $
+# $Id: plastik.tcl,v 1.12 2010/09/05 13:54:20 sbron Exp $
 
 package require Tk 8.4
 package require tile 0.8.0
 
 namespace eval ttk::theme::plastik {
 
-    variable version 0.6.1
+    variable version 0.6.2
     package provide ttk::theme::plastik $version
 
     variable colors
@@ -25,10 +25,9 @@ namespace eval ttk::theme::plastik {
     }
 
     variable hover hover
-    # Need a two-step check as 8.4 doesn't understand beta version numbers
-    if {![package vsatisfies [package present Ttk] 8.6] || \
-      ![package vsatisfies [package present Ttk] 8.6b1]} {
-	# The hover state is not supported prior to 8.6b1
+    if {[package vsatisfies [package present Ttk] 8-8.5.9] || \
+      [package vsatisfies [package present Ttk] 8.6-8.6b1]} {
+	# The hover state is not supported prior to 8.6b1 or 8.5.9
 	set hover active
     }
 
@@ -217,56 +216,53 @@ ttk::style theme create plastik -parent default -settings {
     ttk::style configure TNotebook.Tab -padding {6 2 6 2} -expand {0 0 2}
     ttk::style map TNotebook.Tab -expand [list selected {1 2 4 2}]
 
-    if {[package vsatisfies [package present Ttk] 8.6] && \
-      [package vsatisfies [package present Ttk] 8.6b1]} {
-    	# Spinbox (only available since 8.6b1)
-	ttk::style layout TSpinbox {
-	    Spinbox.field -side top -sticky we -children {
-		Spinbox.buttons -side right -border 1 -children {
-		    null -side right -sticky {} -children {
-			Spinbox.uparrow -side top -sticky e
-			Spinbox.downarrow -side bottom -sticky e
-		    }
+    # Spinbox (only available since 8.6b1 or 8.5.9)
+    ttk::style layout TSpinbox {
+	Spinbox.field -side top -sticky we -children {
+	    Spinbox.buttons -side right -border 1 -children {
+		null -side right -sticky {} -children {
+		    Spinbox.uparrow -side top -sticky e
+		    Spinbox.downarrow -side bottom -sticky e
 		}
-		Spinbox.padding -sticky nswe -children {
-	    	    Spinbox.textarea -sticky nswe
-    		}
+	    }
+	    Spinbox.padding -sticky nswe -children {
+		Spinbox.textarea -sticky nswe
 	    }
 	}
-    	ttk::style element create Spinbox.field \
-  	  image [list $I(spinbox-n) focus $I(spinbox-f)] \
-  	  -border {2 2 18 2} -padding {3 0 0} -sticky news
-	ttk::style element create Spinbox.buttons \
-	  image [list $I(spinbut-n) {hover !disabled} $I(spinbut-a)] \
-	  -border {5 3 3} -padding {0 0 1 0}
-	ttk::style element create Spinbox.uparrow image [list $I(spinup-n) \
-	  disabled	$I(spinup-d) \
-	  pressed	$I(spinup-p) \
-	]
-	ttk::style element create Spinbox.downarrow image [list $I(spindown-n) \
-	  disabled	$I(spindown-d) \
-	  pressed	$I(spindown-p) \
-	]
-	ttk::style element create Spinbox.padding image $I(spinbut-n) \
-	  -border {0 3}
-
-    	# Treeview
-	ttk::style configure Treeview -background $colors(-window)
-	ttk::style map Treeview \
-	  -background [list selected $colors(-selectbg)] \
-	  -foreground [list selected $colors(-selectfg)]
-    } else {
-    	# Treeview
-	ttk::style configure Row -background $colors(-window)
-	ttk::style configure Cell -background $colors(-window)
-	ttk::style map Row \
-	  -background [list selected $colors(-selectbg)] \
-	  -foreground [list selected $colors(-selectfg)]
-	ttk::style map Cell \
-	  -background [list selected $colors(-selectbg)] \
-	  -foreground [list selected $colors(-selectfg)]
-	ttk::style map Item \
-	  -background [list selected $colors(-selectbg)] \
-	  -foreground [list selected $colors(-selectfg)]
     }
+    ttk::style element create Spinbox.field \
+      image [list $I(spinbox-n) focus $I(spinbox-f)] \
+      -border {2 2 18 2} -padding {3 0 0} -sticky news
+    ttk::style element create Spinbox.buttons \
+      image [list $I(spinbut-n) {hover !disabled} $I(spinbut-a)] \
+      -border {5 3 3} -padding {0 0 1 0}
+    ttk::style element create Spinbox.uparrow image [list $I(spinup-n) \
+      disabled	$I(spinup-d) \
+      pressed	$I(spinup-p) \
+      ]
+    ttk::style element create Spinbox.downarrow image [list $I(spindown-n) \
+      disabled	$I(spindown-d) \
+      pressed	$I(spindown-p) \
+      ]
+    ttk::style element create Spinbox.padding image $I(spinbut-n) \
+      -border {0 3}
+    
+    # Treeview (since 8.6b1 or 8.5.9)
+    ttk::style configure Treeview -background $colors(-window)
+    ttk::style map Treeview \
+      -background [list selected $colors(-selectbg)] \
+      -foreground [list selected $colors(-selectfg)]
+
+    # Treeview (older version)
+    ttk::style configure Row -background $colors(-window)
+    ttk::style configure Cell -background $colors(-window)
+    ttk::style map Row \
+      -background [list selected $colors(-selectbg)] \
+      -foreground [list selected $colors(-selectfg)]
+    ttk::style map Cell \
+      -background [list selected $colors(-selectbg)] \
+      -foreground [list selected $colors(-selectfg)]
+    ttk::style map Item \
+      -background [list selected $colors(-selectbg)] \
+      -foreground [list selected $colors(-selectfg)]
 } }

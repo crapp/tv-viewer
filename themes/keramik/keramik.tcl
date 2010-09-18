@@ -5,7 +5,7 @@
 #  Copyright (c) 2004 Googie
 #  Copyright (c) 2004 Pat Thoyts <patthoyts@users.sourceforge.net>
 #
-# $Id: keramik.tcl,v 1.12 2009/01/24 13:26:16 sbron Exp $
+# $Id: keramik.tcl,v 1.13 2010/09/05 13:54:20 sbron Exp $
 
 package require Tk 8.4;                 # minimum version for Tile
 package require tile 0.8.0;             # depends upon tile 0.8.0
@@ -13,10 +13,10 @@ package require tile 0.8.0;             # depends upon tile 0.8.0
 namespace eval ttk {
     namespace eval theme {
         namespace eval keramik {
-            variable version 0.6.1
+            variable version 0.6.2
         }
         namespace eval keramik_alt {
-	    variable version 0.6.1
+	    variable version 0.6.2
 	}
     }
 }
@@ -34,10 +34,9 @@ namespace eval ttk::theme::keramik {
     }
 
     variable hover hover
-    # Need a two-step check as 8.4 doesn't understand beta version numbers
-    if {![package vsatisfies [package present Ttk] 8.6] || \
-      ![package vsatisfies [package present Ttk] 8.6b1]} {
-        # The hover state is not supported prior to 8.6b1
+    if {[package vsatisfies [package present Ttk] 8-8.5.9] || \
+      [package vsatisfies [package present Ttk] 8.6-8.6b1]} {
+        # The hover state is not supported prior to 8.6b1 or 8.5.9
         set hover active
     }
 
@@ -235,49 +234,46 @@ namespace eval ttk::theme::keramik {
 	#
 	ttk::style configure TLabelframe -borderwidth 2 -relief groove
 
-	if {[package vsatisfies [package present Ttk] 8.6] && \
-	  [package vsatisfies [package present Ttk] 8.6b1]} {
-    	    # Spinbox (only available since 8.6b1)
-	    ttk::style layout TSpinbox {
-	     	Spinbox.field -side top -sticky we -children {
-		    Spinbox.arrows -side right -sticky ns -children {
-			null -side right -sticky {} -children {
-    			    Spinbox.uparrow -side top -sticky w
-    			    Spinbox.downarrow -side bottom -sticky w
-			}
-		    }
-		    Spinbox.padding -sticky nswe -children {
-			Spinbox.textarea -sticky nswe
+	# Spinbox (only available since 8.6b1 or 8.5.9)
+	ttk::style layout TSpinbox {
+	    Spinbox.field -side top -sticky we -children {
+		Spinbox.arrows -side right -sticky ns -children {
+		    null -side right -sticky {} -children {
+			Spinbox.uparrow -side top -sticky w
+			Spinbox.downarrow -side bottom -sticky w
 		    }
 		}
+		Spinbox.padding -sticky nswe -children {
+		    Spinbox.textarea -sticky nswe
+		}
 	    }
-    	    ttk::style element create Spinbox.arrows image $I(spinbox-a) \
-	      -border {0 9} -padding 0
-	    ttk::style element create Spinbox.uparrow \
-	      image [list $I(spinup-n) {pressed !disabled} $I(spinup-p)]
-	    ttk::style element create Spinbox.downarrow \
-	      image [list $I(spindown-n) {pressed !disabled} $I(spindown-p)]
-	    
-	    # Treeview
-	    ttk::style configure Treeview -background $colors(-window)
-	    ttk::style map Treeview \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-        } else {
-	    # Treeview
-    	    ttk::style configure Treeview.Row -background $colors(-window)
-    	    ttk::style configure Row -background $colors(-window)
-	    ttk::style configure Cell -background $colors(-window)
-	    ttk::style map Row \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-	    ttk::style map Cell \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-	    ttk::style map Item \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
 	}
+	ttk::style element create Spinbox.arrows image $I(spinbox-a) \
+	  -border {0 9} -padding 0
+	ttk::style element create Spinbox.uparrow \
+	  image [list $I(spinup-n) {pressed !disabled} $I(spinup-p)]
+	ttk::style element create Spinbox.downarrow \
+	  image [list $I(spindown-n) {pressed !disabled} $I(spindown-p)]
+	    
+	# Treeview (since 8.6b1 or 8.5.9)
+	ttk::style configure Treeview -background $colors(-window)
+	ttk::style map Treeview \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
+
+	# Treeview (older version)
+	ttk::style configure Treeview.Row -background $colors(-window)
+	ttk::style configure Row -background $colors(-window)
+	ttk::style configure Cell -background $colors(-window)
+	ttk::style map Row \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
+      	ttk::style map Cell \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
+	ttk::style map Item \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
     }
 }
 
@@ -341,28 +337,26 @@ namespace eval ttk::theme::keramik_alt {
 
 	ttk::style configure TLabelframe -borderwidth 2 -relief groove
 
-	if {[package vsatisfies [package present Ttk] 8.6] && \
-	  [package vsatisfies [package present Ttk] 8.6b1]} {
-	    # Treeview
-	    ttk::style configure Treeview -background $colors(-window)
-	    ttk::style map Treeview \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-	} else {
-	    ttk::style configure Treeview -padding 0
-	    ttk::style configure Treeview.Row -background $colors(-window)
-	    ttk::style configure Row -background $colors(-window)
-	    ttk::style configure Cell -background $colors(-window)
-	    ttk::style map Row \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-	    ttk::style map Cell \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-	    ttk::style map Item \
-	      -background [list selected $colors(-selectbg)] \
-	      -foreground [list selected $colors(-selectfg)]
-	}
+	# Treeview (since 8.6b1 or 8.5.9)
+	ttk::style configure Treeview -background $colors(-window)
+	ttk::style map Treeview \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
+
+	# Treeview (older version)
+	ttk::style configure Treeview -padding 0
+	ttk::style configure Treeview.Row -background $colors(-window)
+	ttk::style configure Row -background $colors(-window)
+	ttk::style configure Cell -background $colors(-window)
+	ttk::style map Row \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
+	ttk::style map Cell \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
+	ttk::style map Item \
+	  -background [list selected $colors(-selectbg)] \
+	  -foreground [list selected $colors(-selectfg)]
     }
 }
 

@@ -6,11 +6,11 @@
 # To use this automatically within tile, the tile-using application should
 # use tile::availableThemes and tile::setTheme 
 #
-# $Id: pkgIndex.tcl,v 1.7 2009/01/24 13:26:16 sbron Exp $
+# $Id: pkgIndex.tcl,v 1.8 2010/09/05 13:59:44 sbron Exp $
 
 if {![file isdirectory [file join $dir plastik]]} { return }
 if {![package vsatisfies [package provide Tcl] 8.4]} { return }
 
-package ifneeded ttk::theme::plastik 0.6.1 \
+package ifneeded ttk::theme::plastik 0.6.2 \
     [list source [file join $dir plastik.tcl]]
 
