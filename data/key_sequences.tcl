@@ -33,7 +33,7 @@ proc key_sequences {} {
 		ttk::scrollbar $mftree.sb_key -orient vertical -command [list $mftree.tv_key yview]
 		ttk::button $mftree.b_ChangeKey -command [list key_sequencesEdit $mftree.tv_key] -text [mc "Change shortcut"]
 		ttk::button $mfbottom.b_save -text [mc "Apply"] -command [list key_sequencesApply $w $mftree.tv_key] -compound left -image $::icon_s(dialog-ok-apply)
-		ttk::button $mfbottom.b_default -text [mc "Default"] -command [list key_sequencesRead $mftree.tv_key]
+		ttk::button $mfbottom.b_default -text [mc "Default"] -command [list key_sequencesDefault $mftree.tv_key]
 		ttk::button $mfbottom.b_quit -text [mc "Cancel"] -command [list destroy $w] -compound left -image $::icon_s(dialog-cancel)
 		
 		grid $mftop -in $w -row 0 -column 0
@@ -57,7 +57,7 @@ proc key_sequences {} {
 			set font TkDefaultFont
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0;1;31m::font:: \033\[0m"
 		}
-		key_sequencesRead $mftree.tv_key
+		key_sequencesRead 1 $mftree.tv_key
 		bind $mftree.tv_key <B1-Motion> break
 		bind $mftree.tv_key <Motion> break
 		bind $mftree.tv_key <Double-ButtonPress-1> [list key_sequencesEdit $mftree.tv_key]
@@ -72,8 +72,9 @@ proc key_sequences {} {
 	}
 }
 
-proc key_sequencesRead {tree} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesRead \033\[0m \{$tree\}"
+proc key_sequencesRead {handler tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesRead \033\[0m \{$handler\} \{$tree\}"
+	#handler 0 == read default; 1 == read standard
 	foreach child [$tree children {}] {
 		$tree delete $child
 	}
@@ -138,6 +139,14 @@ proc key_sequencesRead {tree} {
 	}
 	set line_length 0
 	set i 1
+	if {$handler == 0} {
+		process_KeyFile 0
+		if {[winfo exists .key.default]} {
+			vid_wmCursor 1
+			grab release .key.default
+			destroy .key.default
+		}
+	}
 	foreach id [dict keys $::keyseq] {
 		if {$i == 1} {
 			$tree insert {} end -values [list [mc "General"]] -tags {fat noedit}
@@ -164,11 +173,46 @@ proc key_sequencesRead {tree} {
 	$tree column key -width [expr [font measure $font [mc "Key Sequence"]] + 25]
 }
 
+proc key_sequencesDefault {tree} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesDefault \033\[0m \{$tree\}"
+	set top [toplevel .key.default]
+	place [ttk::frame $top.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+	set fMain [ttk::frame $top.f_defMain]
+	set fBut [ttk::frame $top.f_defBut -style TLabelframe]
+	
+	ttk::label $fMain.l_defMessage -text [mc "Do you really want to load default values for all key sequences?
+This will happen immediately and can not be undone!"] -image $::icon_b(dialog-warning) -compound left
+	#~ ttk::checkbutton $fMain.cb_delAsk -text [mc "Don't ask next time"] -variable ::record(cbDelAsk)
+	
+	ttk::button $fBut.b_defCancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command {vid_wmCursor 1; grab release .key.default; destroy .key.default} -default active
+	ttk::button $fBut.b_defApply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply) -command [list key_sequencesRead 0 $tree]
+	
+	grid $fMain -in $top -row 0 -column 0 -sticky ew
+	grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady 3
+	
+	grid $fMain.l_defMessage -in $fMain -row 0 -column 0 -pady "3 7" -padx 5
+	#~ grid $fMain.cb_delAsk -in $fMain -row 1 -column 0 -sticky w -pady "0 7" -padx 5
+	
+	grid $fBut.b_defCancel -in $fBut -row 0 -column 0 -padx "0 3" -pady 7
+	grid $fBut.b_defApply -in $fBut -row 0 -column 1 -padx "0 3" -pady 7
+	grid anchor $fBut e
+	
+	wm iconphoto $top $::icon_b(key-bindings)
+	wm resizable $top 0 0
+	wm transient $top .key
+	wm protocol $top WM_DELETE_WINDOW {vid_wmCursor 1; grab release .key.default; destroy .key.default}
+	wm title $top [mc "Set shortcuts to default values"]
+	
+	tkwait visibility $top
+	vid_wmCursor 0
+	grab $top
+	focus $fBut.b_defCancel
+}
+
 proc key_sequencesApply {top tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApply \033\[0m \{$top\} \{$tree\}"
 	catch {file delete $::option(home)/config/key-sequences.key}
 	set keyf [open $::option(home)/config/key-sequences.key w+]
-	#FIXME if +,-,[0-9],Enter,/,*,, need to add a keypad sequence
 	foreach child [$tree children {}] {
 		if {[string match *fat* [$tree item $child -tags]] || [string match *small* [$tree item $child -tags]] || [string trim [$tree item $child -values]] == {}} continue
 		lappend setKeys [lindex [$tree item $child -values] 1]
@@ -218,9 +262,8 @@ proc key_sequencesApply {top tree} {
 	log_writeOutTv 0 "$::option(home)/config/key-sequences.key"
 	close $keyf
 	destroy .key
-	process_KeyFile
-	#FIXME What happens with menus if we recreate them while in file playback mode, much better would be only to change accelerator?
-	main_menuDestroy .foptions_bar .fstations.ftoolb_ChanCtrl .ftoolb_Play .fvidBg standard
+	process_KeyFile 1
+	main_menuCreate .foptions_bar .fstations.ftoolb_ChanCtrl .ftoolb_Play .fvidBg standard
 	event_delete all
 	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
 		event_constr 0
@@ -270,7 +313,7 @@ proc key_sequencesApplyManString {children i} {
 					append childSeqKP "<Key-KP_Enter"
 				} else {
 					append childSeq "-Key-$elem"
-					append childSeqKP "$childSeq\-Key-KP_Enter"
+					set childSeqKP [regsub -all "Key-$elem" $childSeq Key-KP_Enter]
 				}
 				incr i
 				continue
@@ -281,7 +324,7 @@ proc key_sequencesApplyManString {children i} {
 					append childSeqKP "<Key-KP_Multiply"
 				} else {
 					append childSeq "-Key-$elem"
-					append childSeqKP "$childSeq\-Key-KP_Multiply"
+					set childSeqKP [regsub -all "Key-$elem" $childSeq Key-KP_Multiply]
 				}
 				incr i
 				continue
@@ -292,7 +335,7 @@ proc key_sequencesApplyManString {children i} {
 					append childSeqKP "<Key-KP_Divide"
 				} else {
 					append childSeq "-Key-$elem"
-					append childSeqKP "$childSeq\-Key-KP_Divide"
+					set childSeqKP [regsub -all "Key-$elem" $childSeq Key-KP_Divide]
 				}
 				incr i
 				continue
@@ -303,7 +346,7 @@ proc key_sequencesApplyManString {children i} {
 					append childSeqKP "<Key-KP_Delete"
 				} else {
 					append childSeq "-Key-$elem"
-					append childSeqKP "$childSeq\-Key-KP_Delete"
+					set childSeqKP [regsub -all "Key-$elem" $childSeq Key-KP_Delete]
 				}
 				incr i
 				continue
@@ -317,10 +360,10 @@ proc key_sequencesApplyManString {children i} {
 			continue
 		}
 		if {[string match "*Key-minus*" $elem]} {
-			append childSeqKP "$childSeq-Key-KP_Subtract"
+			set childSeqKP "$childSeq[regsub -all {Key-minus} $elem -Key-KP_Subtract]"
 		}
 		if {[string match "*Key-plus*" $elem]} {
-			append childSeqKP "$childSeq-Key-KP_Add"
+			set childSeqKP "$childSeq[regsub -all {Key-plus} $elem -Key-KP_Add]"
 		}
 		if {$i == 1} {
 			append childSeq "<$elem"
@@ -457,7 +500,12 @@ proc key_sequencesProcess {key} {
 	if {[string length $key] == 1 && [regexp {[a-z]} $key]} {
 		set key [string toupper $key]
 	}
-	if {"[lindex $::key(sequenceList) end]" == "$key" && [llength $::key(sequenceList)] == 1} return
+	if {"[lindex $::key(sequenceList) end]" == "$key" && [llength $::key(sequenceList)] == 1} {
+		puts "lindex $::key(sequenceList) end [lindex $::key(sequenceList) end]"
+		puts "key $key"
+		puts "llength $::key(sequenceList) [llength $::key(sequenceList)]"
+		return
+	}
 	set goOn 1
 	if {[llength $::key(sequenceList)] >= 1 && $::key(sequenceDone) == 0} {
 		set lastKey {Ctrl Shift Super Alt}

@@ -16,9 +16,9 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc process_KeyFile {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: process_KeyFile \033\[0m"
-	#Main menu
+proc process_KeyFile {handler} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: process_KeyFile \033\[0m \{$handler\}"
+	#handler 0 = do not process key file ; 1 process key file
 	dict set ::keyseq mTv name Alt+T
 	dict set ::keyseq mTv seq <Alt-Key-t>
 	dict set ::keyseq mTv label [mc "TV-Viewer Menu"]
@@ -173,14 +173,15 @@ proc process_KeyFile {} {
 	dict set ::keyseq fileEnd seq <Key-End>
 	dict set ::keyseq fileEnd label [mc "File end"]
 	
-	if {[file exists "$::option(home)/config/key-sequences.key"]} {
-		set open_key_file [open "$::option(home)/config/key-sequences.key" r]
-		while {[gets $open_key_file line]!=-1} {
-			if {[string match #* $line] || [string trim $line] == {}} continue
-			puts "line proc_key_file $line"
-			dict set ::keyseq {*}$line
+	if {$handler} {
+		if {[file exists "$::option(home)/config/key-sequences.key"]} {
+			set open_key_file [open "$::option(home)/config/key-sequences.key" r]
+			while {[gets $open_key_file line]!=-1} {
+				if {[string match #* $line] || [string trim $line] == {}} continue
+				dict set ::keyseq {*}$line
+			}
+		} else {
+			catch {log_writeOutTv 0 "Using standard key sequences"}
 		}
-	} else {
-		catch {log_writeOutTv 0 "Using standard key sequences"}
 	}
 }

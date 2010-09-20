@@ -456,13 +456,8 @@ proc main_frontendUi {} {
 	
 	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	
-	main_menuTvview $menubar $toolbChanCtrl $toolbPlay $vidBg standard
-	main_menuNav $menubar $toolbChanCtrl $toolbPlay $vidBg standard
-	main_menuView $menubar $toolbChanCtrl $toolbPlay $vidBg standard
-	main_menuAud $menubar $toolbChanCtrl $toolbPlay $vidBg standard
-	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $vidBg standard
-	main_menuReFo $menubar $toolbChanCtrl $toolbPlay $vidBg standard
-	main_menuContext $menubar $toolbChanCtrl $toolbPlay $vidBg
+	main_menuCreate $menubar $toolbChanCtrl $toolbPlay $vidBg standard
+	
 	main_frontendChannelHandler main
 	
 	if {$::main(running_recording) == 0} {
@@ -498,8 +493,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts "event info [event info] \n"}
-	bind . <Key-y> {puts "bind motion [bind .fvidBg.cont <Motion>]"}
+	bind . <Key-x> {vid_wmCursor 0}
+	bind . <Key-y> {vid_wmCursor 1}
 	
 	command_socket
 	

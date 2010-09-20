@@ -275,7 +275,7 @@ start_options
 #It is time to load all config values
 process_configRead
 process_configMem
-process_KeyFile
+process_KeyFile 1
 #Sourcing logfile and launching log process
 source $::option(root)/data/log_viewer.tcl
 log_viewerCheck
