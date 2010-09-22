@@ -118,8 +118,8 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
 			$mNavForw entryconfigure 2 -accelerator {*}[dict get $::keyseq fileFow10m name]
 			$mNavForw entryconfigure 3 -accelerator {*}[dict get $::keyseq fileEnd name]
 	} else {
-		$mNav add command -label [mc "Prior station"] -compound left -image $::icon_men(channel-prior) -command [list chan_zapperPrior .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationPrior name]
-		$mNav add command -label [mc "Next station"] -compound left -image $::icon_men(channel-next) -command [list chan_zapperNext .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationNext name]
+		$mNav add command -label [mc "Prior Station"] -compound left -image $::icon_men(channel-prior) -command [list chan_zapperPrior .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationPrior name]
+		$mNav add command -label [mc "Next Station"] -compound left -image $::icon_men(channel-next) -command [list chan_zapperNext .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationNext name]
 		$mNav add command -label [mc "Station jumper"] -compound left -image $::icon_men(channel-jump) -command [list chan_zapperJump .fstations.treeSlist] -accelerator {*}[dict get $::keyseq stationJump name]
 		$mNav add separator
 		$mNav add command -label [mc "Play"] -compound left -image $::icon_men(playback-start) -command {event generate . <<start>>} -state disabled -accelerator {*}[dict get $::keyseq filePlay name]
@@ -129,7 +129,7 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		$mNav add cascade -label [mc "Rewind"] -compound left -image $::icon_men(rewind-small) -state disabled -menu $mNavRew
 			$mNavRew add command -label [mc "-10 seconds"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10s>>} -accelerator {*}[dict get $::keyseq fileRew10s name]
 			$mNavRew add command -label [mc "-1 minute"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_1m>>} -accelerator {*}[dict get $::keyseq fileRew1m name]
-			$mNavRew add command -label [mc "-10 minute"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10m>>} -accelerator {*}[dict get $::keyseq fileRew10m name]
+			$mNavRew add command -label [mc "-10 minutes"] -compound left -image $::icon_men(rewind-small) -command {event generate . <<rewind_10m>>} -accelerator {*}[dict get $::keyseq fileRew10m name]
 			$mNavRew add command -label [mc "File beginning"] -compound left -image $::icon_men(rewind-first) -command {event generate . <<rewind_start>>} -accelerator {*}[dict get $::keyseq fileHome name]
 		$mNav add cascade -label [mc "Forward"] -compound left -image $::icon_men(forward-small) -state disabled -menu $mNavForw
 			$mNavForw add command -label [mc "+10 seconds"] -compound left -image $::icon_men(forward-small) -command {event generate . <<forward_10s>>} -accelerator {*}[dict get $::keyseq fileFow10s name]

@@ -144,7 +144,7 @@ proc process_configRead {} {
 
 proc process_configMem {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configMem \033\[0m"}
-	#FIXME The values for width and height are quite randow and were only chosen to have some fallback values.
+	#FIXME The values for width and height are quite random and were only chosen to have some fallback values.
 	array set ::mem {
 		mainwidth 654
 		mainheight 480

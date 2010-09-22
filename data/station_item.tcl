@@ -230,8 +230,8 @@ proc station_itemAddEdit {tree handler} {
 	wm transient $wtop .station
 	if {$::option(tooltips) == 1} {
 		if {$::option(tooltips_editor) == 1} {
-			settooltip $wfe.e_station [mc "Provide a name for the television station."]
-			settooltip $wfe.e_freq [mc "Frequency for the station. E.g. 175.250"]
+			settooltip $wfe.e_station [mc "Provide a name for the television station"]
+			settooltip $wfe.e_freq [mc "Frequency for the station, E.g. 175.250"]
 			settooltip $wfe.mb_input [mc "Video input for this station. 
 Normally you want television input."]
 			settooltip $wfe.cb_External [mc "Use an external tuner"]
@@ -241,8 +241,6 @@ You may use this substitutions:
 %%F  Frequency
 %%S  Station name
 e.g. externalTune %%F %%S"]
-			settooltip $wfb.b_apply [mc "Apply changes and close window."]
-			settooltip $wfb.b_exit [mc "Exit without changes."]
 		}
 	}
 	grab release .station

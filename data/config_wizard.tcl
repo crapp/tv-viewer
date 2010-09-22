@@ -93,9 +93,9 @@ proc config_wizardMainUi {} {
 	
 	process_config_wizardRead
 	
-	settooltip $wfbtn.button_save [mc "Apply your changes and exit preferences dialog."]
-	settooltip $wfbtn.b_default [mc "Load default values, for the corresponding section."]
-	settooltip $wfbtn.button_quit [mc "Discard changes and close preferences dialog."]
+	settooltip $wfbtn.button_save [mc "Apply your changes and exit preferences dialog"]
+	settooltip $wfbtn.b_default [mc "Load default values, for the corresponding section"]
+	settooltip $wfbtn.button_quit [mc "Discard changes and close preferences dialog"]
 	
 	set ::config(rec_running) 0
 	set status_time [monitor_partRunning 4]

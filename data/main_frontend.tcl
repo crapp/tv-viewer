@@ -102,6 +102,7 @@ proc main_frontendExitViewer {} {
 			set ::mem(sbarTime) $::menu(cbViewStatust)
 			continue
 		}
+		#FIXME Problem with mainX and Y when exiting from fullscreen. Writes expr to mem file.
 		puts $wconfig_mem "$okey $oelem"
 	}
 	close $wconfig_mem
@@ -187,6 +188,14 @@ proc main_frontendChannelHandler {handler} {
 		if {$status_vid_Playback != 1} {
 			vid_playbackStop 0 pic
 		}
+		set font [ttk::style lookup [.fstations.treeSlist cget -style] -font]
+		if {[string trim $font] == {}} {
+			set font TkDefaultFont
+		}
+		.fstations.treeSlist heading name -text [mc "Name"]
+		.fstations.treeSlist column name -width [expr [font measure $font [mc "Name"]] + 20]
+		.fstations.treeSlist heading number -text [mc "No"]
+		.fstations.treeSlist column number -width [expr [font measure $font [mc "No"]] + 20] -anchor center
 		main_frontendDisableTree .fstations.treeSlist 1
 		bind .fstations.treeSlist <<TreeviewSelect>> {}
 		foreach widget [split [winfo children .ftoolb_Top]] {
@@ -315,7 +324,7 @@ proc main_frontendUi {} {
 	ttk::menubutton $menubar.mbNavigation -text [mc "Navigation"] -style Toolbutton -underline 0 -menu $menubar.mbNavigation.mNavigation
 	ttk::menubutton $menubar.mbView -text [mc "View"] -style Toolbutton -underline 0 -menu $menubar.mbView.mView
 	ttk::menubutton $menubar.mbAudio -text [mc "Audio"] -style Toolbutton -underline 0 -menu $menubar.mbAudio.mAudio
-	ttk::menubutton $menubar.mbHelp -text Help -style Toolbutton -underline 0 -menu $menubar.mbHelp.mHelp
+	ttk::menubutton $menubar.mbHelp -text [mc "Help"] -style Toolbutton -underline 0 -menu $menubar.mbHelp.mHelp
 	
 	ttk::button $toolbTop.bTimeshift -image $::icon_m(timeshift) -style Toolbutton -command {event generate . <<timeshift>>}
 	ttk::button $toolbTop.bRecord -image $::icon_m(record) -style Toolbutton -command {event generate . <<record>>}

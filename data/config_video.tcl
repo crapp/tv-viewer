@@ -62,7 +62,7 @@ proc option_screen_3 {} {
 		menu $::window(video_nb1).mbDeint -tearoff 0
 		ttk::label $frame_nb1.l_lf_autoq -text [mc "Postprocessing level"]
 		spinbox $frame_nb1.sb_lf_autoq -from 0 -to 6 -state readonly -textvariable choice(sb_autoq)
-		ttk::label $frame_nb1.l_lf_cache -text [mc "Cache size (kb)"]
+		ttk::label $frame_nb1.l_lf_cache -text [mc "Cache size (kB)"]
 		ttk::menubutton $frame_nb1.mb_lf_cache -menu $::window(video_nb1).mbCache -textvariable choice(mbCache)
 		menu $::window(video_nb1).mbCache -tearoff 0
 		ttk::label $frame_nb1.l_lf_threads -text [mc "Threads for decoding"]
@@ -292,25 +292,25 @@ proc option_screen_3 {} {
 						set frame_nb1  "$::window(video_nb1_cont).f_video2"
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_vo [mc "Select the video ouput driver.
 xv should provide the best performance."]
-						settooltip $::window(video_nb1_cont).f_video2.mb_lf_deint [mc "Select the deinterlace filter."]
+						settooltip $::window(video_nb1_cont).f_video2.mb_lf_deint [mc "Select the deinterlace filter"]
 						settooltip $::window(video_nb1_cont).f_video2.sb_lf_autoq [mc "Changes the level of postprocesseing.
 A value of 0 deactivates postprocessing."]
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_cache [mc "Specify how much memory (in kBytes) should be used for TV playback.
 The lower this value is the faster you may switch between stations.
 But a low value could cause other problems.
 A value of 0 will deactivate cache use."]
-						settooltip $frame_nb1.sb_lf_threads [mc "Sets the number of threads for decoding."]
+						settooltip $frame_nb1.sb_lf_threads [mc "Sets the number of threads for decoding"]
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_dr [mc "If checked, enables direct rendering. This is not supported
 for all video ouput drivers."]
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_double [mc "Double buffering fixes flicker by storing two frames in memory
 and displaying one, while decoding another."]
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_slice [mc "Enable / Disable drawing video by 16-pixel height slices/bands.
 May help in better video playback."]
-						settooltip $::window(video_nb1_cont).f_video2.cb_lf_framedrop [mc "Skip displaying some frames to maintain A/V sync."]
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_framedrop [mc "Skip displaying some frames to maintain A/V sync"]
 						settooltip $::window(video_nb1_cont).f_video2.cb_lf_hframedrop [mc "More intense frame dropping. May lead to image distortion."]
-						settooltip $::window(video_nb1_cont).f_video2.cb_lf_screensaver [mc "Enable / Disable screensaver while playback."]
-						settooltip $::window(video_nb1_cont).f_video2.rb_lf_mplayer_screens [mc "Use MPlayer to deactivate the screensaver."]
-						settooltip $::window(video_nb1_cont).f_video2.rb_lf_heartbeat_screens [mc "If MPlayer can't deactivate your screensaver, use this heartbeat hack."]
+						settooltip $::window(video_nb1_cont).f_video2.cb_lf_screensaver [mc "Enable / Disable screensaver while playback"]
+						settooltip $::window(video_nb1_cont).f_video2.rb_lf_mplayer_screens [mc "Use MPlayer to deactivate the screensaver"]
+						settooltip $::window(video_nb1_cont).f_video2.rb_lf_heartbeat_screens [mc "If MPlayer can't deactivate your screensaver, use this heartbeat hack"]
 					} else {
 						set frame_nb1  "$::window(video_nb1_cont).f_video2"
 						settooltip $::window(video_nb1_cont).f_video2.mb_lf_vo {}

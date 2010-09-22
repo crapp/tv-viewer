@@ -26,7 +26,7 @@ proc station_searchUi {tree} {
 	set bf [ttk::frame $wtop.f_button -style TLabelframe]
 	
 	ttk::labelframe $mf.lf_search -text [mc "Station search options"]
-	ttk::checkbutton $mf.cb_lf_search_append -text [mc "Append stations to existing list"] -variable search(append)
+	ttk::checkbutton $mf.cb_lf_search_append -text [mc "Append stations"] -variable search(append)
 	ttk::checkbutton $mf.cb_lf_search_full -text [mc "Perform a full frequency sweep"] -variable search(full) -command [list station_searchFull $mf]
 	ttk::menubutton $mf.mb_lf_search_full_dist -menu $mf.mbFull_dist -textvariable search(mbFull_dist)
 	menu $mf.mbFull_dist -tearoff 0
@@ -104,21 +104,19 @@ proc station_searchUi {tree} {
 	}
 	if {$::option(tooltips) == 1} {
 		if {$::option(tooltips_editor) == 1} {
-			settooltip $mf.cb_lf_search_append [mc "Append stations to existing list.
-Otherwise the existing list will be deleted."]
-			settooltip $mf.cb_lf_search_full [mc "Perform a full frequency sweep.
-Otherwise TV-Viewer checks all channels for the chosen
-frequency table.
+			settooltip $mf.cb_lf_search_append [mc "Append stations, or overwrite existing list"]
+			settooltip $mf.cb_lf_search_full [mc "Perform a full frequency sweep, or check all channels
+defined by the frequency table.
 Note: A full frequency sweep may find many duplicates."]
 			settooltip $mf.mb_lf_search_full_dist [mc "Choose the frequency increase factor for full frequency sweep.
 Note: The lower this factor the more duplicates will be found and
 the search takes more time."]
 			settooltip $mf.mb_lf_search_full_time [mc "Time in milliseconds to wait for the driver to respond.
 The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver will possibly not have
+Note: If this value is too small the driver won't have
 enough time to report if there is a signal on the current frequency.
 As a result not all stations will be found."]
-			settooltip $bf.b_ok [mc "Start station search."]
+			settooltip $bf.b_ok [mc "Start station search"]
 		} else {
 			settooltip $mf.cb_lf_search_append {}
 			settooltip $mf.cb_lf_search_full {}

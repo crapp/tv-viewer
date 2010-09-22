@@ -147,11 +147,11 @@ mcset en {Audio/Video sync correction}
 mcset en {Choose an audio output driver, alsa is recommended.}
 mcset en {Check this option to use the software mixer,
 instead of the hardware mixer.}
-mcset en {This option is used by MPlayer so the audio is decoded
-to the chosen value.}
-mcset en {Remeber volume level when exiting TV-Viewer}
-mcset en {Gradually adjusts the A/V sync based on audio delay measurements.}
-mcset en {Audio/Video sync correction per frame in seconds.}
+mcset en {This option tells MPlayer to decode
+audio to the chosen value}
+mcset en {Remeber volume level}
+mcset en {Gradually adjusts the A/V sync based on audio delay measurements}
+mcset en {Audio/Video sync correction per frame in seconds}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_dvb.tcl
 
@@ -174,11 +174,11 @@ mcset en {Choose a program}
 mcset en {Choose an EPG application}
 mcset en {Choose your language.
 You'll need to restart TV-Viewer for changes to take effect.}
-mcset en {Autostart tv playback on program start.}
+mcset en {Autostart tv playback on program start}
 mcset en {Activate Newsreader.
 The Newsreader will check for news about TV-Viewer.}
-mcset en {Choose time intervall in days for Newsreader. Range 1 to 30.}
-mcset en {Specify a program to retrieve the television program.}
+mcset en {Choose time intervall in days for Newsreader (1-30)}
+mcset en {Specify a program to retrieve the television program}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_interface.tcl
 
@@ -190,7 +190,7 @@ mcset en {Preferences}
 mcset en {Station Editor}
 mcset en {Record Wizard}
 mcset en {Splash Screen}
-mcset en {Show Splash Screen on initialization.}
+mcset en {Show Splash Screen on initialization}
 mcset en {Window Properties}
 mcset en {Main window}
 mcset en {Start in full-screen mode}
@@ -208,27 +208,27 @@ mcset en {Full-screen mode}
 mcset en {Volume | Video input | Pan&Scan}
 mcset en {Key Input}
 mcset en {OSD Station list lirc}
-mcset en {Choose your preferred theme.}
-mcset en {Check this if you want to see tooltips.}
-mcset en {Tooltips for the main Interface.}
-mcset en {Tooltips for the preferences.}
-mcset en {Tooltips for the Station Editor.}
-mcset en {Tooltips for the Color Management.}
-mcset en {Tooltips for the Record Wizard.}
-mcset en {Check this if you want to see the splash screen at the start of TV-Viewer.}
-mcset en {Start TV-Viewer in full-screen mode.}
+mcset en {Choose your preferred theme}
+mcset en {Check this if you want to see tooltips}
+mcset en {Tooltips for the main Interface}
+mcset en {Tooltips for the preferences}
+mcset en {Tooltips for the Station Editor}
+mcset en {Tooltips for the Color Management}
+mcset en {Tooltips for the Record Wizard}
+mcset en {Check this if you want to see the splash screen at the start of TV-Viewer}
+mcset en {Start TV-Viewer in full-screen mode}
 mcset en {Remember window size and position}
-mcset en {Activate system tray icon}
+mcset en {Activate integration to system tray}
 mcset en {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.}
 mcset en {Choose the size for the system tray icon}
-mcset en {OSD for station name in windowed mode.}
-mcset en {OSD for station name in full-screen mode.}
-mcset en {Change font, color and alignment.}
-mcset en {OSD for Volume; Pan&Scan; Video input in windowed mode.}
-mcset en {OSD for Volume; Pan&Scan; Video input in full-screen mode.}
-mcset en {OSD for change stations via numbers input in windowed mode.}
-mcset en {OSD for change stations via numbers input in full-screen mode.}
+mcset en {OSD for station name in windowed mode}
+mcset en {OSD for station name in full-screen mode}
+mcset en {Change font, color and alignment}
+mcset en {OSD for Volume; Pan&Scan; Video input in windowed mode}
+mcset en {OSD for Volume; Pan&Scan; Video input in full-screen mode}
+mcset en {OSD for change stations via numbers input in windowed mode}
+mcset en {OSD for change stations via numbers input in full-screen mode}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_radio.tcl
 
@@ -248,15 +248,15 @@ mcset en {Timeshift}
 mcset en {Timeshift folder}
 mcset en {Space to be left free}
 mcset en {Choose a directory}
-mcset en {Set the default directory for all recordings.}
-mcset en {Define the default duration for recordings (Hours).}
-mcset en {Define the default duration for recordings (Minutes).}
-mcset en {Define the default duration for recordings (Seconds).}
+mcset en {Set the default directory for all recordings}
+mcset en {Define the default duration for recordings (Hours)}
+mcset en {Define the default duration for recordings (Minutes)}
+mcset en {Define the default duration for recordings (Seconds)}
 mcset en {Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings}
-mcset en {Allow station change during recording.}
+mcset en {Allow station change during recording}
 mcset en {Autostart the scheduler.
 This is necessary for scheduled recordings.}
-mcset en {Choose path where Timeshift events will be cached.}
+mcset en {Choose path where Timeshift events will be cached}
 mcset en {Define the minimum free disk space.
 If free disk space is falling below this value
 timeshift will automatically be stopped.
@@ -269,7 +269,7 @@ mcset en {Video}
 mcset en {Video output driver}
 mcset en {Deinterlacing filter}
 mcset en {Postprocessing level}
-mcset en {Cache size (kb)}
+mcset en {Cache size (kB)}
 mcset en {Threads for decoding}
 mcset en {Direct Rendering}
 mcset en {Double Buffering}
@@ -281,25 +281,25 @@ mcset en {Use MPlayer}
 mcset en {Use Heartbeat function}
 mcset en {Select the video ouput driver.
 xv should provide the best performance.}
-mcset en {Select the deinterlace filter.}
+mcset en {Select the deinterlace filter}
 mcset en {Changes the level of postprocesseing.
 A value of 0 deactivates postprocessing.}
 mcset en {Specify how much memory (in kBytes) should be used for TV playback.
 The lower this value is the faster you may switch between stations.
 But a low value could cause other problems.
 A value of 0 will deactivate cache use.}
-mcset en {Sets the number of threads for decoding.}
+mcset en {Sets the number of threads for decoding}
 mcset en {If checked, enables direct rendering. This is not supported
 for all video ouput drivers.}
 mcset en {Double buffering fixes flicker by storing two frames in memory
 and displaying one, while decoding another.}
 mcset en {Enable / Disable drawing video by 16-pixel height slices/bands.
 May help in better video playback.}
-mcset en {Skip displaying some frames to maintain A/V sync.}
+mcset en {Skip displaying some frames to maintain A/V sync}
 mcset en {More intense frame dropping. May lead to image distortion.}
-mcset en {Enable / Disable screensaver while playback.}
-mcset en {Use MPlayer to deactivate the screensaver.}
-mcset en {If MPlayer can't deactivate your screensaver, use this heartbeat hack.}
+mcset en {Enable / Disable screensaver while playback}
+mcset en {Use MPlayer to deactivate the screensaver}
+mcset en {If MPlayer can't deactivate your screensaver, use this heartbeat hack}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_wizard.tcl
 
@@ -310,9 +310,9 @@ mcset en {Audio}
 mcset en {Radio}
 mcset en {Interface}
 mcset en {Record}
-mcset en {Apply your changes and exit preferences dialog.}
-mcset en {Load default values, for the corresponding section.}
-mcset en {Discard changes and close preferences dialog.}
+mcset en {Apply your changes and exit preferences dialog}
+mcset en {Load default values, for the corresponding section}
+mcset en {Discard changes and close preferences dialog}
 
 # /home/saedelaere/Projekte/tv-viewer/data/create_icons.tcl
 
@@ -380,13 +380,10 @@ mcset en {Choose color}
 
 mcset en {TV-Viewer % Build %} {TV-Viewer %s Build %s}
 mcset en {Info}
-mcset en {A small and simple frontend to watch and record television.}
+mcset en {A small and simple frontend to watch and record television}
 mcset en {Homepage}
-mcset en {http://tv-viewer.sourceforge.net}
 mcset en {Forum}
-mcset en {http://sourceforge.net/.../forums}
 mcset en {IRC channel}
-mcset en {http://webchat.freenode.net/}
 mcset en {© Copyright 2007 - 2010
 Christian Rapp}
 mcset en {Credits}
@@ -440,6 +437,7 @@ mcset en {Name}
 mcset en {No}
 mcset en {Navigation}
 mcset en {View}
+mcset en {Help}
 mcset en {Welcome to TV-Viewer}
 mcset en {TV-Viewer %} {TV-Viewer %s}
 mcset en {TV-Viewer idle}
@@ -448,8 +446,8 @@ mcset en {TV-Viewer idle}
 
 mcset en {EPG}
 mcset en {TV}
-mcset en {Prior station}
-mcset en {Next station}
+mcset en {Prior Station}
+mcset en {Next Station}
 mcset en {Station jumper}
 mcset en {Play}
 mcset en {Pause}
@@ -457,7 +455,7 @@ mcset en {Stop}
 mcset en {Rewind}
 mcset en {-10 seconds}
 mcset en {-1 minute}
-mcset en {-10 minute}
+mcset en {-10 minutes}
 mcset en {File beginning}
 mcset en {Forward}
 mcset en {+10 seconds}
@@ -491,12 +489,10 @@ mcset en {Volume -}
 mcset en {Mute}
 mcset en {Delay +}
 mcset en {Delay -}
-mcset en {Help}
 mcset en {User Guide}
 mcset en {MPlayer Log}
 mcset en {Scheduler Log}
 mcset en {TV-Viewer Log}
-mcset en {-10 minutes}
 
 # /home/saedelaere/Projekte/tv-viewer/data/main_newsreader.tcl
 
@@ -522,8 +518,6 @@ mcset en {Audio Menu}
 mcset en {Help Menu}
 mcset en {Exit TV-Viewer}
 mcset en {Toggle TV playback}
-mcset en {Next Station}
-mcset en {Prior Station}
 mcset en {Jump between the last two stations}
 mcset en {Station by number}
 mcset en {Next video input}
@@ -564,15 +558,15 @@ mcset en {Resolution:}
 mcset en {Output file}
 mcset en {Add a new recording}
 mcset en {Edit recording}
-mcset en {Choose station to record.}
-mcset en {Time when recording should start. (Hour)}
-mcset en {Time when recording should start. (Minute)}
+mcset en {Choose station to record}
+mcset en {Time when recording should start (Hour)}
+mcset en {Time when recording should start (Minute)}
 mcset en {Choose between before or after midday.
 You may change hour format in the preferences (Record).}
-mcset en {Choose date on which recording should occur.}
-mcset en {Duration for the recording. (Hours)}
-mcset en {Duration for the recording. (Minutes)}
-mcset en {Duration for the recording. (Seconds)}
+mcset en {Choose date on which recording should occur}
+mcset en {Duration for the recording (Hours)}
+mcset en {Duration for the recording (Minutes)}
+mcset en {Duration for the recording (Seconds)}
 mcset en {Resolution (width) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
@@ -584,17 +578,15 @@ to convert the file afterwards.}
 mcset en {Output file for recording. If you omit
 this value TV-Viewer will determine a name
 and store the file in the default record path.}
-mcset en {Apply your changes and exit the dialogue.}
-mcset en {Exit the dialogue without changes.}
 mcset en {Do you really want to delete the selected recording(s)?}
 mcset en {Don't ask next time}
 mcset en {Delete}
 mcset en {Delete recordings}
 mcset en {Choose date}
-mcset en {Previous year.}
-mcset en {Previous month.}
-mcset en {Next month.}
-mcset en {Next year.}
+mcset en {Previous year}
+mcset en {Previous month}
+mcset en {Next month}
+mcset en {Next year}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_external.tcl
 
@@ -639,14 +631,11 @@ mcset en {Duration}
 mcset en {Resolution}
 mcset en {Add a scheduled recording or
 start recording immediately.}
-mcset en {Delete selected recordings.}
-mcset en {Edit selected recording.}
-mcset en {Indicates whether the Scheduler
-is running or not.}
-mcset en {Provides informations about the
-current recording.}
-mcset en {If there is a running recording,
-click here to stop it.}
+mcset en {Delete selected recordings}
+mcset en {Edit selected recording}
+mcset en {Indicates whether the Scheduler is running or not}
+mcset en {Provides informations about the current recording}
+mcset en {If there is a running recording, click here to stop it}
 mcset en {Exit Record Wizard}
 
 # /home/saedelaere/Projekte/tv-viewer/data/recorder.tcl
@@ -668,25 +657,24 @@ mcset en {TV-Viewer playing - %} {TV-Viewer playing - %s}
 mcset en {Station search}
 mcset en {Add}
 mcset en {Lock}
-mcset en {Prior}
-mcset en {Next}
+mcset en {Up}
+mcset en {Down}
 mcset en {Preview}
 mcset en {Unlock}
 mcset en {Frequency}
 mcset en {Video input}
 mcset en {External Tuner}
-mcset en {Perform an automatic station search.
-This will delete all stations currently in the list!}
-mcset en {Add a new television station.}
-mcset en {Delete selected television station.}
-mcset en {(De)Activate selected station.
-Deactivated stations will be marked red.}
-mcset en {Edit selected station.}
-mcset en {Move selected item up.}
-mcset en {Move selected item down.}
-mcset en {Preview for selected tv station.}
-mcset en {Save station list and exit editor.}
-mcset en {Exit editor without any changes.}
+mcset en {Perform an automatic station search}
+mcset en {Add a new television station}
+mcset en {Delete selected television station}
+mcset en {Lock or unlock selected station(s).
+Locked stations will be displayed in red.}
+mcset en {Edit selected station}
+mcset en {Move selected item up}
+mcset en {Move selected item down}
+mcset en {Preview for selected tv station}
+mcset en {Save station list and exit editor}
+mcset en {Exit editor without any changes}
 
 # /home/saedelaere/Projekte/tv-viewer/data/station_item.tcl
 
@@ -697,8 +685,8 @@ mcset en {Frequency:}
 mcset en {Video input:}
 mcset en {Add a new station}
 mcset en {Edit Station / Frequency}
-mcset en {Provide a name for the television station.}
-mcset en {Frequency for the station. E.g. 175.250}
+mcset en {Provide a name for the television station}
+mcset en {Frequency for the station, E.g. 175.250}
 mcset en {Video input for this station. 
 Normally you want television input.}
 mcset en {Use an external tuner}
@@ -708,31 +696,27 @@ You may use this substitutions:
 %%F  Frequency
 %%S  Station name
 e.g. externalTune %%F %%S}
-mcset en {Apply changes and close window.}
-mcset en {Exit without changes.}
 mcset en {Please specify name and frequency for each station}
 
 # /home/saedelaere/Projekte/tv-viewer/data/station_search.tcl
 
 mcset en {Station search options}
-mcset en {Append stations to existing list}
+mcset en {Append stations}
 mcset en {Perform a full frequency sweep}
 mcset en {Start}
-mcset en {Append stations to existing list.
-Otherwise the existing list will be deleted.}
-mcset en {Perform a full frequency sweep.
-Otherwise TV-Viewer checks all channels for the chosen
-frequency table.
+mcset en {Append stations, or overwrite existing list}
+mcset en {Perform a full frequency sweep, or check all channels
+defined by the frequency table.
 Note: A full frequency sweep may find many duplicates.}
 mcset en {Choose the frequency increase factor for full frequency sweep.
 Note: The lower this factor the more duplicates will be found and
 the search takes more time.}
 mcset en {Time in milliseconds to wait for the driver to respond.
 The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver will possibly not have
+Note: If this value is too small the driver won't have
 enough time to report if there is a signal on the current frequency.
 As a result not all stations will be found.}
-mcset en {Start station search.}
+mcset en {Start station search}
 mcset en {Station search in progress.
 Please wait...}
 mcset en {Channel: %} {Channel: %s}
@@ -816,4 +800,5 @@ mcset en {Thu}
 mcset en {Fri}
 mcset en {Sat}
 
-
+# Need to source msg files from fsdialog because this is an external project
+source "/home/saedelaere/Projekte/tv-viewer/extensions/fsdialog/en.msg"

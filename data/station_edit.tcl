@@ -207,8 +207,8 @@ proc station_editUiMenu {tree x y} {
 		$tree.mCont add command -label [mc "Edit"] -command [list station_itemAddEdit $tree 2] -compound left -image $::icon_men(seditor)
 		$tree.mCont add command -label [mc "Lock"] -command [list station_itemDeactivate $tree .station.top_buttons.b_station_activate 1] -compound left -image $::icon_men(locked)
 		$tree.mCont add separator
-		$tree.mCont add command -label [mc "Prior"] -command [list station_itemMove $tree -1] -compound left -image $::icon_men(channel-prior)
-		$tree.mCont add command -label [mc "Next"] -command [list station_itemMove $tree 1] -compound left -image $::icon_men(channel-next)
+		$tree.mCont add command -label [mc "Up"] -command [list station_itemMove $tree -1] -compound left -image $::icon_men(channel-prior)
+		$tree.mCont add command -label [mc "Down"] -command [list station_itemMove $tree 1] -compound left -image $::icon_men(channel-next)
 		$tree.mCont add separator
 		$tree.mCont add command -label [mc "Preview"] -command [list station_editPreview $tree] -compound left -image $::icon_men(starttv)
 	}
@@ -261,8 +261,8 @@ proc station_editUi {} {
 		ttk::button $wftop.b_station_activate -text [mc "Lock"] -style Toolbutton -command [list station_itemDeactivate $wfstation.tv_station $wftop.b_station_activate 1] -compound top -image $::icon_m(locked)
 		ttk::button $wftop.b_station_edit -text [mc "Edit"] -style Toolbutton -command [list station_itemAddEdit $wfstation.tv_station 2] -compound top -image $::icon_m(seditor)
 		ttk::separator $wftop.sr_2 -orient vertical
-		ttk::button $wftop.b_station_up -text [mc "Prior"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station -1] -compound top -image $::icon_m(channel-prior)
-		ttk::button $wftop.b_station_down -text [mc "Next"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station 1] -compound top -image $::icon_m(channel-next)
+		ttk::button $wftop.b_station_up -text [mc "Up"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station -1] -compound top -image $::icon_m(channel-prior)
+		ttk::button $wftop.b_station_down -text [mc "Down"] -style Toolbutton -command [list station_itemMove $wfstation.tv_station 1] -compound top -image $::icon_m(channel-next)
 		ttk::separator $wftop.sr_3 -orient vertical
 		ttk::button $wftop.b_station_preview -text [mc "Preview"] -style Toolbutton -command [list station_editPreview $wfstation.tv_station] -compound top -image $::icon_m(starttv)
 		ttk::treeview $wfstation.tv_station -yscrollcommand [list $wfstation.sb_station set] -columns {station frequency input external} -show headings
@@ -399,18 +399,17 @@ proc station_editUi {} {
 		wm transient $w .
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_editor) == 1} {
-				settooltip $wftop.b_station_search [mc "Perform an automatic station search.
-This will delete all stations currently in the list!"]
-				settooltip $wftop.b_station_add [mc "Add a new television station."]
-				settooltip $wftop.b_station_delete [mc "Delete selected television station."]
-				settooltip $wftop.b_station_activate [mc "(De)Activate selected station.
-Deactivated stations will be marked red."]
-				settooltip $wftop.b_station_edit [mc "Edit selected station."]
-				settooltip $wftop.b_station_up [mc "Move selected item up."]
-				settooltip $wftop.b_station_down [mc "Move selected item down."]
-				settooltip $wftop.b_station_preview [mc "Preview for selected tv station."]
-				settooltip $wfbottom.b_save [mc "Save station list and exit editor."]
-				settooltip $wfbottom.b_exit [mc "Exit editor without any changes."]
+				settooltip $wftop.b_station_search [mc "Perform an automatic station search"]
+				settooltip $wftop.b_station_add [mc "Add a new television station"]
+				settooltip $wftop.b_station_delete [mc "Delete selected television station"]
+				settooltip $wftop.b_station_activate [mc "Lock or unlock selected station(s).
+Locked stations will be displayed in red."]
+				settooltip $wftop.b_station_edit [mc "Edit selected station"]
+				settooltip $wftop.b_station_up [mc "Move selected item up"]
+				settooltip $wftop.b_station_down [mc "Move selected item down"]
+				settooltip $wftop.b_station_preview [mc "Preview for selected tv station"]
+				settooltip $wfbottom.b_save [mc "Save station list and exit editor"]
+				settooltip $wfbottom.b_exit [mc "Exit editor without any changes"]
 			}
 		}
 		set status_vid_Playback [vid_callbackMplayerRemote alive]

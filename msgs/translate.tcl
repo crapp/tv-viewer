@@ -114,6 +114,8 @@ proc translate {files} {
 namespace import -force msgcat::mcset\n";# original texts are in english
 		append transEn $myEn
 		append transEn "\n"
+		append transEn "# Need to source msg files from fsdialog because this is an external project"
+		append transEn "\nsource \"$::root/extensions/fsdialog/en.msg\"";# need to source msg files from fsdialog
 		puts $msgFileEn $transEn
 		close $msgFileEn
 	}
@@ -122,6 +124,13 @@ namespace import -force msgcat::mcset\n";# original texts are in english
 namespace import -force msgcat::mcset\n";# translation into choosen language
 	append transLc $myLc
 	append transLc "\n"
+	if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
+		append transLc "# Need to source msg files from fsdialog because this is an external project"
+		append transLc "\nsource \"$::root/extensions/fsdialog/$::start_value(--lang).msg\""
+	} else {
+		puts "there is no \"$::start_value(--lang)\" translation file available for fsdialog
+consider creating one and place it into extensions/fsdialog."
+	}
 	puts $msgFile($::start_value(--lang)) $transLc
 	close $msgFile($::start_value(--lang))
 	puts "\nfinished"

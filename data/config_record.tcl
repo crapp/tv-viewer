@@ -227,18 +227,18 @@ proc option_screen_7 {} {
 			set ::choice(ent_times_df) $::option(timeshift_df)
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
-					settooltip $::window(rec_nb1).entry_rec [mc "Set the default directory for all recordings."]
-					settooltip $::window(rec_nb1).button_rec_path [mc "Set the default directory for all recordings."]
-					settooltip $::window(rec_nb1).sb_lf_duration_hour [mc "Define the default duration for recordings (Hours)."]
-					settooltip $::window(rec_nb1).sb_lf_duration_min [mc "Define the default duration for recordings (Minutes)."]
-					settooltip $::window(rec_nb1).sb_lf_duration_sec [mc "Define the default duration for recordings (Seconds)."]
+					settooltip $::window(rec_nb1).entry_rec [mc "Set the default directory for all recordings"]
+					settooltip $::window(rec_nb1).button_rec_path [mc "Set the default directory for all recordings"]
+					settooltip $::window(rec_nb1).sb_lf_duration_hour [mc "Define the default duration for recordings (Hours)"]
+					settooltip $::window(rec_nb1).sb_lf_duration_min [mc "Define the default duration for recordings (Minutes)"]
+					settooltip $::window(rec_nb1).sb_lf_duration_sec [mc "Define the default duration for recordings (Seconds)"]
 					settooltip $::window(rec_nb1).lf_hoursFormat.rbHours24 [mc "Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings"]
 					settooltip $::window(rec_nb1).lf_hoursFormat.rbHours12 [mc "Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings"]
-					settooltip $::window(rec_nb1).b_lf_allow_rec [mc "Allow station change during recording."]
+					settooltip $::window(rec_nb1).b_lf_allow_rec [mc "Allow station change during recording"]
 					settooltip $::window(rec_nb1).cb_lf_scheduler_autostart [mc "Autostart the scheduler.
 This is necessary for scheduled recordings."]
-					settooltip $::window(rec_nb2).e_lf_times_stnd [mc "Choose path where Timeshift events will be cached."]
-					settooltip $::window(rec_nb2).b_lf_times_stnd [mc "Choose path where Timeshift events will be cached."]
+					settooltip $::window(rec_nb2).e_lf_times_stnd [mc "Choose path where Timeshift events will be cached"]
+					settooltip $::window(rec_nb2).b_lf_times_stnd [mc "Choose path where Timeshift events will be cached"]
 					settooltip $::window(rec_nb2).e_lf_times_df [mc "Define the minimum free disk space.
 If free disk space is falling below this value
 timeshift will automatically be stopped.

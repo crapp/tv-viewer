@@ -224,18 +224,13 @@ proc record_wizardUi {} {
 			if {$::option(tooltips_record) == 1} {
 				settooltip $topf.b_add_rec [mc "Add a scheduled recording or
 start recording immediately."]
-				settooltip $topf.b_delete_rec [mc "Delete selected recordings."]
-				settooltip $topf.b_edit_rec [mc "Edit selected recording."]
-				settooltip $statf.l_rec_sched [mc "Indicates whether the Scheduler
-is running or not."]
-				settooltip $statf.l_rec_sched_info [mc "Indicates whether the Scheduler
-is running or not."]
-				settooltip $statf.l_rec_current [mc "Provides informations about the
-current recording."]
-				settooltip $statf.l_rec_current_info [mc "Provides informations about the
-current recording."]
-				settooltip $statf.b_rec_current [mc "If there is a running recording,
-click here to stop it."]
+				settooltip $topf.b_delete_rec [mc "Delete selected recordings"]
+				settooltip $topf.b_edit_rec [mc "Edit selected recording"]
+				settooltip $statf.l_rec_sched [mc "Indicates whether the Scheduler is running or not"]
+				settooltip $statf.l_rec_sched_info [mc "Indicates whether the Scheduler is running or not"]
+				settooltip $statf.l_rec_current [mc "Provides informations about the current recording"]
+				settooltip $statf.l_rec_current_info [mc "Provides informations about the current recording"]
+				settooltip $statf.b_rec_current [mc "If there is a running recording, click here to stop it"]
 				settooltip $bf.b_exit [mc "Exit Record Wizard"]
 			}
 		}

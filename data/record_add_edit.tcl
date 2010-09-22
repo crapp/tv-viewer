@@ -282,16 +282,16 @@ proc record_add_edit {tree com} {
 	
 	if {$::option(tooltips) == 1} {
 		if {$::option(tooltips_record) == 1} {
-			settooltip $lbf.lb_stations [mc "Choose station to record."]
-			settooltip $recf.sb_time_hour [mc "Time when recording should start. (Hour)"]
-			settooltip $recf.sb_time_min [mc "Time when recording should start. (Minute)"]
+			settooltip $lbf.lb_stations [mc "Choose station to record"]
+			settooltip $recf.sb_time_hour [mc "Time when recording should start (Hour)"]
+			settooltip $recf.sb_time_min [mc "Time when recording should start (Minute)"]
 			settooltip $recf.mbHourFormat [mc "Choose between before or after midday.
 You may change hour format in the preferences (Record)."]
-			settooltip $recf.ent_date [mc "Choose date on which recording should occur."]
-			settooltip $recf.b_date [mc "Choose date on which recording should occur."]
-			settooltip $recf.sb_duration_hour [mc "Duration for the recording. (Hours)"]
-			settooltip $recf.sb_duration_min [mc "Duration for the recording. (Minutes)"]
-			settooltip $recf.sb_duration_sec [mc "Duration for the recording. (Seconds)"]
+			settooltip $recf.ent_date [mc "Choose date on which recording should occur"]
+			settooltip $recf.b_date [mc "Choose date on which recording should occur"]
+			settooltip $recf.sb_duration_hour [mc "Duration for the recording (Hours)"]
+			settooltip $recf.sb_duration_min [mc "Duration for the recording (Minutes)"]
+			settooltip $recf.sb_duration_sec [mc "Duration for the recording (Seconds)"]
 			settooltip $recf.sb_resol_width [mc "Resolution (width) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
@@ -306,8 +306,6 @@ and store the file in the default record path."]
 			settooltip $recf.b_file [mc "Output file for recording. If you omit
 this value TV-Viewer will determine a name
 and store the file in the default record path."]
-			settooltip $bf.b_apply [mc "Apply your changes and exit the dialogue."]
-			settooltip $bf.b_cancel [mc "Exit the dialogue without changes."]
 		}
 	}
 	tkwait visibility $w
@@ -612,10 +610,10 @@ proc record_add_editDate {} {
 	
 	if {$::option(tooltips) == 1} {
 		if {$::option(tooltips_record) == 1} {
-			settooltip $fnavi.b_year_back [mc "Previous year."]
-			settooltip $fnavi.b_month_back [mc "Previous month."]
-			settooltip $fnavi.b_month_forw [mc "Next month."]
-			settooltip $fnavi.b_year_forw [mc "Next year."]
+			settooltip $fnavi.b_year_back [mc "Previous year"]
+			settooltip $fnavi.b_month_back [mc "Previous month"]
+			settooltip $fnavi.b_month_forw [mc "Next month"]
+			settooltip $fnavi.b_year_forw [mc "Next year"]
 		}
 	}
 	

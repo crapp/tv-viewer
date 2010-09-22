@@ -112,13 +112,13 @@ proc info_helpAbout {} {
 		set nb1 [ttk::frame $mf.nb.f_info]
 		set linkf [ttk::frame $nb1.link_frame]
 		$mf.nb add $nb1 -text [mc "Info"] -padding 2
-		ttk::label $nb1.l_desc -text [mc "A small and simple frontend to watch and record television."] -justify center -font "systemfont 12 bold"
+		ttk::label $nb1.l_desc -text [mc "A small and simple frontend to watch and record television"] -justify center -font "systemfont 12 bold"
 		ttk::label $linkf.l_homepage -text [mc "Homepage"]
-		ttk::button $linkf.b_homepage -text [mc "http://tv-viewer.sourceforge.net"] -command [list info_helpWebpage 0]  -style Toolbutton
+		ttk::button $linkf.b_homepage -text "http://tv-viewer.sourceforge.net" -command [list info_helpWebpage 0]  -style Toolbutton
 		ttk::label $linkf.l_forum -text [mc "Forum"]
-		ttk::button $linkf.b_forum -text [mc "http://sourceforge.net/.../forums"] -command [list info_helpWebpage 1] -style Toolbutton
+		ttk::button $linkf.b_forum -text "http://sourceforge.net/.../forums" -command [list info_helpWebpage 1] -style Toolbutton
 		ttk::label $linkf.l_irc -text [mc "IRC channel"]
-		ttk::button $linkf.b_irc -text [mc "http://webchat.freenode.net/"] -command [list info_helpWebpage 2] -style Toolbutton
+		ttk::button $linkf.b_irc -text "http://webchat.freenode.net/" -command [list info_helpWebpage 2] -style Toolbutton
 		ttk::label $nb1.l_version
 		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2010
 Christian Rapp"] -justify center

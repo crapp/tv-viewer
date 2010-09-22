@@ -22,7 +22,7 @@ mcset de {Set contrast, this is a global value} {Kontrast festlegen, betrifft al
 mcset de {Set hue, this is a global value} {Farbton festlegen, betrifft alle Sender}
 mcset de {Set saturation, this is a global value} {Sättigung festlegen, betrifft alle Sender}
 mcset de {Save values and close color management} {Werte speichern und Farbverwaltung verlassen}
-mcset de {Load default values} {Standard Werte laden}
+mcset de {Load default values} {Standardwerte laden}
 mcset de {Close color management without saving changes} {Farbverwaltung beenden ohne die Änderungen zu übernehmen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/command_socket.tcl
@@ -176,7 +176,7 @@ mcset de {Audio Settings} {Audio Einstellungen}
 mcset de {Audio output driver} {Audio Ausgabetreiber}
 mcset de {Audio channels} {Audio Kanäle}
 mcset de {Use software mixer} {Software Mixer verwenden}
-mcset de {Remember volume level} {Remember volume level}
+mcset de {Remember volume level} {Volume Level merken}
 mcset de {Audio synchronization} {Audio Synchronisation}
 mcset de {Auto synchronization} {Automatische Synchronisation}
 mcset de {Audio/Video sync correction} {Audio/Video Sync-Korrektur}
@@ -278,95 +278,102 @@ mcset de {Radio Settings} {Radio Einstellungen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_record.tcl
 
-mcset de {Record Settings} {Record Settings}
-mcset de {Standard folder} {Standard folder}
-mcset de {Default record duration} {Default record duration}
-mcset de {Allow station change while recording} {Allow station change while recording}
-mcset de {Autostart scheduler} {Autostart scheduler}
-mcset de {Hours format} {Hours format}
-mcset de {24-hour clock} {24-hour clock}
-mcset de {12-hour clock} {12-hour clock}
+mcset de {Record Settings} {Aufnahme Einstellungen}
+mcset de {Standard folder} {Standardpfad}
+mcset de {Default record duration} {Standard Aufnahmedauer}
+mcset de {Allow station change while recording} {Senderwechsel während einer Aufnahme erlauben}
+mcset de {Autostart scheduler} {Scheduler automatisch starten}
+mcset de {Hours format} {Stunden-Format}
+mcset de {24-hour clock} {24-Stunden-Format}
+mcset de {12-hour clock} {12-Stunden-Format}
 mcset de {Timeshift} {Timeshift}
-mcset de {Timeshift folder} {Timeshift folder}
-mcset de {Space to be left free} {Space to be left free}
-mcset de {Choose a directory} {Choose a directory}
-mcset de {Set the default directory for all recordings.} {Set the default directory for all recordings.}
-mcset de {Define the default duration for recordings (Hours).} {Define the default duration for recordings (Hours).}
-mcset de {Define the default duration for recordings (Minutes).} {Define the default duration for recordings (Minutes).}
-mcset de {Define the default duration for recordings (Seconds).} {Define the default duration for recordings (Seconds).}
-mcset de {Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings} {Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings}
-mcset de {Allow station change during recording.} {Allow station change during recording.}
+mcset de {Timeshift folder} {Timeshift Ordner}
+mcset de {Space to be left free} {Platz der freigelassen werden soll}
+mcset de {Choose a directory} {Verzeichnis wählen}
+mcset de {Set the default directory for all recordings} {Standardpfad für Aufnahmen festlegen}
+mcset de {Define the default duration for recordings (Hours)} {Standard Dauer für Aufnahmen (Stunden)}
+mcset de {Define the default duration for recordings (Minutes)} {Standard Dauer für Aufnahmen (Minuten)}
+mcset de {Define the default duration for recordings (Seconds)} {Standard Dauer für Aufnahmen (Sekunden)}
+mcset de {Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings} {Wählen ob man im 12-Stunden- oder 24-Stunden-Format Aufnahmen planen will.}
+mcset de {Allow station change during recording} {Senderwechsel während einer Aufnahme erlauben}
 mcset de {Autostart the scheduler.
-This is necessary for scheduled recordings.} {Autostart the scheduler.
-This is necessary for scheduled recordings.}
-mcset de {Choose path where Timeshift events will be cached.} {Choose path where Timeshift events will be cached.}
+This is necessary for scheduled recordings.} {Scheduler automatisch starten.
+Dies ist notwendig für geplante Aufnahmen.}
+mcset de {Choose path where Timeshift events will be cached} {Pfad wählen wo Timeshift-Dateien zwischengespeichert werden sollen}
 mcset de {Define the minimum free disk space.
 If free disk space is falling below this value
 timeshift will automatically be stopped.
-A value of 0 deactivates this feature.} {Define the minimum free disk space.
-If free disk space is falling below this value
-timeshift will automatically be stopped.
-A value of 0 deactivates this feature.}
+A value of 0 deactivates this feature.} {Festlegen wieviel Platz auf der Festplatte
+mindestens frei bleiben soll.
+Wenn der freie Platz unter den angegeben Wert
+fällt, wird Timeshift automatisch angehalten.
+Der Wert 0 deaktiviert dieses Feature.}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_video.tcl
 
-mcset de {Video Settings} {Video Settings}
+mcset de {Video Settings} {Video Einstellungen}
 mcset de {Video} {Video}
-mcset de {Video output driver} {Video output driver}
-mcset de {Deinterlacing filter} {Deinterlacing filter}
-mcset de {Postprocessing level} {Postprocessing level}
-mcset de {Cache size (kb)} {Cache size (kb)}
-mcset de {Threads for decoding} {Threads for decoding}
-mcset de {Direct Rendering} {Direct Rendering}
-mcset de {Double Buffering} {Double Buffering}
-mcset de {Slice Mode} {Slice Mode}
-mcset de {Framedrop} {Framedrop}
-mcset de {Hard Framedrop} {Hard Framedrop}
-mcset de {Disable Screensaver} {Disable Screensaver}
-mcset de {Use MPlayer} {Use MPlayer}
-mcset de {Use Heartbeat function} {Use Heartbeat function}
+mcset de {Video output driver} {Video Ausgabetreiber}
+mcset de {Deinterlacing filter} {Deinterlacing Filter}
+mcset de {Postprocessing level} {Nachbearbeitung}
+mcset de {Cache size (kB)} {Cache Größe (kB)}
+mcset de {Threads for decoding} {Threads zur Dekodierung}
+mcset de {Direct Rendering} {Direktes Rendern}
+mcset de {Double Buffering} {Doppelpufferung}
+mcset de {Slice Mode} {Modus Slices}
+mcset de {Framedrop} {Bilder überspringen}
+mcset de {Hard Framedrop} {Verstärktes Bilder überspringen}
+mcset de {Disable Screensaver} {Bildschirmschoner deaktivieren}
+mcset de {Use MPlayer} {Verwende MPlayer}
+mcset de {Use Heartbeat function} {Verwende Heartbeat Funktion}
 mcset de {Select the video ouput driver.
-xv should provide the best performance.} {Select the video ouput driver.
-xv should provide the best performance.}
-mcset de {Select the deinterlace filter.} {Select the deinterlace filter.}
+xv should provide the best performance.} {Wähle den Video Ausgabetreiber.
+xv sollte die beste Leistung bieten.}
+mcset de {Select the deinterlace filter} {Deinterlace Filter auswählen}
 mcset de {Changes the level of postprocesseing.
-A value of 0 deactivates postprocessing.} {Changes the level of postprocesseing.
-A value of 0 deactivates postprocessing.}
+A value of 0 deactivates postprocessing.} {Niveau der Nachbearbeitung.
+Der Wert 0 deaktiviert die Nachbearbeitung.}
 mcset de {Specify how much memory (in kBytes) should be used for TV playback.
 The lower this value is the faster you may switch between stations.
 But a low value could cause other problems.
-A value of 0 will deactivate cache use.} {Specify how much memory (in kBytes) should be used for TV playback.
-The lower this value is the faster you may switch between stations.
-But a low value could cause other problems.
-A value of 0 will deactivate cache use.}
-mcset de {Sets the number of threads for decoding.} {Sets the number of threads for decoding.}
+A value of 0 will deactivate cache use.} {Gib an wieviel Speicher (in kBytes) für die Fernsehwiedergabe
+verwendet werden soll.
+Je niedriger dieser Wert, desto schneller kann man zwischen zwei
+Sendern umschalten. Aber ein niedriger Wert kann andere Probleme
+verursachen. Der Wert 0 deaktiviert precaching.}
+mcset de {Sets the number of threads for decoding} {Legt die Anzahl der Threads zur Dekodierung fest}
 mcset de {If checked, enables direct rendering. This is not supported
-for all video ouput drivers.} {If checked, enables direct rendering. This is not supported
-for all video ouput drivers.}
+for all video ouput drivers.} {Aktiviert direktes Rendern. Funktioniert nicht mit allen
+Video Ausgabetreibern.}
 mcset de {Double buffering fixes flicker by storing two frames in memory
-and displaying one, while decoding another.} {Double buffering fixes flicker by storing two frames in memory
-and displaying one, while decoding another.}
+and displaying one, while decoding another.} {Doppelbufferung verhindert Flackern durch das speichern von
+zwei Frames im Speicher. Einer wird angezeigt, während der andere
+dekodiert wird.}
 mcset de {Enable / Disable drawing video by 16-pixel height slices/bands.
-May help in better video playback.} {Enable / Disable drawing video by 16-pixel height slices/bands.
-May help in better video playback.}
-mcset de {Skip displaying some frames to maintain A/V sync.} {Skip displaying some frames to maintain A/V sync.}
-mcset de {More intense frame dropping. May lead to image distortion.} {More intense frame dropping. May lead to image distortion.}
-mcset de {Enable / Disable screensaver while playback.} {Enable / Disable screensaver while playback.}
-mcset de {Use MPlayer to deactivate the screensaver.} {Use MPlayer to deactivate the screensaver.}
-mcset de {If MPlayer can't deactivate your screensaver, use this heartbeat hack.} {If MPlayer can't deactivate your screensaver, use this heartbeat hack.}
+May help in better video playback.} {Ein- Ausschalten des Modus - Slices. Wenn deaktiviert wird
+das Bild in einem Durchgang angezeigt. Abhängig von Grafikkarte
+und Cache kann dieser Modus langsamer oder schneller sein.}
+mcset de {Skip displaying some frames to maintain A/V sync} {Überspringen von Einzelbildern um A/V Syncronisation
+zu gewährleisten.}
+mcset de {More intense frame dropping. May lead to image distortion.} {Verstärktes Überspringen von Einzelbildern. Kann zu
+Bildverzerrungen führen.}
+mcset de {Enable / Disable screensaver while playback} {Bildschirmschoner während der Fernsehwiedergabe deaktivieren}
+mcset de {Use MPlayer to deactivate the screensaver} {Use MPlayer to deactivate the screensaver}
+mcset de {If MPlayer can't deactivate your screensaver, use this heartbeat hack} {Sollte MPLayer nicht in der Lage sein den Bildschirmschoner zu
+deaktivieren, verwende diesen Heartbeat hack}
 
 # /home/saedelaere/Projekte/tv-viewer/data/config_wizard.tcl
 
-mcset de {General} {General}
+mcset de {General} {Allgemein}
 mcset de {Analog} {Analog}
 mcset de {DVB} {DVB}
 mcset de {Audio} {Audio}
 mcset de {Radio} {Radio}
 mcset de {Interface} {Interface}
-mcset de {Record} {Record}
-mcset de {Apply your changes and exit preferences dialog.} {Apply your changes and exit preferences dialog.}
-mcset de {Load default values, for the corresponding section.} {Load default values, for the corresponding section.}
-mcset de {Discard changes and close preferences dialog.} {Discard changes and close preferences dialog.}
+mcset de {Record} {Aufnahme}
+mcset de {Apply your changes and exit preferences dialog} {Änderungen übernehmen und Einstellungen verlassen}
+mcset de {Load default values, for the corresponding section} {Standardwerte laden für den entsprechenden Abschnitt}
+mcset de {Discard changes and close preferences dialog} {Änderungen verwerfen und Einstellungen verlassen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/create_icons.tcl
 
@@ -377,12 +384,12 @@ mcset de {Diagnostic Routine is checking your system.
 Please wait...} {Diagnostic Routine is checking your system.
 Please wait...}
 mcset de {Exit} {Exit}
-mcset de {Diagnostic Routine} {Diagnostic Routine}
-mcset de {Diagnostic Routine finished} {Diagnostic Routine finished}
-mcset de {Generated file:} {Generated file:}
-mcset de {Create a bug report on } {Create a bug report on }
-mcset de {and attach the generated file.} {and attach the generated file.}
-mcset de {Diagnostic Routine crashed} {Diagnostic Routine crashed}
+mcset de {Diagnostic Routine} {Diagnoseprogramm}
+mcset de {Diagnostic Routine finished} {Diagnoseprogramm beenden}
+mcset de {Generated file:} {Ausgabedatei:}
+mcset de {Create a bug report on } {Erstelle einen Fehlerbericht auf }
+mcset de {and attach the generated file.} {und hänge die Ausgabedatei an.}
+mcset de {Diagnostic Routine crashed} {Diagnoseprogramm ist abgestürzt}
 
 # /home/saedelaere/Projekte/tv-viewer/data/diag_runtime.tcl
 
@@ -392,87 +399,84 @@ mcset de {Diagnostic Routine crashed} {Diagnostic Routine crashed}
 
 # /home/saedelaere/Projekte/tv-viewer/data/error_interp.tcl
 
-mcset de {Skip further error messages} {Skip further error messages}
+mcset de {Skip further error messages} {Weitere Fehlermeldungen überspringen}
 mcset de {OK} {OK}
-mcset de {File bug report} {File bug report}
-mcset de {Save to disk} {Save to disk}
-mcset de {Error: %} {Error: %s}
-mcset de {Select everything} {Select everything}
-mcset de {Copy to clipboard} {Copy to clipboard}
+mcset de {File bug report} {Fehlerbericht erstellen}
+mcset de {Save to disk} {Speichern}
+mcset de {Error: %} {Fehler: %s}
+mcset de {Select everything} {Alles markieren}
+mcset de {Copy to clipboard} {In die Zwischenablage kopieren}
 mcset de {TV-Viewer crashed} {TV-Viewer crashed}
-mcset de {Choose name and location} {Choose name and location}
+mcset de {Choose name and location} {Name und Ort wählen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/event_bind.tcl
 
 
 # /home/saedelaere/Projekte/tv-viewer/data/font_chooser.tcl
 
-mcset de {Family:} {Family:}
-mcset de {Style:} {Style:}
-mcset de {Size:} {Size:}
-mcset de {Font color:} {Font color:}
-mcset de {Display:} {Display:}
-mcset de {Preview:} {Preview:}
-mcset de {top left} {top left}
-mcset de {top} {top}
-mcset de {top right} {top right}
-mcset de {left} {left}
-mcset de {center} {center}
-mcset de {right} {right}
-mcset de {bottom left} {bottom left}
-mcset de {bottom} {bottom}
-mcset de {bottom right} {bottom right}
-mcset de {Choose a font} {Choose a font}
-mcset de {Choose font style} {Choose font style}
-mcset de {Choose font size} {Choose font size}
-mcset de {Choose font color} {Choose font color}
+mcset de {Family:} {Familie:}
+mcset de {Style:} {Stil:}
+mcset de {Size:} {Größe:}
+mcset de {Font color:} {Schriftfarbe:}
+mcset de {Display:} {Anzeigen:}
+mcset de {Preview:} {Vorschau:}
+mcset de {top left} {Oben links}
+mcset de {top} {Oben}
+mcset de {top right} {Oben rechts}
+mcset de {left} {Links}
+mcset de {center} {Mitte}
+mcset de {right} {Rechts}
+mcset de {bottom left} {Unten links}
+mcset de {bottom} {Unten}
+mcset de {bottom right} {Unten rechts}
+mcset de {Choose a font} {Wähle eine Schrift}
+mcset de {Choose font style} {Schriftstil auswählen}
+mcset de {Choose font size} {Schriftgröße auswählen}
+mcset de {Choose font color} {Schriftfarbe auswählen}
 mcset de {Specify where the message box should be
-displayed in the video frame} {Specify where the message box should be
-displayed in the video frame}
-mcset de {Choose font} {Choose font}
-mcset de {Choose color} {Choose color}
+displayed in the video frame} {Festlegen wo die Benachrichtigungsbox im
+Videoframe erscheinen soll}
+mcset de {Choose font} {Wähle eine Schrift}
+mcset de {Choose color} {Schriftfarbe auswählen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/info_help.tcl
 
 mcset de {TV-Viewer % Build %} {TV-Viewer %s Build %s}
 mcset de {Info} {Info}
-mcset de {A small and simple frontend to watch and record television.} {A small and simple frontend to watch and record television.}
+mcset de {A small and simple frontend to watch and record television} {Ein kleines und einfaches Programm zum Fernsehen und Aufnehmen}
 mcset de {Homepage} {Homepage}
-mcset de {http://tv-viewer.sourceforge.net} {http://tv-viewer.sourceforge.net}
 mcset de {Forum} {Forum}
-mcset de {http://sourceforge.net/.../forums} {http://sourceforge.net/.../forums}
-mcset de {IRC channel} {IRC channel}
-mcset de {http://webchat.freenode.net/} {http://webchat.freenode.net/}
+mcset de {IRC channel} {IRC Kanal}
 mcset de {© Copyright 2007 - 2010
 Christian Rapp} {© Copyright 2007 - 2010
 Christian Rapp}
 mcset de {Credits} {Credits}
-mcset de {License} {License}
+mcset de {License} {Lizenz}
 mcset de {Changelog} {Changelog}
-mcset de {About TV-Viewer} {About TV-Viewer}
+mcset de {About TV-Viewer} {Über TV-Viewer}
 
 # /home/saedelaere/Projekte/tv-viewer/data/key_sequences.tcl
 
-mcset de {Available Key Sequences} {Available Key Sequences}
+mcset de {Available Key Sequences} {Verfügbare Tastenkombinationen}
 mcset de {Change shortcut} {Change shortcut}
-mcset de {Key Sequences} {Key Sequences}
-mcset de {Action} {Action}
-mcset de {Key Sequence} {Key Sequence}
-mcset de {Television} {Television}
-mcset de {Window management} {Window management}
-mcset de {Recording / File playback} {Recording / File playback}
+mcset de {Key Sequences} {Tastenkombinationen}
+mcset de {Action} {Aktion}
+mcset de {Key Sequence} {Tastenkombination}
+mcset de {Television} {Fernsehen}
+mcset de {Window management} {Fenstermanagement}
+mcset de {Recording / File playback} {Aufnahme / Datei Wiedergabe}
 mcset de {Do you really want to load default values for all key sequences?
 
-This will happen instantly and can not be undone!} {Do you really want to load default values for all key sequences?
+This will happen instantly and can not be undone!} {Wirklich Standardwerte für alle Tastenkombinationen laden?
 
-This will happen instantly and can not be undone!}
-mcset de {Set shortcuts to default values} {Set shortcuts to default values}
-mcset de {Press the key combination you want to assign} {Press the key combination you want to assign}
-mcset de {Clear} {Clear}
-mcset de {Modify shortcut} {Modify shortcut}
-mcset de {It is not possible to edit this shortcut} {It is not possible to edit this shortcut}
-mcset de {Conflict detected with station by number "0-9"} {Conflict detected with station by number "0-9"}
-mcset de {Conflict detected with %} {Conflict detected with %s}
+Dies wird sofort passieren und kann nicht mehr rückgängig gemacht werden!}
+mcset de {Set shortcuts to default values} {Tastenkombinationen auf Standardwerte zurücksetzen}
+mcset de {Press the key combination you want to assign} {Tastenkombination die man zuweisen will betätigen}
+mcset de {Clear} {Löschen}
+mcset de {Modify shortcut} {Shortcut bearbeiten}
+mcset de {It is not possible to edit this shortcut} {Es ist nicht möglich diesen Shortcut zu bearbeiten}
+mcset de {Conflict detected with station by number "0-9"} {Konflikt mit Senderwahl über Zifferntasten "0-9"}
+mcset de {Conflict detected with %} {Konflikt mit %s}
 
 # /home/saedelaere/Projekte/tv-viewer/data/launch_splash.tcl
 
@@ -484,11 +488,11 @@ mcset de {Conflict detected with %} {Conflict detected with %s}
 
 mcset de {Choose output file} {Choose output file}
 mcset de {$ident(name($handler)) Log} {$ident(name($handler)) Log}
-mcset de {Save logfile to disk} {Save logfile to disk}
-mcset de {Send logfile by e-mail to the authors} {Send logfile by e-mail to the authors}
-mcset de {Show/hide Debug messages} {Show/hide Debug messages}
-mcset de {Show/hide Warning messages} {Show/hide Warning messages}
-mcset de {Show/hide Error messages} {Show/hide Error messages}
+mcset de {Save logfile to disk} {Logfile speichern}
+mcset de {Send logfile by e-mail to the authors} {Logdatei per E-Mail an die Entwickler schicken}
+mcset de {Show/hide Debug messages} {Debug-Meldungen anzeigen / verbergen}
+mcset de {Show/hide Warning messages} {Warnmeldungen anzeigen / verbergen}
+mcset de {Show/hide Error messages} {Fehlermeldungen anzeigen / verbergen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/main_command_line_options.tcl
 
@@ -496,66 +500,65 @@ mcset de {Show/hide Error messages} {Show/hide Error messages}
 # /home/saedelaere/Projekte/tv-viewer/data/main_frontend.tcl
 
 mcset de {Name} {Name}
-mcset de {No} {No}
+mcset de {No} {Nr}
 mcset de {Navigation} {Navigation}
-mcset de {View} {View}
-mcset de {Welcome to TV-Viewer} {Welcome to TV-Viewer}
+mcset de {View} {Ansicht}
+mcset de {Help} {Hilfe}
+mcset de {Welcome to TV-Viewer} {Willkommen bei TV-Viewer}
 mcset de {TV-Viewer %} {TV-Viewer %s}
-mcset de {TV-Viewer idle} {TV-Viewer idle}
+mcset de {TV-Viewer idle} {TV-Viewer inaktiv}
 
 # /home/saedelaere/Projekte/tv-viewer/data/main_menu.tcl
 
 mcset de {EPG} {EPG}
 mcset de {TV} {TV}
-mcset de {Prior station} {Prior station}
-mcset de {Next station} {Next station}
-mcset de {Station jumper} {Station jumper}
+mcset de {Prior Station} {Vorheriger Sender}
+mcset de {Next Station} {Nächster Sender}
+mcset de {Station jumper} {Senderswitch}
 mcset de {Play} {Play}
 mcset de {Pause} {Pause}
 mcset de {Stop} {Stop}
-mcset de {Rewind} {Rewind}
-mcset de {-10 seconds} {-10 seconds}
-mcset de {-1 minute} {-1 minute}
-mcset de {-10 minute} {-10 minute}
-mcset de {File beginning} {File beginning}
-mcset de {Forward} {Forward}
-mcset de {+10 seconds} {+10 seconds}
-mcset de {+1 minute} {+1 minute}
-mcset de {+10 minutes} {+10 minutes}
-mcset de {File end} {File end}
+mcset de {Rewind} {Zurück}
+mcset de {-10 seconds} {-10 Sekunden}
+mcset de {-1 minute} {-1 Minute}
+mcset de {-10 minutes} {-10 Minuten}
+mcset de {File beginning} {Dateistart}
+mcset de {Forward} {Vorwärts}
+mcset de {+10 seconds} {+10 Sekunden}
+mcset de {+1 minute} {+1 Minute}
+mcset de {+10 minutes} {+10 Minuten}
+mcset de {File end} {Dateiende}
 mcset de {Pan&Scan} {Pan&Scan}
 mcset de {Zoom +} {Zoom +}
 mcset de {Zoom -} {Zoom -}
 mcset de {Pan&Scan (16:9 / 4:3)} {Pan&Scan (16:9 / 4:3)}
-mcset de {Move up} {Move up}
-mcset de {Move down} {Move down}
-mcset de {Move left} {Move left}
-mcset de {Move right} {Move right}
-mcset de {Center video} {Center video}
-mcset de {Size} {Size}
-mcset de {Stay on top} {Stay on top}
-mcset de {Never} {Never}
-mcset de {Always} {Always}
-mcset de {While playback} {While playback}
+mcset de {Move up} {Nach oben bewegen}
+mcset de {Move down} {Nach unten bewegen}
+mcset de {Move left} {Nach links bewegen}
+mcset de {Move right} {Nach rechts bewegen}
+mcset de {Center video} {Video zentrieren}
+mcset de {Size} {Größe}
+mcset de {Stay on top} {Im Vordergrund bleiben}
+mcset de {Never} {Nie}
+mcset de {Always} {Immer}
+mcset de {While playback} {Während der Wiedergabe}
 mcset de {Toolbars} {Toolbars}
-mcset de {Main toolbar} {Main toolbar}
+mcset de {Main toolbar} {Hauptwerkzeugleiste}
 mcset de {Station list} {Senderliste}
 mcset de {Statusbar} {Statusbar}
-mcset de {Show status messages} {Show status messages}
-mcset de {Show playback time} {Show playback time}
-mcset de {Compact mode} {Compact mode}
-mcset de {Fullscreen} {Fullscreen}
+mcset de {Show status messages} {Statusmeldungen zeigen}
+mcset de {Show playback time} {Zeitinformationen zeigen}
+mcset de {Compact mode} {Kompaktmodus}
+mcset de {Fullscreen} {Vollbild}
 mcset de {Volume +} {Volume +}
 mcset de {Volume -} {Volume -}
-mcset de {Mute} {Mute}
+mcset de {Mute} {Stumm}
 mcset de {Delay +} {Delay +}
 mcset de {Delay -} {Delay -}
-mcset de {Help} {Help}
-mcset de {User Guide} {User Guide}
+mcset de {User Guide} {Handbuch}
 mcset de {MPlayer Log} {MPlayer Log}
 mcset de {Scheduler Log} {Scheduler Log}
 mcset de {TV-Viewer Log} {TV-Viewer Log}
-mcset de {-10 minutes} {-10 minutes}
 
 # /home/saedelaere/Projekte/tv-viewer/data/main_newsreader.tcl
 
@@ -574,38 +577,36 @@ mcset de {-10 minutes} {-10 minutes}
 
 # /home/saedelaere/Projekte/tv-viewer/data/process_key_file.tcl
 
-mcset de {TV-Viewer Menu} {TV-Viewer Menu}
-mcset de {Navigation Menu} {Navigation Menu}
-mcset de {View Menu} {View Menu}
-mcset de {Audio Menu} {Audio Menu}
-mcset de {Help Menu} {Help Menu}
-mcset de {Exit TV-Viewer} {Exit TV-Viewer}
-mcset de {Toggle TV playback} {Toggle TV playback}
-mcset de {Next Station} {Next Station}
-mcset de {Prior Station} {Prior Station}
-mcset de {Jump between the last two stations} {Jump between the last two stations}
-mcset de {Station by number} {Station by number}
-mcset de {Next video input} {Next video input}
-mcset de {Previous video input} {Previous video input}
-mcset de {Increase Volume} {Increase Volume}
-mcset de {Decrease Volume} {Decrease Volume}
-mcset de {Increase audio delay} {Increase audio delay}
-mcset de {Decrease audio delay} {Decrease audio delay}
-mcset de {Toggle mute} {Toggle mute}
-mcset de {Toggle Fullscreen} {Toggle Fullscreen}
-mcset de {Increase Zoom} {Increase Zoom}
-mcset de {Decrease Zoom} {Decrease Zoom}
-mcset de {Move video up} {Move video up}
-mcset de {Move video down} {Move video down}
-mcset de {Move video right} {Move video right}
-mcset de {Move video left} {Move video left}
-mcset de {Original window size} {Original window size}
-mcset de {Double window size} {Double window size}
-mcset de {Take a screenshot} {Take a screenshot}
-mcset de {Record wizard} {Record wizard}
-mcset de {Toggle pause} {Toggle pause}
-mcset de {Start playback} {Start playback}
-mcset de {Stop playback} {Stop playback}
+mcset de {TV-Viewer Menu} {TV-Viewer Menü}
+mcset de {Navigation Menu} {Navigation Menü}
+mcset de {View Menu} {Ansichts Menü}
+mcset de {Audio Menu} {Audio Menü}
+mcset de {Help Menu} {Hilfe Menü}
+mcset de {Exit TV-Viewer} {TV-Viewer beenden}
+mcset de {Toggle TV playback} {Fernsehwiedergabe an oder aus}
+mcset de {Jump between the last two stations} {Zwischen den letzten beiden Sendern hin und her springen}
+mcset de {Station by number} {Senderwahl durch Zifferntasten}
+mcset de {Next video input} {Nächster Videoeingang}
+mcset de {Previous video input} {Vorheriger Videoeingang}
+mcset de {Increase Volume} {Lautstärke erhöhen}
+mcset de {Decrease Volume} {Lautstärke verringern}
+mcset de {Increase audio delay} {Audioverzögerung erhöhen}
+mcset de {Decrease audio delay} {Audioverzögerung verringern}
+mcset de {Toggle mute} {Stummschalten}
+mcset de {Toggle Fullscreen} {In den Vollbildmodus wechseln}
+mcset de {Increase Zoom} {Zoom vergrößern}
+mcset de {Decrease Zoom} {Zoom verringern}
+mcset de {Move video up} {Video nach oben bewegen}
+mcset de {Move video down} {Video nach unten bewegen}
+mcset de {Move video right} {Video nach rechts bewegen}
+mcset de {Move video left} {Video nach links bewegen}
+mcset de {Original window size} {Fenster Ausgangsgröße}
+mcset de {Double window size} {Doppelte Fenstergröße}
+mcset de {Take a screenshot} {Screenshot machen}
+mcset de {Record wizard} {Aufnahmeassistent}
+mcset de {Toggle pause} {Pause}
+mcset de {Start playback} {Wiedergabe starten}
+mcset de {Stop playback} {Wiedergabe stoppen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/process_station_file.tcl
 
@@ -615,111 +616,105 @@ mcset de {Stop playback} {Stop playback}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_add_edit.tcl
 
-mcset de {Record options} {Record options}
-mcset de {Time:} {Time:}
-mcset de {Date:} {Date:}
-mcset de {Duration:} {Duration:}
-mcset de {Resolution:} {Resolution:}
-mcset de {Output file} {Output file}
-mcset de {Add a new recording} {Add a new recording}
-mcset de {Edit recording} {Edit recording}
-mcset de {Choose station to record.} {Choose station to record.}
-mcset de {Time when recording should start. (Hour)} {Time when recording should start. (Hour)}
-mcset de {Time when recording should start. (Minute)} {Time when recording should start. (Minute)}
+mcset de {Record options} {Aufnahme Optionen}
+mcset de {Time:} {Zeit:}
+mcset de {Date:} {Datum:}
+mcset de {Duration:} {Dauer:}
+mcset de {Resolution:} {Auflösung:}
+mcset de {Output file} {Ausgabedatei}
+mcset de {Add a new recording} {Eine neue Aufnahme hinzufügen}
+mcset de {Edit recording} {Aufnahme bearbeiten}
+mcset de {Choose station to record} {Sender wählen der aufgenommen werden soll}
+mcset de {Time when recording should start (Hour)} {Uhrzeit, wann die Aufnahme beginnen soll (Stunde)}
+mcset de {Time when recording should start (Minute)} {Uhrzeit, wann die Aufnahme beginnen soll (Minute)}
 mcset de {Choose between before or after midday.
-You may change hour format in the preferences (Record).} {Choose between before or after midday.
-You may change hour format in the preferences (Record).}
-mcset de {Choose date on which recording should occur.} {Choose date on which recording should occur.}
-mcset de {Duration for the recording. (Hours)} {Duration for the recording. (Hours)}
-mcset de {Duration for the recording. (Minutes)} {Duration for the recording. (Minutes)}
-mcset de {Duration for the recording. (Seconds)} {Duration for the recording. (Seconds)}
+You may change hour format in the preferences (Record).} {Zwischen am und pm wählen.
+Das Stunden-Format kann in den Einstellungen (Aufnahme)
+geändert werden.}
+mcset de {Choose date on which recording should occur} {Wähle das Datum, wann die Aufnahme stattfinden soll}
+mcset de {Duration for the recording (Hours)} {Dauer der Aufnahme (Stunden)}
+mcset de {Duration for the recording (Minutes)} {Dauer der Aufnahme (Minuten)}
+mcset de {Duration for the recording (Seconds)} {Dauer der Aufnahme (Sekunden)}
 mcset de {Resolution (width) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
-to convert the file afterwards.} {Resolution (width) in which the recording
-should be made. In most cases it doesn't
-make sense to change this value. It is better
-to convert the file afterwards.}
+to convert the file afterwards.} {Auflösung (Weite) in der die Aufnahme gemacht
+werden soll. Es ist meist nicht sinnvoll
+diese zu ändern, da Aufnahmen auch später
+noch entsprechend bearbeitet werden können.}
 mcset de {Resolution (height) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
-to convert the file afterwards.} {Resolution (height) in which the recording
-should be made. In most cases it doesn't
-make sense to change this value. It is better
-to convert the file afterwards.}
+to convert the file afterwards.} {Auflösung (Höhe) in der die Aufnahme gemacht
+werden soll. Es ist meist nicht sinnvoll
+diese zu ändern, da Aufnahmen auch später
+noch entsprechend bearbeitet werden können.}
 mcset de {Output file for recording. If you omit
 this value TV-Viewer will determine a name
-and store the file in the default record path.} {Output file for recording. If you omit
-this value TV-Viewer will determine a name
-and store the file in the default record path.}
-mcset de {Apply your changes and exit the dialogue.} {Apply your changes and exit the dialogue.}
-mcset de {Exit the dialogue without changes.} {Exit the dialogue without changes.}
-mcset de {Do you really want to delete the selected recording(s)?} {Do you really want to delete the selected recording(s)?}
-mcset de {Don't ask next time} {Don't ask next time}
-mcset de {Delete} {Delete}
-mcset de {Delete recordings} {Delete recordings}
-mcset de {Choose date} {Choose date}
-mcset de {Previous year.} {Previous year.}
-mcset de {Previous month.} {Previous month.}
-mcset de {Next month.} {Next month.}
-mcset de {Next year.} {Next year.}
+and store the file in the default record path.} {Ausgabe Datei für die Aufnahme. Wenn
+keine Datei angegeben wird, bestimmt TV-Viewer
+einen Namen und speichert die Datei im Standardpfad
+für Aufnahmen.}
+mcset de {Do you really want to delete the selected recording(s)?} {Die gewählte(n) Aufnahme(n) wirklich löschen?}
+mcset de {Don't ask next time} {Das nächste mal nicht mehr fragen}
+mcset de {Delete} {Löschen}
+mcset de {Delete recordings} {Aufnahmen löschen}
+mcset de {Choose date} {Datum wählen}
+mcset de {Previous year} {Vorheriges Jahr}
+mcset de {Previous month} {Vorheriger Monat}
+mcset de {Next month} {Nächster Monat}
+mcset de {Next year} {Nächstes Jahr}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_external.tcl
 
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_handler.tcl
 
-mcset de {Time format incorrect (%-hour clock)!} {Time format incorrect (%s-hour clock)!}
-mcset de {Time format incorrect (min)!} {Time format incorrect (min)!}
-mcset de {Chosen date is in the past!} {Chosen date is in the past!}
-mcset de {Time is in the past!} {Time is in the past!}
-mcset de {Duration not specified correctly (hour)!} {Duration not specified correctly (hour)!}
-mcset de {Duration not specified correctly (min)!} {Duration not specified correctly (min)!}
-mcset de {Duration not specified correctly (sec)!} {Duration not specified correctly (sec)!}
-mcset de {Resolution format incorrect!} {Resolution format incorrect!}
+mcset de {Time format incorrect (%-hour clock)!} {Zeit Format falsch (%s-Stunden-Format)!}
+mcset de {Time format incorrect (min)!} {Zeit Format falsch (Minute)!}
+mcset de {Chosen date is in the past!} {Gewähltes Datum liegt in der Vergangenheit!}
+mcset de {Time is in the past!} {Gewählte Zeit ist vergangen!}
+mcset de {Duration not specified correctly (hour)!} {Dauer nicht korrekt angegeben (Stunde)!}
+mcset de {Duration not specified correctly (min)!} {Dauer nicht korrekt angegeben (Minute)!}
+mcset de {Duration not specified correctly (sec)!} {Dauer nicht korrekt angegeben (Sekunde)!}
+mcset de {Resolution format incorrect!} {Format der Auflösung falsch!}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_linker.tcl
 
 mcset de {Currently recording %
-Started at %} {Currently recording %s
-Started at %s}
+Started at %} {Aufnahme von %s läuft.
+Gestarted um %s}
 mcset de {Timeshift %} {Timeshift %s}
-mcset de {Recording % - Ends at % %} {Recording %s - Ends at %s %s}
-mcset de {% -- ends % at %} {%s -- ends %s at %s}
-mcset de {Playing file: %} {Playing file: %s}
+mcset de {Recording % - Ends at % %} {Aufnahme %s - Endet am %s um %s}
+mcset de {% -- ends % at %} {%s -- endet am %s um %s}
+mcset de {Playing file: %} {Dateiwiedergabe: %s}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_wizard.tcl
 
-mcset de {Running} {Running}
-mcset de {Stop Scheduler} {Stop Scheduler}
-mcset de {Stopped} {Stopped}
-mcset de {Start Scheduler} {Start Scheduler}
-mcset de {New recording} {New recording}
-mcset de {Edit} {Edit}
+mcset de {Running} {Läuft}
+mcset de {Stop Scheduler} {Scheduler anhalten}
+mcset de {Stopped} {Angehalten}
+mcset de {Start Scheduler} {Scheduler starten}
+mcset de {New recording} {Neue Aufnahme}
+mcset de {Edit} {Bearbeiten}
 mcset de {Status} {Status}
-mcset de {Scheduler status:} {Scheduler status:}
-mcset de {Currently recording:} {Currently recording:}
-mcset de {Stop recording} {Stop recording}
+mcset de {Scheduler status:} {Scheduler Status:}
+mcset de {Currently recording:} {Aktuelle Aufnahme:}
+mcset de {Stop recording} {Aufnahme anhalten}
 mcset de {Job ID} {Job ID}
-mcset de {Time} {Time}
-mcset de {Date} {Date}
-mcset de {Duration} {Duration}
-mcset de {Resolution} {Resolution}
+mcset de {Time} {Zeit}
+mcset de {Date} {Datum}
+mcset de {Duration} {Dauer}
+mcset de {Resolution} {Auflösung}
 mcset de {Add a scheduled recording or
-start recording immediately.} {Add a scheduled recording or
-start recording immediately.}
-mcset de {Delete selected recordings.} {Delete selected recordings.}
-mcset de {Edit selected recording.} {Edit selected recording.}
-mcset de {Indicates whether the Scheduler
-is running or not.} {Indicates whether the Scheduler
-is running or not.}
-mcset de {Provides informations about the
-current recording.} {Provides informations about the
-current recording.}
-mcset de {If there is a running recording,
-click here to stop it.} {If there is a running recording,
-click here to stop it.}
-mcset de {Exit Record Wizard} {Exit Record Wizard}
+start recording immediately.} {Eine geplante Aufnahme hinzufügen,
+oder eine Aufnahme sofort starten.}
+mcset de {Delete selected recordings} {Ausgewählte Aufnahme(n) löschen}
+mcset de {Edit selected recording} {Gewählte Aufnahme bearbeiten}
+mcset de {Indicates whether the Scheduler is running or not} {Zeigt ob der Scheduler läuft oder nicht}
+mcset de {Provides informations about the current recording} {Zeigt Informationen über eine laufende Aufnahme}
+mcset de {If there is a running recording, click here to stop it} {Beendet eine Aufnahme}
+mcset de {Exit Record Wizard} {Aufnahme Assistent beenden}
 
 # /home/saedelaere/Projekte/tv-viewer/data/recorder.tcl
 
@@ -732,137 +727,133 @@ mcset de {Exit Record Wizard} {Exit Record Wizard}
 
 # /home/saedelaere/Projekte/tv-viewer/data/station_after_msg.tcl
 
-mcset de {Now playing %} {Now playing %s}
-mcset de {TV-Viewer playing - %} {TV-Viewer playing - %s}
+mcset de {Now playing %} {Jetzt läuft %s}
+mcset de {TV-Viewer playing - %} {TV-Viewer Wiedergabe - %s}
 
 # /home/saedelaere/Projekte/tv-viewer/data/station_edit.tcl
 
-mcset de {Station search} {Station search}
-mcset de {Add} {Add}
-mcset de {Lock} {Lock}
-mcset de {Prior} {Prior}
-mcset de {Next} {Next}
-mcset de {Preview} {Preview}
-mcset de {Unlock} {Unlock}
-mcset de {Frequency} {Frequency}
-mcset de {Video input} {Video input}
-mcset de {External Tuner} {External Tuner}
-mcset de {Perform an automatic station search.
-This will delete all stations currently in the list!} {Perform an automatic station search.
-This will delete all stations currently in the list!}
-mcset de {Add a new television station.} {Add a new television station.}
-mcset de {Delete selected television station.} {Delete selected television station.}
-mcset de {(De)Activate selected station.
-Deactivated stations will be marked red.} {(De)Activate selected station.
-Deactivated stations will be marked red.}
-mcset de {Edit selected station.} {Edit selected station.}
-mcset de {Move selected item up.} {Move selected item up.}
-mcset de {Move selected item down.} {Move selected item down.}
-mcset de {Preview for selected tv station.} {Preview for selected tv station.}
-mcset de {Save station list and exit editor.} {Save station list and exit editor.}
-mcset de {Exit editor without any changes.} {Exit editor without any changes.}
+mcset de {Station search} {Sendersuchlauf}
+mcset de {Add} {Hinzufügen}
+mcset de {Lock} {Sperren}
+mcset de {Up} {Nach oben}
+mcset de {Down} {Nach unten}
+mcset de {Preview} {Vorschau}
+mcset de {Unlock} {Entsperren}
+mcset de {Frequency} {Fequenz}
+mcset de {Video input} {Videoeingang}
+mcset de {External Tuner} {Externer Tuner}
+mcset de {Perform an automatic station search} {Automatische Sendersuche durchführen}
+mcset de {Add a new television station} {Einen neuen Sender hinzufügen}
+mcset de {Delete selected television station} {Den gewählten Kanal entfernen}
+mcset de {Lock or unlock selected station(s).
+Locked stations will be displayed in red.} {Sender sperren oder entsperren.
+Gesperrte Sender werden in rot dargestellt.}
+mcset de {Edit selected station} {Gewählten Sender bearbeiten}
+mcset de {Move selected item up} {Ausgewählte(s) Element(e) nach oben verschieben}
+mcset de {Move selected item down} {Ausgewählte(s) Element(e) nach unten verschieben}
+mcset de {Preview for selected tv station} {Vorschau für gewählten Sender}
+mcset de {Save station list and exit editor} {Senderliste speichern und Sendereditor verlassen}
+mcset de {Exit editor without any changes} {Editor verlassen ohne Änderungen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/station_item.tcl
 
-mcset de {Do you really want to delete the selected station(s)?} {Do you really want to delete the selected station(s)?}
-mcset de {Delete stations} {Delete stations}
-mcset de {Station:} {Station:}
-mcset de {Frequency:} {Frequency:}
-mcset de {Video input:} {Video input:}
-mcset de {Add a new station} {Add a new station}
-mcset de {Edit Station / Frequency} {Edit Station / Frequency}
-mcset de {Provide a name for the television station.} {Provide a name for the television station.}
-mcset de {Frequency for the station. E.g. 175.250} {Frequency for the station. E.g. 175.250}
+mcset de {Do you really want to delete the selected station(s)?} {Sollen die die ausgewählten Sender wirklich gelöscht werden?}
+mcset de {Delete stations} {Sender löschen}
+mcset de {Station:} {Sender:}
+mcset de {Frequency:} {Frequenz:}
+mcset de {Video input:} {Videoeingang:}
+mcset de {Add a new station} {Neuen Sender hinzufügen}
+mcset de {Edit Station / Frequency} {Sender / Frequenz bearbeiten}
+mcset de {Provide a name for the television station} {Einen Namen für den Sender angeben}
+mcset de {Frequency for the station, E.g. 175.250} {Frequency for the station, E.g. 175.250}
 mcset de {Video input for this station. 
-Normally you want television input.} {Video input for this station. 
-Normally you want television input.}
-mcset de {Use an external tuner} {Use an external tuner}
+Normally you want television input.} {Videoeingang für diesen Sender. 
+Im Normalfall ist dies der TV-Eingang.}
+mcset de {Use an external tuner} {Einen externen Tuner verwenden}
 mcset de {Specify a command for the external tuner.
 You may use this substitutions:
 
 %%F  Frequency
 %%S  Station name
-e.g. externalTune %%F %%S} {Specify a command for the external tuner.
-You may use this substitutions:
+e.g. externalTune %%F %%S} {Einen Befehl für den externen Tuner angeben.
+Man kann Stellvertreter verwenden:
 
-%%F  Frequency
-%%S  Station name
-e.g. externalTune %%F %%S}
-mcset de {Apply changes and close window.} {Apply changes and close window.}
-mcset de {Exit without changes.} {Exit without changes.}
-mcset de {Please specify name and frequency for each station} {Please specify name and frequency for each station}
+%%F  Frequenz
+%%S  Sendername
+z.B. externalTune %%F %%S}
+mcset de {Please specify name and frequency for each station} {Name und Frequenz für Sender angeben}
 
 # /home/saedelaere/Projekte/tv-viewer/data/station_search.tcl
 
-mcset de {Station search options} {Station search options}
-mcset de {Append stations to existing list} {Append stations to existing list}
-mcset de {Perform a full frequency sweep} {Perform a full frequency sweep}
-mcset de {Start} {Start}
-mcset de {Append stations to existing list.
-Otherwise the existing list will be deleted.} {Append stations to existing list.
-Otherwise the existing list will be deleted.}
-mcset de {Perform a full frequency sweep.
-Otherwise TV-Viewer checks all channels for the chosen
-frequency table.
-Note: A full frequency sweep may find many duplicates.} {Perform a full frequency sweep.
-Otherwise TV-Viewer checks all channels for the chosen
-frequency table.
-Note: A full frequency sweep may find many duplicates.}
+mcset de {Station search options} {Optionen - Sendersuche}
+mcset de {Append stations} {Sender hinzufügen}
+mcset de {Perform a full frequency sweep} {Gesamten Frequenzbereich absuchen}
+mcset de {Start} {Starten}
+mcset de {Append stations, or overwrite existing list} {Sender hinzufügen, oder vorhandene Liste überschreiben}
+mcset de {Perform a full frequency sweep, or check all channels
+defined by the frequency table.
+Note: A full frequency sweep may find many duplicates.} {Gesamten Frequenzbereich absuchen, oder alle Kanäle
+überprüfen die durch die Frequenztabelle definiert sind.
+Achtung: Wird der gesamte Frequenzbereich durchsucht,
+können viele Duplikate gefunden werden.}
 mcset de {Choose the frequency increase factor for full frequency sweep.
 Note: The lower this factor the more duplicates will be found and
-the search takes more time.} {Choose the frequency increase factor for full frequency sweep.
-Note: The lower this factor the more duplicates will be found and
-the search takes more time.}
+the search takes more time.} {Frequenzsteigerungs Faktor für das Absuchen des gesamten
+Frequenzbereichs wählen.
+Achtung: Desto niedriger dieser Wert desto mehr Duplikate eines
+Senders werden gefunden und die Sendersuche dauert länger.}
 mcset de {Time in milliseconds to wait for the driver to respond.
 The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver will possibly not have
+Note: If this value is too small the driver won't have
 enough time to report if there is a signal on the current frequency.
-As a result not all stations will be found.} {Time in milliseconds to wait for the driver to respond.
-The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver will possibly not have
-enough time to report if there is a signal on the current frequency.
-As a result not all stations will be found.}
-mcset de {Start station search.} {Start station search.}
+As a result not all stations will be found.} {Zeit in Millisekunden die auf den Treiber gewartet wird.
+Je niedriger diesert Wert ist, desto schneller wird die Suche
+abgeschlossen sein.
+Achtung: Wenn dieser Wert zu gering ist hat der Treiber möglicherweise
+nicht mehr genug Zeit für eine Rückmeldung ob auf der aktuellen
+Frequenz ein Signal liegt. Dies führt dazu, dass nicht alle Sender
+gefunden werden.}
+mcset de {Start station search} {Sendersuche starten}
 mcset de {Station search in progress.
-Please wait...} {Station search in progress.
-Please wait...}
-mcset de {Channel: %} {Channel: %s}
+Please wait...} {Sendersuche läuft.
+Bitte warten...}
+mcset de {Channel: %} {Kanal: %s}
 mcset de {Station search finished!} {Station search finished!}
-mcset de {Frequency: %} {Frequency: %s}
+mcset de {Frequency: %} {Frequenz: %s}
 
 # /home/saedelaere/Projekte/tv-viewer/data/system_tray.tcl
 
-mcset de {Hide} {Hide}
-mcset de {Restore} {Restore}
+mcset de {Hide} {Verstecken}
+mcset de {Restore} {Wiederherstellen}
 
 # /home/saedelaere/Projekte/tv-viewer/data/timeshift.tcl
 
 mcset de {Copying timeshift video file.
-Please wait...} {Copying timeshift video file.
-Please wait...}
-mcset de {Copying...       %%%} {Copying...       %s%%}
-mcset de {Copying...       finished} {Copying...       finished}
+Please wait...} {Kopiere Timeshift Videofile.
+Bitte warten...}
+mcset de {Copying...       %%%} {Kopiere...       %s%%}
+mcset de {Copying...       finished} {Kopiere...       beendet}
 
 # /home/saedelaere/Projekte/tv-viewer/data/tooltip.tcl
 
-mcset de {Tune up} {Tune up}
-mcset de {Tune down} {Tune down}
-mcset de {Zap among the last two stations} {Zap among the last two stations}
-mcset de {Alter volume} {Alter volume}
-mcset de {Start/Stop timeshift} {Start/Stop timeshift}
-mcset de {Start/Stop record} {Start/Stop record}
-mcset de {Execute the selected EPG application} {Execute the selected EPG application}
-mcset de {Switch to radio mode} {Switch to radio mode}
-mcset de {Start/Stop TV playback} {Start/Stop TV playback}
-mcset de {Pause playback} {Pause playback}
-mcset de {Jump to the beginning} {Jump to the beginning}
-mcset de {Seek back} {Seek back}
-mcset de {Choose amount of seek back} {Choose amount of seek back}
-mcset de {Seek forward} {Seek forward}
-mcset de {Choose amount of seek forward} {Choose amount of seek forward}
-mcset de {Jump to the end} {Jump to the end}
-mcset de {Toggle fullscreen} {Toggle fullscreen}
-mcset de {Current position / File length} {Current position / File length}
+mcset de {Tune up} {Vorheriger Sender}
+mcset de {Tune down} {Nächster Sender}
+mcset de {Zap among the last two stations} {Zwischen den letzten beiden Sendern hin- und herzappen}
+mcset de {Alter volume} {Lautstärke anpassen}
+mcset de {Start/Stop timeshift} {Timeshift starten/stoppen}
+mcset de {Start/Stop record} {Aufnahme starten/beenden}
+mcset de {Execute the selected EPG application} {Die ausgewählte EPG Applikation starten}
+mcset de {Switch to radio mode} {In den Radio-Modus wechseln}
+mcset de {Start/Stop TV playback} {Fernsehwiedergabe starten/stoppen}
+mcset de {Pause playback} {Wiedergabe pausieren}
+mcset de {Jump to the beginning} {Zum Anfang springen}
+mcset de {Seek back} {Zurück}
+mcset de {Choose amount of seek back} {Wählen wie weit zurückgesprungen werden soll}
+mcset de {Seek forward} {Vorwärts}
+mcset de {Choose amount of seek forward} {Wählen wie weit vorgesprungen werden soll}
+mcset de {Jump to the end} {Zum Ende springen}
+mcset de {Toggle fullscreen} {Vollbild-, Fenstermodus}
+mcset de {Current position / File length} {Aktuelle Position / Länge der Aufnahme}
 
 # /home/saedelaere/Projekte/tv-viewer/data/tv-viewer_main.tcl
 
@@ -872,7 +863,7 @@ mcset de {Current position / File length} {Current position / File length}
 
 # /home/saedelaere/Projekte/tv-viewer/data/vid_callback.tcl
 
-mcset de {idle} {idle}
+mcset de {idle} {inaktiv}
 
 # /home/saedelaere/Projekte/tv-viewer/data/vid_file_calc.tcl
 
@@ -894,9 +885,9 @@ mcset de {idle} {idle}
 
 # /home/saedelaere/Projekte/tv-viewer/data/vid_wm.tcl
 
-mcset de {Move x=%} {Move x=%s}
-mcset de {Move y=%} {Move y=%s}
-mcset de {Centering video} {Centering video}
+mcset de {Move x=%} {Bild bewegen x=%s}
+mcset de {Move y=%} {Bild bewegen y=%s}
+mcset de {Centering video} {Video zentrieren}
 
 # /home/saedelaere/Projekte/tv-viewer/extensions/callib/callib.tcl
 
@@ -908,4 +899,5 @@ mcset de {Thu} {Do}
 mcset de {Fri} {Fr}
 mcset de {Sat} {Sa}
 
-
+# Need to source msg files from fsdialog because this is an external project
+source "/home/saedelaere/Projekte/tv-viewer/extensions/fsdialog/de.msg"
