@@ -1,8 +1,0 @@
-#
-#      Translation file for TV-Viewer
-#      Config wizard radio section.
-#
-
-mcset $lang \
-	{Radio Settings} \
-	{Radio Einstellungen}

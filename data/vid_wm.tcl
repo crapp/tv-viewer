@@ -38,11 +38,11 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			vid_wmCursorPlaybar %Y
 			#~ vid_slistCursor %X %Y
 		}
-		bind $mw <ButtonPress-1> {.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont); .fvidBg configure -cursor $::cursor(old_.fvidBg)}
-		set ::cursor($vid_cont) ""
-		set ::cursor($vid_bg) ""
-		vid_wmCursorHide $vid_cont 0
-		vid_wmCursorHide $vid_bg 0
+		#~ bind $mw <ButtonPress-1> {.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont); .fvidBg configure -cursor $::cursor(old_.fvidBg)}
+		#~ set ::cursor($vid_cont) ""
+		#~ set ::cursor($vid_bg) ""
+		#~ vid_wmCursorHide $vid_cont 0
+		#~ vid_wmCursorHide $vid_bg 0
 		wm attributes $mw -fullscreen 1
 		if {$::data(panscanAuto) == 1} {
 			set ::vid(id_panscanAuto) [after 500 {
@@ -505,12 +505,8 @@ proc vid_wmCursor {com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursor \033\[0m \{$com\}"
 	#com 0 stop hiding cursor - 1 hide cursor
 	if {$com == 0} {
-		bind .fvidBg.cont <Motion> {
-			#~ vid_slistCursor %X %Y
-		}
-		bind .fvidBg <Motion> {
-			#~ vid_slistCursor %X %Y
-		}
+		bind .fvidBg.cont <Motion> {}
+		bind .fvidBg <Motion> {}
 		bind . <ButtonPress-1> {}
 		vid_wmCursorHide .fvidBg.cont 1
 		vid_wmCursorHide .fvidBg 1
@@ -519,18 +515,27 @@ proc vid_wmCursor {com} {
 		.fvidBg configure -cursor $::cursor(old_.fvidBg)
 		.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont)
 	}
-	if {$com} {
-		bind .fvidBg.cont <Motion> {
-			vid_wmCursorHide .fvidBg.cont 0
-			#~ vid_slistCursor %X %Y
-		}
-		bind .fvidBg <Motion> {
-			vid_wmCursorHide .fvidBg 0
-			#~ vid_slistCursor %X %Y
+	if {$com == 1} {
+		if {[wm attributes . -fullscreen] == 1} {
+			bind .fvidBg.cont <Motion> {
+				vid_wmCursorHide .fvidBg.cont 0
+				vid_wmCursorPlaybar %Y
+			}
+			bind .fvidBg <Motion> {
+				vid_wmCursorHide .fvidBg 0
+				vid_wmCursorPlaybar %Y
+			}
+		} else {
+			bind .fvidBg.cont <Motion> {
+				vid_wmCursorHide .fvidBg.cont 0
+			}
+			bind .fvidBg <Motion> {
+				vid_wmCursorHide .fvidBg 0
+			}
 		}
 		bind . <ButtonPress-1> {.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont); .fvidBg configure -cursor $::cursor(old_.fvidBg)}
-		set ::cursor(.fvidBg.cont) ""
-		set ::cursor(.fvidBg) ""
+		set ::cursor(.fvidBg.cont) left_ptr
+		set ::cursor(.fvidBg) left_ptr
 		vid_wmCursorHide .fvidBg.cont 0
 		vid_wmCursorHide .fvidBg 0
 	}
@@ -545,10 +550,10 @@ proc vid_wmCursorHide {w com} {
 	}
 	if {$com == 1} return
 	if {"$::cursor($w)" == "none"} {
-		set ::cursor($w) ""
+		set ::cursor($w) left_ptr
 		$w configure -cursor $::cursor(old_$w)
 	} else {
-		set ::cursor(old_$w) [$w cget -cursor]
+		set ::cursor(old_$w) left_ptr
 		lappend ::option(cursor_id\($w\)) [after 1500 "$w configure -cursor none; set ::cursor($w) none"]
 	}
 }

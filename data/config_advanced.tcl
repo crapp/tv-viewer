@@ -301,7 +301,7 @@ This may improve picture quality."]
 Screenshots will be stored in the users home directory."]
 					settooltip $lf_mconfig.cb_advanced_mconfig [mc "If enabled MPlayer will ignore all existing config files.
 This will ensure only values set by TV-Viewer will be used."]
-					settooltip $lf_factory.b_reset [mc "Reset all configuration options."]
+					settooltip $lf_factory.b_reset [mc "Reset all configuration options"]
 					settooltip $::window(advanced_nb2).e_lf_additional_mplayer_com [mc "Here you may provide additional command line options for MPlayer.
 Separate the different options with spaces.
 See the MPlayer man pages for more informations."]

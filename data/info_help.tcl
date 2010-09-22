@@ -110,11 +110,15 @@ proc info_helpAbout {} {
 		ttk::button $btnf.b_about_exit -text [mc "Exit"] -command [list info_helpExitAbout $w] -compound left -image $::icon_s(dialog-close)
 		
 		set nb1 [ttk::frame $mf.nb.f_info]
+		set linkf [ttk::frame $nb1.link_frame]
 		$mf.nb add $nb1 -text [mc "Info"] -padding 2
 		ttk::label $nb1.l_desc -text [mc "A small and simple frontend to watch and record television."] -justify center -font "systemfont 12 bold"
-		ttk::button $nb1.b_homepage -text [mc "http://tv-viewer.sourceforge.net"] -command [list info_helpWebpage 0]  -style Toolbutton
-		ttk::button $nb1.b_forum -text [mc "http://sourceforge.net/.../forums"] -command [list info_helpWebpage 1] -style Toolbutton
-		ttk::button $nb1.b_irc -text [mc "http://webchat.freenode.net/"] -command [list info_helpWebpage 2] -style Toolbutton
+		ttk::label $linkf.l_homepage -text [mc "Homepage"]
+		ttk::button $linkf.b_homepage -text [mc "http://tv-viewer.sourceforge.net"] -command [list info_helpWebpage 0]  -style Toolbutton
+		ttk::label $linkf.l_forum -text [mc "Forum"]
+		ttk::button $linkf.b_forum -text [mc "http://sourceforge.net/.../forums"] -command [list info_helpWebpage 1] -style Toolbutton
+		ttk::label $linkf.l_irc -text [mc "IRC channel"]
+		ttk::button $linkf.b_irc -text [mc "http://webchat.freenode.net/"] -command [list info_helpWebpage 2] -style Toolbutton
 		ttk::label $nb1.l_version
 		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2010
 Christian Rapp"] -justify center
@@ -143,11 +147,17 @@ Christian Rapp"] -justify center
 		grid anchor $btnf e
 		grid anchor $nb1 center
 		grid $nb1.l_desc -in $nb1 -row 0 -column 0 -pady 10
-		grid $nb1.b_homepage -in $nb1 -row 1 -column 0 -pady "0 3"
-		grid $nb1.b_forum -in $nb1 -row 2 -column 0 -pady "0 3"
-		grid $nb1.b_irc -in $nb1 -row 3 -column 0 -pady "0 10"
-		grid $nb1.l_version -in $nb1 -row 4 -column 0 -pady "0 10"
-		grid $nb1.l_copy -in $nb1 -row 5 -column 0 -pady "0 10"
+		
+		grid $linkf -in $nb1 -row 1 -column 0 -pady "0 10"
+		grid $linkf.l_homepage -in $linkf -row 0 -column 0 -sticky w -pady "0 3" -padx "0 3"
+		grid $linkf.b_homepage -in $linkf -row 0 -column 1 -sticky w -pady "0 3"
+		grid $linkf.l_forum -in $linkf -row 1 -column 0 -sticky w -pady "0 3" -padx "0 3"
+		grid $linkf.b_forum -in $linkf -row 1 -column 1 -sticky w -pady "0 3"
+		grid $linkf.l_irc -in $linkf -row 2 -column 0 -sticky w -pady "0 3" -padx "0 3"
+		grid $linkf.b_irc -in $linkf -row 2 -column 1 -sticky w
+		
+		grid $nb1.l_version -in $nb1 -row 2 -column 0 -pady "0 10"
+		grid $nb1.l_copy -in $nb1 -row 3 -column 0 -pady "0 10"
 		grid $nb2.t_credits -in $nb2 -row 0 -column 0 -sticky nesw
 		grid $nb2.scrollb_credits -in $nb2 -row 0 -column 1 -sticky ns -pady 10
 		grid $nb3.t_license -in $nb3 -row 0 -column 0 -sticky nesw

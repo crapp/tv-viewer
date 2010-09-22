@@ -67,8 +67,8 @@ proc vid_slistCursor {xpos ypos} {
 							focus .tv
 							place forget .tv.slist
 							log_writeOutTv 0 "Removing station list from video window."
-							.tv.bg configure -cursor arrow
-							.tv.bg.w configure -cursor arrow
+							.tv.bg configure -cursor left_ptr
+							.tv.bg.w configure -cursor left_ptr
 							vid_wmCursorHide .tv.bg 1
 							vid_wmCursorHide .tv.bg.w 1
 							bind .tv.slist <Any-Leave> {}
@@ -95,8 +95,8 @@ proc vid_slistCursor {xpos ypos} {
 							focus .tv
 							place forget .tv.slist
 							log_writeOutTv 0 "Removing station list from video window."
-							.tv.bg configure -cursor arrow
-							.tv.bg.w configure -cursor arrow
+							.tv.bg configure -cursor left_ptr
+							.tv.bg.w configure -cursor left_ptr
 							vid_wmCursorHide .tv.bg 1
 							vid_wmCursorHide .tv.bg.w 1
 							bind .tv.slist <Any-Leave> {}

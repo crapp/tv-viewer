@@ -102,7 +102,7 @@ proc record_linkerPrestartCancel {handler} {
 		log_writeOutTv 1 "Prestart sequence for timeshift has been canceled."
 	}
 	if {[winfo exists .record_wizard]} {
-		.record_wizard configure -cursor arrow
+		.record_wizard configure -cursor left_ptr
 	}
 	vid_pmhandlerButton {{1 !disabled} {1 !pressed} {4 !disabled} {5 !disabled}} {{1 !disabled} {2 !disabled} {3 !disabled}} {100 0}
 	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{4 normal} {6 normal} {8 normal} {11 normal} {12 normal}}
@@ -173,11 +173,11 @@ Started at %" $station $stime]
 		vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"
 	}
 	if {[winfo exists .record_wizard]} {
-		.record_wizard configure -cursor arrow
+		.record_wizard configure -cursor left_ptr
 	}
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard]} {
-			.record_wizard configure -cursor arrow
+			.record_wizard configure -cursor left_ptr
 			.record_wizard.status_frame.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
 			.record_wizard.status_frame.b_rec_current state !disabled
 			record_linkerWizardReread
@@ -250,10 +250,6 @@ proc record_linkerPreStop {handler} {
 		.tv.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
-	if {[wm attributes . -fullscreen] == 1} {
-		bind .fvidBg.cont <Motion> {vid_wmCursorHide .fvidBg.cont 0}
-		bind .fvidBg <Motion> {vid_wmCursorHide .fvidBg 0}
-	}
 	.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
 	.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::::vid(current_rec_file)]
 	if {"$handler" != "timeshift"} {

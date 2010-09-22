@@ -498,15 +498,15 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 				if {$::option(tooltips) == 1} {
 					if {$::option(tooltips_wizard) == 1} {
 						settooltip $::window(analog_nb1).lf_mb_video_device [mc "Choose the video device node.
-See \[dmesg | grep ivtv || pvrusb2 || cx18\]"]
+See \"dmesg | grep ivtv || pvrusb2 || cx18\""]
 						settooltip $::window(analog_nb1).cb_lf_video_standard [mc "Constrain setting of the video standard.
 Choose this if the driver selects the wrong one."]
 						settooltip $::window(analog_nb1).mb_lf_video_standard [mc "Define the way of color transmission.
 Depends on where you are located."]
 						settooltip $::window(analog_nb1).mb_lf_freqtable [mc "The frequency table provides informations about the 
 frequency band that should be used to search for tv stations."]
-						settooltip $::window(analog_nb1).mb_lf_video_input [mc "Choose the video input."]
-						settooltip $::window(analog_nb2).cb_lf_streambitrate [mc "Check this if you want to alter the videobitrate."]
+						settooltip $::window(analog_nb1).mb_lf_video_input [mc "Choose the video input"]
+						settooltip $::window(analog_nb2).cb_lf_streambitrate [mc "Check this if you want to alter the videobitrate"]
 						settooltip $::window(analog_nb2).s_lf_videobitrate [mc "Define the videobitrate. Don't set the
 videobitrate to a higher value than videobitrate (peak)!
 Standard values are recommended.
@@ -525,7 +525,7 @@ Standard values are recommended.
 Data in kb/sec."]
 						settooltip $::window(analog_nb2).cb_lf_temporal [mc "Check this if you want to change the temporal filter.
 This option can help if you have a blurred picture."]
-						settooltip $::window(analog_nb2).sb_lf_temporal [mc "Choose level of temporal filtering."]
+						settooltip $::window(analog_nb2).sb_lf_temporal [mc "Choose level of temporal filtering"]
 						settooltip $::window(analog_nb2).cb_audio_v4l2 [mc "Enable this option if you want to change the hardware volume level."]
 						settooltip $::window(analog_nb2).s_audio_v4l2 [mc "Specify the hardware volume level.
 This applies to all stations and it is not recommended

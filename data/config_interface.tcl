@@ -55,7 +55,7 @@ proc option_screen_6 {} {
 		ttk::checkbutton $::window(interface_nb1).cb_lf_tooltip_record -text [mc "Record Wizard"] -variable choice(cb_tooltip_record)
 		
 		ttk::labelframe $::window(interface_nb1).lf_splash -text [mc "Splash Screen"]
-		ttk::checkbutton $::window(interface_nb1).cb_lf_splash -text [mc "Show Splash Screen on initialization."] -variable choice(cb_splash)
+		ttk::checkbutton $::window(interface_nb1).cb_lf_splash -text [mc "Show Splash Screen on initialization"] -variable choice(cb_splash)
 		
 		set ::window(interface_nb2) [ttk::frame $w.f_windowprop]
 		$w add $::window(interface_nb2) -text [mc "Window Properties"] -padding 2
@@ -292,35 +292,35 @@ proc option_screen_6 {} {
 			config_interfaceChangeTooltips $w1
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
-					settooltip $::window(interface_nb1).mb_lf_theme [mc "Choose your preferred theme."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip [mc "Check this if you want to see tooltips."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip_main [mc "Tooltips for the main Interface."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip_wizard [mc "Tooltips for the preferences."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip_station [mc "Tooltips for the Station Editor."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip_videocard [mc "Tooltips for the Color Management."]
-					settooltip $::window(interface_nb1).cb_lf_tooltip_record [mc "Tooltips for the Record Wizard."]
-					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer."]
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode."]
+					settooltip $::window(interface_nb1).mb_lf_theme [mc "Choose your preferred theme"]
+					settooltip $::window(interface_nb1).cb_lf_tooltip [mc "Check this if you want to see tooltips"]
+					settooltip $::window(interface_nb1).cb_lf_tooltip_main [mc "Tooltips for the main Interface"]
+					settooltip $::window(interface_nb1).cb_lf_tooltip_wizard [mc "Tooltips for the preferences"]
+					settooltip $::window(interface_nb1).cb_lf_tooltip_station [mc "Tooltips for the Station Editor"]
+					settooltip $::window(interface_nb1).cb_lf_tooltip_videocard [mc "Tooltips for the Color Management"]
+					settooltip $::window(interface_nb1).cb_lf_tooltip_record [mc "Tooltips for the Record Wizard"]
+					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer"]
+					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode"]
 					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom [mc "Remember window size and position"]
-					settooltip $lf_systray.cb_systray [mc "Activate system tray icon"]
+					settooltip $lf_systray.cb_systray [mc "Activate integration to system tray"]
 					settooltip $lf_systray.cb_systray_mini [mc "Minimize to tray"]
 					settooltip $lf_systray.cb_systrayClose [mc "Close to tray"]
 					settooltip $lf_systray.cb_systrayResize [mc "Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option."]
 					settooltip $lf_systray.mb_systrayIcSize [mc "Choose the size for the system tray icon"]
-					settooltip $w3.cb_osd_station_w [mc "OSD for station name in windowed mode."]
-					settooltip $w3.cb_osd_station_f [mc "OSD for station name in full-screen mode."]
-					settooltip $w3.b_osd_station_fnt_w [mc "Change font, color and alignment."]
-					settooltip $w3.b_osd_station_fnt_f [mc "Change font, color and alignment."]
-					settooltip $w3.cb_osd_group_w [mc "OSD for Volume; Pan&Scan; Video input in windowed mode."]
-					settooltip $w3.cb_osd_group_f [mc "OSD for Volume; Pan&Scan; Video input in full-screen mode."]
-					settooltip $w3.b_osd_group_fnt_w [mc "Change font, color and alignment."]
-					settooltip $w3.b_osd_group_fnt_f [mc "Change font, color and alignment."]
-					settooltip $w3.cb_osd_key_w [mc "OSD for change stations via numbers input in windowed mode."]
-					settooltip $w3.cb_osd_key_f [mc "OSD for change stations via numbers input in full-screen mode."]
-					settooltip $w3.b_osd_key_fnt_w [mc "Change font, color and alignment."]
-					settooltip $w3.b_osd_key_fnt_f [mc "Change font, color and alignment."]
-					settooltip $w3.b_osd_lirc_fnt [mc "Change font, color and alignment."]
+					settooltip $w3.cb_osd_station_w [mc "OSD for station name in windowed mode"]
+					settooltip $w3.cb_osd_station_f [mc "OSD for station name in full-screen mode"]
+					settooltip $w3.b_osd_station_fnt_w [mc "Change font, color and alignment"]
+					settooltip $w3.b_osd_station_fnt_f [mc "Change font, color and alignment"]
+					settooltip $w3.cb_osd_group_w [mc "OSD for Volume; Pan&Scan; Video input in windowed mode"]
+					settooltip $w3.cb_osd_group_f [mc "OSD for Volume; Pan&Scan; Video input in full-screen mode"]
+					settooltip $w3.b_osd_group_fnt_w [mc "Change font, color and alignment"]
+					settooltip $w3.b_osd_group_fnt_f [mc "Change font, color and alignment"]
+					settooltip $w3.cb_osd_key_w [mc "OSD for change stations via numbers input in windowed mode"]
+					settooltip $w3.cb_osd_key_f [mc "OSD for change stations via numbers input in full-screen mode"]
+					settooltip $w3.b_osd_key_fnt_w [mc "Change font, color and alignment"]
+					settooltip $w3.b_osd_key_fnt_f [mc "Change font, color and alignment"]
+					settooltip $w3.b_osd_lirc_fnt [mc "Change font, color and alignment"]
 				} else {
 					settooltip $::window(interface_nb1).mb_lf_theme {}
 					settooltip $::window(interface_nb1).cb_lf_tooltip {}

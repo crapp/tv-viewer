@@ -181,8 +181,8 @@ proc key_sequencesDefault {tree} {
 	set fBut [ttk::frame $top.f_defBut -style TLabelframe]
 	
 	ttk::label $fMain.l_defMessage -text [mc "Do you really want to load default values for all key sequences?
-This will happen immediately and can not be undone!"] -image $::icon_b(dialog-warning) -compound left
-	#~ ttk::checkbutton $fMain.cb_delAsk -text [mc "Don't ask next time"] -variable ::record(cbDelAsk)
+
+This will happen instantly and can not be undone!"] -image $::icon_b(dialog-warning) -compound left
 	
 	ttk::button $fBut.b_defCancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command {vid_wmCursor 1; grab release .key.default; destroy .key.default} -default active
 	ttk::button $fBut.b_defApply -text [mc "Apply"] -compound left -image $::icon_s(dialog-ok-apply) -command [list key_sequencesRead 0 $tree]
@@ -191,7 +191,6 @@ This will happen immediately and can not be undone!"] -image $::icon_b(dialog-wa
 	grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady 3
 	
 	grid $fMain.l_defMessage -in $fMain -row 0 -column 0 -pady "3 7" -padx 5
-	#~ grid $fMain.cb_delAsk -in $fMain -row 1 -column 0 -sticky w -pady "0 7" -padx 5
 	
 	grid $fBut.b_defCancel -in $fBut -row 0 -column 0 -padx "0 3" -pady 7
 	grid $fBut.b_defApply -in $fBut -row 0 -column 1 -padx "0 3" -pady 7
@@ -555,14 +554,15 @@ proc key_sequencesEditApply {tree lbl} {
 	set end 0
 	foreach child [$tree children {}] {
 		if {[string trim $::key(entrySequence)] != {} && [string is integer "$::key(entrySequence)"]} {
-			$lbl configure -text [mc "Conflict detected with station by number \[0-9\]"] -image $::icon_m(dialog-warning) -compound left
+			$lbl configure -text [mc "Conflict detected with station by number \"0-9\""] -image $::icon_m(dialog-warning) -compound left
 			log_writeOutTv 1 "Conflict detected with station by number \[0-9\]"
 			set end 1
 			break
 		}
 		if {"[lindex [$tree item $child -values] 1]" == "$::key(entrySequence)" && "[$tree selection]" != "$child"} {
-			$lbl configure -text [mc "Conflict detected with \"[lindex [$tree item $child -values] 0]\""] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 1 "Conflict detected with \"[lindex [$tree item $child -values] 0]\""
+			set conflictKey "[lindex [$tree item $child -values] 0]"
+			$lbl configure -text [mc "Conflict detected with %" $conflictKey] -image $::icon_m(dialog-warning) -compound left
+			log_writeOutTv 1 "Conflict detected with $conflictKey"
 			set end 1
 			break
 		}

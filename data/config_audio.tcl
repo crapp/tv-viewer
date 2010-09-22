@@ -188,11 +188,11 @@ proc option_screen_4 {} {
 					settooltip $lf_audioStnd.mb_audio [mc "Choose an audio output driver, alsa is recommended."]
 					settooltip $lf_audioStnd.cb_softvol [mc "Check this option to use the software mixer,
 instead of the hardware mixer."]
-					settooltip $lf_audioStnd.mb_channels [mc "This option is used by MPlayer so the audio is decoded
-to the chosen value."]
-					settooltip $lf_audioStnd.cb_remAudio [mc "Remeber volume level when exiting TV-Viewer"]
-					settooltip $lf_audioSync.cb_audautosync [mc "Gradually adjusts the A/V sync based on audio delay measurements."]
-					settooltip $lf_audioSync.sb_auddelay [mc "Audio/Video sync correction per frame in seconds."]
+					settooltip $lf_audioStnd.mb_channels [mc "This option tells MPlayer to decode
+audio to the chosen value"]
+					settooltip $lf_audioStnd.cb_remAudio [mc "Remeber volume level"]
+					settooltip $lf_audioSync.cb_audautosync [mc "Gradually adjusts the A/V sync based on audio delay measurements"]
+					settooltip $lf_audioSync.sb_auddelay [mc "Audio/Video sync correction per frame in seconds"]
 				} else {
 					settooltip $lf_audioStnd.mb_audio {}
 					settooltip $lf_audioStnd.cb_softvol {}

@@ -493,8 +493,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {vid_wmCursor 0}
-	bind . <Key-y> {vid_wmCursor 1}
+	bind . <Key-x> {hallodri}
+	bind . <Key-y> {mangafrs}
 	
 	command_socket
 	

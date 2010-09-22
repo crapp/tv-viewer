@@ -106,12 +106,12 @@ proc option_screen_0 {} {
 				if {$::option(tooltips_wizard) == 1} {
 					settooltip $::window(general_nb1).mb_lf_language [mc "Choose your language.
 You'll need to restart TV-Viewer for changes to take effect."]
-					settooltip $::window(general_nb1).cb_lf_starttv [mc "Autostart tv playback on program start."]
+					settooltip $::window(general_nb1).cb_lf_starttv [mc "Autostart tv playback on program start"]
 					settooltip $::window(general_nb1).cb_lf_newsreader [mc "Activate Newsreader.
 The Newsreader will check for news about TV-Viewer."]
-					settooltip $::window(general_nb1).sb_newsreader [mc "Choose time intervall in days for Newsreader. Range 1 to 30."]
-					settooltip $::window(general_nb1).e_lf_epg [mc "Specify a program to retrieve the television program."]
-					settooltip $::window(general_nb1).b_lf_epg [mc "Specify a program to retrieve the television program."]
+					settooltip $::window(general_nb1).sb_newsreader [mc "Choose time intervall in days for Newsreader (1-30)"]
+					settooltip $::window(general_nb1).e_lf_epg [mc "Specify a program to retrieve the television program"]
+					settooltip $::window(general_nb1).b_lf_epg [mc "Specify a program to retrieve the television program"]
 				} else {
 					settooltip $::window(general_nb1).mb_lf_language {}
 					settooltip $::window(general_nb1).cb_lf_starttv {}

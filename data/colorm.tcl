@@ -390,13 +390,13 @@ proc colorm_mainUi {} {
 		wm title .cm [mc "Color Management"]
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_colorm) == 1} {
-				settooltip $wfscale.s_brightness [mc "Set brightness, this is a global value."]
-				settooltip $wfscale.s_contrast [mc "Set contrast, this is a global value."]
-				settooltip $wfscale.s_hue [mc "Set hue, this is a global value."]
-				settooltip $wfscale.s_saturation [mc "Set saturation, this is a global value."]
-				settooltip $wfbtn.b_ok [mc "Save values and close color management."]
-				settooltip $wfbtn.b_default [mc "Load default values."]
-				settooltip $wfbtn.b_exit [mc "Close color management without saving changes."]
+				settooltip $wfscale.s_brightness [mc "Set brightness, this is a global value"]
+				settooltip $wfscale.s_contrast [mc "Set contrast, this is a global value"]
+				settooltip $wfscale.s_hue [mc "Set hue, this is a global value"]
+				settooltip $wfscale.s_saturation [mc "Set saturation, this is a global value"]
+				settooltip $wfbtn.b_ok [mc "Save values and close color management"]
+				settooltip $wfbtn.b_default [mc "Load default values"]
+				settooltip $wfbtn.b_exit [mc "Close color management without saving changes"]
 			} else {
 				settooltip $wfscale.s_brightness {}
 				settooltip $wfscale.s_contrast {}
