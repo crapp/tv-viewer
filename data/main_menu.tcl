@@ -28,7 +28,7 @@ proc main_menuTvview {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		}
 	} else {
 		if {[winfo exists $menubar.mbTvviewer.mTvviewer] == 0} {
-			set mTv [menu $menubar.mbTvviewer.mTvviewer -tearoff 0]
+			set mTv [menu $menubar.mbTvviewer.mTvviewer -tearoff 0 -postcommand [list main_menuPostcommand 0 "$menubar.mbTvviewer $menubar.mbNavigation $menubar.mbView $menubar.mbAudio $menubar.mbHelp" $menubar.mbTvviewer.mTvviewer]]
 			set changeAccels 0
 		} else {
 			set mTv $menubar.mbTvviewer.mTvviewer
@@ -89,7 +89,7 @@ proc main_menuNav {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		}
 	} else {
 		if {[winfo exists $menubar.mbNavigation.mNavigation] == 0} {
-			set mNav [menu $menubar.mbNavigation.mNavigation -tearoff 0]
+			set mNav [menu $menubar.mbNavigation.mNavigation -tearoff 0 -postcommand [list main_menuPostcommand 1 "$menubar.mbTvviewer $menubar.mbNavigation $menubar.mbView $menubar.mbAudio $menubar.mbHelp" $menubar.mbNavigation.mNavigation]]
 				set mNavRew [menu $menubar.mbNavigation.mNavigation.mNavigationRewind -tearoff 0 ]
 				set mNavForw [menu $menubar.mbNavigation.mNavigation.mNavigationForward -tearoff 0 ]
 			set changeAccels 0
@@ -165,7 +165,7 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		}
 	} else {
 		if {[winfo exists $menubar.mbView.mView] == 0} {
-			set mView [menu $menubar.mbView.mView -tearoff 0]
+			set mView [menu $menubar.mbView.mView -tearoff 0 -postcommand [list main_menuPostcommand 2 "$menubar.mbTvviewer $menubar.mbNavigation $menubar.mbView $menubar.mbAudio $menubar.mbHelp" $menubar.mbView.mView]]
 				set mViewPan [menu $menubar.mbView.mView.mViewPanScan -tearoff 0]
 				set mViewSize [menu $menubar.mbView.mView.mViewSize -tearoff 0]
 				set mViewMove [menu $menubar.mbView.mView.mViewMove -tearoff 0]
@@ -250,7 +250,7 @@ proc main_menuAud {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		}
 	} else {
 		if {[winfo exists $menubar.mbAudio.mAudio] == 0} {
-			set mAud [menu $menubar.mbAudio.mAudio -tearoff 0]
+			set mAud [menu $menubar.mbAudio.mAudio -tearoff 0 -postcommand [list main_menuPostcommand 3 "$menubar.mbTvviewer $menubar.mbNavigation $menubar.mbView $menubar.mbAudio $menubar.mbHelp" $menubar.mbAudio.mAudio]]
 			set changeAccels 0
 		} else {
 			set mAud $menubar.mbAudio.mAudio
@@ -288,7 +288,7 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		}
 	} else {
 		if {[winfo exists $menubar.mbHelp.mHelp] == 0} {
-			set mHelp [menu $menubar.mbHelp.mHelp -tearoff 0]
+			set mHelp [menu $menubar.mbHelp.mHelp -tearoff 0 -postcommand [list main_menuPostcommand 4 "$menubar.mbTvviewer $menubar.mbNavigation $menubar.mbView $menubar.mbAudio $menubar.mbHelp" $menubar.mbHelp.mHelp]]
 			set changeAccels 0
 		} else {
 			set mHelp $menubar.mbHelp.mHelp
@@ -366,4 +366,19 @@ proc main_menuCreate {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	main_menuHelp $menubar $toolbChanCtrl $toolbPlay $vidBg standard
 	main_menuReFo $menubar $toolbChanCtrl $toolbPlay $vidBg standard
 	main_menuContext $menubar $toolbChanCtrl $toolbPlay $vidBg
+}
+
+proc main_menuPostcommand {id menubtn menu} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_menuPostcommand \033\[0m \{$menubtn\} \{$menu\}"
+	set i 0
+	foreach mb $menubtn {
+		if {$id == $i} {
+			$mb state pressed
+			bind $menu <Unmap> "$mb state !pressed; bind $menu <Unmap> {}"
+		} else {
+			#FIXME Mouse traversal won't work this way, we don't get an enter event.
+			#~ bind $mb <Any-Enter> "puts {any enter $mb}"
+		}
+		incr i
+	}
 }

@@ -80,10 +80,11 @@ proc option_screen_6 {} {
 		set frame_nb3  "$::window(interface_nb3_cont).f_osd2"
 		
 		ttk::labelframe $frame_nb3.lf_osd_station -text [mc "Station"]
-		ttk::checkbutton $frame_nb3.cb_osd_station_w -variable config_int(cb_osd_station_w) -text [mc "Windowed mode"] -command {set ::choice(osd_station_w) [lreplace $::choice(osd_station_w) 0 0 $::config_int(cb_osd_station_w)]}
-		ttk::button $frame_nb3.b_osd_station_fnt_w -command [list font_chooserUi $frame_nb3.b_osd_station_fnt_w osd_station_w]
-		ttk::checkbutton $frame_nb3.cb_osd_station_f -variable config_int(cb_osd_station_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_station_f) [lreplace $::choice(osd_station_f) 0 0 $::config_int(cb_osd_station_f)]}
-		ttk::button $frame_nb3.b_osd_station_fnt_f -command [list font_chooserUi $frame_nb3.b_osd_station_fnt_f osd_station_f]
+		set lf_osdStation $frame_nb3.lf_osd_station
+		ttk::checkbutton $lf_osdStation.cb_osd_station_w -variable config_int(cb_osd_station_w) -text [mc "Windowed mode"] -command {set ::choice(osd_station_w) [lreplace $::choice(osd_station_w) 0 0 $::config_int(cb_osd_station_w)]}
+		ttk::button $lf_osdStation.b_osd_station_fnt_w -command [list font_chooserUi $lf_osdStation.b_osd_station_fnt_w osd_station_w]
+		ttk::checkbutton $lf_osdStation.cb_osd_station_f -variable config_int(cb_osd_station_f) -text [mc "Full-screen mode"] -command {set ::choice(osd_station_f) [lreplace $::choice(osd_station_f) 0 0 $::config_int(cb_osd_station_f)]}
+		ttk::button $lf_osdStation.b_osd_station_fnt_f -command [list font_chooserUi $frame_nb3.b_osd_station_fnt_f osd_station_f]
 		
 		ttk::labelframe $frame_nb3.lf_osd_group -text [mc "Volume | Video input | Pan&Scan"]
 		ttk::checkbutton $frame_nb3.cb_osd_group_w -variable config_int(cb_osd_group_w) -text [mc "Windowed mode"] -command {set ::choice(osd_group_w) [lreplace $::choice(osd_group_w) 0 0 $::config_int(cb_osd_group_w)]}
@@ -134,11 +135,11 @@ proc option_screen_6 {} {
 		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
 		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
 		
-		grid $frame_nb3.lf_osd_station -in $frame_nb3 -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $frame_nb3.cb_osd_station_w -in $frame_nb3.lf_osd_station -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $frame_nb3.b_osd_station_fnt_w -in $frame_nb3.lf_osd_station -row 0 -column 1 -sticky ew -padx "0 7" -pady 3
-		grid $frame_nb3.cb_osd_station_f -in $frame_nb3.lf_osd_station -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $frame_nb3.b_osd_station_fnt_f -in $frame_nb3.lf_osd_station -row 1 -column 1 -sticky ew -padx "0 7" -pady "0 3"
+		grid $lf_osdStation -in $frame_nb3 -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_osdStation.cb_osd_station_w -in $lf_osdStation -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_osdStation.b_osd_station_fnt_w -in $lf_osdStation -row 0 -column 1 -sticky ew -padx "0 7" -pady 3
+		grid $lf_osdStation.cb_osd_station_f -in $lf_osdStation -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_osdStation.b_osd_station_fnt_f -in $lf_osdStation -row 1 -column 1 -sticky ew -padx "0 7" -pady "0 3"
 		
 		grid $frame_nb3.lf_osd_group -in $frame_nb3 -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $frame_nb3.cb_osd_group_w -in $frame_nb3.lf_osd_group -row 0 -column 0 -sticky w -padx 7 -pady 3
@@ -224,6 +225,7 @@ proc option_screen_6 {} {
 			log_writeOutTv 0 "Starting to collect data for interface section."
 			
 			set lf_systray $::window(interface_nb2).lf_systray
+			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
 			
 			set ::choice(mbTheme) $::option(use_theme)
 			set ::choice(cb_tooltip) $::option(tooltips)
@@ -244,16 +246,16 @@ proc option_screen_6 {} {
 			set ::choice(osd_station_w) $::option(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] | [lindex $::choice(osd_station_w) 3]"
+				$lf_osdStation.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] | [lindex $::choice(osd_station_w) 3]"
 			} else {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] - [lindex $::choice(osd_station_w) 2] | [lindex $::choice(osd_station_w) 3]"
+				$lf_osdStation.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] - [lindex $::choice(osd_station_w) 2] | [lindex $::choice(osd_station_w) 3]"
 			}
 			set ::choice(osd_station_f) $::option(osd_station_f)
 			set ::config_int(cb_osd_station_f) [lindex $::choice(osd_station_f) 0]
 			if {"[lindex $::choice(osd_station_f) 2]" == "Regular"} {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] | [lindex $::choice(osd_station_f) 3]"
+				$lf_osdStation.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] | [lindex $::choice(osd_station_f) 3]"
 			} else {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] - [lindex $::choice(osd_station_f) 2] | [lindex $::choice(osd_station_f) 3]"
+				$lf_osdStation.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] - [lindex $::choice(osd_station_f) 2] | [lindex $::choice(osd_station_f) 3]"
 			}
 			set ::choice(osd_group_w) $::option(osd_group_w)
 			set ::config_int(cb_osd_group_w) [lindex $::choice(osd_group_w) 0]
@@ -308,10 +310,10 @@ proc option_screen_6 {} {
 					settooltip $lf_systray.cb_systrayResize [mc "Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option."]
 					settooltip $lf_systray.mb_systrayIcSize [mc "Choose the size for the system tray icon"]
-					settooltip $w3.cb_osd_station_w [mc "OSD for station name in windowed mode"]
-					settooltip $w3.cb_osd_station_f [mc "OSD for station name in full-screen mode"]
-					settooltip $w3.b_osd_station_fnt_w [mc "Change font, color and alignment"]
-					settooltip $w3.b_osd_station_fnt_f [mc "Change font, color and alignment"]
+					settooltip $lf_osdStation.cb_osd_station_w [mc "OSD for station name in windowed mode"]
+					settooltip $lf_osdStation.cb_osd_station_f [mc "OSD for station name in full-screen mode"]
+					settooltip $lf_osdStation.b_osd_station_fnt_w [mc "Change font, color and alignment"]
+					settooltip $lf_osdStation.b_osd_station_fnt_f [mc "Change font, color and alignment"]
 					settooltip $w3.cb_osd_group_w [mc "OSD for Volume; Pan&Scan; Video input in windowed mode"]
 					settooltip $w3.cb_osd_group_f [mc "OSD for Volume; Pan&Scan; Video input in full-screen mode"]
 					settooltip $w3.b_osd_group_fnt_w [mc "Change font, color and alignment"]
@@ -381,16 +383,16 @@ itself is changed. Be careful with this option."]
 			set ::choice(osd_station_w) $::stnd_opt(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] | [lindex $::choice(osd_station_w) 3]"
+				$lf_osdStation.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] | [lindex $::choice(osd_station_w) 3]"
 			} else {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] - [lindex $::choice(osd_station_w) 2] | [lindex $::choice(osd_station_w) 3]"
+				$lf_osdStation.b_osd_station_fnt_w configure -text "[lindex $::choice(osd_station_w) 1] - [lindex $::choice(osd_station_w) 2] | [lindex $::choice(osd_station_w) 3]"
 			}
 			set ::choice(osd_station_f) $::stnd_opt(osd_station_f)
 			set ::config_int(cb_osd_station_f) [lindex $::choice(osd_station_f) 0]
 			if {"[lindex $::choice(osd_station_f) 2]" == "Regular"} {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] | [lindex $::choice(osd_station_f) 3]"
+				$lf_osdStation.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] | [lindex $::choice(osd_station_f) 3]"
 			} else {
-				$::window(interface_nb3_cont).f_osd2.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] - [lindex $::choice(osd_station_f) 2] | [lindex $::choice(osd_station_f) 3]"
+				$lf_osdStation.b_osd_station_fnt_f configure -text "[lindex $::choice(osd_station_f) 1] - [lindex $::choice(osd_station_f) 2] | [lindex $::choice(osd_station_f) 3]"
 			}
 			set ::choice(osd_group_w) $::stnd_opt(osd_group_w)
 			set ::config_int(cb_osd_group_w) [lindex $::choice(osd_group_w) 0]

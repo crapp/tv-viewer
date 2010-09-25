@@ -48,7 +48,7 @@ if {[file exists "$::option(home)/log/tvviewer.log"]} {
 
 command_socket
 
-array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 station_nr 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 volume_incr 0 volume_decr 0 mute 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
+array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 station_nr 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 compact 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 radio 0 volume_incr 0 volume_decr 0 mute 0 adelay_incr 0 adelay_decr 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -63,7 +63,7 @@ foreach command_argument $argv {
 	}
 }
 
-if {[array size ::start_options] != 46} {
+if {[array size ::start_options] != 50} {
 	log_writeOutTv 2 "Lirc emitter received unknown command $argv"
 	log_writeOutTv 2 "See the userguide for possible actions."
 	exit 1
@@ -169,6 +169,11 @@ if {$start_options(fullscreen)} {
 	log_writeOutTv 0 "Lirc emitter received Signal fullscreen"
 	exit 0
 }
+if {$start_options(compact)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmCompact>>"
+	log_writeOutTv 0 "Lirc emitter received Signal compact"
+	exit 0
+}
 if {$start_options(quit)} {
 	command_WritePipe 0 "tv-viewer_main event generate . <<exit>>"
 	log_writeOutTv 0 "Lirc emitter received Signal quit"
@@ -234,6 +239,12 @@ if {$start_options(timeshift)} {
 	log_writeOutTv 0 "Lirc emitter received Signal timeshift"
 	exit 0
 }
+if {$start_options(radio)} {
+	#FIXME Don't forget to activate radio support in lirc emitter
+	#~ command_WritePipe 0 "tv-viewer_main event generate . <<radio>>"
+	log_writeOutTv 0 "Lirc emitter received Signal radio"
+	exit 0
+}
 if {$start_options(volume_incr)} {
 	command_WritePipe 0 "tv-viewer_main event generate . <<volume_incr>>"
 	log_writeOutTv 0 "Lirc emitter received Signal volume_incr"
@@ -247,6 +258,16 @@ if {$start_options(volume_decr)} {
 if {$start_options(mute)} {
 	command_WritePipe 0 "tv-viewer_main event generate . <<mute>>"
 	log_writeOutTv 0 "Lirc emitter received Signal mute"
+	exit 0
+}
+if {$start_options(adelay_incr)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<delay_incr>>"
+	log_writeOutTv 0 "Lirc emitter received Signal adelay_incr"
+	exit 0
+}
+if {$start_options(adelay_decr)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<delay_decr>>"
+	log_writeOutTv 0 "Lirc emitter received Signal adelay_decr"
 	exit 0
 }
 if {$start_options(forward_10s)} {

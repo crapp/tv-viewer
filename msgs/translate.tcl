@@ -158,7 +158,7 @@ array set start_option {--help 0 --lang 0 --langEn 0}
 		}
 	}
 if {[array size ::start_option] != 3} {
-	puts "TV-Viewer translation engine version 0.1
+	puts "TV-Viewer translation engine version 0.2
 
 Received unknown option $argv
 
@@ -174,7 +174,7 @@ Usage: translate.tcl \[OPTION...\]
 }
 
 if {$start_option(--help)} {
-	puts "TV-Viewer translation engine version 0.1
+	puts "TV-Viewer translation engine version 0.2
 Usage: translate.tcl \[OPTION...\]
 
   --help                show this help
@@ -199,7 +199,7 @@ Do you want to continue \[Y/n\]? "
 }
 
 if {$start_option(--lang) == 0} {
-	puts "TV-Viewer translation engine version 0.1
+	puts "TV-Viewer translation engine version 0.2
 
 No language code provided
 

@@ -403,8 +403,8 @@ source $::option(root)/data/config_advanced.tcl
 #Source font chooser dialog
 source $::option(root)/data/font_chooser.tcl
 
-#Launching main ui and all things that need to be done now...
-
+#cding into the users home directory is a hack so the screenshots can be saved somewhere.
 cd "$::env(HOME)"
 
+#Launching main ui and all things that need to be done now...
 main_frontendUi

@@ -44,6 +44,10 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		#~ vid_wmCursorHide $vid_cont 0
 		#~ vid_wmCursorHide $vid_bg 0
 		wm attributes $mw -fullscreen 1
+		if {[string trim [focus -displayof .]] == {}} {
+			log_writeOutTv 1 "Trying to request focus for main window"
+			focus -force . ;#FIXME forcing focus may not work everytime, sometimes only the taskbar button is flashing
+		}
 		if {$::data(panscanAuto) == 1} {
 			set ::vid(id_panscanAuto) [after 500 {
 				catch {after cancel $::vid(id_panscanAuto)}

@@ -64,6 +64,12 @@ proc main_frontendExitViewer {} {
 				}
 			}
 		}
+		# This is needed when there is no integer value in mem_conf and tv-viewer is exited in fullscreen mode. otherwise a program code will be written into mem_conf because it is not substituted.
+		if {"$okey" == "mainX" || "$okey" == "mainY" && [string is integer $oelem] == 0} {
+			puts $wconfig_mem "$okey [subst $::mem($okey)]"
+			set ::mem($okey) [subst $::mem($okey)]
+			continue
+		}
 		if {$::option(volRem)} {
 			if {"$okey" == "volume"} {
 				puts $wconfig_mem "volume $::main(volume_scale)"
@@ -102,7 +108,6 @@ proc main_frontendExitViewer {} {
 			set ::mem(sbarTime) $::menu(cbViewStatust)
 			continue
 		}
-		#FIXME Problem with mainX and Y when exiting from fullscreen. Writes expr to mem file.
 		puts $wconfig_mem "$okey $oelem"
 	}
 	close $wconfig_mem
@@ -503,7 +508,7 @@ proc main_frontendUi {} {
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
 	bind . <Key-x> {hallodri}
-	bind . <Key-y> {mangafrs}
+	bind . <Key-y> {puts "focus [focus -displayof .]"}
 	
 	command_socket
 	

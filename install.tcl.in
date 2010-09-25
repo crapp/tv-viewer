@@ -146,11 +146,12 @@ you are $::tcl_platform(user)
 			catch {file delete -force "$mandir/man1/tv-viewer.1.gz"}
 			catch {file delete -force "$docdir/README"}
 			if {$tktray} {
-				#Make sure all previous installed versions will be deleted. What if this is provided by some package?
-				catch {file delete -force -- pathname "$libdir/tktray1.2"}
-				catch {file delete -force -- pathname "$libdir/tktray1.3.3/"}
-				catch {file delete -force -- pathname "$libdir/tktray1.3.8/"}
-				catch {file delete -force -- pathname "$libdir/tktray1.3.9/"}
+				set tray {tktray1.2 tktray1.3.3 tktray1.3.8 tktray1.3.9}
+				foreach elem $tray {
+					if {[file exists "$libdir/$elem/tv_extension.tcl"]} {
+						catch {file delete -force -- pathname "$libdir/$elem"}
+					}
+				}
 			}
 			puts "TV-Viewer has been uninstalled successfully
 
@@ -184,7 +185,7 @@ proc install_checkScheduler {} {
 }
 
 proc install_createFolders {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch} {
-	set dir_list [list "$datadir/tv-viewer/" "$datadir/tv-viewer/data/" "$datadir/tv-viewer/extensions/" "$datadir/tv-viewer/extensions/autoscroll/" "$datadir/tv-viewer/extensions/callib/" "$datadir/tv-viewer/extensions/fsdialog/" "$datadir/tv-viewer/icons/" "$datadir/tv-viewer/icons/16x16/" "$datadir/tv-viewer/icons/22x22/" "$datadir/tv-viewer/icons/32x32/" "$datadir/tv-viewer/icons/extras/" "$datadir/tv-viewer/license/" "$datadir/tv-viewer/msgs/" "$datadir/tv-viewer/msgs/de/" "$datadir/tv-viewer/msgs/en/" "$datadir/tv-viewer/shortcuts" "$datadir/tv-viewer/themes/" "$datadir/tv-viewer/themes/plastik/" "$datadir/tv-viewer/themes/plastik/plastik/" "$datadir/tv-viewer/themes/keramik/" "$datadir/tv-viewer/themes/keramik/keramik/" "$datadir/tv-viewer/themes/keramik/keramik_alt/"]
+	set dir_list [list "$datadir/tv-viewer/" "$datadir/tv-viewer/data/" "$datadir/tv-viewer/extensions/" "$datadir/tv-viewer/extensions/autoscroll/" "$datadir/tv-viewer/extensions/callib/" "$datadir/tv-viewer/extensions/fsdialog/" "$datadir/tv-viewer/icons/" "$datadir/tv-viewer/icons/16x16/" "$datadir/tv-viewer/icons/22x22/" "$datadir/tv-viewer/icons/32x32/" "$datadir/tv-viewer/icons/extras/" "$datadir/tv-viewer/license/" "$datadir/tv-viewer/msgs/" "$datadir/tv-viewer/themes/" "$datadir/tv-viewer/themes/plastik/" "$datadir/tv-viewer/themes/plastik/plastik/" "$datadir/tv-viewer/themes/keramik/" "$datadir/tv-viewer/themes/keramik/keramik/" "$datadir/tv-viewer/themes/keramik/keramik_alt/"]
 	if {[file isdirectory "$datadir/tv-viewer"]} {
 		set status_dir [catch {file delete -force -- pathname "$datadir/tv-viewer/"} result_dir]
 		if {$status_dir != 0} {
@@ -287,11 +288,12 @@ $resultat_permissions_desktop"
 
 proc install_copyExtensions {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray} {
 	if {$tktray} {
-		#Make sure all previous installed versions will be deleted. What if this is provided by some package?
-		catch {file delete -force -- pathname "$libdir/tktray1.2"}
-		catch {file delete -force -- pathname "$libdir/tktray1.3.3/"}
-		catch {file delete -force -- pathname "$libdir/tktray1.3.8/"}
-		catch {file delete -force -- pathname "$libdir/tktray1.3.9/"}
+		set tray {tktray1.2 tktray1.3.3 tktray1.3.8 tktray1.3.9}
+		foreach elem $tray {
+			if {[file exists "$libdir/$elem/tv_extension.tcl"]} {
+				catch {file delete -force -- pathname "$libdir/$elem"}
+			}
+		}
 		file mkdir "$libdir/tktray1.3.9/"
 		
 		if {$arch == 32} {
@@ -649,10 +651,7 @@ $resultat_file_doc
 
 proc install_copyMsgs {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch} {
 	set filelist_msg [lsort [glob -directory "$where_is/msgs" *.msg]]
-	set filelist_mde [lsort [glob -directory "$where_is/msgs/de" *.de]]
-	set filelist_men [lsort [glob -directory "$where_is/msgs/en" *.en]]
-	set filelist_key [lsort [glob "$where_is/shortcuts/*"]]
-	set elements [expr [llength $filelist_msg] + [llength $filelist_mde] + [llength $filelist_men] + [llength $filelist_key]]
+	set elements [llength $filelist_msg]
 	set pincr [format %.2f [expr 100.0 / $elements.0]]
 	set percentage 0
 	foreach mfile [file normalize $filelist_msg] {
@@ -674,81 +673,6 @@ $resultat_mfile
 Could not change permissions for: $datadir/tv-viewer/msgs/[lindex [file split $mfile] end]
 
 Error message: $resultat_permissions_mfile"
-				exit 1
-			}
-		}
-		after 10
-	}
-
-	foreach defile [file normalize $filelist_mde] {
-		set status_defile [catch {file copy -force "$defile" "$datadir/tv-viewer/msgs/de/"} resultat_defile]
-		if { $status_defile != 0 } {
-			puts "
-could not copy file: $defile
-
-$resultat_defile
-"
-			exit 1
-		} else {
-			set percentage [format %.2f [expr $percentage + $pincr]]
-			puts -nonewline "\rprocessing language files \[${percentage}%\]\033\[K"
-			flush stdout
-			set status_permissions_defile [catch {file attributes "$datadir/tv-viewer/msgs/de/[lindex [file split $defile] end]" -permissions rw-r--r--} resultat_permissions_defile]
-			if {$status_permissions_defile != 0} {
-				puts "
-could not change permissions for: $datadir/tv-viewer/msgs/de/[lindex [file split $defile] end]
-
-$resultat_permissions_defile"
-				exit 1
-			}
-		}
-		after 10
-	}
-
-	foreach enfile [file normalize $filelist_men] {
-		set status_enfile [catch {file copy -force "$enfile" "$datadir/tv-viewer/msgs/en/"} resultat_enfile]
-		if { $status_enfile != 0 } {
-			puts "
-could not copy file: $enfile
-
-$resultat_enfile
-"
-			exit 1
-		} else {
-			set percentage [format %.2f [expr $percentage + $pincr]]
-			puts -nonewline "\rprocessing language files \[${percentage}%\]\033\[K"
-			flush stdout
-			set status_permissions_enfile [catch {file attributes "$datadir/tv-viewer/msgs/en/[lindex [file split $enfile] end]" -permissions rw-r--r--} resultat_permissions_enfile]
-			if {$status_permissions_enfile != 0} {
-				puts "
-could not change permissions for: $datadir/tv-viewer/msgs/en/[lindex [file split $enfile] end]
-
-$resultat_permissions_enfile"
-				exit 1
-			}
-		}
-		after 10
-	}
-	
-	foreach sfile [file normalize $filelist_key] {
-		set status_file_cut [catch {file copy -force "$sfile" "$datadir/tv-viewer/shortcuts/"} resultat_file_cut]
-		if { $status_file_cut != 0 } {
-			puts "
-could not copy file: $sfile
-
-$resultat_file_cut
-	"
-			exit 1
-		} else {
-			set percentage [format %.2f [expr $percentage + $pincr]]
-			puts -nonewline "\rprocessing language files \[${percentage}%\]\033\[K"
-			flush stdout
-			set status_permissions_sfile [catch {file attributes "$datadir/tv-viewer/shortcuts/[lindex [file split $sfile] end]" -permissions rw-r--r--} resultat_permissions_sfile]
-			if {$status_permissions_sfile != 0} {
-				puts "
-could not change permissions for: $datadir/tv-viewer/shortcuts/[lindex [file split $lfile] end]
-
-$resultat_permissions_sfile"
 				exit 1
 			}
 		}
