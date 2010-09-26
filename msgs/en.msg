@@ -195,6 +195,10 @@ mcset en {Window Properties}
 mcset en {Main window}
 mcset en {Start in full-screen mode}
 mcset en {Remember size and position}
+mcset en {Floating control}
+mcset en {Main toolbar}
+mcset en {Station list}
+mcset en {Control toolbar}
 mcset en {System Tray}
 mcset en {Show icon in system tray}
 mcset en {Minimize to tray}
@@ -218,6 +222,12 @@ mcset en {Tooltips for the Record Wizard}
 mcset en {Check this if you want to see the splash screen at the start of TV-Viewer}
 mcset en {Start TV-Viewer in full-screen mode}
 mcset en {Remember window size and position}
+mcset en {The floating control appears in fullscreen mode when the
+mouse pointer is moved to the "top", of the screen.}
+mcset en {The floating control appears in fullscreen mode when the
+mouse pointer is moved to the "left side", of the screen.}
+mcset en {The floating control appears in fullscreen mode when the
+mouse pointer is moved to the "bottom", of the screen.}
 mcset en {Activate integration to system tray}
 mcset en {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.}
@@ -477,8 +487,6 @@ mcset en {Never}
 mcset en {Always}
 mcset en {While playback}
 mcset en {Toolbars}
-mcset en {Main toolbar}
-mcset en {Station list}
 mcset en {Statusbar}
 mcset en {Show status messages}
 mcset en {Show playback time}
@@ -611,6 +619,9 @@ mcset en {Timeshift %} {Timeshift %s}
 mcset en {Recording % - Ends at % %} {Recording %s - Ends at %s %s}
 mcset en {% -- ends % at %} {%s -- ends %s at %s}
 mcset en {Playing file: %} {Playing file: %s}
+mcset en {Save timeshift video file
+File size %} {Save timeshift video file
+File size %s}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_wizard.tcl
 

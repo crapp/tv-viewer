@@ -579,8 +579,6 @@ proc main_frontendUi {} {
 		}
 	}
 	
-	#FIXME Hide cursor in windowed mode?
-	
 	vid_wmCursor 1
 	
 	if {$::option(systray) == 1} {

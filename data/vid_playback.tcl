@@ -260,24 +260,27 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 			bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
 			bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
 			bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
-			vid_pmhandlerButton {100 0} {100 0} {{3 !disabled} {4 !disabled} {5 !disabled} {6 !disabled} {7 !disabled} {8 !disabled} {9 !disabled} {10 disabled}}
-			vid_pmhandlerMenuNav {{6 normal} {8 normal} {9 normal}} {{6 normal} {8 normal} {9 normal}}
-			vid_pmhandlerMenuTray {{17 normal}}
 			if {"$handler" == "timeshift"} {
-				vid_pmhandlerButton {{1 !disabled}} {100 0} {{1 disabled} {2 !disabled}}
-				vid_pmhandlerMenuNav {{4 disabled} {5 normal}} {{4 disabled} {5 normal}}
-				vid_pmhandlerMenuTray {{15 disabled} {16 normal}}
+				# Make sure file save button is only activated when timeshift is stopped
+				set status_timeshift [lindex [monitor_partRunning 4] 0]
+				if {$status_timeshift} {
+					vid_pmhandlerButton {{1 !disabled}} {100 0} {{1 disabled} {2 !disabled} {3 !disabled} {4 !disabled} {5 !disabled} {6 !disabled} {7 !disabled} {8 !disabled} {9 !disabled} {10 disabled}}
+				} else {
+					vid_pmhandlerButton {{1 !disabled}} {100 0} {{1 disabled} {2 !disabled} {3 !disabled} {4 !disabled} {5 !disabled} {6 !disabled} {7 !disabled} {8 !disabled} {9 !disabled} {10 !disabled}}
+				}
+				vid_pmhandlerMenuNav {{4 disabled} {5 normal} {6 normal} {8 normal} {9 normal}} {{4 disabled} {5 normal} {6 normal} {8 normal} {9 normal}}
+				vid_pmhandlerMenuTray {{15 disabled} {16 normal} {17 normal}}
 				bind . <<start>> {vid_seek 0 0}
 			} else {
 				if {$::vid(recStart)} {
-					vid_pmhandlerButton {100 0} {100 0} {{1 disabled} {2 !disabled}}
-					vid_pmhandlerMenuNav {{4 disabled} {5 normal}} {{4 disabled} {5 normal}}
-					vid_pmhandlerMenuTray {{15 disabled} {16 normal}}
+					vid_pmhandlerButton {100 0} {100 0} {{1 disabled} {2 !disabled} {3 !disabled} {4 !disabled} {5 !disabled} {6 !disabled} {7 !disabled} {8 !disabled} {9 !disabled} {10 disabled}}
+					vid_pmhandlerMenuNav {{4 disabled} {5 normal} {6 normal} {8 normal} {9 normal}} {{4 disabled} {5 normal} {6 normal} {8 normal} {9 normal}}
+					vid_pmhandlerMenuTray {{15 disabled} {16 normal} {17 normal}}
 					bind . <<start>> {vid_seek 0 0}
 				} else {
-					vid_pmhandlerButton {{1 disabled}} {100 0} {{1 !disabled} {2 disabled}}
-					vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
-					vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
+					vid_pmhandlerButton {{1 disabled}} {100 0} {{1 !disabled} {2 disabled} {3 !disabled} {4 !disabled} {5 !disabled} {6 !disabled} {7 !disabled} {8 !disabled} {9 !disabled} {10 disabled}}
+					vid_pmhandlerMenuNav {{4 normal} {5 disabled} {6 normal} {8 normal} {9 normal}} {{4 normal} {5 disabled} {6 normal} {8 normal} {9 normal}}
+					vid_pmhandlerMenuTray {{15 normal} {16 disabled} {17 normal}}
 					bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"}
 					set ::vid(recStart) 1
 					if {[winfo exists .fvidBg.l_anigif]} {
@@ -379,13 +382,6 @@ proc vid_playbackStop {com handler} {
 	vid_fileComputePos cancel
 	if {$com == 0} {
 		vid_fileComputeSize cancel
-	} else {
-		#~ if {$::vid(pbMode) == 1} {
-			#~ vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
-			#~ vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
-			#~ vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
-			#~ bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont $::record(handler) "$::vid(current_rec_file)"}
-		#~ }
 	}
 	log_writeOutTv 0 "Stopping playback"
 }

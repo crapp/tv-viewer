@@ -236,6 +236,10 @@ mcset de {Window Properties} {Fenstereigenschaften}
 mcset de {Main window} {Hauptfenster}
 mcset de {Start in full-screen mode} {Im Vollbild-Modus starten}
 mcset de {Remember size and position} {Größe und Position merken}
+mcset de {Floating control} {Schwebendes Kontrollelement}
+mcset de {Main toolbar} {Hauptwerkzeugleiste}
+mcset de {Station list} {Senderliste}
+mcset de {Control toolbar} {Steuerungsleiste}
 mcset de {System Tray} {System Tray}
 mcset de {Show icon in system tray} {Icon im System Tran anzeigen}
 mcset de {Minimize to tray} {In den Tray minimieren}
@@ -259,6 +263,18 @@ mcset de {Tooltips for the Record Wizard} {Tooltips für den Aufnahme-Assistent}
 mcset de {Check this if you want to see the splash screen at the start of TV-Viewer} {Auswählen falls man beim Programmstart den Splash Screen sehen will}
 mcset de {Start TV-Viewer in full-screen mode} {Im Vollbild-Modus starten}
 mcset de {Remember window size and position} {Fenstergröße und Position merken}
+mcset de {The floating control appears in fullscreen mode when the
+mouse pointer is moved to the "top", of the screen.} {Das schwebende Kontrollelement erscheint im Vollbildmodus
+und wird aktiviert, wenn der Mauszeiger am oberen Ende des
+Bildschirms ist.}
+mcset de {The floating control appears in fullscreen mode when the
+mouse pointer is moved to the "left side", of the screen.} {Das schwebende Kontrollelement erscheint im Vollbildmodus
+und wird aktiviert, wenn der Mauszeiger auf der linken Seite des
+Bildschirms ist.}
+mcset de {The floating control appears in fullscreen mode when the
+mouse pointer is moved to the "bottom", of the screen.} {Das schwebende Kontrollelement erscheint im Vollbildmodus
+und wird aktiviert, wenn der Mauszeiger am unteren Ende des
+Bildschirms ist.}
 mcset de {Activate integration to system tray} {Integration in den System Tray aktivieren}
 mcset de {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.} {Größe des System Tray icons automatisch anpassen wenn sich
@@ -543,8 +559,6 @@ mcset de {Never} {Nie}
 mcset de {Always} {Immer}
 mcset de {While playback} {Während der Wiedergabe}
 mcset de {Toolbars} {Toolbars}
-mcset de {Main toolbar} {Hauptwerkzeugleiste}
-mcset de {Station list} {Senderliste}
 mcset de {Statusbar} {Statusbar}
 mcset de {Show status messages} {Statusmeldungen zeigen}
 mcset de {Show playback time} {Zeitinformationen zeigen}
@@ -688,6 +702,9 @@ mcset de {Timeshift %} {Timeshift %s}
 mcset de {Recording % - Ends at % %} {Aufnahme %s - Endet am %s um %s}
 mcset de {% -- ends % at %} {%s -- endet am %s um %s}
 mcset de {Playing file: %} {Dateiwiedergabe: %s}
+mcset de {Save timeshift video file
+File size %} {Timeshift Videodatei speichern
+Dateigröße %s}
 
 # /home/saedelaere/Projekte/tv-viewer/data/record_wizard.tcl
 

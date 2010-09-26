@@ -19,7 +19,6 @@
 proc process_configRead {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configRead \033\[0m"}
 	array set ::option {
-		#FIXME Remove theme black if it does not work properly
 		language Autodetect
 		language_value 0
 		starttv_startup 0
@@ -85,6 +84,9 @@ proc process_configRead {} {
 		window_full 0
 		window_remGeom 1
 		volRem 1
+		floatMain 0
+		floatStation 1
+		floatPlay 0
 		systray 0
 		systrayMini 0
 		systrayClose 0
@@ -144,7 +146,6 @@ proc process_configRead {} {
 
 proc process_configMem {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configMem \033\[0m"}
-	#FIXME The values for width and height are quite random and were only chosen to have some fallback values.
 	array set ::mem {
 		mainwidth 654
 		mainheight 480

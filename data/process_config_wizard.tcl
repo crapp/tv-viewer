@@ -19,7 +19,6 @@
 proc process_config_wizardRead {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: process_config_wizardRead \033\[0m"
 	log_writeOutTv 0 "Reading configuration values for preferences dialog."
-	#FIXME Remove theme black if it does not work properly.
 	array set ::option {
 		language Autodetect
 		language_value 0
@@ -86,6 +85,9 @@ proc process_config_wizardRead {} {
 		window_full 0
 		window_remGeom 1
 		volRem 1
+		floatMain 0
+		floatStation 1
+		floatPlay 0
 		systray 0
 		systrayMini 0
 		systrayClose 0
@@ -110,7 +112,6 @@ proc process_config_wizardRead {} {
 	}
 	
 	array set ::stnd_opt {
-		#FIXME Remove theme black if it does not work properly.
 		language Autodetect
 		language_value 0
 		starttv_startup 0
@@ -175,6 +176,9 @@ proc process_config_wizardRead {} {
 		window_full 0
 		window_remGeom 1
 		volRem 1
+		floatMain 0
+		floatStation 1
+		floatPlay 0
 		systray 0
 		systrayMini 0
 		systrayClose 0
@@ -264,6 +268,9 @@ proc process_config_wizardRead {} {
 		cb_splash show_splash
 		cb_fullscr window_full
 		cb_remGeom window_remGeom
+		cb_floatMain floatMain
+		cb_floatStation floatStation
+		cb_floatPlay floatPlay
 		cb_systray systray
 		cb_systrayMini systrayMini
 		cb_systrayClose systrayClose

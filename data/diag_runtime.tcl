@@ -32,8 +32,6 @@ might not point to the correct location.
 exit 1
 }
 
-#FIXME Rework whole diag runtime - use procs
-
 after 200
 
 set dwhere_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
@@ -132,6 +130,437 @@ proc diag_writeOut {outfile msg} {
 	}
 }
 
+proc diag_checkPkg {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkPkg @@@#######"
+	set insertLocal 1
+	set insertGlob 1
+	foreach pa $::auto_path {
+		if {[string match /usr/local/lib $pa]} {
+			set insertLocal 0
+		}
+		if {[string match /usr/lib $pa]} {
+			set insertGlob 0
+		}
+	}
+	if {$insertLocal} {
+		if {[file isdirectory /usr/local/lib]} {
+			set auto_path [linsert $::auto_path 0 "/usr/local/lib"]
+		}
+	}
+	if {$insertGlob} {
+		if {[file isdirectory /usr/lib]} {
+			set auto_path [linsert $::auto_path 0 "/usr/lib"]
+		}
+	}
+	
+	# Checking package Tk available and version
+	set status_tk [catch {package require Tk} resultat_tk]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Tk:
+$resultat_tk"
+	
+	# Checking version of package Tcl.
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Tcl:
+[info patchlevel]"
+	
+	# Checking package tkimg available and version.
+	set status_img [catch {package require Img} resultat_img]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+tkimg:
+$resultat_img"
+	
+	# Checking package tkimg available and version.
+	set status_tktray [catch {package require tktray} resultat_tktray]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+tktray:
+$resultat_tktray"
+}
+
+proc diag_checkVer {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkVer @@@#######"
+	# Checking version of tv-viewer.
+	set resultat_get_installed_version [glob -nocomplain "$::dwhere_is_home/.tv-viewer/config/tv-viewer-*.ver"]
+	if {[string trim $resultat_get_installed_version] != {}} {
+		set normalized_version_file [file normalize "$resultat_get_installed_version"]
+		set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\_build} "$normalized_version_file" <-> read_version]
+		if {$status_regexp_version == 1} {
+			set status_regexp_version2 [regexp {_build([\d]+)\.ver} "$normalized_version_file" <-> read_build]
+			set version "$read_version Build $read_build"
+		} else {
+			set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\.ver} "$normalized_version_file" <-> read_version]
+			set version "$read_version Build UNKNOWN"
+		}
+	} else {
+		set version UNKNOW
+	}
+	catch {diag_writeOut $diag_file_append "
+***********************************************************************
+Checkversion:
+$version"
+	}
+}
+
+proc diag_checkMachineDistri {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkMachineDistri @@@#######"
+	# On which machine are we running.
+	set kernelcheck [catch {exec uname -r} resultat_kernelcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Kernelcheck:
+$resultat_kernelcheck"
+	
+	# On which machine are we running.
+	set archcheck [catch {exec uname -m} resultat_archcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Processor architecture:
+$resultat_archcheck"
+	
+	# Trying to read distribution and version.
+	set districheck [catch {exec sh -c "cat /etc/*release"} resultat_districheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Districheck:
+$resultat_districheck"
+}
+
+proc diag_checkInstallation {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkInstallation @@@#######"
+	# Checking symbolic link tv-viewer. Pointing correct?
+	set linkcheck [catch {file readlink [auto_execok tv-viewer]} resultat_linkcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Linkcheck(main):
+$resultat_linkcheck"
+	set linkcheck [catch {file readlink [auto_execok tv-viewer_diag]} resultat_linkcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Linkcheck(diag):
+$resultat_linkcheck"
+	set linkcheck [catch {file readlink [auto_execok tv-viewer_lirc]} resultat_linkcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Linkcheck(lirc):
+$resultat_linkcheck"
+	set linkcheck [catch {file readlink [auto_execok tv-viewer_scheduler]} resultat_linkcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Linkcheck(scheduler):
+$resultat_linkcheck"
+	set linkcheck [catch {file readlink [auto_execok tv-viewer_recext]} resultat_linkcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Linkcheck(recext):
+$resultat_linkcheck"
+}
+
+proc diag_checkHardware {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkHardware @@@#######"
+	# Here we beginn with checking some Hardware values.
+	# Output of lsmod. Are the ivtv moduls loaded?
+	catch {exec sh -c "lsmod"} read_lsmod
+	set modcheck [catch {agrep -m 0 "$read_lsmod" ivtv} resultat_modcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Modcheck:
+$resultat_modcheck"
+	set modcheck2 [catch {agrep -m 0 "$read_lsmod" pvrusb2} resultat_modcheck2]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Modcheck(pvrusb2):
+$resultat_modcheck2"
+	set modcheck3 [catch {agrep -m 0 "$read_lsmod" cx18} resultat_modcheck3]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Modcheck(cx18):
+$resultat_modcheck3"
+	
+	# Output of dmesg. TV-Card initialized correct by the driver?
+	catch {exec sh -c "dmesg"} read_dmesg
+	set dmesgcheck [catch {agrep -m 0 "$read_dmesg" ivtv} resultat_dmesgcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Dmesgcheck(ivtv):
+$resultat_dmesgcheck"
+	set dmesgcheck2 [catch {agrep -m 0 "$read_dmesg" pvrusb2} resultat_dmesgcheck2]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Dmesgcheck(pvrusb2):
+$resultat_dmesgcheck2"
+	set dmesgcheck3 [catch {agrep -m 0 "$read_dmesg" cx18} resultat_dmesgcheck3]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Dmesgcheck(cx18):
+$resultat_dmesgcheck3"
+	
+	# Output of lspci. Which tv-card is recognized?
+	set lspci [auto_execok lspci]
+	if {[string trim $lspci] != {}} {
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Lspcicheck:"
+		catch {exec sh -c "$lspci -v"} resultat_lspcicheck
+		#checkFor 0 == check for Multimedia; 1 == check for Syubsystem:
+		set checkFor 0
+		foreach line [split $resultat_lspcicheck \n] {
+			if {$checkFor == 0} {
+				if {[string match *Multimedia* $line]} {
+					diag_writeOut $diag_file_append "
+$line"
+					set checkFor 1
+				}
+			} else {
+				if {[string match *Subsystem:* $line]} {
+					diag_writeOut $diag_file_append "$line"
+					set checkFor 0
+				}
+			}
+		}
+	} else {
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Lspcicheck:
+Could not detect lspci."
+	}
+	
+	# Output of lsusb. In case you have a supported usb device.
+	set lsusbcheck [catch {exec sh -c "lsusb"} resultat_lsusbcheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Lsusbcheck:
+$resultat_lsusbcheck"
+}
+
+proc diag_checkConfig {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkConfig @@@#######"
+	# Checking tv-viewer config directory.
+	set dircheck [catch {exec sh -c "ls $::env(HOME)/.tv-viewer/*"} resultat_dircheck]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Dircheck(/home/.tv-viewer):
+$resultat_dircheck"
+	
+	# Reading configuration file of tv-viewer.
+	if {[file exists "$::dwhere_is_home/.tv-viewer/config/tv-viewer.conf"]} {
+				diag_writeOut $diag_file_append "
+***********************************************************************
+Configuration:"
+		set open_config_file [open "$::dwhere_is_home/.tv-viewer/config/tv-viewer.conf" r]
+		while {[gets $open_config_file line]!=-1} {
+			if {[string match #* $line] || [string trim $line] == {} } {
+				diag_writeOut $diag_file_append "$line"
+			} else {
+				if {[catch {array set ::option $line}]} {
+					diag_writeOut $diag_file_append "Config file line incorrect: $line"
+				} else {
+					diag_writeOut $diag_file_append "$line"
+				}
+			}
+		}
+		close $open_config_file
+	} else {
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Configuration:
+No config file"
+	}
+	
+	# Reading lastchannel file.
+	if {[file exists "$::env(HOME)/.tv-viewer/config/lastchannel.conf"]} {
+		set lastcheck [catch {exec cat "$::env(HOME)/.tv-viewer/config/lastchannel.conf"} resultat_lastcheck]
+		diag_writeOut $diag_file_append "
+***********************************************************************
+lastchannel:
+$resultat_lastcheck"
+	}
+	
+	# Reading record config.
+	if {[file exists "$::env(HOME)/.tv-viewer/config/scheduled_recordings.conf"]} {
+		catch {exec cat "$::env(HOME)/.tv-viewer/config/scheduled_recordings.conf"} resultat_scheduled_recordings
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Record_conf:
+$resultat_scheduled_recordings"
+	}
+	
+	# Looking for a actual recording
+	if {[file exists "$::env(HOME)/.tv-viewer/config/current_rec.conf"]} {
+		catch {exec cat "$::env(HOME)/.tv-viewer/config/current_rec.conf"} resultat_current_rec
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Actual recording:
+$resultat_current_rec"
+	}
+	
+	# Looking for actual recording
+	if {[file exists "$::env(HOME)/.tv-viewer/config/tv-viewer_mem.conf"]} {
+		catch {exec cat "$::env(HOME)/.tv-viewer/config/tv-viewer_mem.conf"} resultat_mem
+		diag_writeOut $diag_file_append "
+***********************************************************************
+tv-viewer_mem:
+$resultat_mem"
+	}
+	
+	# Reading .lircrc
+	if {[file exists "$::env(HOME)/.lircrc"]} {
+		catch {exec cat "$::env(HOME)/.lircrc"} resultat_lircrc
+		diag_writeOut $diag_file_append "
+***********************************************************************
+.lircrc:
+$resultat_lircrc"
+	}
+}
+
+proc diag_checkDevice {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkDevice @@@#######"
+	# List all video devices.
+	catch {exec sh -c "ls /dev/video*"} resultat_videodevicels
+	diag_writeOut $diag_file_append "
+***********************************************************************
+VideoDeviceLS:
+$resultat_videodevicels"
+	
+	# Does the device node from the configuration file exist?
+	# Trying to read tv-card values using v4l2-ctl.
+	if {[info exists ::option(video_device)] == 1 } {
+		if {[file exists $::option(video_device)]} {
+			diag_writeOut $diag_file_append "
+***********************************************************************
+VideoDeviceConfig:
+Video device exists."
+			set v4l2checkall [catch {exec v4l2-ctl -d $::option(video_device) --all} resultat_v4l2checkall]
+			diag_writeOut $diag_file_append "
+***********************************************************************
+V4l2checkall:
+$resultat_v4l2checkall"
+			set v4l2checkl [catch {exec v4l2-ctl -d $::option(video_device) -l} resultat_v4l2checkl]
+			diag_writeOut $diag_file_append "
+***********************************************************************
+V4l2checkl:
+$resultat_v4l2checkl"
+		} else {
+			diag_writeOut $diag_file_append "
+***********************************************************************
+Device:
+Video device does not exist."
+		}
+	} else {
+		set v4l2checkall [catch {exec v4l2-ctl --all} resultat_v4l2checkall]
+		diag_writeOut $diag_file_append "
+***********************************************************************
+V4l2checkallNOCONFIG:
+$resultat_v4l2checkall"
+		set v4l2checkl [catch {exec v4l2-ctl -l} resultat_v4l2checkl]
+		diag_writeOut $diag_file_append "
+***********************************************************************
+V4l2checklNOCONFIG:
+$resultat_v4l2checkl"
+	}
+}
+
+proc diag_checkStation {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkStation @@@#######"
+	# Reading the stations list.
+	if {[info exists ::option(frequency_table)] == 1 } {
+		if {[file exists "$::env(HOME)/.tv-viewer/config/stations_$::option(frequency_table).conf"]} {
+			set stationscheck [catch {exec cat "$::env(HOME)/.tv-viewer/config/stations_$::option(frequency_table).conf"} resultat_stationscheck]
+			diag_writeOut $diag_file_append "
+***********************************************************************
+StationlistFreqTableConfig:
+$resultat_stationscheck"
+		}
+	}
+	
+	# If there is more than one stations list they will be read in now.
+	catch {exec sh -c "ls $::env(HOME)/.tv-viewer/config/stations*.conf"} resultat_stationlists
+	if {[llength $resultat_stationlists] > 1} {
+		foreach slists $resultat_stationlists {
+			if {[string match *$::option(frequency_table)* $slists]} continue
+			set slistName [file rootname [file tail $slists]]
+			set slist($slistName) $slists
+			set slistsread($slistName) [catch {exec cat $slist($slistName)} resultat_slistsread($slistName)]
+			if {[info exists ::option(frequency_table)] == 1 } {
+				diag_writeOut $diag_file_append "
+***********************************************************************
+Stationlist($slistName):
+$resultat_slistsread($slistName)"
+			}
+		}
+	}
+}
+
+proc diag_checkDep {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkDep @@@#######"
+	# Are the ivtv utilities installed?
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Tunecheck:
+[auto_execok ivtv-tune]
+v4l2check:
+[auto_execok v4l2-ctl]"
+	
+	# Searching for xdg-utils
+	diag_writeOut $diag_file_append "
+***********************************************************************
+xdg-utils:
+[auto_execok xdg-open]"
+	
+	# Is MPlayer installed
+	diag_writeOut $diag_file_append "
+***********************************************************************
+MPlayer:
+[auto_execok mplayer]"
+	if {[string trim [auto_execok mplayer]] != {}} {
+		catch {exec mplayer --version} mplayer_ver
+		diag_writeOut $diag_file_append "Mplayer_ver:
+$mplayer_ver"
+		catch {exec mplayer -vo help} mplayer_vo
+		diag_writeOut $diag_file_append "Mplayer_vo:
+$mplayer_vo"
+	}
+}
+
+proc diag_exit {diag_file_append} {
+	# Program collected all necessary data.
+	diag_writeOut $diag_file_append "
+
+
+Diagnostic routine for TV-Viewer is finished.
+
+Ouput has been stored in:
+$::dwhere_is_home/tv-viewer_diag.out
+
+File a bug report on 
+http://sourceforge.net/tracker2/?group_id=238442&atid=1106486
+and attach the created file.
+"
+	if {[file isdirectory "$::env(HOME)/.tv-viewer/tmp/"]} {
+		catch {exec mkfifo "$::env(HOME)/.tv-viewer/tmp/ComSocketMain"}
+		set comsocket [open "$::env(HOME)/.tv-viewer/tmp/ComSocketMain" r+]
+		fconfigure $comsocket -blocking 0 -buffering line
+		puts -nonewline $comsocket "tv-viewer_main diag_RunFinished 0 \n"
+		flush $comsocket
+		exit 0
+	} else {
+		close $diag_file_append
+		exit 0
+	}
+}
+
 puts "
 TV-Viewer Diagnostic Routine [lindex $option(release_version) 0] Build [lindex $option(release_version) 1]
 
@@ -158,382 +587,22 @@ and attach this file, or contact the author.
 close $diag_file
 set diag_file_append [open "$::dwhere_is_home/tv-viewer_diag.out" a]
 
-after 500
-
-# Checking package Tk available and version
-set status_tk [catch {package require Tk} resultat_tk]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Tk:
-$resultat_tk"
-
-# Checking version of package Tcl.
-diag_writeOut $diag_file_append "
-***********************************************************************
-Tcl:
-[info patchlevel]"
-
-# Checking package tkimg available and version.
-set status_img [catch {package require Img} resultat_img]
-diag_writeOut $diag_file_append "
-***********************************************************************
-tkimg:
-$resultat_img"
-
-# Checking package Ttk available and version.
-set status_ttk [catch {package require Ttk} resultat_ttk]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Ttk:
-$resultat_ttk"
-
-# Checking package http available and version.
-set status_http [catch {package require http} resultat_http]
-diag_writeOut $diag_file_append "
-***********************************************************************
-http:
-$resultat_http"
-
-# Checking package msgcat available and version.
-set status_msgc [catch {package require msgcat} resultat_msgc]
-diag_writeOut $diag_file_append "
-***********************************************************************
-msgcat:
-$resultat_msgc"
-
+diag_checkPkg $diag_file_append
 after 200
-
-# Checking tv-viewer config directory.
-set dircheck [catch {exec sh -c "ls $::env(HOME)/.tv-viewer/*"} resultat_dircheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Dircheck(/home/.tv-viewer):
-$resultat_dircheck"
-
-after 500
-
-# Checking symbolic link tv-viewer. Pointing correct?
-set linkcheck [catch {file readlink /usr/bin/tv-viewer} resultat_linkcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Linkcheck:
-$resultat_linkcheck"
-set linkcheck [catch {file readlink /usr/bin/tv-viewer_diag} resultat_linkcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Linkcheck(diag):
-$resultat_linkcheck"
-set linkcheck [catch {file readlink /usr/bin/tv-viewer_lirc} resultat_linkcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Linkcheck(lirc):
-$resultat_linkcheck"
-set linkcheck [catch {file readlink /usr/bin/tv-viewer_scheduler} resultat_linkcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Linkcheck(scheduler):
-$resultat_linkcheck"
-
+diag_checkVer $diag_file_append
 after 200
-
-# Checking version of tv-viewer.
-set resultat_get_installed_version [glob -nocomplain "$dwhere_is_home/.tv-viewer/config/tv-viewer-*.ver"]
-if {[string trim $resultat_get_installed_version] != {}} {
-	set normalized_version_file [file normalize "$resultat_get_installed_version"]
-	set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\_build} "$normalized_version_file" <-> read_version]
-	if {$status_regexp_version == 1} {
-		set status_regexp_version2 [regexp {_build([\d]+)\.ver} "$normalized_version_file" <-> read_build]
-		set version "$read_version Build $read_build"
-	} else {
-		set status_regexp_version [regexp {tv-viewer-([\d.ab]+)\.ver} "$normalized_version_file" <-> read_version]
-		set version "$read_version Build UNKNOWN"
-	}
-} else {
-	set version UNKNOW
-}
-catch {diag_writeOut $diag_file_append "
-***********************************************************************
-Checkversion:
-$version"
-}
-
-# On which machine are we running.
-set kernelcheck [catch {exec uname -r} resultat_kernelcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Kernelcheck:
-$resultat_kernelcheck"
-
-# On which machine are we running.
-set archcheck [catch {exec uname -m} resultat_archcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Processor architecture:
-$resultat_archcheck"
-
-# Trying to read distribution and version.
-set districheck [catch {exec sh -c "cat /etc/*release"} resultat_districheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Districheck:
-$resultat_districheck"
-
-# Here we beginn with checking some Hardware values.
-# Output of lsmod. Are the ivtv moduls loaded?
-catch {exec sh -c "lsmod"} read_lsmod
-set modcheck [catch {agrep -m 0 "$read_lsmod" ivtv} resultat_modcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Modcheck:
-$resultat_modcheck"
-set modcheck2 [catch {agrep -m 0 "$read_lsmod" pvrusb2} resultat_modcheck2]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Modcheck(pvrusb2):
-$resultat_modcheck2"
-set modcheck3 [catch {agrep -m 0 "$read_lsmod" cx18} resultat_modcheck3]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Modcheck(cx18):
-$resultat_modcheck3"
-
-# Output of dmesg. TV-Card initialized correct by the driver?
-catch {exec sh -c "dmesg"} read_dmesg
-set dmesgcheck [catch {agrep -m 0 "$read_dmesg" ivtv} resultat_dmesgcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Dmesgcheck(ivtv):
-$resultat_dmesgcheck"
-set dmesgcheck2 [catch {agrep -m 0 "$read_dmesg" pvrusb2} resultat_dmesgcheck2]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Dmesgcheck(pvrusb2):
-$resultat_dmesgcheck2"
-set dmesgcheck3 [catch {agrep -m 0 "$read_dmesg" cx18} resultat_dmesgcheck3]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Dmesgcheck(cx18):
-$resultat_dmesgcheck3"
-
+diag_checkMachineDistri $diag_file_append
 after 200
-
-# Output of lspci. Which tv-card is recognized?
-set lspci [auto_execok lspci]
-if {[string trim $lspci] != {}} {
-	catch {exec sh -c "$lspci -v"} resultat_lspcicheck
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Lspcicheck:
-$resultat_lspcicheck"
-} else {
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Lspcicheck:
-Could not detect lspci."
-}
-
-# Output of lsusb. In case you have a supported usb device.
-set lsusbcheck [catch {exec sh -c "lsusb"} resultat_lsusbcheck]
-diag_writeOut $diag_file_append "
-***********************************************************************
-Lsusbcheck:
-$resultat_lsusbcheck"
-
-# Reading configuration file of tv-viewer.
-
-if {[file exists "$dwhere_is_home/.tv-viewer/config/tv-viewer.conf"]} {
-	set open_config_file [open "$dwhere_is_home/.tv-viewer/config/tv-viewer.conf" r]
-	while {[gets $open_config_file line]!=-1} {
-		if {[string match #* $line] || [string trim $line] == {} } continue
-		if {[catch {array set option $line}]} {
-			puts stderr "Config file line incorrect: $line"
-		}
-	}
-	close $open_config_file
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Configuration:"
-	foreach {key elem} [array get option] {
-		catch {diag_writeOut $diag_file_append "$key $elem"}
-	}
-} else {
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Configuration:
-No config file"
-}
-
-after 500
-
-# List all video devices.
-set videodevicels [catch {exec sh -c "ls /dev/video*"} resultat_videodevicels]
-diag_writeOut $diag_file_append "
-***********************************************************************
-VideoDeviceLS:
-$resultat_videodevicels"
-
-# Does the device node from the configuration file exist?
-# Trying to read tv-card values using v4l2-ctl.
-if {[info exists option(video_device)] == 1 } {
-	if {[file exists $option(video_device)]} {
-		diag_writeOut $diag_file_append "
-***********************************************************************
-VideoDeviceConfig:
-Video device exists."
-		set v4l2checkall [catch {exec v4l2-ctl -d $option(video_device) --all} resultat_v4l2checkall]
-		diag_writeOut $diag_file_append "
-***********************************************************************
-V4l2checkall:
-$resultat_v4l2checkall"
-		set v4l2checkl [catch {exec v4l2-ctl -d $option(video_device) -l} resultat_v4l2checkl]
-		diag_writeOut $diag_file_append "
-***********************************************************************
-V4l2checkl:
-$resultat_v4l2checkl"
-	} else {
-		diag_writeOut $diag_file_append "
-***********************************************************************
-Device:
-Video device does not exist."
-	}
-} else {
-	set v4l2checkall [catch {exec v4l2-ctl --all} resultat_v4l2checkall]
-	diag_writeOut $diag_file_append "
-***********************************************************************
-V4l2checkallNOCONFIG:
-$resultat_v4l2checkall"
-	set v4l2checkl [catch {exec v4l2-ctl -l} resultat_v4l2checkl]
-	diag_writeOut $diag_file_append "
-***********************************************************************
-V4l2checklNOCONFIG:
-$resultat_v4l2checkl"
-}
-
-after 500
-
-# Are the ivtv utilities installed?
-diag_writeOut $diag_file_append "
-***********************************************************************
-Tunecheck:
-[auto_execok ivtv-tune]
-v4l2check:
-[auto_execok v4l2-ctl]"
-
-# Is MPlayer installed
-diag_writeOut $diag_file_append "
-***********************************************************************
-MPlayer:
-[auto_execok mplayer]"
-
-if {[string trim [auto_execok mplayer]] != {}} {
-	catch {exec mplayer --version} mplayer_ver
-	diag_writeOut $diag_file_append "Mplayer_ver:
-$mplayer_ver"
-	catch {exec mplayer -vo help} mplayer_vo
-	diag_writeOut $diag_file_append "Mplayer_vo:
-$mplayer_vo"
-}
-
+diag_checkInstallation $diag_file_append
 after 200
-
-diag_writeOut $diag_file_append "
-***********************************************************************
-xdg-utils:
-[auto_execok xdg-open]"
-
-# Reading the stations list.
-if {[info exists option(frequency_table)] == 1 } {
-	if {[file exists "$::env(HOME)/.tv-viewer/config/channels_$option(frequency_table).conf"]} {
-		set stationscheck [catch {exec cat "$::env(HOME)/.tv-viewer/config/channels_$option(frequency_table).conf"} resultat_stationscheck]
-		diag_writeOut $diag_file_append "
-***********************************************************************
-StationlistFreqTableConfig:
-$resultat_stationscheck"
-	}
-}
-
-# If there is more than one stations list they will be read in now.
-set stationlists [catch {exec sh -c "ls $::env(HOME)/.tv-viewer/config/channels*.conf"} resultat_stationlists]
-if { $stationlists == 0 } {
-	set i 1
-	foreach {slists} [split "$resultat_stationlists" \n] {
-		set slist($i) $slists
-		set slistsread($i) [catch {exec cat $slist($i)} resultat_slistsread($i)]
-		if {[info exists option(frequency_table)] == 1 } {
-			if { "$resultat_slistsread($i)" != "$resultat_stationscheck" } {
-				diag_writeOut $diag_file_append "
-***********************************************************************
-Stationlist($i):
-$resultat_slistsread($i)"
-			}
-		}
-		incr i
-	}
-}
-
+diag_checkHardware $diag_file_append
 after 200
-
-# Reading lastchannel file.
-if {[file exists "$::env(HOME)/.tv-viewer/config/lastchannel.conf"]} {
-	set lastcheck [catch {exec cat "$::env(HOME)/.tv-viewer/config/lastchannel.conf"} resultat_lastcheck]
-	diag_writeOut $diag_file_append "
-***********************************************************************
-lastchannel:
-$resultat_lastcheck"
-}
-
-# Reading record config.
-if {[file exists "$::env(HOME)/.tv-viewer/config/scheduled_recordings.conf"]} {
-	catch {exec cat "$::env(HOME)/.tv-viewer/config/scheduled_recordings.conf"} resultat_scheduled_recordings
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Record_conf:
-$resultat_scheduled_recordings"
-}
-
-# Looking for a actual recording
-if {[file exists "$::env(HOME)/.tv-viewer/config/current_rec.conf"]} {
-	catch {exec cat "$::env(HOME)/.tv-viewer/config/current_rec.conf"} resultat_current_rec
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Actual recording:
-$resultat_current_rec"
-}
-
-# Reading .lircrc
-if {[file exists "$::env(HOME)/.lircrc"]} {
-	catch {exec cat "$::env(HOME)/.lircrc"} resultat_lircrc
-	diag_writeOut $diag_file_append "
-***********************************************************************
-.lircrc:
-$resultat_lircrc"
-}
-
+diag_checkConfig $diag_file_append
 after 200
-
-# Program collected all necessary data.
-diag_writeOut $diag_file_append "
-
-
-Diagnostic routine for TV-Viewer is finished.
-
-Ouput has been stored in:
-$::dwhere_is_home/tv-viewer_diag.out
-
-File a bug report on 
-http://sourceforge.net/tracker2/?group_id=238442&atid=1106486
-and attach the created file.
-"
-
+diag_checkDevice $diag_file_append
 after 200
-if {[file isdirectory "$::env(HOME)/.tv-viewer/tmp/"]} {
-	catch {exec mkfifo "$::env(HOME)/.tv-viewer/tmp/ComSocketMain"}
-	set comsocket [open "$::env(HOME)/.tv-viewer/tmp/ComSocketMain" r+]
-	fconfigure $comsocket -blocking 0 -buffering line
-	puts -nonewline $comsocket "tv-viewer_main diag_RunFinished 0 \n"
-	flush $comsocket
-	exit 0
-} else {
-	close $diag_file_append
-	exit 0
-}
+diag_checkStation $diag_file_append
+after 200
+diag_checkDep $diag_file_append
+after 200
+diag_exit $diag_file_append

@@ -30,19 +30,12 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		
 		bind $vid_cont <Motion> {
 			vid_wmCursorHide .fvidBg.cont 0
-			vid_wmCursorPlaybar %Y
-			#~ vid_slistCursor %X %Y
+			vid_wmCursorToolbar %X %Y
 		}
 		bind $vid_bg <Motion> {
 			vid_wmCursorHide .fvidBg 0
-			vid_wmCursorPlaybar %Y
-			#~ vid_slistCursor %X %Y
+			vid_wmCursorToolbar %X %Y
 		}
-		#~ bind $mw <ButtonPress-1> {.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont); .fvidBg configure -cursor $::cursor(old_.fvidBg)}
-		#~ set ::cursor($vid_cont) ""
-		#~ set ::cursor($vid_bg) ""
-		#~ vid_wmCursorHide $vid_cont 0
-		#~ vid_wmCursorHide $vid_bg 0
 		wm attributes $mw -fullscreen 1
 		if {[string trim [focus -displayof .]] == {}} {
 			log_writeOutTv 1 "Trying to request focus for main window"
@@ -56,40 +49,19 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			}]
 		}
 		log_writeOutTv 0 "Going to full-screen mode."
-		#~ if {[winfo exists .tv.slist] && [string trim [place info .tv.slist]] != {}} {
-			#~ .tv.slist.lb_station selection clear 0 end
-			#~ place forget .tv.slist
-			#~ log_writeOutTv 0 "Removing station list from video window."
-		#~ }
 	} else {
-		#~ if {[winfo exists .tv.slist] && [string trim [place info .tv.slist]] != {}} {
-			#~ .tv.slist.lb_station selection clear 0 end
-			#~ place forget .tv.slist
-			#~ log_writeOutTv 0 "Removing station list from video window."
-		#~ }
-		#~ if {[winfo exists .tv.slist_lirc] && [string trim [place info .tv.slist_lirc]] != {}} {
-			#~ log_writeOutTv 0 "Closing OSD station list for remote controls."
-			#~ .tv.slist_lirc.lb_station selection clear 0 end
-			#~ focus .tv
-			#~ place forget .tv.slist_lirc
-		#~ }
+		if {[winfo exists .fvidBg.slist_lirc] && [string trim [place info .fvidBg.slist_lirc]] != {}} {
+			log_writeOutTv 0 "Closing OSD station list for remote controls."
+			.fvidBg.slist_lirc.lb_station selection clear 0 end
+			focus .fvidBg
+			destroy .fvidBg.slist_lirc
+		}
 		bind $vid_cont <Motion> {
 			vid_wmCursorHide .fvidBg.cont 0
-			#~ vid_wmCursorPlaybar %Y
-			#~ vid_slistCursor %X %Y
 		}
 		bind $vid_bg <Motion> {
 			vid_wmCursorHide .fvidBg 0
-			#~ vid_wmCursorPlaybar %Y
-			#~ vid_slistCursor %X %Y
 		}
-		#~ bind $mw <ButtonPress-1> {}
-		#~ set ::cursor($vid_cont) ""
-		#~ set ::cursor($vid_bg) ""
-		#~ vid_wmCursorHide $vid_bg 1
-		#~ vid_wmCursorHide $vid_cont 1
-		#~ $vid_cont configure -cursor $::cursor(old_.fvidBg.cont)
-		#~ $vid_bg configure -cursor $::cursor(old_.fvidBg)
 		if {$::main(compactMode) == 0} {
 			grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
 			grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2
@@ -523,11 +495,11 @@ proc vid_wmCursor {com} {
 		if {[wm attributes . -fullscreen] == 1} {
 			bind .fvidBg.cont <Motion> {
 				vid_wmCursorHide .fvidBg.cont 0
-				vid_wmCursorPlaybar %Y
+				vid_wmCursorToolbar %X %Y
 			}
 			bind .fvidBg <Motion> {
 				vid_wmCursorHide .fvidBg 0
-				vid_wmCursorPlaybar %Y
+				vid_wmCursorToolbar %X %Y
 			}
 		} else {
 			bind .fvidBg.cont <Motion> {
@@ -562,19 +534,59 @@ proc vid_wmCursorHide {w com} {
 	}
 }
 
-proc vid_wmCursorPlaybar {ypos} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursorPlaybar \033\[0m \{$ypos\}"
+proc vid_wmCursorToolbar {xpos ypos} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursorToolbar \033\[0m \{$xpos\} \{$ypos\}"
 	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 0} {
-		#FIXME TV Playback mode show controls nevertheless?!
+		if {$::option(floatMain)} {
+			if {[string trim [grid info .ftoolb_Top]] == {}} {
+				if {$ypos < 20} {
+					grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
+					log_writeOutTv 0 "Adding main toolbar with grid window manager."
+				}
+			}
+			if {[string trim [grid info .ftoolb_Top]] != {}} {
+				if {$ypos > 80} {
+					grid remove .ftoolb_Top
+					log_writeOutTv 0 "Removing main toolbar with grid window manager."
+				}
+			}
+		}
+		if {$::option(floatStation)} {
+			if {[string trim [grid info .fstations]] == {}} {
+				if {$xpos < 20} {
+					grid .fstations -in . -row 3 -column 0 -sticky nesw
+					log_writeOutTv 0 "Adding station list with grid window manager."
+				}
+			}
+			if {[string trim [grid info .fstations]] != {}} {
+				if {$xpos > 80} {
+					grid remove .fstations
+					log_writeOutTv 0 "Removing station list with grid window manager."
+				}
+			}
+		}
+		if {$::option(floatPlay)} {
+			if {[string trim [grid info .ftoolb_Play]] == {}} {
+				if {$ypos > [expr [winfo screenheight .] - 20]} {
+					grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
+					grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+					log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
+				}
+			}
+			if {[string trim [grid info .ftoolb_Play]] != {}} {
+				if {$ypos < [expr [winfo screenheight .] - 80]} {
+					grid remove .ftoolb_Play
+					grid remove .ftoolb_Disp
+					log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
+				}
+			}
+		}
 	}
 	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
 		if {[string trim [grid info .ftoolb_Play]] == {}} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
-				grid .ftoolb_Play -in . -row 4 -column 1 \
-				-sticky ew
-				grid .ftoolb_Disp -in . -row 5 -column 0 \
-				-columnspan 2 \
-				-sticky ew
+				grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
+				grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
 				log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
 			}
 			return
@@ -584,10 +596,6 @@ proc vid_wmCursorPlaybar {ypos} {
 				grid remove .ftoolb_Play
 				grid remove .ftoolb_Disp
 				log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
-				.fvidBg configure -cursor $::cursor(old_.fvidBg)
-				.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont)
-				vid_wmCursorHide .fvidBg 1
-				vid_wmCursorHide .fvidBg.cont 1
 			}
 			return
 		}

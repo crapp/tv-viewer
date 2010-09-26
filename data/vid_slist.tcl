@@ -16,103 +16,6 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc vid_slistCursor {xpos ypos} {
-	#FIXME Here are variables that are no longer in use (osd_mouse_w osd_mouse_f)
-	if {[winfo exists .tv.slist]} {
-		if {[winfo exists .tv.file_play_bar] == 1 && $::option(rec_allow_sta_change) == 0} {
-			return
-		}
-		array set alignment {
-			0 {-anchor nw -x 10 -y 10}
-			1 {-anchor n -relx 0.5 -y 10}
-			2 {-anchor ne -relx 1.0 -x -10 -y 10}
-			3 {-anchor w -rely 0.5 -x 10}
-			5 {-anchor e -relx 1.0 -rely 0.5 -x -10}
-			6 {-anchor sw -rely 1.0 -x 10 -y -10}
-			7 {-anchor s -relx 0.5 -rely 1.0 -y -10}
-			8 {-anchor se -relx 1.0 -rely 1.0 -x -10 -y -10}
-		}
-		array set pos {
-			0 {$xpos < 40 && $ypos < 40}
-			3 {$xpos < 40 && $ypos > [expr ([winfo screenheight .] / 2.0) - 40] && $ypos < [expr ([winfo screenheight .] / 2.0) + 40]}
-			6 {$xpos < 40 && $ypos > [expr [winfo screenheight .] - 40]}
-			2 {$xpos > [expr [winfo screenwidth .] - 40] && $ypos < 40}
-			5 {$xpos > [expr [winfo screenwidth .] - 40] && $ypos > [expr ([winfo screenheight .] / 2.0) - 40] && $ypos < [expr ([winfo screenheight .] / 2.0) + 40]}
-			8 {$xpos > [expr [winfo screenwidth .] - 40] && $ypos > [expr [winfo screenheight .] - 40]}
-			1 {$ypos < 40 && $xpos > [expr ([winfo screenwidth .] / 2.0) - 40] && $xpos < [expr ([winfo screenwidth .] / 2.0) + 40]}
-			7 {$ypos > [expr [winfo screenheight .] - 40] && $xpos > [expr ([winfo screenwidth .] / 2.0) - 40] && $xpos < [expr ([winfo screenwidth .] / 2.0) + 40]}
-		}
-		array set pos_win {
-			0 {[winfo pointerx .tv] < [expr [winfo x .tv] + 40] && [winfo pointery .tv] < [expr [winfo y .tv] + 40]}
-			3 {[winfo pointerx .tv] < [expr [winfo x .tv] + 40] && [winfo pointery .tv] < [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) + 40] && [winfo pointery .tv] > [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) - 40]}
-			6 {[winfo pointerx .tv] < [expr [winfo x .tv] + 40] && [winfo pointery .tv] > [expr ([winfo height .tv] + [winfo y .tv]) - 40]}
-			2 {[winfo pointerx .tv] > [expr ([winfo width .tv] + [winfo x .tv]) - 40] && [winfo pointery .tv] < [expr [winfo y .tv] + 40]}
-			5 {[winfo pointerx .tv] > [expr ([winfo width .tv] + [winfo x .tv]) - 40] && [winfo pointery .tv] < [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) + 40] && [winfo pointery .tv] > [expr (([winfo height .tv] / 2.0) + [winfo y .tv]) - 40]}
-			8 {[winfo pointerx .tv] > [expr ([winfo width .tv] + [winfo x .tv]) - 40] && [winfo pointery .tv] > [expr ([winfo height .tv] + [winfo y .tv]) - 40]}
-			1 {[winfo pointerx .tv] < [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) + 40] && [winfo pointerx .tv] > [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) - 40] && [winfo pointery .tv] < [expr [winfo y .tv] + 40]}
-			7 {[winfo pointerx .tv] < [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) + 40] && [winfo pointerx .tv] > [expr (([winfo width .tv] / 2.0) + [winfo x .tv]) - 40] && [winfo pointery .tv] > [expr ([winfo height .tv] + [winfo y .tv]) - 40]}
-		}
-		if {[string trim [place info .tv.slist]] == {}} {
-			if {[wm attributes .tv -fullscreen] == 0 && [lindex $::option(osd_mouse_w) 0] == 1} {
-				set bias [lindex $::option(osd_mouse_w) 1]
-				if $pos_win($bias) {
-					puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_slistCursor ::osd_mouse_w:: \033\[0m \{$pos_win($bias)\}"
-					place .tv.slist -in .tv {*}$alignment($bias)
-					focus .tv.slist.lb_station
-					.tv.slist.lb_station selection set [expr [lindex $::station(last) 2] - 1]
-					.tv.slist.lb_station activate [expr [lindex $::station(last) 2] - 1]
-					bind .tv.slist <Any-Leave> {
-						set ::data(after_leave_slist_id) [after 1000 {
-							.tv.slist.lb_station selection clear 0 end
-							focus .tv
-							place forget .tv.slist
-							log_writeOutTv 0 "Removing station list from video window."
-							.tv.bg configure -cursor left_ptr
-							.tv.bg.w configure -cursor left_ptr
-							vid_wmCursorHide .tv.bg 1
-							vid_wmCursorHide .tv.bg.w 1
-							bind .tv.slist <Any-Leave> {}
-						}]
-						bind .tv.slist <Any-Enter> {
-							catch {after cancel $::data(after_leave_slist_id)}
-						}
-					}
-					log_writeOutTv 0 "Adding station list to video window with place window manager."
-				}
-				return
-			}
-			if {[wm attributes .tv -fullscreen] == 1 && [lindex $::option(osd_mouse_f) 0] == 1} {
-				set bias [lindex $::option(osd_mouse_f) 1]
-				if $pos($bias) {
-					puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_slistCursor ::osd_mouse_f:: \033\[0m \{$pos_win($bias)\}"
-					place .tv.slist -in .tv {*}$alignment($bias)
-					focus .tv.slist.lb_station
-					.tv.slist.lb_station selection set [expr [lindex $::station(last) 2] - 1]
-					.tv.slist.lb_station activate [expr [lindex $::station(last) 2] - 1]
-					bind .tv.slist <Any-Leave> {
-							set ::data(after_leave_slist_id) [after 1000 {
-							.tv.slist.lb_station selection clear 0 end
-							focus .tv
-							place forget .tv.slist
-							log_writeOutTv 0 "Removing station list from video window."
-							.tv.bg configure -cursor left_ptr
-							.tv.bg.w configure -cursor left_ptr
-							vid_wmCursorHide .tv.bg 1
-							vid_wmCursorHide .tv.bg.w 1
-							bind .tv.slist <Any-Leave> {}
-						}]
-						bind .tv.slist <Any-Enter> {
-							catch {after cancel $::data(after_leave_slist_id)}
-						}
-					}
-					log_writeOutTv 0 "Adding station list to video window with place window manager."
-				}
-				return
-			}
-		}
-	}
-}
-
 proc vid_slistLirc {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_slistLirc \033\[0m"
 	if {[wm attributes . -fullscreen] == 1} {
@@ -134,9 +37,8 @@ proc vid_slistLirc {} {
 					chan_zapperStationNr .fstations.treeSlist $get_lb_index
 					.fvidBg.slist_lirc.lb_station selection clear 0 end
 				}
-				#FIXME Do we need to focus here something?
 				focus .fvidBg
-				place forget .fvidBg.slist_lirc
+				destroy .fvidBg.slist_lirc
 			}
 		} else {
 			if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
@@ -149,7 +51,6 @@ proc vid_slistLirc {} {
 				for {set i 1} {$i <= $::station(max)} {incr i} {
 					.fvidBg.slist_lirc.lb_station insert end "$::kanalid($i)"
 				}
-				#~ bindtags .fvidBg.slist_lirc.lb_station {.fvidBg.slist_lirc.lb_station .fvidBg all}
 				vid_slistLircPlace
 			}
 		}

@@ -31,6 +31,11 @@ proc option_screen_6 {} {
 		.config_wizard.frame_configoptions.nb add $::window(interface_nb3)
 		.config_wizard.frame_configoptions.nb select $::window(interface_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)]
+		bind $::window(interface_nb2_cont) <Map> {
+			$::window(interface_nb2_cont) itemconfigure cont_int_nb2 -width [winfo width $::window(interface_nb2_cont)] -height [winfo reqheight $::window(interface_nb2_cont).f_windowprop2]
+			$::window(interface_nb2_cont) configure -scrollregion [$::window(interface_nb2_cont) bbox all]
+			$::window(interface_nb2_cont) yview moveto 0
+		}
 		bind $::window(interface_nb3_cont) <Map> {
 			$::window(interface_nb3_cont) itemconfigure cont_int_nb3 -width [winfo width $::window(interface_nb3_cont)] -height [winfo reqheight $::window(interface_nb3_cont).f_osd2]
 			$::window(interface_nb3_cont) configure -scrollregion [$::window(interface_nb3_cont) bbox all]
@@ -57,20 +62,33 @@ proc option_screen_6 {} {
 		ttk::labelframe $::window(interface_nb1).lf_splash -text [mc "Splash Screen"]
 		ttk::checkbutton $::window(interface_nb1).cb_lf_splash -text [mc "Show Splash Screen on initialization"] -variable choice(cb_splash)
 		
+		
 		set ::window(interface_nb2) [ttk::frame $w.f_windowprop]
 		$w add $::window(interface_nb2) -text [mc "Window Properties"] -padding 2
-		ttk::labelframe $::window(interface_nb2).lf_mainWindow -text [mc "Main window"]
-		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_fullscr -text [mc "Start in full-screen mode"] -variable choice(cb_fullscr)
-		ttk::checkbutton $::window(interface_nb2).lf_mainWindow.cb_remGeom -text [mc "Remember size and position"] -variable choice(cb_remGeom)
+		set ::window(interface_nb2_cont) [canvas $::window(interface_nb2).c_cont -yscrollcommand [list $::window(interface_nb2).scrollb_cont set] -highlightthickness 0]
+		ttk::scrollbar $::window(interface_nb2).scrollb_cont -command [list $::window(interface_nb2).c_cont yview]
+		$::window(interface_nb2_cont) create window 0 0 -window [ttk::frame $::window(interface_nb2_cont).f_windowprop2] -anchor w -tags cont_int_nb2
 		
-		ttk::labelframe $::window(interface_nb2).lf_systray -text [mc "System Tray"]
-		set lf_systray $::window(interface_nb2).lf_systray
+		ttk::labelframe $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow -text [mc "Main window"]
+		set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
+		ttk::checkbutton $lf_manWindow.cb_fullscr -text [mc "Start in full-screen mode"] -variable choice(cb_fullscr)
+		ttk::checkbutton $lf_manWindow.cb_remGeom -text [mc "Remember size and position"] -variable choice(cb_remGeom)
+		
+		ttk::labelframe $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl -text [mc "Floating control"]
+		set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
+		ttk::checkbutton $lf_floatingCtrl.cb_floatMain -text [mc "Main toolbar"] -variable choice(cb_floatMain)
+		ttk::checkbutton $lf_floatingCtrl.cb_floatStation -text [mc "Station list"] -variable choice(cb_floatStation)
+		ttk::checkbutton $lf_floatingCtrl.cb_floatPlay -text [mc "Control toolbar"] -variable choice(cb_floatPlay)
+		
+		ttk::labelframe $::window(interface_nb2_cont).f_windowprop2.lf_systray -text [mc "System Tray"]
+		set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
 		ttk::checkbutton $lf_systray.cb_systray -text [mc "Show icon in system tray"] -variable choice(cb_systray) -command {system_trayActivate 0}
 		ttk::checkbutton $lf_systray.cb_systray_mini -text [mc "Minimize to tray"] -variable choice(cb_systrayMini)
 		ttk::checkbutton $lf_systray.cb_systrayClose -text [mc "Close to tray"] -variable choice(cb_systrayClose)
 		ttk::checkbutton $lf_systray.cb_systrayResize -text [mc "Resize system tray icon"] -variable choice(cb_systrayResize) -state disabled
 		ttk::label $lf_systray.l_systrayIcSize -text [mc "System tray icon size"]
 		ttk::menubutton $lf_systray.mb_systrayIcSize -menu $lf_systray.mb_systrayIcSize.mIcSize
+		
 		
 		set ::window(interface_nb3) [ttk::frame $w.f_osd]
 		$w add $::window(interface_nb3) -text [mc "On screen Display"] -padding 2
@@ -105,6 +123,8 @@ proc option_screen_6 {} {
 		grid columnconfigure $::window(interface_nb1) 0 -weight 1
 		grid columnconfigure $::window(interface_nb1).lf_theme 0 -minsize 120
 		grid columnconfigure $::window(interface_nb2) 0 -weight 1
+		grid columnconfigure $::window(interface_nb2_cont).f_windowprop2 0 -weight 1
+		grid rowconfigure $::window(interface_nb2_cont).f_windowprop2 0 -weight 1
 		grid columnconfigure $lf_systray 1 -minsize 120
 		grid columnconfigure $::window(interface_nb3) 0 -weight 1
 		grid columnconfigure $::window(interface_nb3_cont).f_osd2 0 -weight 1
@@ -121,10 +141,17 @@ proc option_screen_6 {} {
 		grid $::window(interface_nb1).lf_splash -in $::window(interface_nb1) -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb1).cb_lf_splash -in $::window(interface_nb1).lf_splash -row 0 -column 0 -padx 7 -pady 3
 		
-		grid $::window(interface_nb2).lf_mainWindow -in $::window(interface_nb2) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $::window(interface_nb2).lf_mainWindow.cb_fullscr -in $::window(interface_nb2).lf_mainWindow -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $::window(interface_nb2).lf_mainWindow.cb_remGeom -in $::window(interface_nb2).lf_mainWindow -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $::window(interface_nb2).lf_systray -in $::window(interface_nb2) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $::window(interface_nb2_cont) -in $::window(interface_nb2) -row 0 -column 0 -sticky nesw
+		grid $::window(interface_nb2).scrollb_cont -in $::window(interface_nb2) -row 0 -column 1 -sticky ns
+		
+		grid $lf_manWindow -in $::window(interface_nb2_cont).f_windowprop2 -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_manWindow.cb_fullscr -in $lf_manWindow -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_manWindow.cb_remGeom -in $lf_manWindow -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_floatingCtrl -in $::window(interface_nb2_cont).f_windowprop2 -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_floatingCtrl.cb_floatMain -in $lf_floatingCtrl -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_floatingCtrl.cb_floatStation -in $lf_floatingCtrl -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_floatingCtrl.cb_floatPlay -in $lf_floatingCtrl -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray -in $::window(interface_nb2_cont).f_windowprop2 -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $lf_systray.cb_systray -in $lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
 		grid $lf_systray.cb_systray_mini -in $lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $lf_systray.cb_systrayClose -in $lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
@@ -169,12 +196,18 @@ proc option_screen_6 {} {
 		foreach size {22 32 48 64} {
 			$lf_systray.mb_systrayIcSize.mIcSize add radiobutton -variable choice(mb_systrayIcSize) -label "$size\px" -command [list config_interfaceSystray $size] -value $size
 		}
-		foreach scrollw [winfo children $::window(interface_nb3_cont).f_osd2] {
-			bind $scrollw <Button-4> {config_interfaceMousew 120}
-			bind $scrollw <Button-5> {config_interfaceMousew -120}
+		foreach scrollw [winfo children $::window(interface_nb2_cont).f_windowprop2] {
+			bind $scrollw <Button-4> {config_interfaceMousew $::window(interface_nb2_cont) 120}
+			bind $scrollw <Button-5> {config_interfaceMousew $::window(interface_nb2_cont) -120}
 		}
-		bind $::window(interface_nb3_cont).f_osd2  <Button-4> {config_interfaceMousew 120}
-		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew -120}
+		bind $::window(interface_nb2_cont).f_windowprop2  <Button-4> {config_interfaceMousew $::window(interface_nb2_cont) 120}
+		bind $::window(interface_nb2_cont).f_windowprop2  <Button-5> {config_interfaceMousew $::window(interface_nb2_cont) -120}
+		foreach scrollw [winfo children $::window(interface_nb3_cont).f_osd2] {
+			bind $scrollw <Button-4> {config_interfaceMousew $::window(interface_nb3_cont) 120}
+			bind $scrollw <Button-5> {config_interfaceMousew $::window(interface_nb3_cont) -120}
+		}
+		bind $::window(interface_nb3_cont).f_osd2  <Button-4> {config_interfaceMousew $::window(interface_nb3_cont) 120}
+		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew $::window(interface_nb3_cont) -120}
 		# Subprocs
 		
 		proc config_interfaceTheme {theme} {
@@ -187,7 +220,8 @@ proc option_screen_6 {} {
 		
 		proc config_interfaceSystray {size} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceSystray \033\[0m \{$size\}"
-			set lf_systray $::window(interface_nb2).lf_systray
+			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
+			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			$lf_systray.mb_systrayIcSize configure -text "$size\px"
 			if {[winfo exists .tray]} {
 				.tray configure -image $::icon_e(systray_icon$size)
@@ -216,15 +250,17 @@ proc option_screen_6 {} {
 			set ::choice($cvar) [lreplace $::choice($cvar) 1 1 [lindex $value 1]]
 			set ::config_int($cvar) [lindex $value 0]
 		}
-		proc config_interfaceMousew {delta} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceMousew \033\[0m \{$delta\}"
-			$::window(interface_nb3_cont) yview scroll [expr {-$delta/120}] units
+		proc config_interfaceMousew {window delta} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceMousew \033\[0m \{$window\} \{$delta\}"
+			$window yview scroll [expr {-$delta/120}] units
 		}
 		proc default_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			log_writeOutTv 0 "Starting to collect data for interface section."
 			
-			set lf_systray $::window(interface_nb2).lf_systray
+			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
+			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
+			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
 			
 			set ::choice(mbTheme) $::option(use_theme)
@@ -237,6 +273,9 @@ proc option_screen_6 {} {
 			set ::choice(cb_splash) $::option(show_splash)
 			set ::choice(cb_fullscr) $::option(window_full)
 			set ::choice(cb_remGeom) $::option(window_remGeom)
+			set ::choice(cb_floatMain) $::option(floatMain)
+			set ::choice(cb_floatStation) $::option(floatStation)
+			set ::choice(cb_floatPlay) $::option(floatPlay)
 			set ::choice(cb_systray) $::option(systray)
 			set ::choice(cb_systrayMini) $::option(systrayMini)
 			set ::choice(cb_systrayClose) $::option(systrayClose)
@@ -302,8 +341,14 @@ proc option_screen_6 {} {
 					settooltip $::window(interface_nb1).cb_lf_tooltip_videocard [mc "Tooltips for the Color Management"]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record [mc "Tooltips for the Record Wizard"]
 					settooltip $::window(interface_nb1).cb_lf_splash [mc "Check this if you want to see the splash screen at the start of TV-Viewer"]
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode"]
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom [mc "Remember window size and position"]
+					settooltip $lf_manWindow.cb_fullscr [mc "Start TV-Viewer in full-screen mode"]
+					settooltip $lf_manWindow.cb_remGeom [mc "Remember window size and position"]
+					settooltip $lf_floatingCtrl.cb_floatMain [mc "The floating control appears in fullscreen mode when the
+mouse pointer is moved to the \"top\", of the screen."]
+					settooltip $lf_floatingCtrl.cb_floatStation [mc "The floating control appears in fullscreen mode when the
+mouse pointer is moved to the \"left side\", of the screen."]
+					settooltip $lf_floatingCtrl.cb_floatPlay [mc "The floating control appears in fullscreen mode when the
+mouse pointer is moved to the \"bottom\", of the screen."]
 					settooltip $lf_systray.cb_systray [mc "Activate integration to system tray"]
 					settooltip $lf_systray.cb_systray_mini [mc "Minimize to tray"]
 					settooltip $lf_systray.cb_systrayClose [mc "Close to tray"]
@@ -333,8 +378,11 @@ itself is changed. Be careful with this option."]
 					settooltip $::window(interface_nb1).cb_lf_tooltip_player {}
 					settooltip $::window(interface_nb1).cb_lf_tooltip_record {}
 					settooltip $::window(interface_nb1).cb_lf_splash {}
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_fullscr {}
-					settooltip $::window(interface_nb2).lf_mainWindow.cb_remGeom {}
+					settooltip $lf_manWindow.cb_fullscr {}
+					settooltip $lf_manWindow.cb_remGeom {}
+					settooltip $lf_floatingCtrl.cb_floatMain {}
+					settooltip $lf_floatingCtrl.cb_floatStation {}
+					settooltip $lf_floatingCtrl.cb_floatPlay {}
 					settooltip $lf_systray.cb_systray {}
 					settooltip $lf_systray.cb_systray_mini {}
 					settooltip $lf_systray.cb_systrayClose {}
@@ -360,7 +408,9 @@ itself is changed. Be careful with this option."]
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			log_writeOutTv 1 "Setting interface options to default."
 			
-			set lf_systray $::window(interface_nb2).lf_systray
+			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
+			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
+			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
 			config_interfaceTheme $::stnd_opt(use_theme)
@@ -369,11 +419,13 @@ itself is changed. Be careful with this option."]
 			set ::choice(cb_tooltip_wizard) $::stnd_opt(tooltips_wizard)
 			set ::choice(cb_tooltip_station) $::stnd_opt(tooltips_editor)
 			set ::choice(cb_tooltip_colorm) $::stnd_opt(tooltips_colorm)
-			set ::choice(cb_tooltip_player) $::stnd_opt(tooltips_player)
 			set ::choice(cb_tooltip_record) $::stnd_opt(tooltips_record)
 			set ::choice(cb_splash) $::stnd_opt(show_splash)
 			set ::choice(cb_fullscr) $::stnd_opt(window_full)
-			set ::choice(cb_remGeom) $::option(window_remGeom)
+			set ::choice(cb_remGeom) $::stnd_opt(window_remGeom)
+			set ::choice(cb_floatMain) $::stnd_opt(floatMain)
+			set ::choice(cb_floatStation) $::stnd_opt(floatStation)
+			set ::choice(cb_floatPlay) $::stnd_opt(floatPlay)
 			set ::choice(cb_systray) $::stnd_opt(systray)
 			set ::choice(cb_systrayMini) $::stnd_opt(systrayMini)
 			set ::choice(cb_systrayClose) $::stnd_opt(systrayClose)

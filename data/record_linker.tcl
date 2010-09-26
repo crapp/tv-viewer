@@ -79,11 +79,8 @@ proc record_linkerPrestart {handler} {
 		if {[winfo exists .fstations] == 1} {
 			main_frontendDisableTree .fstations.treeSlist 1
 		}
-		if {[winfo exists .tv.slist.lb_station] == 1} {
-			.tv.slist.lb_station configure -state disabled
-		}
-		if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
-			.tv.slist_lirc.lb_station configure -state disabled
+		if {[winfo exists .fvidBg.slist_lirc.lb_station] == 1} {
+			.fvidBg.slist_lirc.lb_station configure -state disabled
 		}
 	}
 	event_recordStart $handler
@@ -112,11 +109,8 @@ proc record_linkerPrestartCancel {handler} {
 	if {[winfo exists .fstations] == 1} {
 		main_frontendDisableTree .fstations.treeSlist 0
 	}
-	if {[winfo exists .tv.slist.lb_station] == 1} {
-		.tv.slist.lb_station configure -state normal
-	}
-	if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
-		.tv.slist_lirc.lb_station configure -state normal
+	if {[winfo exists .fvidBg.slist_lirc.lb_station] == 1} {
+		.fvidBg.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
 	if {[winfo exists .fvidBg.l_anigif]} {
@@ -243,15 +237,12 @@ proc record_linkerPreStop {handler} {
 	if {[winfo exists .fstations] == 1} {
 		main_frontendDisableTree .fstations.treeSlist 0
 	}
-	if {[winfo exists .tv.slist.lb_station] == 1} {
-		.tv.slist.lb_station configure -state normal
-	}
-	if {[winfo exists .tv.slist_lirc.lb_station] == 1} {
-		.tv.slist_lirc.lb_station configure -state normal
+	if {[winfo exists .fvidBg.slist_lirc.lb_station] == 1} {
+		.fvidBg.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
 	.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
-	.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::::vid(current_rec_file)]
+	.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::vid(current_rec_file)]
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
 			.record_wizard.status_frame.l_rec_current_info configure -text "Idle"
@@ -260,7 +251,7 @@ proc record_linkerPreStop {handler} {
 	} else {
 		if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
 			vid_pmhandlerButton {100 0} {100 0} {{10 !disabled}}
-			if {$::option(tooltips_player) == 1} {
+			if {$::option(tooltips_main) == 1} {
 				set file_size [expr round((([file size "$::option(timeshift_path)/timeshift.mpeg"] / 1024.0) / 1024.0))]
 				if {$file_size > 1000} {
 					set file_size [expr round($file_size / 1024)]
@@ -268,8 +259,8 @@ proc record_linkerPreStop {handler} {
 				} else {
 					set file_size "$file_size MB"
 				}
-				settooltip .ftoolb_Play.bSave "Save timeshift video file
-File size $file_size"
+				settooltip .ftoolb_Play.bSave [mc "Save timeshift video file
+File size %" $file_size]
 			}
 		} else {
 			log_writeOutTv 2 "Can not detect timeshift video file."

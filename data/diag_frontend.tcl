@@ -84,8 +84,8 @@ proc diag_RunFinished {handler} {
 		.top_diagnostic.f_main.t_diagtext tag configure hyper_file -underline on -foreground #0064FF
 		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
 		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Enter> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_enter; .top_diagnostic.f_main.t_diagtext configure -cursor hand1"
-		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
-		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor arrow"
+		.top_diagnostic.f_main.t_diagtext tag bind hyper <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor left_ptr"
+		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Any-Leave> ".top_diagnostic.f_main.t_diagtext tag configure hyper_file $hylink_leave; .top_diagnostic.f_main.t_diagtext configure -cursor left_ptr"
 		.top_diagnostic.f_main.t_diagtext tag bind hyper <Button-1> {catch {exec sh -c "xdg-open http://sourceforge.net/tracker2/?group_id=238442" &}}
 		.top_diagnostic.f_main.t_diagtext tag bind hyper_file <Button-1> {catch {exec sh -c "xdg-open $::env(HOME)/tv-viewer_diag.out" &}}
 		
