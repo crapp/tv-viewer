@@ -507,7 +507,7 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {hallodri}
+	bind . <Key-x> {puts [dict get $::keyseq preferences label]}
 	bind . <Key-y> {puts "focus [focus -displayof .]"}
 	
 	command_socket

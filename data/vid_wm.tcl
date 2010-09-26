@@ -266,11 +266,6 @@ proc vid_wmPanscanAuto {} {
 		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, zoom disabled!"
 		return
 	}
-	if {[winfo ismapped .fvidBg.cont] == 0} {
-		log_writeOutTv 1 "Video frame is not mapped."
-		log_writeOutTv 1 "Auto Pan&Scan not possible."
-		return
-	}
 	if {[wm attributes . -fullscreen] == 0} {
 		if {$::data(panscanAuto) == 0} {
 			set relativeX [dict get [place info .fvidBg.cont] -relx]

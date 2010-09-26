@@ -210,8 +210,8 @@ This will happen instantly and can not be undone!"] -image $::icon_b(dialog-warn
 
 proc key_sequencesApply {top tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApply \033\[0m \{$top\} \{$tree\}"
-	catch {file delete $::option(home)/config/key-sequences.key}
-	set keyf [open $::option(home)/config/key-sequences.key w+]
+	catch {file delete $::option(home)/config/key-sequences.conf}
+	set keyf [open $::option(home)/config/key-sequences.conf w+]
 	foreach child [$tree children {}] {
 		if {[string match *fat* [$tree item $child -tags]] || [string match *small* [$tree item $child -tags]] || [string trim [$tree item $child -values]] == {}} continue
 		lappend setKeys [lindex [$tree item $child -values] 1]
@@ -252,13 +252,17 @@ proc key_sequencesApply {top tree} {
 			append childSeqKP ">"
 			puts $keyf [list $key seq "$childSeq $childSeqKP"]
 		} else {
-			append childSeq ">"
+			if {$childSeq != "\{ \}"} {
+				append childSeq ">"
+			} else {
+				set childSeq none
+			}
 			puts $keyf [list $key seq $childSeq]
 		}
 		unset -nocomplain childSeq childSeqKP
 	}
 	log_writeOutTv 0 "Writing new shortcuts to"
-	log_writeOutTv 0 "$::option(home)/config/key-sequences.key"
+	log_writeOutTv 0 "$::option(home)/config/key-sequences.conf"
 	close $keyf
 	destroy .key
 	process_KeyFile 1
@@ -374,6 +378,9 @@ proc key_sequencesApplyManString {children i} {
 	if {[info exists childSeqKP]} {
 		return [list $childSeq $childSeqKP]
 	} else {
+		if {[info exists childSeq] == 0} {
+			set childSeq " "
+		}
 		return [list $childSeq]
 	}
 }
@@ -559,7 +566,7 @@ proc key_sequencesEditApply {tree lbl} {
 			set end 1
 			break
 		}
-		if {"[lindex [$tree item $child -values] 1]" == "$::key(entrySequence)" && "[$tree selection]" != "$child"} {
+		if {"[lindex [$tree item $child -values] 1]" == "$::key(entrySequence)" && "[$tree selection]" != "$child" && [string trim $::key(entrySequence)] != {}} {
 			set conflictKey "[lindex [$tree item $child -values] 0]"
 			$lbl configure -text [mc "Conflict detected with %" $conflictKey] -image $::icon_m(dialog-warning) -compound left
 			log_writeOutTv 1 "Conflict detected with $conflictKey"
@@ -568,8 +575,8 @@ proc key_sequencesEditApply {tree lbl} {
 		}
 	}
 	if {$end} return
-	$tree item [$tree selection] -values "[lrange [$tree item [$tree selection] -values] 0 end-1] $::key(entrySequence)"
-	log_writeOutTv 0 "Changing key sequence for \"[lindex [$tree item [$tree selection] -values] 0]\" to \"$::key(entrySequence)\""
+	$tree item [$tree selection] -values "[lrange [$tree item [$tree selection] -values] 0 end-1] [string trim $::key(entrySequence)]"
+	log_writeOutTv 0 "Changing key sequence for \"[lindex [$tree item [$tree selection] -values] 0]\" to \"[string trim $::key(entrySequence)]\""
 	vid_wmCursor 1
 	grab release $tree.w_keyEdit
 	destroy $tree.w_keyEdit

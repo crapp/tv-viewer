@@ -526,7 +526,6 @@ mcset en {Audio Menu}
 mcset en {Help Menu}
 mcset en {Exit TV-Viewer}
 mcset en {Toggle TV playback}
-mcset en {Jump between the last two stations}
 mcset en {Station by number}
 mcset en {Next video input}
 mcset en {Previous video input}

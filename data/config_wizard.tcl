@@ -116,7 +116,9 @@ proc config_wizardMainUi {} {
 	option_screen_8
 	log_writeOutTv 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
 	option_screen_$::mem(wizardSec)
-	$wfcopt.nb select $::mem(wizardTab)
+	if {[winfo exists $::mem(wizardTab)]} {
+		$wfcopt.nb select $::mem(wizardTab)
+	}
 	$wfbox.listbox_clist selection set $::mem(wizardSec)
 	$wfbox.listbox_clist activate $::mem(wizardSec)
 	
@@ -149,6 +151,11 @@ proc config_wizardExit {lbox nbook} {
 		}
 		if {"$okey" == "wizardTab"} {
 			puts $wconfig_mem "wizardTab [$nbook select]"
+			continue
+		}
+		if {"$okey" == "mainX" || "$okey" == "mainY" && [string is integer $oelem] == 0} {
+			puts $wconfig_mem "$okey [subst $::mem($okey)]"
+			set ::mem($okey) [subst $::mem($okey)]
 			continue
 		}
 		puts $wconfig_mem "$okey $oelem"

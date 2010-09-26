@@ -598,7 +598,6 @@ mcset de {Audio Menu} {Audio Menü}
 mcset de {Help Menu} {Hilfe Menü}
 mcset de {Exit TV-Viewer} {TV-Viewer beenden}
 mcset de {Toggle TV playback} {Fernsehwiedergabe an oder aus}
-mcset de {Jump between the last two stations} {Zwischen den letzten beiden Sendern hin und her springen}
 mcset de {Station by number} {Senderwahl durch Zifferntasten}
 mcset de {Next video input} {Nächster Videoeingang}
 mcset de {Previous video input} {Vorheriger Videoeingang}

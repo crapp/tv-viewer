@@ -63,7 +63,7 @@ proc process_KeyFile {handler} {
 	dict set ::keyseq stationPrior label [mc "Prior Station"]
 	dict set ::keyseq stationJump name J
 	dict set ::keyseq stationJump seq <Key-j>
-	dict set ::keyseq stationJump label [mc "Jump between the last two stations"]
+	dict set ::keyseq stationJump label [mc "Station jumper"]
 	dict set ::keyseq stationKey name \[0-9\]
 	dict set ::keyseq stationKey seq \[0-9\]
 	dict set ::keyseq stationKey label [mc "Station by number"]
@@ -174,8 +174,8 @@ proc process_KeyFile {handler} {
 	dict set ::keyseq fileEnd label [mc "File end"]
 	
 	if {$handler} {
-		if {[file exists "$::option(home)/config/key-sequences.key"]} {
-			set open_key_file [open "$::option(home)/config/key-sequences.key" r]
+		if {[file exists "$::option(home)/config/key-sequences.conf"]} {
+			set open_key_file [open "$::option(home)/config/key-sequences.conf" r]
 			while {[gets $open_key_file line]!=-1} {
 				if {[string match #* $line] || [string trim $line] == {}} continue
 				dict set ::keyseq {*}$line

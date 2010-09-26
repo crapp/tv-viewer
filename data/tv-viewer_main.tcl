@@ -102,7 +102,7 @@ $::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
 	foreach {station_file} [split "$get_channels"] {
 		catch {file copy -force "$station_file" "$::option(home)/config/"}
 	}
-	set confFiles {tv-viewer scheduler scheduled_recordings}
+	set confFiles {tv-viewer key-sequences scheduler scheduled_recordings}
 	foreach conf $confFiles {
 		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf"] == 0} continue
 		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf" "$::option(home)/config/"}
@@ -275,7 +275,6 @@ start_options
 #It is time to load all config values
 process_configRead
 process_configMem
-process_KeyFile 1
 #Sourcing logfile and launching log process
 source $::option(root)/data/log_viewer.tcl
 log_viewerCheck
@@ -303,8 +302,10 @@ if {$::option(language_value) != 0} {
 if {[msgcat::mcload $option(root)/msgs] != 1} {
 	msgcat::mclocale en
 	msgcat::mcload $option(root)/msgs
-	puts "$::env(LANG) no translation found"
+	log_writeOutTv 1 "$::env(LANG) no translation found"
 }
+# Process key file now because we need language support.
+process_KeyFile 1
 #Source monitor procs
 source $::option(root)/data/monitor.tcl
 #Source create icons
