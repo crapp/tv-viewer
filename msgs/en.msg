@@ -1,13 +1,13 @@
 # en.msg
 namespace import -force msgcat::mcset
 
-# /home/saedelaere/Projekte/tv-viewer/data/agrep.tcl
+### ../data/agrep.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/chan_zapper.tcl
+### ../data/chan_zapper.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/colorm.tcl
+### ../data/colorm.tcl ###
 
 mcset en {Brightness}
 mcset en {Contrast}
@@ -25,10 +25,10 @@ mcset en {Save values and close color management}
 mcset en {Load default values}
 mcset en {Close color management without saving changes}
 
-# /home/saedelaere/Projekte/tv-viewer/data/command_socket.tcl
+### ../data/command_socket.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_advanced.tcl
+### ../data/config_advanced.tcl ###
 
 mcset en {Advanced}
 mcset en {Manage aspect ratio}
@@ -85,7 +85,7 @@ If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
 Minimum: 10kb Maximum: 100kb}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_analog.tcl
+### ../data/config_analog.tcl ###
 
 mcset en {Analog Settings}
 mcset en {Video Device Node}
@@ -134,7 +134,7 @@ mcset en {Specify the hardware volume level.
 This applies to all stations and it is not recommended
 to change this value.}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_audio.tcl
+### ../data/config_audio.tcl ###
 
 mcset en {Audio Settings}
 mcset en {Audio output driver}
@@ -153,12 +153,12 @@ mcset en {Remeber volume level}
 mcset en {Gradually adjusts the A/V sync based on audio delay measurements}
 mcset en {Audio/Video sync correction per frame in seconds}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_dvb.tcl
+### ../data/config_dvb.tcl ###
 
 mcset en {DVB Settings}
 mcset en {Expect more soon}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_general.tcl
+### ../data/config_general.tcl ###
 
 mcset en {General Settings}
 mcset en {Language}
@@ -180,7 +180,7 @@ The Newsreader will check for news about TV-Viewer.}
 mcset en {Choose time intervall in days for Newsreader (1-30)}
 mcset en {Specify a program to retrieve the television program}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_interface.tcl
+### ../data/config_interface.tcl ###
 
 mcset en {Interface Settings}
 mcset en {Theme}
@@ -240,11 +240,11 @@ mcset en {OSD for Volume; Pan&Scan; Video input in full-screen mode}
 mcset en {OSD for change stations via numbers input in windowed mode}
 mcset en {OSD for change stations via numbers input in full-screen mode}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_radio.tcl
+### ../data/config_radio.tcl ###
 
 mcset en {Radio Settings}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_record.tcl
+### ../data/config_record.tcl ###
 
 mcset en {Record Settings}
 mcset en {Standard folder}
@@ -272,7 +272,7 @@ If free disk space is falling below this value
 timeshift will automatically be stopped.
 A value of 0 deactivates this feature.}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_video.tcl
+### ../data/config_video.tcl ###
 
 mcset en {Video Settings}
 mcset en {Video}
@@ -311,7 +311,7 @@ mcset en {Enable / Disable screensaver while playback}
 mcset en {Use MPlayer to deactivate the screensaver}
 mcset en {If MPlayer can't deactivate your screensaver, use this heartbeat hack}
 
-# /home/saedelaere/Projekte/tv-viewer/data/config_wizard.tcl
+### ../data/config_wizard.tcl ###
 
 mcset en {General}
 mcset en {Analog}
@@ -324,10 +324,10 @@ mcset en {Apply your changes and exit preferences dialog}
 mcset en {Load default values, for the corresponding section}
 mcset en {Discard changes and close preferences dialog}
 
-# /home/saedelaere/Projekte/tv-viewer/data/create_icons.tcl
+### ../data/create_icons.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/diag_frontend.tcl
+### ../data/diag_frontend.tcl ###
 
 mcset en {Diagnostic Routine is checking your system.
 Please wait...}
@@ -339,13 +339,13 @@ mcset en {Create a bug report on }
 mcset en {and attach the generated file.}
 mcset en {Diagnostic Routine crashed}
 
-# /home/saedelaere/Projekte/tv-viewer/data/diag_runtime.tcl
+### ../data/diag_runtime.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/difftime.tcl
+### ../data/difftime.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/error_interp.tcl
+### ../data/error_interp.tcl ###
 
 mcset en {Skip further error messages}
 mcset en {OK}
@@ -357,10 +357,10 @@ mcset en {Copy to clipboard}
 mcset en {TV-Viewer crashed}
 mcset en {Choose name and location}
 
-# /home/saedelaere/Projekte/tv-viewer/data/event_bind.tcl
+### ../data/event_bind.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/font_chooser.tcl
+### ../data/font_chooser.tcl ###
 
 mcset en {Family:}
 mcset en {Style:}
@@ -386,7 +386,7 @@ displayed in the video frame}
 mcset en {Choose font}
 mcset en {Choose color}
 
-# /home/saedelaere/Projekte/tv-viewer/data/info_help.tcl
+### ../data/info_help.tcl ###
 
 mcset en {TV-Viewer % Build %} {TV-Viewer %s Build %s}
 mcset en {Info}
@@ -401,7 +401,7 @@ mcset en {License}
 mcset en {Changelog}
 mcset en {About TV-Viewer}
 
-# /home/saedelaere/Projekte/tv-viewer/data/key_sequences.tcl
+### ../data/key_sequences.tcl ###
 
 mcset en {Available Key Sequences}
 mcset en {Change shortcut}
@@ -422,13 +422,13 @@ mcset en {It is not possible to edit this shortcut}
 mcset en {Conflict detected with station by number "0-9"}
 mcset en {Conflict detected with %} {Conflict detected with %s}
 
-# /home/saedelaere/Projekte/tv-viewer/data/launch_splash.tcl
+### ../data/launch_splash.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/lirc_emitter.tcl
+### ../data/lirc_emitter.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/log_viewer.tcl
+### ../data/log_viewer.tcl ###
 
 mcset en {Choose output file}
 mcset en {$ident(name($handler)) Log}
@@ -438,10 +438,10 @@ mcset en {Show/hide Debug messages}
 mcset en {Show/hide Warning messages}
 mcset en {Show/hide Error messages}
 
-# /home/saedelaere/Projekte/tv-viewer/data/main_command_line_options.tcl
+### ../data/main_command_line_options.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/main_frontend.tcl
+### ../data/main_frontend.tcl ###
 
 mcset en {Name}
 mcset en {No}
@@ -452,7 +452,7 @@ mcset en {Welcome to TV-Viewer}
 mcset en {TV-Viewer %} {TV-Viewer %s}
 mcset en {TV-Viewer idle}
 
-# /home/saedelaere/Projekte/tv-viewer/data/main_menu.tcl
+### ../data/main_menu.tcl ###
 
 mcset en {EPG}
 mcset en {TV}
@@ -502,22 +502,22 @@ mcset en {MPlayer Log}
 mcset en {Scheduler Log}
 mcset en {TV-Viewer Log}
 
-# /home/saedelaere/Projekte/tv-viewer/data/main_newsreader.tcl
+### ../data/main_newsreader.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/main_picqual_stream.tcl
+### ../data/main_picqual_stream.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/monitor.tcl
+### ../data/monitor.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/process_config.tcl
+### ../data/process_config.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/process_config_wizard.tcl
+### ../data/process_config_wizard.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/process_key_file.tcl
+### ../data/process_key_file.tcl ###
 
 mcset en {TV-Viewer Menu}
 mcset en {Navigation Menu}
@@ -549,13 +549,13 @@ mcset en {Toggle pause}
 mcset en {Start playback}
 mcset en {Stop playback}
 
-# /home/saedelaere/Projekte/tv-viewer/data/process_station_file.tcl
+### ../data/process_station_file.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/radio.tcl
+### ../data/radio.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/record_add_edit.tcl
+### ../data/record_add_edit.tcl ###
 
 mcset en {Record options}
 mcset en {Time:}
@@ -595,10 +595,10 @@ mcset en {Previous month}
 mcset en {Next month}
 mcset en {Next year}
 
-# /home/saedelaere/Projekte/tv-viewer/data/record_external.tcl
+### ../data/record_external.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/record_handler.tcl
+### ../data/record_handler.tcl ###
 
 mcset en {Time format incorrect (%-hour clock)!} {Time format incorrect (%s-hour clock)!}
 mcset en {Time format incorrect (min)!}
@@ -609,7 +609,7 @@ mcset en {Duration not specified correctly (min)!}
 mcset en {Duration not specified correctly (sec)!}
 mcset en {Resolution format incorrect!}
 
-# /home/saedelaere/Projekte/tv-viewer/data/record_linker.tcl
+### ../data/record_linker.tcl ###
 
 mcset en {Currently recording %
 Started at %} {Currently recording %s
@@ -622,7 +622,7 @@ mcset en {Save timeshift video file
 File size %} {Save timeshift video file
 File size %s}
 
-# /home/saedelaere/Projekte/tv-viewer/data/record_wizard.tcl
+### ../data/record_wizard.tcl ###
 
 mcset en {Running}
 mcset en {Stop Scheduler}
@@ -648,21 +648,21 @@ mcset en {Provides informations about the current recording}
 mcset en {If there is a running recording, click here to stop it}
 mcset en {Exit Record Wizard}
 
-# /home/saedelaere/Projekte/tv-viewer/data/recorder.tcl
+### ../data/recorder.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/release_version.tcl
+### ../data/release_version.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/scheduler.tcl
+### ../data/scheduler.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/station_after_msg.tcl
+### ../data/station_after_msg.tcl ###
 
 mcset en {Now playing %} {Now playing %s}
 mcset en {TV-Viewer playing - %} {TV-Viewer playing - %s}
 
-# /home/saedelaere/Projekte/tv-viewer/data/station_edit.tcl
+### ../data/station_edit.tcl ###
 
 mcset en {Station search}
 mcset en {Add}
@@ -686,7 +686,7 @@ mcset en {Preview for selected tv station}
 mcset en {Save station list and exit editor}
 mcset en {Exit editor without any changes}
 
-# /home/saedelaere/Projekte/tv-viewer/data/station_item.tcl
+### ../data/station_item.tcl ###
 
 mcset en {Do you really want to delete the selected station(s)?}
 mcset en {Delete stations}
@@ -708,7 +708,7 @@ You may use this substitutions:
 e.g. externalTune %%F %%S}
 mcset en {Please specify name and frequency for each station}
 
-# /home/saedelaere/Projekte/tv-viewer/data/station_search.tcl
+### ../data/station_search.tcl ###
 
 mcset en {Station search options}
 mcset en {Append stations}
@@ -733,19 +733,19 @@ mcset en {Channel: %} {Channel: %s}
 mcset en {Station search finished!}
 mcset en {Frequency: %} {Frequency: %s}
 
-# /home/saedelaere/Projekte/tv-viewer/data/system_tray.tcl
+### ../data/system_tray.tcl ###
 
 mcset en {Hide}
 mcset en {Restore}
 
-# /home/saedelaere/Projekte/tv-viewer/data/timeshift.tcl
+### ../data/timeshift.tcl ###
 
 mcset en {Copying timeshift video file.
 Please wait...}
 mcset en {Copying...       %%%} {Copying...       %s%%}
 mcset en {Copying...       finished}
 
-# /home/saedelaere/Projekte/tv-viewer/data/tooltip.tcl
+### ../data/tooltip.tcl ###
 
 mcset en {Tune up}
 mcset en {Tune down}
@@ -766,41 +766,41 @@ mcset en {Jump to the end}
 mcset en {Toggle fullscreen}
 mcset en {Current position / File length}
 
-# /home/saedelaere/Projekte/tv-viewer/data/tv-viewer_main.tcl
+### ../data/tv-viewer_main.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_audio.tcl
+### ../data/vid_audio.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_callback.tcl
+### ../data/vid_callback.tcl ###
 
 mcset en {idle}
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_file_calc.tcl
+### ../data/vid_file_calc.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_osd.tcl
+### ../data/vid_osd.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_playback.tcl
+### ../data/vid_playback.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_pmhandler.tcl
+### ../data/vid_pmhandler.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_seek.tcl
+### ../data/vid_seek.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_slist.tcl
+### ../data/vid_slist.tcl ###
 
 
-# /home/saedelaere/Projekte/tv-viewer/data/vid_wm.tcl
+### ../data/vid_wm.tcl ###
 
 mcset en {Move x=%} {Move x=%s}
 mcset en {Move y=%} {Move y=%s}
 mcset en {Centering video}
 
-# /home/saedelaere/Projekte/tv-viewer/extensions/callib/callib.tcl
+### ../callib/callib.tcl ###
 
 mcset en {Sun}
 mcset en {Mon}
@@ -811,4 +811,4 @@ mcset en {Fri}
 mcset en {Sat}
 
 # Need to source msg files from fsdialog because this is an external project
-source "/home/saedelaere/Projekte/tv-viewer/extensions/fsdialog/en.msg"
+source "$::option(root)/extensions/fsdialog/en.msg"

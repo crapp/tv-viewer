@@ -27,7 +27,7 @@ package require msgcat
 
 proc translate {files} {
 	if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
-		source "$::msgsDir/$::start_value(--lang).msg";# use existing translations
+		catch {source "$::msgsDir/$::start_value(--lang).msg"};# use existing translations
 	} else {
 		set file($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
 		close $file($::start_value(--lang))
@@ -43,7 +43,17 @@ proc translate {files} {
 		set myC [read $myFd]
 		close $myFd
 		# add file names in list
-		lappend ::myList "# $myFile"
+		set fi 1
+		foreach aFile [file join [lrange [file split "$myFile"] end-1 end]] {
+			if {$fi == 1} {
+				append myListFile ../$aFile
+			} else {
+				append myListFile /$aFile
+			}
+			incr fi
+		}
+		lappend ::myList "### $myListFile ###"
+		unset -nocomplain myListFile
 		# find namespace
 		set myNs [lindex [regexp -inline -line -all -- {^namespace\s+eval\s+[[:graph:]]+\s} $myC] end]
 		if {$myNs eq {}} {set myNs {namespace eval ::}}
@@ -115,7 +125,7 @@ namespace import -force msgcat::mcset\n";# original texts are in english
 		append transEn $myEn
 		append transEn "\n"
 		append transEn "# Need to source msg files from fsdialog because this is an external project"
-		append transEn "\nsource \"$::root/extensions/fsdialog/en.msg\"";# need to source msg files from fsdialog
+		append transEn "\nsource \"\$::option(root)/extensions/fsdialog/en.msg\"";# need to source msg files from fsdialog
 		puts $msgFileEn $transEn
 		close $msgFileEn
 	}
@@ -126,7 +136,7 @@ namespace import -force msgcat::mcset\n";# translation into choosen language
 	append transLc "\n"
 	if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
 		append transLc "# Need to source msg files from fsdialog because this is an external project"
-		append transLc "\nsource \"$::root/extensions/fsdialog/$::start_value(--lang).msg\""
+		append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
 	} else {
 		puts "there is no \"$::start_value(--lang)\" translation file available for fsdialog
 consider creating one and place it into extensions/fsdialog."
