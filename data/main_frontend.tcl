@@ -88,26 +88,6 @@ proc main_frontendExitViewer {} {
 			set ::mem(ontop) $::vid(stayontop)
 			continue
 		}
-		if {"$okey" == "toolbMain"} {
-			puts $wconfig_mem "toolbMain $::menu(cbViewMainToolbar)"
-			set ::mem(toolbMain) $::menu(cbViewMainToolbar)
-			continue
-		}
-		if {"$okey" == "toolbStation"} {
-			puts $wconfig_mem "toolbStation $::menu(cbViewStationl)"
-			set ::mem(toolbStation) $::menu(cbViewStationl)
-			continue
-		}
-		if {"$okey" == "sbarStatus"} {
-			puts $wconfig_mem "sbarStatus $::menu(cbViewStatusm)"
-			set ::mem(sbarStatus) $::menu(cbViewStatusm)
-			continue
-		}
-		if {"$okey" == "sbarTime"} {
-			puts $wconfig_mem "sbarTime $::menu(cbViewStatust)"
-			set ::mem(sbarTime) $::menu(cbViewStatust)
-			continue
-		}
 		puts $wconfig_mem "$okey $oelem"
 	}
 	close $wconfig_mem
@@ -318,7 +298,7 @@ proc main_frontendUi {} {
 	set toolbTop [ttk::frame .ftoolb_Top] ; place [ttk::label $toolbTop.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set stations [ttk::frame .fstations] ; place [ttk::label $stations.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set toolbChanCtrl [ttk::frame .fstations.ftoolb_ChanCtrl] ; place [ttk::label $toolbChanCtrl.bg -style Toolbutton] -relwidth 1 -relheight 1
-	set toolbPlay [ttk::frame .ftoolb_Play -borderwidth 1 -relief groove] ; place [ttk::label $toolbPlay.bg -style Toolbutton] -relwidth 1 -relheight 1
+	set toolbPlay [ttk::frame .ftoolb_Play] ; place [ttk::label $toolbPlay.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set toolbDisp [frame .ftoolb_Disp -background black]
 	set toolbDispIcTxt [frame .ftoolb_Disp.fIcTxt -background black]
 	
@@ -385,8 +365,10 @@ proc main_frontendUi {} {
 		grid $stations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
 	}
 	grid $vidBg -in . -row 3 -column 1 -sticky nesw
-	grid $toolbPlay -in . -row 4 -column 0 -columnspan 2 -sticky ew
-	grid $toolbDisp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+	if {$::mem(toolbControl)} {
+		grid $toolbPlay -in . -row 4 -column 0 -columnspan 2 -sticky ew
+	}
+	grid $toolbDisp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
 	
 	grid $menubar.mbTvviewer -in $menubar -row 0 -column 0
 	grid $menubar.mbNavigation -in $menubar -row 0 -column 1
@@ -603,7 +585,12 @@ proc main_frontendUi {} {
 	} else {
 		set mainHeight 0
 	}
-	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
+	if {$::menu(cbViewControlbar)} {
+		set controlbHeight [winfo height .ftoolb_Play]
+	} else {
+		set controlbHeight 0
+	}
+	set height [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp] + 141]
 	wm minsize . 250 $height
 	if {$::mem(compact)} {
 		event generate . <<wmCompact>>

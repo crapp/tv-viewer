@@ -127,6 +127,15 @@ proc process_KeyFile {handler} {
 	dict set ::keyseq wmSize2 name Ctrl+2
 	dict set ::keyseq wmSize2 seq <Control-Key-2>
 	dict set ::keyseq wmSize2 label [mc "Double window size"]
+	dict set ::keyseq wmMainToolbar name F5
+	dict set ::keyseq wmMainToolbar seq <Key-F5>
+	dict set ::keyseq wmMainToolbar label [mc "Show/hide main toolbar"]
+	dict set ::keyseq wmStationList name F6
+	dict set ::keyseq wmStationList seq <Key-F6>
+	dict set ::keyseq wmStationList label [mc "Show/hide station list"]
+	dict set ::keyseq wmControlbar name F7
+	dict set ::keyseq wmControlbar seq <Key-F7>
+	dict set ::keyseq wmControlbar label [mc "Show/hide control bar"]
 	
 	dict set ::keyseq scrshot name Super+S
 	dict set ::keyseq scrshot seq <Mod4-Key-s>

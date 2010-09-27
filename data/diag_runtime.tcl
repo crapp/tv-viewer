@@ -145,12 +145,12 @@ proc diag_checkPkg {diag_file_append} {
 	}
 	if {$insertLocal} {
 		if {[file isdirectory /usr/local/lib]} {
-			set auto_path [linsert $::auto_path 0 "/usr/local/lib"]
+			set ::auto_path [linsert $::auto_path 0 "/usr/local/lib"]
 		}
 	}
 	if {$insertGlob} {
 		if {[file isdirectory /usr/lib]} {
-			set auto_path [linsert $::auto_path 0 "/usr/lib"]
+			set ::auto_path [linsert $::auto_path 0 "/usr/lib"]
 		}
 	}
 	
@@ -488,16 +488,16 @@ $resultat_stationscheck"
 	catch {exec sh -c "ls $::env(HOME)/.tv-viewer/config/stations*.conf"} resultat_stationlists
 	if {[llength $resultat_stationlists] > 1} {
 		foreach slists $resultat_stationlists {
-			if {[string match *$::option(frequency_table)* $slists]} continue
+			if {[info exists ::option(frequency_table)] == 1 } {
+				if {[string match *$::option(frequency_table)* $slists]} continue
+			}
 			set slistName [file rootname [file tail $slists]]
 			set slist($slistName) $slists
 			set slistsread($slistName) [catch {exec cat $slist($slistName)} resultat_slistsread($slistName)]
-			if {[info exists ::option(frequency_table)] == 1 } {
-				diag_writeOut $diag_file_append "
+			diag_writeOut $diag_file_append "
 ***********************************************************************
 Stationlist($slistName):
 $resultat_slistsread($slistName)"
-			}
 		}
 	}
 }

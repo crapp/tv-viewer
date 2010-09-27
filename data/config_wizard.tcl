@@ -30,6 +30,17 @@ proc config_wizardMainUi {} {
 	if {[wm attributes . -fullscreen] == 1} {
 		event generate . <<wmFull>>
 	}
+	#FIXME Make it possible to remember what was running before and restart that on exit. Also remember file position when watching recording or timeshift.
+	set statusMplayer [vid_callbackMplayerRemote alive]
+	if {$statusMplayer == 0} {
+		set ::wizard(Restart) 1
+		if {$::vid(pbMode) == 1} {
+			set ::wizard(Pos) $::data(file_pos)
+		}
+	} else {
+		set ::wizard(Restart) 0
+		set ::wizard(Pos) 0
+	}
 	vid_playbackStop 1 pic
 	log_writeOutTv 0 "Starting preferences..."
 	
@@ -214,6 +225,16 @@ proc config_wizardExit {lbox nbook} {
 	vid_wmCursor 1
 	grab release .config_wizard
 	destroy .config_wizard
+	if {$::wizard(Restart)} {
+		if {$::vid(pbMode) == 0} {
+			unset -nocomplain ::wizard(Restart)
+			event generate . <<teleview>>
+		}
+		if {$::vid(pbMode) == 1} {
+			unset -nocomplain ::wizard(Restart)
+			event generate . <<start>>
+		}
+	}
 }
 
 proc config_wizardSaveopts {} {

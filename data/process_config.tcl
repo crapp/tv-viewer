@@ -25,7 +25,7 @@ proc process_configRead {} {
 		resolx 640
 		resoly 480
 		newsreader 1
-		newsreader_interval 7
+		newsreader_interval 3
 		epg_command "[auto_execok tvbrowser]"
 		log_files 1
 		log_size_tvviewer 30
@@ -155,6 +155,7 @@ proc process_configMem {} {
 		compact 0
 		toolbMain 1
 		toolbStation 1
+		toolbControl 1
 		sbarStatus 1
 		sbarTime 1
 		volume 100

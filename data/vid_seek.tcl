@@ -77,6 +77,16 @@ proc vid_seek {secs direct} {
 			}
 			return
 		}
+		if {$direct == 3} {
+			log_writeOutTv 0 "Seeking to position $secs"
+			set seekpos [expr ($secs - 2)]
+			vid_callbackMplayerRemote "seek $seekpos 2"
+			after 650 {
+				set ::vid(getvid_seek) 0
+				vid_callbackMplayerRemote get_time_pos
+			}
+			return
+		}
 		if {$direct == -1} {
 			if {[expr ($::data(file_pos) - $secs)] < 0} {
 				log_writeOutTv 0 "Seeking -$secs\s"

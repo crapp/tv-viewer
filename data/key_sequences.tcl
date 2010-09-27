@@ -123,11 +123,11 @@ proc key_sequencesRead {handler tree} {
 		33 {}
 		34 {}
 		35 {}
-		36 noedit
-		37 noedit
+		36 {}
+		37 {}
 		38 {}
-		39 {}
-		40 {}
+		39 noedit
+		40 noedit
 		41 {}
 		42 {}
 		43 {}
@@ -136,6 +136,9 @@ proc key_sequencesRead {handler tree} {
 		46 {}
 		47 {}
 		48 {}
+		49 {}
+		50 {}
+		51 {}
 	}
 	set line_length 0
 	set i 1
@@ -159,7 +162,7 @@ proc key_sequencesRead {handler tree} {
 			$tree insert {} end -values " " -tags {small noedit}
 			$tree insert {} end -values [list [mc "Window management"]] -tags {fat noedit}
 		}
-		if {$i == 36} {
+		if {$i == 38} {
 			$tree insert {} end -values " " -tags {small noedit}
 			$tree insert {} end -values [list [mc "Recording / File playback"]] -tags {fat noedit}
 		}

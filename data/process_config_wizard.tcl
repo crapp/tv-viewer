@@ -26,7 +26,7 @@ proc process_config_wizardRead {} {
 		resolx 720
 		resoly 576
 		newsreader 1
-		newsreader_interval 7
+		newsreader_interval 3
 		epg_command "[auto_execok tvbrowser]"
 		#log_files 1
 		#log_size_tvviewer 30
@@ -118,7 +118,7 @@ proc process_config_wizardRead {} {
 		resolx 720
 		resoly 576
 		newsreader 1
-		newsreader_interval 7
+		newsreader_interval 3
 		epg_command "[auto_execok tvbrowser]"
 		log_files 1
 		log_size_tvviewer 30

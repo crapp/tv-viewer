@@ -196,6 +196,9 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 			$mViewPan entryconfigure 8 -accelerator [dict get $::keyseq wmMoveCenter name]
 			$mViewSize entryconfigure 2 -accelerator [dict get $::keyseq wmSize1 name]
 			$mViewSize entryconfigure 6 -accelerator [dict get $::keyseq wmSize2 name]
+			$mViewToolb entryconfigure 0 -accelerator [dict get $::keyseq wmMainToolbar name]
+			$mViewToolb entryconfigure 1 -accelerator [dict get $::keyseq wmStationList name]
+			$mViewToolb entryconfigure 2 -accelerator [dict get $::keyseq wmControlbar name]
 		$mView entryconfigure 5 -accelerator [dict get $::keyseq wmCompact name]
 		$mView entryconfigure 6 -accelerator [dict get $::keyseq wmFull name]
 	} else {
@@ -222,8 +225,9 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 			$mViewTop add radiobutton -label [mc "Always"] -variable vid(stayontop) -value 1 -command [list vid_wmStayonTop 1]
 			$mViewTop add radiobutton -label [mc "While playback"] -variable vid(stayontop) -value 2 -command [list vid_wmStayonTop 2]
 		$mView add cascade -label [mc "Toolbars"] -compound left -image $::icon_men(placeholder) -menu $mViewToolb
-			$mViewToolb add checkbutton -label [mc "Main toolbar"] -variable menu(cbViewMainToolbar) -command {vid_wmViewToolb main}
-			$mViewToolb add checkbutton -label [mc "Station list"] -variable menu(cbViewStationl) -command {vid_wmViewToolb station}
+			$mViewToolb add checkbutton -label [mc "Main toolbar"] -variable menu(cbViewMainToolbar) -command {event generate . <<wmMainToolbar>>} -accelerator [dict get $::keyseq wmMainToolbar name]
+			$mViewToolb add checkbutton -label [mc "Station list"] -variable menu(cbViewStationl) -command {event generate . <<wmStationList>>} -accelerator [dict get $::keyseq wmStationList name]
+			$mViewToolb add checkbutton -label [mc "Control toolbar"] -variable menu(cbViewControlbar) -command {event generate . <<wmControlbar>>} -accelerator [dict get $::keyseq wmControlbar name]
 		$mView add cascade -label [mc "Statusbar"] -compound left -image $::icon_men(placeholder) -menu $mViewStatusb
 			$mViewStatusb add checkbutton -label [mc "Show status messages"] -variable menu(cbViewStatusm) -command {vid_wmViewStatus ltxt}
 			$mViewStatusb add checkbutton -label [mc "Show playback time"] -variable menu(cbViewStatust) -command {vid_wmViewStatus ltm}
@@ -231,6 +235,7 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		$mView add command -command {event generate . <<wmFull>>} -compound left -image $::icon_men(fullscreen) -label [mc "Fullscreen"] -accelerator [dict get $::keyseq wmFull name]
 		set ::menu(cbViewMainToolbar) $::mem(toolbMain)
 		set ::menu(cbViewStationl) $::mem(toolbStation)
+		set ::menu(cbViewControlbar) $::mem(toolbControl)
 		set ::menu(cbViewStatusm) $::mem(sbarStatus)
 		set ::menu(cbViewStatust) $::mem(sbarTime)
 	}

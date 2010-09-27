@@ -71,9 +71,11 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			if {$::menu(cbViewStationl)} {
 				grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
 			}
+			if {$::menu(cbViewControlbar)} {
+				grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
+			}
 			grid .fvidBg -in . -row 3 -column 1 -sticky nesw
-			grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
-			grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+			grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
 			
 			.fvidBg configure -borderwidth 1
 		}
@@ -108,9 +110,11 @@ proc vid_wmCompact {} {
 		if {$::menu(cbViewStationl)} {
 			grid .fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"
 		}
+		if {$::menu(cbViewControlbar)} {
+			grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
+		}
 		grid .fvidBg -in . -row 3 -column 1 -sticky nesw
-		grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
-		grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+		grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
 		
 		.fvidBg configure -borderwidth 1
 		
@@ -128,8 +132,13 @@ proc vid_wmCompact {} {
 		} else {
 			set mainHeight 0
 		}
-		set heightc [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + $height]
-		set heightmin [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp] + 141]
+		if {$::menu(cbViewControlbar)} {
+			set controlbHeight [winfo height .ftoolb_Play]
+		} else {
+			set controlbHeight 0
+		}
+		set heightc [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp] + $height]
+		set heightmin [expr [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp] + 141]
 		wm minsize . 250 $heightmin
 		if {$widthc < 250 || $heightc < $heightmin} {
 			wm geometry . 250x$heightc
@@ -160,6 +169,10 @@ proc vid_wmCompact {} {
 		log_writeOutTv 0 "Compact mode"
 		set ::main(compactMode) 1
 	}
+	if {$::data(panscanAuto) == 1} {
+		set ::data(panscanAuto) 0
+		event generate . <<wmZoomAuto>>
+	}
 }
 
 proc vid_wmViewToolb {bar} {
@@ -167,27 +180,62 @@ proc vid_wmViewToolb {bar} {
 	array set bargrid {
 		main {.ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew}
 		station {.fstations -in . -row 3 -column 0 -sticky nesw -padx "0 2"}
+		control {.ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew}
 	}
 	array set barrem {
 		main .ftoolb_Top
 		station .fstations
+		control .ftoolb_Play
 	}
 	if {$::main(compactMode)} {
 		#Do nothing now because we are in compact mode
 		return
 	}
 	if {[string trim [grid info $barrem($bar)]] == {}} {
+		if {"$bar" == "main"} {
+			if {$::menu(cbViewMainToolbar) != 1} {
+				set ::menu(cbViewMainToolbar) 1
+			}
+		}
 		if {"$bar" == "station"} {
+			if {$::menu(cbViewStationl) != 1} {
+				set ::menu(cbViewStationl) 1
+			}
 			grid .fvidBg -in . -row 3 -column 1 -sticky nesw
+		}
+		if {"$bar" == "control"} {
+			if {$::menu(cbViewControlbar) != 1} {
+				set ::menu(cbViewControlbar) 1
+			}
 		}
 		grid {*}$bargrid($bar)
 		log_writeOutTv 0 "Grid manager added $bar"
 	} else {
 		grid remove $barrem($bar)
+		if {"$bar" == "main"} {
+			if {$::menu(cbViewMainToolbar) != 0} {
+				set ::menu(cbViewMainToolbar) 0
+			}
+		}
 		if {"$bar" == "station"} {
+			if {$::menu(cbViewStationl) != 0} {
+				set ::menu(cbViewStationl) 0
+			}
 			grid .fvidBg -in . -row 3 -column 0 -columnspan 2 -sticky nesw
 		}
+		if {"$bar" == "control"} {
+			if {$::menu(cbViewControlbar) != 0} {
+				set ::menu(cbViewControlbar) 0
+			}
+		}
 		log_writeOutTv 0 "Grid manager removed $bar"
+	}
+	set ::mem(toolbMain) $::menu(cbViewMainToolbar)
+	set ::mem(toolbStation) $::menu(cbViewStationl)
+	set ::mem(toolbControl) $::menu(cbViewControlbar)
+	if {$::data(panscanAuto) == 1} {
+		set ::data(panscanAuto) 0
+		event generate . <<wmZoomAuto>>
 	}
 }
 
@@ -209,6 +257,8 @@ proc vid_wmViewStatus {lbl} {
 		grid remove $lblrem($lbl)
 		log_writeOutTv 0 "Grid manager removed $lbl"
 	}
+	set ::mem(sbarStatus) $::menu(cbViewStatusm)
+	set ::mem(sbarTime) $::menu(cbViewStatust)
 }
 
 proc vid_wmPanscan {w direct} {
@@ -288,7 +338,12 @@ proc vid_wmPanscanAuto {} {
 				} else {
 					set mainHeight 0
 				}
-				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + [winfo height .ftoolb_Play] + [winfo height .ftoolb_Disp]]
+				if {$::menu(cbViewControlbar)} {
+					set controlbHeight [winfo height .ftoolb_Play]
+				} else {
+					set controlbHeight 0
+				}
+				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
 				wm geometry . [winfo width .]x$heightwp
 			}
 			set relheight [lindex [split [expr ([winfo reqwidth .fvidBg].0 / [winfo reqheight .fvidBg].0)] .] end]
@@ -302,8 +357,6 @@ proc vid_wmPanscanAuto {} {
 			set ::data(panscanAuto) 1
 			place .fvidBg.cont -relheight 1.3333333333333333
 		} else {
-			#FIXME needs more testing!! Deprecated??
-			.fvidBg configure -height [expr int(ceil([winfo width .fvidBg].0 / 1.33333333333))]
 			vid_wmPanscan .fvidBg.cont 0
 		}
 	} else {
@@ -564,7 +617,7 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {[string trim [grid info .ftoolb_Play]] == {}} {
 				if {$ypos > [expr [winfo screenheight .] - 20]} {
 					grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
-					grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+					grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
 					log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
 				}
 			}
@@ -581,7 +634,7 @@ proc vid_wmCursorToolbar {xpos ypos} {
 		if {[string trim [grid info .ftoolb_Play]] == {}} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
 				grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
-				grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew
+				grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
 				log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
 			}
 			return

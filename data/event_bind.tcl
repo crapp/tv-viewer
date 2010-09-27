@@ -95,6 +95,12 @@ proc event_constr {handler} {
 	bind . <<wmSize1>> [list vid_wmGivenSize .fvidBg 1.0]
 	event add <<wmSize2>> {*}[dict get $::keyseq wmSize2 seq]
 	bind . <<wmSize2>> [list vid_wmGivenSize .fvidBg 2.0]
+	event add <<wmMainToolbar>> {*}[dict get $::keyseq wmMainToolbar seq]
+	bind . <<wmMainToolbar>> [list vid_wmViewToolb main]
+	event add <<wmStationList>> {*}[dict get $::keyseq wmStationList seq]
+	bind . <<wmStationList>> [list vid_wmViewToolb station]
+	event add <<wmControlbar>> {*}[dict get $::keyseq wmControlbar seq]
+	bind . <<wmControlbar>> [list vid_wmViewToolb control]
 	
 	bind .fvidBg <Button-3> [list tk_popup .fvidBg.mContext %X %Y]
 	bind .fvidBg.cont <Button-3> [list tk_popup .fvidBg.mContext %X %Y]
@@ -196,8 +202,8 @@ proc event_recordStart {handler} {
 	bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
 	bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
 	bind . <<teleview>> {}
-	bind . <Control-Key-m> {}
-	bind . <Control-Key-e> {}
+	bind . <<colorm>> {}
+	bind . <<sedit>> {}
 	if {"$handler" != "timeshift"} {
 		vid_pmhandlerButton {{1 disabled}} {100 0} {100 0}
 		vid_pmhandlerMenuTv {{4 disabled}} {{8 disabled}} 
@@ -218,6 +224,6 @@ proc event_recordStop {} {
 	bind . <<input_next>> [list chan_zapperInput 1 1]
 	bind . <<input_prior>> [list chan_zapperInput 1 -1]
 	bind . <<timeshift>> [list timeshift .ftoolb_Top.bTimeshift]
-	bind . <Control-Key-m> {colorm_mainUi}
-	bind . <Control-Key-e> {station_editUi}
+	bind . <<colorm>> {colorm_mainUi}
+	bind . <<sedit>> {station_editUi}
 }

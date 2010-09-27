@@ -175,6 +175,10 @@ proc vid_callbackVidData {} {
 						.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
 					}
 				}
+				if {[info exists ::wizard(Pos)] && $::wizard(Pos) > 0} {
+					vid_seek $::wizard(Pos) 3
+					unset -nocomplain ::wizard(Pos)
+				}
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {
 				if {$::vid(getvid_seek) == 0} {
@@ -215,9 +219,11 @@ proc vid_callbackMplayerRemote {command} {
 		log_writeOutTv 0 "Sending command $command to MPlayer remote channel."
 		catch {puts -nonewline $::data(mplayer) "$command \n"}
 		flush $::data(mplayer)
+		# Mplayer is running
 		return 0
 	} else {
 		log_writeOutTv 2 "Can't access mplayer command pipe."
+		# Mplayer is not running
 		return 1
 	}
 }
