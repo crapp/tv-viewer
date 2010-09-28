@@ -411,6 +411,7 @@ itself is changed. Be careful with this option."]
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
+			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
 			
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
 			config_interfaceTheme $::stnd_opt(use_theme)

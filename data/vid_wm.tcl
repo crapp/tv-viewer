@@ -187,6 +187,11 @@ proc vid_wmViewToolb {bar} {
 		station .fstations
 		control .ftoolb_Play
 	}
+	if {[wm attributes . -fullscreen]} {
+		#Do nothing in fullscreen mode
+		log_writeOutTv 1 "Can not show/hide toolbars in fullscreen mode"
+		return
+	}
 	if {$::main(compactMode)} {
 		#Do nothing now because we are in compact mode
 		return
@@ -357,6 +362,30 @@ proc vid_wmPanscanAuto {} {
 			set ::data(panscanAuto) 1
 			place .fvidBg.cont -relheight 1.3333333333333333
 		} else {
+			if {$::main(compactMode)} {
+				set width [winfo width .]
+				set height [expr int(ceil($width.0 / 1.3333333333333333))]
+				wm geometry . [winfo width .]x$height
+			} else {
+				if {$::menu(cbViewStationl)} {
+					set width [expr [winfo width .] - [winfo width .fstations]]
+				} else {
+					set width [winfo width .]
+				}
+				set height [expr int(ceil($width.0 / 1.3333333333333333))]
+				if {$::menu(cbViewMainToolbar)} {
+					set mainHeight [winfo height .ftoolb_Top]
+				} else {
+					set mainHeight 0
+				}
+				if {$::menu(cbViewControlbar)} {
+					set controlbHeight [winfo height .ftoolb_Play]
+				} else {
+					set controlbHeight 0
+				}
+				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
+				wm geometry . [winfo width .]x$heightwp
+			}
 			vid_wmPanscan .fvidBg.cont 0
 		}
 	} else {
@@ -663,4 +692,3 @@ proc vid_wmHeartbeatCmd {com} {
 	tk inactive reset
 	set ::data(heartbeat_id) [after 50000 vid_wmHeartbeatCmd 0]
 }
-

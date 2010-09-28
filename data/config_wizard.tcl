@@ -30,7 +30,6 @@ proc config_wizardMainUi {} {
 	if {[wm attributes . -fullscreen] == 1} {
 		event generate . <<wmFull>>
 	}
-	#FIXME Make it possible to remember what was running before and restart that on exit. Also remember file position when watching recording or timeshift.
 	set statusMplayer [vid_callbackMplayerRemote alive]
 	if {$statusMplayer == 0} {
 		set ::wizard(Restart) 1
@@ -117,6 +116,7 @@ proc config_wizardMainUi {} {
 		set ::config(rec_running) 1
 	}
 	
+	option_screen_0
 	option_screen_1
 	option_screen_2
 	option_screen_3

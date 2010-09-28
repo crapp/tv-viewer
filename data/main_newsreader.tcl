@@ -18,6 +18,7 @@
 
 proc main_newsreaderCheckUpdate {handler} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m"}
+	#handler 0 == check for updates; 1 == autocheck for updates.
 	log_writeOutTv 0 "Checking for news..."
 	if {$::option(language_value) == 0} {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
@@ -27,11 +28,14 @@ proc main_newsreaderCheckUpdate {handler} {
 		}
 		if {[string trim [array get locales $locale_split]] != {}} {
 			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_[string trim $locale_split].html"} get_news]
+			set lang $locale_split
 		} else {
 			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_en.html"} get_news]
+			set lang en
 		}
 	} else {
 		set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_$::option(language_value).html"} get_news]
+		set lang $::option(language_value)
 	}
 	if {$status_http == 0} {
 		if {[::http::ncode $get_news] != 404} {
@@ -74,10 +78,12 @@ proc main_newsreaderCheckUpdate {handler} {
 			set word_tags [join [lrange [split $get_current_tags "\n"] 0 end] "\n"]
 			foreach line [split $get_current_links \n] {
 				if {[string trim $line] == {}} continue
-				if {[info exists hyperlinks] == 0} {
-					set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
-				} else {
-					dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
+				if {[string match "*_$lang *" $line]} {
+					if {[info exists hyperlinks] == 0} {
+						set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
+					} else {
+						dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
+					}
 				}
 			}
 			catch {file delete "$::option(home)/config/last_update.date"}
@@ -110,6 +116,10 @@ proc main_newsreaderCheckUpdate {handler} {
 			grid columnconfigure $mf 0 -weight 1 -minsize 515
 			
 			autoscroll $mf.scrollb_newsr
+			
+			bind .top_newsreader <Key-x> {puts [.top_newsreader.mf.t_top_newsr tag ranges _hylinkSF_bazaar_de]}
+			bind .top_newsreader <Key-c> {puts [.top_newsreader.mf.t_top_newsr mark current]}
+			bind .top_newsreader <Key-v> {puts [.top_newsreader.mf.t_top_newsrmark mark insert]}
 			
 			wm title $w [mc "Newsreader"]
 			wm protocol $w WM_DELETE_WINDOW [list main_newsreaderExit $w]
@@ -193,20 +203,85 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 		}
 	}
 	if {$handler == 1} {
-		set hylink_enter "-foreground #0023FF -underline off"
+		set hylink_enter "-foreground #0023FF -underline on"
 		set hylink_leave "-foreground #0064FF -underline on"
-		foreach {key elem} [dict get $hyperlinks] {
-			$textw tag configure $key -foreground #0064FF -underline on
-			$textw tag bind $key <Any-Enter> "$textw tag configure $key $hylink_enter; $textw configure -cursor hand1"
-			$textw tag bind $key <Any-Leave> "$textw tag configure $key $hylink_leave; $textw configure -cursor {}"
-			$textw tag bind $key <Button-1> "catch {exec xdg-open $elem &}"
-		}
 		set search_index 0.0
 		foreach {key elem} [dict get $hyperlinks] {
-			set index [$textw search -exact $key $search_index end]
+			set index [$textw search -all -exact -- $key $search_index end]
+			puts "index $index key $key"
 			if {[string trim $index] == {}} continue
-			$textw tag add $key "$index wordstar" $index
-			$textw delete $index "$index wordend"
+			if {[llength $index] > 1} {
+				set index [lreverse $index]
+				set i 0
+				foreach id $index {
+					if {[info exists tagIds]} {
+						if {[lsearch $tagIds $id] != -1} {
+							continue
+						} else {
+							unset -nocomplain tagIds
+						}
+					}
+					if {[lindex $index [expr $i + 1]] != {}} {
+						foreach lid [lrange $index $i end] {
+							if {[$textw index "$lid linestart"] == [$textw index "$id linestart"]} {
+								lappend tagIds $lid
+							}
+						}
+						puts "tagIds $tagIds"
+						if {[llength $tagIds] > 1} {
+							for {set forI 0} {$forI < [expr [llength $tagIds] -1]} {incr forI} {
+								set wordIndex [$textw index "[lindex $tagIds $forI] wordstart"]
+								set wordNextIndex [$textw index "$wordIndex -2c wordstart"]
+								puts "forI $forI"
+								if {$wordNextIndex == [$textw index "[lindex $tagIds [expr $forI + 1]] wordstart"]} {
+									puts [list $wordNextIndex [$textw index "[lindex $tagIds [expr $forI + 1]] wordstart"]]
+									if {[info exists tagFusion] == 0} {
+										lappend tagFusion [lindex $tagIds $forI]
+									}
+									lappend tagFusion [lindex $tagIds [expr $forI + 1]]
+								}
+							}
+							puts "tagFusion $tagFusion"
+							set tagStart [$textw index "[lindex $tagFusion end] wordstart"]
+							set tagEnd [lindex $tagFusion 0]
+							puts "tagStart $tagStart tagEnd $tagEnd"
+							$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
+							$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
+							$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
+							$textw tag bind [subst $key]($i) <Button-1> "catch {exec xdg-open $elem &}"
+							$textw tag add [subst $key]($i) $tagStart $tagEnd
+							set delI 0
+							foreach delTag $tagFusion {
+								puts "delTag $delTag"
+								if {$delI == 0} {
+									$textw delete $delTag "$delTag wordend"
+									incr delI
+									continue
+								}
+								$textw delete $delTag "$delTag wordend"
+								incr delI
+							}
+						}
+					}
+					set tagStart [$textw index "$id wordstart"]
+					set tagEnd $id
+					puts "tagStart $tagStart tagEnd $tagEnd"
+					$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
+					$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
+					$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
+					$textw tag bind [subst $key]($i) <Button-1> "catch {exec xdg-open $elem &}"
+					$textw tag add [subst $key]($i) $tagStart $tagEnd
+					$textw delete $id "$id wordend"
+					incr i
+				}
+			} else {
+				$textw tag configure $key -foreground #0064FF -underline on
+				$textw tag bind $key <Any-Enter> "$textw tag configure $key $hylink_enter; $textw configure -cursor hand1"
+				$textw tag bind $key <Any-Leave> "$textw tag configure $key $hylink_leave; $textw configure -cursor {}"
+				$textw tag bind $key <Button-1> "catch {exec xdg-open $elem &}"
+				$textw tag add $key "$index wordstar" $index
+				$textw delete $index "$index wordend"
+			}
 		}
 	}
 }
