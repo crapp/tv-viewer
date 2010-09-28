@@ -113,7 +113,7 @@ proc main_newsreaderCheckUpdate {handler} {
 			grid $fb.b_newsr_ok -in $fb -row 0 -column 1 -padx 3
 			
 			grid rowconfigure $mf 1 -weight 1 -minsize 350
-			grid columnconfigure $mf 0 -weight 1 -minsize 515
+			grid columnconfigure $mf 0 -weight 1 -minsize 520
 			
 			autoscroll $mf.scrollb_newsr
 			
@@ -261,6 +261,7 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 								$textw delete $delTag "$delTag wordend"
 								incr delI
 							}
+							unset -nocomplain tagFusion
 						}
 					}
 					set tagStart [$textw index "$id wordstart"]

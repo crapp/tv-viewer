@@ -138,7 +138,7 @@ namespace import -force msgcat::mcset\n";# translation into choosen language
 		append transLc "# Need to source msg files from fsdialog because this is an external project"
 		append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
 	} else {
-		puts "there is no \"$::start_value(--lang)\" translation file available for fsdialog
+		puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
 consider creating one and place it into extensions/fsdialog."
 	}
 	puts $msgFile($::start_value(--lang)) $transLc
