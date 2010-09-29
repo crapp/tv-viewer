@@ -262,17 +262,28 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 								incr delI
 							}
 							unset -nocomplain tagFusion
+						} else {
+							set tagStart [$textw index "$id wordstart"]
+							set tagEnd $id
+							puts "tagStart $tagStart tagEnd $tagEnd"
+							$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
+							$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
+							$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
+							$textw tag bind [subst $key]($i) <Button-1> "catch {exec xdg-open $elem &}"
+							$textw tag add [subst $key]($i) $tagStart $tagEnd
+							$textw delete $id "$id wordend"
 						}
+					} else {
+						set tagStart [$textw index "$id wordstart"]
+						set tagEnd $id
+						puts "tagStart $tagStart tagEnd $tagEnd"
+						$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
+						$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
+						$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
+						$textw tag bind [subst $key]($i) <Button-1> "catch {exec xdg-open $elem &}"
+						$textw tag add [subst $key]($i) $tagStart $tagEnd
+						$textw delete $id "$id wordend"
 					}
-					set tagStart [$textw index "$id wordstart"]
-					set tagEnd $id
-					puts "tagStart $tagStart tagEnd $tagEnd"
-					$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
-					$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
-					$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
-					$textw tag bind [subst $key]($i) <Button-1> "catch {exec xdg-open $elem &}"
-					$textw tag add [subst $key]($i) $tagStart $tagEnd
-					$textw delete $id "$id wordend"
 					incr i
 				}
 			} else {
