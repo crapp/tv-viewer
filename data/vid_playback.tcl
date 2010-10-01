@@ -153,7 +153,7 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 	}
 	set winid [expr [winfo id $vid_cont]]
 	
-	lappend mcommand -nomouseinput -input nodefault-bindings:conf=/dev/null {*}{-osdlevel 0} -nosub -noautosub
+	lappend mcommand -nomouseinput -input nodefault-bindings:conf=/dev/null {*}{-osdlevel 0}
 	
 	lappend mcommand -nokeepaspect
 	if {$::option(player_aspect) == 1} {
