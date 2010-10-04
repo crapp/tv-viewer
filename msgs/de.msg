@@ -241,7 +241,7 @@ mcset de {Main toolbar} {Hauptwerkzeugleiste}
 mcset de {Station list} {Senderliste}
 mcset de {Control toolbar} {Steuerungsleiste}
 mcset de {System Tray} {System Tray}
-mcset de {Show icon in system tray} {Icon im System Tran anzeigen}
+mcset de {Show icon in system tray} {Icon im System Tray anzeigen}
 mcset de {Minimize to tray} {In den Tray minimieren}
 mcset de {Close to tray} {In den Tray schließen}
 mcset de {Resize system tray icon} {Größe des Tray Icons ändern}
@@ -615,6 +615,9 @@ mcset de {Move video right} {Video nach rechts bewegen}
 mcset de {Move video left} {Video nach links bewegen}
 mcset de {Original window size} {Fenster Ausgangsgröße}
 mcset de {Double window size} {Doppelte Fenstergröße}
+mcset de {Show/hide main toolbar} {Anzeigen/verbergen Hauptwerkzeugleiste}
+mcset de {Show/hide station list} {Anzeigen/verbergen Senderliste}
+mcset de {Show/hide control bar} {Anzeigen/verbergen Steuerungsleiste}
 mcset de {Take a screenshot} {Screenshot machen}
 mcset de {Record wizard} {Aufnahmeassistent}
 mcset de {Toggle pause} {Pause}
@@ -915,4 +918,5 @@ mcset de {Thu} {Do}
 mcset de {Fri} {Fr}
 mcset de {Sat} {Sa}
 
-
+# Need to source msg files from fsdialog because this is an external project
+source "$::option(root)/extensions/fsdialog/de.msg"

@@ -29,9 +29,9 @@ proc translate {files} {
 	if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
 		catch {source "$::msgsDir/$::start_value(--lang).msg"};# use existing translations
 	} else {
-		set file($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
-		close $file($::start_value(--lang))
-		source "$::msgsDir/$::start_value(--lang).msg"
+		#~ set file($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
+		#~ close $file($::start_value(--lang))
+		#~ source "$::msgsDir/$::start_value(--lang).msg"
 	}
 	set amountFile 0
 	set amountString 0
@@ -129,20 +129,69 @@ namespace import -force msgcat::mcset\n";# original texts are in english
 		puts $msgFileEn $transEn
 		close $msgFileEn
 	}
-	set msgFile($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
-	set transLc "# $::start_value(--lang).msg
+	if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
+		set msgFileTmp($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).tmp" w]
+		set transLc "# $::start_value(--lang).msg
 namespace import -force msgcat::mcset\n";# translation into choosen language
-	append transLc $myLc
-	append transLc "\n"
-	if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
-		append transLc "# Need to source msg files from fsdialog because this is an external project"
-		append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
-	} else {
-		puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
+		append transLc $myLc
+		append transLc "\n"
+		if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
+			append transLc "# Need to source msg files from fsdialog because this is an external project"
+			append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
+		} else {
+			puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
 consider creating one and place it into extensions/fsdialog."
+		}
+		puts $msgFileTmp($::start_value(--lang)) $transLc
+		close $msgFileTmp($::start_value(--lang))
+		unset -nocomplain transLc
+		
+		catch {exec diff -u "$::msgsDir/$::start_value(--lang).msg" "$::msgsDir/$::start_value(--lang).tmp" | grep +mcset} fileDiff
+		if {[string trim $fileDiff] != {}} {
+			foreach line [split $fileDiff \n] {
+				set line [string trimleft $line "+"]
+				lappend fileDiffList $line
+			}
+			set tmpOpen [open "$::msgsDir/$::start_value(--lang).tmp" r]
+			set i 0
+			while {[gets $tmpOpen line] != -1} {
+				if {[lsearch $fileDiffList $line] != -1} {
+					if {$i == 0} {
+						append transLc "$line ;#Newline"; # mark newlines to find them easier
+					} else {
+						append transLc "\n$line ;#Newline"; # mark newlines to find them easier
+					}
+				} else {
+					if {$i == 0} {
+						append transLc "$line"
+					} else {
+						append transLc "\n$line"
+					}
+				}
+				incr i
+			}
+			close $tmpOpen
+			set msgFile($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
+			puts $msgFile($::start_value(--lang)) $transLc
+			close $msgFile($::start_value(--lang))
+			catch {file delete "$::msgsDir/$::start_value(--lang).tmp"}
+		}
+	} else {
+		set msgFile($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
+		set transLc "# $::start_value(--lang).msg
+namespace import -force msgcat::mcset\n";# translation into choosen language
+		append transLc $myLc
+		append transLc "\n"
+		if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
+			append transLc "# Need to source msg files from fsdialog because this is an external project"
+			append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
+		} else {
+			puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
+consider creating one and place it into extensions/fsdialog."
+		}
+		puts $msgFile($::start_value(--lang)) $transLc
+		close $msgFile($::start_value(--lang))
 	}
-	puts $msgFile($::start_value(--lang)) $transLc
-	close $msgFile($::start_value(--lang))
 	puts "\nfinished"
 	puts "processed $amountFile files with $amountString text strings"
 	puts "please edit \"$::start_value(--lang).msg\" manually and provide translations,
