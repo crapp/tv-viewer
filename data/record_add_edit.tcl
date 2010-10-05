@@ -39,7 +39,8 @@ proc record_add_edit {tree com} {
 	ttk::scrollbar $lbf.scrollbar_stations -orient vertical -command [list $lbf.lb_stations yview]
 	
 	ttk::labelframe $recf.lf_rec_values -text [mc "Record options"]
-	ttk::label $recf.l_time -text [mc "Time:"]
+	set lf_recValues $recf.lf_rec_values
+	ttk::label $lf_recValues.l_time -text [mc "Time:"]
 	
 	proc record_add_editTimeHourValidate {value widget} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHourValidate \033\[0m \{$value\} \{$widget\}"
@@ -58,19 +59,19 @@ proc record_add_edit {tree com} {
 		}
 	}
 	
-	spinbox $recf.sb_time_hour -from -1 -to 24 -width 3 -validate key -vcmd {record_add_editTimeHourValidate %P %W} -repeatinterval 80 -command record_add_editTimeHour -textvariable record(time_hour)
-	ttk::label $recf.l_time_colon -text ":"
-	spinbox $recf.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %W} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
-	ttk::menubutton $recf.mbHourFormat -menu $recf.mbHourFormat.mHour -textvariable record(mbHourFormat) -state disabled -width 0
-	menu $recf.mbHourFormat.mHour -tearoff 0
+	spinbox $lf_recValues.sb_time_hour -from -1 -to 24 -width 3 -validate key -vcmd {record_add_editTimeHourValidate %P %W} -repeatinterval 80 -command record_add_editTimeHour -textvariable record(time_hour)
+	ttk::label $lf_recValues.l_time_colon -text ":"
+	spinbox $lf_recValues.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %W} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
+	ttk::menubutton $lf_recValues.mbHourFormat -menu $recf.mbHourFormat.mHour -textvariable record(mbHourFormat) -state disabled -width 0
+	menu $lf_recValues.mbHourFormat.mHour -tearoff 0
 	
-	ttk::separator $recf.sep1 -orient vertical
+	ttk::separator $lf_recValues.sep1 -orient vertical
 	
-	ttk::label $recf.l_date -text [mc "Date:"]
-	ttk::entry $recf.ent_date -textvariable record(date) -width 11 -state readonly
-	ttk::button $recf.b_date -width 0 -compound image -image $::icon_s(calendar) -command record_add_editDate
-	ttk::separator $recf.sep2 -orient horizontal
-	ttk::label $recf.l_duration -text [mc "Duration:"]
+	ttk::label $lf_recValues.l_date -text [mc "Date:"]
+	ttk::entry $lf_recValues.ent_date -textvariable record(date) -width 11 -state readonly
+	ttk::button $lf_recValues.b_date -width 0 -compound image -image $::icon_s(calendar) -command record_add_editDate
+	ttk::separator $lf_recValues.sep2 -orient horizontal
+	ttk::label $lf_recValues.l_duration -text [mc "Duration:"]
 	
 	proc record_add_editDurHourValidate {value widget} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHourValidate \033\[0m \{$value\} \{$widget\}"
@@ -97,15 +98,23 @@ proc record_add_edit {tree com} {
 		}
 	}
 	
-	spinbox $recf.sb_duration_hour -from -1 -to 99 -width 3 -validate key -vcmd {record_add_editDurHourValidate %P %W} -repeatinterval 25 -command record_add_editDurHour -textvariable record(duration_hour)
-	ttk::label $recf.l_duration_colon1 -text ":"
-	spinbox $recf.sb_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurMinValidate %P %W} -repeatinterval 25 -command record_add_editDurMin -textvariable record(duration_min)
-	ttk::label $recf.l_duration_colon2 -text ":"
-	spinbox $recf.sb_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurSecValidate %P %W} -repeatinterval 25 -command record_add_editDurSec -textvariable record(duration_sec)
+	spinbox $lf_recValues.sb_duration_hour -from -1 -to 99 -width 3 -validate key -vcmd {record_add_editDurHourValidate %P %W} -repeatinterval 25 -command record_add_editDurHour -textvariable record(duration_hour)
+	ttk::label $lf_recValues.l_duration_colon1 -text ":"
+	spinbox $lf_recValues.sb_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurMinValidate %P %W} -repeatinterval 25 -command record_add_editDurMin -textvariable record(duration_min)
+	ttk::label $lf_recValues.l_duration_colon2 -text ":"
+	spinbox $lf_recValues.sb_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurSecValidate %P %W} -repeatinterval 25 -command record_add_editDurSec -textvariable record(duration_sec)
 	
-	ttk::separator $recf.sep3 -orient vertical
+	ttk::separator $lf_recValues.sep3 -orient vertical
 	
-	ttk::label $recf.l_resol -text [mc "Resolution:"]
+	ttk::label $lf_recValues.l_repeat -text [mc "Repeat:"]
+	ttk::menubutton $lf_recValues.mb_repeat -menu $lf_recValues.mb_repeat.mRepeat -textvariable record(mbRepeat)
+	menu $lf_recValues.mb_repeat.mRepeat -tearoff 0
+	ttk::label $lf_recValues.l_repeatReps -text [mc "Repetitions:"]
+	spinbox $lf_recValues.sb_repeat -from 1 -to 30 -width 3 -repeatinterval 25 -state readonly -textvariable record(sbRepeat)
+	
+	ttk::separator $lf_recValues.sep4 -orient horizontal
+	
+	ttk::label $lf_recValues.l_resol -text [mc "Resolution:"]
 	
 	proc record_add_editResolWidthValidate {value widget} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidthValidate \033\[0m \{$value\} \{$widget\}"
@@ -124,18 +133,20 @@ proc record_add_edit {tree com} {
 		}
 	}
 	
-	spinbox $recf.sb_resol_width -from 99 -to 721 -width 3 -validate key -vcmd {record_add_editResolWidthValidate %P %W} -repeatinterval 10 -command record_add_editResolWidth -textvariable record(resolution_width)
-	ttk::label $recf.l_resol_slash -text "/"
-	spinbox $recf.sb_resol_height -width 3 -validate key -vcmd {record_add_editResolHeightValidate %P %W} -repeatinterval 10 -command record_add_editResolHeight -textvariable record(resolution_height)
+	spinbox $lf_recValues.sb_resol_width -from 99 -to 721 -width 3 -validate key -vcmd {record_add_editResolWidthValidate %P %W} -repeatinterval 10 -command record_add_editResolWidth -textvariable record(resolution_width)
+	ttk::label $lf_recValues.l_resol_slash -text "/"
+	spinbox $lf_recValues.sb_resol_height -width 3 -validate key -vcmd {record_add_editResolHeightValidate %P %W} -repeatinterval 10 -command record_add_editResolHeight -textvariable record(resolution_height)
 	if {"$::option(video_standard)" == "NTSC"} {
-		$recf.sb_resol_height configure -from 99 -to 481
+		$lf_recValues.sb_resol_height configure -from 99 -to 481
 		set ::record(resolution_height_max) 480
 		set ::record(resolution_height_min) 100
 	} else {
-		$recf.sb_resol_height configure -from 99 -to 577
+		$lf_recValues.sb_resol_height configure -from 99 -to 577
 		set ::record(resolution_height_max) 576
 		set ::record(resolution_height_min) 100
 	}
+	
+	ttk::separator $lf_recValues.sep5 -orient vertical
 	
 	ttk::labelframe $recf.lf_rec_file -text [mc "Output file"]
 	ttk::entry $recf.ent_file -textvariable record(file) -state readonly
@@ -148,12 +159,13 @@ proc record_add_edit {tree com} {
 	ttk::button $bf.b_cancel -text [mc "Cancel"] -compound left -image $::icon_s(dialog-cancel) -command [list record_add_editExit $w]
 	
 	grid rowconfigure $w 1 -weight 0
+	grid rowconfigure $lbf 0 -weight 1
 	grid rowconfigure $recf.lf_rec_values {0 2} -weight 1
 	grid columnconfigure $w 1 -weight 1
 	grid columnconfigure $recf.lf_rec_file 0 -weight 1
 	grid columnconfigure $recf.lf_rec_values 0 -weight 1
 	
-	grid $lbf -in $w -row 0 -column 0 -sticky nesw
+	grid $lbf -in $w -row 0 -column 0 -sticky nesw -pady "13 31" -padx "2 0"
 	grid $recf -in $w -row 0 -column 1 -sticky nesw
 	grid $bf -in $w -row 1 -column 0 -columnspan 2 -sticky ew -padx 3 -pady 3
 	grid anchor $bf e
@@ -162,31 +174,37 @@ proc record_add_edit {tree com} {
 	grid $lbf.scrollbar_stations -in $lbf -row 0 -column 1 -sticky ns
 	
 	grid $recf.lf_rec_values -in $recf -row 0 -column 0 -sticky new -padx 5 -pady 6
-	grid $recf.l_time -in $recf.lf_rec_values -row 0 -column 0 -sticky w -padx 5 -pady 3
-	grid $recf.sb_time_hour -in $recf.lf_rec_values -row 0 -column 1 -sticky w -padx "0 2" -pady 3
-	grid $recf.l_time_colon -in $recf.lf_rec_values -row 0 -column 2 -padx "0 2" -pady 3
-	grid $recf.sb_time_min -in $recf.lf_rec_values -row 0 -column 3 -sticky w -padx "0 5" -pady 3
-	grid $recf.mbHourFormat -in $recf.lf_rec_values -row 0 -column 5 -padx "0 5" -pady 3 -sticky w
+	grid $lf_recValues.l_time -in $lf_recValues -row 0 -column 0 -sticky w -padx 5 -pady 3
+	grid $lf_recValues.sb_time_hour -in $lf_recValues -row 0 -column 1 -sticky w -padx "0 2" -pady 3
+	grid $lf_recValues.l_time_colon -in $lf_recValues -row 0 -column 2 -padx "0 2" -pady 3
+	grid $lf_recValues.sb_time_min -in $lf_recValues -row 0 -column 3 -sticky w -padx "0 5" -pady 3
+	grid $lf_recValues.mbHourFormat -in $lf_recValues -row 0 -column 5 -padx "0 5" -pady 3 -sticky w
 	
-	grid $recf.sep1 -in $recf.lf_rec_values -row 0 -column 6 -sticky ns -padx 2
+	grid $lf_recValues.sep1 -in $lf_recValues -row 0 -column 6 -sticky ns -padx 2
 	
-	grid $recf.l_date -in $recf.lf_rec_values -row 0 -column 7 -sticky w -padx 5 -pady 3
-	grid $recf.ent_date -in $recf.lf_rec_values -row 0 -column 8 -sticky w -padx "0 5" -pady 3 -columnspan 3
-	grid $recf.b_date -in $recf.lf_rec_values -row 0 -column 11 -sticky w -padx "0 5" -pady 3
+	grid $lf_recValues.l_date -in $lf_recValues -row 0 -column 7 -sticky w -padx 5 -pady 3
+	grid $lf_recValues.ent_date -in $lf_recValues -row 0 -column 8 -sticky ew -padx "0 5" -pady 3 -columnspan 2
+	grid $lf_recValues.b_date -in $lf_recValues -row 0 -column 10 -sticky w -padx "0 5" -pady 3
 	
-	grid $recf.sep2 -in $recf.lf_rec_values -row 1 -column 0 -sticky ew -columnspan 12 -padx 3
+	grid $lf_recValues.sep2 -in $lf_recValues -row 1 -column 0 -sticky ew -columnspan 12 -padx 3
 	
-	grid $recf.l_duration -in $recf.lf_rec_values -row 2 -column 0 -sticky w -padx 5 -pady "5 11"
-	grid $recf.sb_duration_hour -in $recf.lf_rec_values -row 2 -column 1 -sticky w -padx "0 2" -pady "5 11"
-	grid $recf.l_duration_colon1 -in $recf.lf_rec_values -row 2 -column 2 -padx "0 2" -pady "5 11"
-	grid $recf.sb_duration_min -in $recf.lf_rec_values -row 2 -column 3 -sticky w -padx "0 2" -pady "5 11"
-	grid $recf.l_duration_colon2 -in $recf.lf_rec_values -row 2 -column 4 -padx "0 2" -pady "5 11"
-	grid $recf.sb_duration_sec -in $recf.lf_rec_values -row 2 -column 5 -sticky w -padx "0 5" -pady "5 11"
-	grid $recf.sep3 -in $recf.lf_rec_values -row 2 -column 6 -sticky ns -padx 2 -pady "0 5"
-	grid $recf.l_resol -in $recf.lf_rec_values -row 2 -column 7 -sticky w -padx 5 -pady "5 11"
-	grid $recf.sb_resol_width -in $recf.lf_rec_values -row 2 -column 8 -sticky w -padx "0 2" -pady "5 11"
-	grid $recf.l_resol_slash -in $recf.lf_rec_values -row 2 -column 9 -padx "0 2" -pady "5 11"
-	grid $recf.sb_resol_height -in $recf.lf_rec_values -row 2 -column 10 -sticky w -padx "0 5" -pady "5 11"
+	grid $lf_recValues.l_duration -in $lf_recValues -row 2 -column 0 -sticky w -padx 5 -pady "5 0"
+	grid $lf_recValues.sb_duration_hour -in $lf_recValues -row 2 -column 1 -sticky w -padx "0 2" -pady "5 0"
+	grid $lf_recValues.l_duration_colon1 -in $lf_recValues -row 2 -column 2 -padx "0 2" -pady "5 0"
+	grid $lf_recValues.sb_duration_min -in $lf_recValues -row 2 -column 3 -sticky w -padx "0 2" -pady "5 0"
+	grid $lf_recValues.l_duration_colon2 -in $lf_recValues -row 2 -column 4 -padx "0 2" -pady "5 0"
+	grid $lf_recValues.sb_duration_sec -in $lf_recValues -row 2 -column 5 -sticky w -padx "0 5" -pady "5 0"
+	grid $lf_recValues.sep3 -in $lf_recValues -row 2 -column 6 -sticky ns -rowspan 2 -padx 2
+	grid $lf_recValues.l_repeat -in $lf_recValues -row 2 -column 7 -sticky w -padx 5 -pady 3
+	grid $lf_recValues.mb_repeat -in $lf_recValues -row 2 -column 8 -sticky ew -padx "0 5" -pady "3 0"
+	grid $lf_recValues.l_repeatReps -in $lf_recValues -row 3 -column 7 -sticky w -padx 5 -pady 3
+	grid $lf_recValues.sb_repeat -in $lf_recValues -row 3 -column 8 -sticky w -padx "0 5" -pady 3
+	grid $lf_recValues.sep4 -in $lf_recValues -row 4 -column 0 -sticky ew -columnspan 12 -padx 3
+	grid $lf_recValues.l_resol -in $lf_recValues -row 5 -column 0 -sticky w -padx 5 -pady "5 11"
+	grid $lf_recValues.sb_resol_width -in $lf_recValues -row 5 -column 1 -sticky w -padx "0 2" -pady "5 11"
+	grid $lf_recValues.l_resol_slash -in $lf_recValues -row 5 -column 2 -padx "0 2" -pady "5 11"
+	grid $lf_recValues.sb_resol_height -in $lf_recValues -row 5 -column 3 -sticky w -padx "0 5" -pady "5 11"
+	grid $lf_recValues.sep5 -in $lf_recValues -row 5 -column 6 -sticky ns -padx 2 -pady "0 5"
 	
 	grid $recf.lf_rec_file -in $recf -row 1 -column 0 -sticky new -padx 5 -pady "0 6"
 	grid $recf.ent_file -in $recf.lf_rec_file -row 0 -column 0 -sticky ew -padx 5 -pady 3
@@ -207,15 +225,20 @@ proc record_add_edit {tree com} {
 	wm iconphoto $w $::icon_b(record)
 	wm transient $w .record_wizard
 	
-	bind $recf.ent_date <Double-ButtonPress-1> {record_add_editDate}
+	bind $lf_recValues.ent_date <Double-ButtonPress-1> {record_add_editDate}
 	bind $recf.ent_file <Double-ButtonPress-1> [list record_add_editOfile $w]
 	
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		$lbf.lb_stations insert end $::kanalid($i)
 	}
 	
-	$recf.mbHourFormat.mHour add radiobutton -label am -variable record(rbAddEditHour) -command {set ::record(mbHourFormat) am}
-	$recf.mbHourFormat.mHour add radiobutton -label pm -variable record(rbAddEditHour) -command {set ::record(mbHourFormat) pm}
+	$lf_recValues.mbHourFormat.mHour add radiobutton -label am -variable record(rbAddEditHour) -command {set ::record(mbHourFormat) am}
+	$lf_recValues.mbHourFormat.mHour add radiobutton -label pm -variable record(rbAddEditHour) -command {set ::record(mbHourFormat) pm}
+	
+	$lf_recValues.mb_repeat.mRepeat add radiobutton -label [mc "Never"] -variable record(rbRepeat) -value 0 -command {set ::record(mbRepeat) [mc "Never"]}
+	$lf_recValues.mb_repeat.mRepeat add radiobutton -label [mc "Daily"] -variable record(rbRepeat) -value 1 -command {set ::record(mbRepeat) [mc "Daily"]}
+	$lf_recValues.mb_repeat.mRepeat add radiobutton -label [mc "Weekday"] -variable record(rbRepeat) -value 2 -command {set ::record(mbRepeat) [mc "Weekday"]}
+	$lf_recValues.mb_repeat.mRepeat add radiobutton -label [mc "Weekly"] -variable record(rbRepeat) -value 3 -command {set ::record(mbRepeat) [mc "Weekly"]}
 	
 	if {$com == 0} {
 		$lbf.lb_stations see [expr [lindex $::station(last) 2] - 1]
@@ -232,13 +255,16 @@ proc record_add_edit {tree com} {
 			set ::record(time_HourOld) $::record(time_hour)
 			set ::record(mbHourFormat) [clock format [clock scan now] -format %P]
 			set ::record(rbAddEditHour) [clock format [clock scan now] -format %P]
-			$recf.mbHourFormat state !disabled
+			$lf_recValues.mbHourFormat state !disabled
 		}
 		set ::record(time_min) [scan [clock format [clock scan now] -format %M] %d]
 		set ::record(date) [clock format [clock scan now] -format {%Y-%m-%d}]
 		set ::record(duration_hour) [scan $::option(rec_duration_hour) %d]
 		set ::record(duration_min) [scan $::option(rec_duration_min) %d]
 		set ::record(duration_sec) [scan $::option(rec_duration_sec) %d]
+		set ::record(mbRepeat) [mc "Never"]
+		set ::record(rbRepeat) 0
+		set ::record(sbRepeat) 1
 		set ::record(resolution_width) 720
 		if {"$::option(video_standard)" == "NTSC"} {
 			set ::record(resolution_height) 480
@@ -261,7 +287,7 @@ proc record_add_edit {tree com} {
 			set ::record(time_min) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %M] %d]
 			set ::record(mbHourFormat) [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %P]
 			set ::record(rbAddEditHour) [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %P]
-			$recf.mbHourFormat state !disabled
+			$lf_recValues.mbHourFormat state !disabled
 		} else {
 			set ::record(time_hour) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %H] %d] 
 			set ::record(time_min) [scan [clock format [clock scan [lindex [$tree item [$tree selection] -values] 2]] -format %M] %d]
@@ -273,30 +299,36 @@ proc record_add_edit {tree com} {
 			set ::record(duration_min) $dmin
 			set ::record(duration_sec) $dsec
 		}
-		foreach {rwidth rheight} [split [lindex [$tree item [$tree selection] -values] 5] "/"] {
+		set ::record(rbRepeat) [lindex [$tree item [$tree selection] -values] 5]
+		set ::record(mbRepeat) [$lf_recValues.mb_repeat.mRepeat entrycget [lindex [$tree item [$tree selection] -values] 5] -label]
+		set ::record(sbRepeat) [lindex [$tree item [$tree selection] -values] 6]
+		foreach {rwidth rheight} [split [lindex [$tree item [$tree selection] -values] 7] "/"] {
 			set ::record(resolution_width) $rwidth
 			set ::record(resolution_height) $rheight
 		}
-		set ::record(file) [lindex [$tree item [$tree selection] -values] 6]
+		set ::record(file) [lindex [$tree item [$tree selection] -values] 8]
 	}
 	
 	if {$::option(tooltips) == 1} {
 		if {$::option(tooltips_record) == 1} {
 			settooltip $lbf.lb_stations [mc "Choose station to record"]
-			settooltip $recf.sb_time_hour [mc "Time when recording should start (Hour)"]
-			settooltip $recf.sb_time_min [mc "Time when recording should start (Minute)"]
-			settooltip $recf.mbHourFormat [mc "Choose between before or after midday.
+			settooltip $lf_recValues.sb_time_hour [mc "Time when recording should start (Hour)"]
+			settooltip $lf_recValues.sb_time_min [mc "Time when recording should start (Minute)"]
+			settooltip $lf_recValues.mbHourFormat [mc "Choose between before or after midday.
 You may change hour format in the preferences (Record)."]
-			settooltip $recf.ent_date [mc "Choose date on which recording should occur"]
-			settooltip $recf.b_date [mc "Choose date on which recording should occur"]
-			settooltip $recf.sb_duration_hour [mc "Duration for the recording (Hours)"]
-			settooltip $recf.sb_duration_min [mc "Duration for the recording (Minutes)"]
-			settooltip $recf.sb_duration_sec [mc "Duration for the recording (Seconds)"]
-			settooltip $recf.sb_resol_width [mc "Resolution (width) in which the recording
+			settooltip $lf_recValues.ent_date [mc "Choose date on which recording should occur"]
+			settooltip $lf_recValues.b_date [mc "Choose date on which recording should occur"]
+			settooltip $lf_recValues.sb_duration_hour [mc "Duration for the recording (Hours)"]
+			settooltip $lf_recValues.sb_duration_min [mc "Duration for the recording (Minutes)"]
+			settooltip $lf_recValues.sb_duration_sec [mc "Duration for the recording (Seconds)"]
+			settooltip $lf_recValues.mb_repeat [mc "Choose between never, daily (Mo - Su),
+weekday (Mo - Fr), weekly"]
+			settooltip $lf_recValues.sb_repeat [mc "Choose the quantity of repetitions"]
+			settooltip $lf_recValues.sb_resol_width [mc "Resolution (width) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
 to convert the file afterwards."]
- 			settooltip $recf.sb_resol_width [mc "Resolution (height) in which the recording
+ 			settooltip $lf_recValues.sb_resol_width [mc "Resolution (height) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
 to convert the file afterwards."]
@@ -430,7 +462,7 @@ proc record_add_editResolHeight {} {
 proc record_add_editExit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editExit \033\[0m \{$w\}"
 	log_writeOutTv 0 "Exiting 'add/edit recording'."
-	unset -nocomplain ::record(time_hour) ::record(time_HourOld) ::record(time_min) set ::record(rbAddEditHour) ::record(mbHourFormat) ::record(date) ::record(duration) ::record(resolution) ::record(file)
+	unset -nocomplain ::record(time_hour) ::record(time_HourOld) ::record(time_min) set ::record(rbAddEditHour) ::record(mbHourFormat) ::record(date) ::record(duration) ::record(mbRepeat) ::record(rbRepeat) ::record(sbRepeat) ::record(resolution) ::record(file)
 	vid_wmCursor 1
 	grab release $w
 	destroy $w

@@ -18,6 +18,7 @@
 
 proc record_wizardExit {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardExit \033\[0m"
+	unset -nocomplain ::record(bbox)
 	destroy .record_wizard
 }
 
@@ -98,13 +99,17 @@ proc record_wizardUi {} {
 		set statf [ttk::frame $w.status_frame]
 		set bf [ttk::frame $w.button_frame -style TLabelframe]
 		
-		ttk::button $topf.b_add_rec -text [mc "New recording"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 0] -image $::icon_m(item-add) -compound top
-		ttk::button $topf.b_delete_rec -text [mc "Delete"] -style Toolbutton -command [list record_add_editDelete $treef.tv_rec] -image $::icon_m(item-remove) -compound top
-		ttk::button $topf.b_edit_rec -text [mc "Edit"] -style Toolbutton -command [list record_add_edit $treef.tv_rec 1] -image $::icon_m(seditor) -compound top
+		ttk::button $topf.b_add_rec -text [mc "New recording"] -style Toolbutton -command [list record_add_edit $treef.cv.f.tv_rec 0] -image $::icon_m(item-add) -compound top
+		ttk::button $topf.b_delete_rec -text [mc "Delete"] -style Toolbutton -command [list record_add_editDelete $treef.cv.f.tv_rec] -image $::icon_m(item-remove) -compound top
+		ttk::button $topf.b_edit_rec -text [mc "Edit"] -style Toolbutton -command [list record_add_edit $treef.cv.f.tv_rec 1] -image $::icon_m(seditor) -compound top
 		ttk::separator $topf.sep_1 -orient vertical
 		
-		ttk::treeview $treef.tv_rec -yscrollcommand [list $treef.sb_rec_vert set] -columns {jobid station time date duration resolution file} -show headings
-		ttk::scrollbar $treef.sb_rec_vert -orient vertical -command [list $treef.tv_rec yview]
+		canvas $treef.cv -xscrollcommand [list $treef.sb_rec_hori set] -highlightthickness 0
+		$treef.cv create window 0 0 -window [ttk::frame $treef.cv.f] -anchor w -tags cont_record
+		ttk::treeview $treef.cv.f.tv_rec -yscrollcommand [list $treef.sb_rec_vert set] -columns {jobid station time date duration repeat reps resolution file} -show headings
+		ttk::scrollbar $treef.sb_rec_vert -orient vertical -command [list $treef.cv.f.tv_rec yview]
+		ttk::scrollbar $treef.sb_rec_hori -orient horizontal -command [list $treef.cv xview]
+		ttk::label $treef.l_repeat -text [mc "Repeat: 0 - Never; 1 - Daily; 2 - Weekday; 3 - Weekly"]
 		
 		ttk::labelframe $statf.lf_status -text [mc "Status"]
 		ttk::label $statf.l_rec_sched -text [mc "Scheduler status:"]
@@ -121,6 +126,8 @@ proc record_wizardUi {} {
 		
 		grid columnconfigure $treef {0} -weight 1
 		grid rowconfigure $treef {0} -weight 1
+		grid columnconfigure $treef.cv.f 0 -weight 1
+		grid rowconfigure $treef.cv.f 0 -weight 1
 		
 		grid columnconfigure $statf {0} -weight 1
 		
@@ -136,8 +143,11 @@ proc record_wizardUi {} {
 		grid $topf.b_edit_rec -in $topf -row 0 -column 2 -padx "0 3" -pady 4
 		grid $topf.sep_1 -in $topf -row 0 -column 3 -sticky ns
 		
-		grid $treef.tv_rec -in $treef -row 0 -column 0 -sticky nesw
+		grid $treef.cv -in $treef -row 0 -column 0 -sticky nesw
+		grid $treef.cv.f.tv_rec -in $treef.cv.f -row 0 -column 0 -sticky nesw
 		grid $treef.sb_rec_vert -in $treef -row 0 -column 1 -sticky ns
+		grid $treef.sb_rec_hori -in $treef -row 1 -column 0 -sticky ew
+		grid $treef.l_repeat -in $treef -row 2 -column 0 -sticky w -padx 10 -pady 2
 		
 		grid $statf.lf_status -in $statf -row 0 -column 0 -sticky ew -padx 15 -pady 10
 		grid $statf.l_rec_sched -in $statf.lf_status -row 0 -column 0 -sticky w -padx 7 -pady 4
@@ -155,34 +165,76 @@ proc record_wizardUi {} {
 		wm iconphoto $w $::icon_b(record)
 		
 		autoscroll $treef.sb_rec_vert
+		autoscroll $treef.sb_rec_hori; #FIXME autoscroll does not work here atm
 		
-		set font [ttk::style lookup [$treef.tv_rec cget -style] -font]
+		set font [ttk::style lookup [$treef.cv.f.tv_rec cget -style] -font]
 		if {[string trim $font] == {}} {
 			set font TkDefaultFont
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0;1;31m::font:: \033\[0m"
 		}
-		$treef.tv_rec heading jobid -text [mc "Job ID"]
-		$treef.tv_rec column jobid -anchor center -stretch 0 -width [expr [font measure $font [mc "Job ID"]] + 15]
-		$treef.tv_rec heading station -text [mc "Station"]
-		$treef.tv_rec column station -anchor center -width [expr [font measure $font [mc "Station"]] + 80]
-		$treef.tv_rec heading time -text [mc "Time"]
-		$treef.tv_rec column time -anchor center -stretch 0 -width [expr [font measure $font [mc "Time"]] + 55]
-		$treef.tv_rec heading date -text [mc "Date"]
-		$treef.tv_rec column date -anchor center -stretch 0 -width [expr [font measure $font [mc "Date"]] + 60]
-		$treef.tv_rec heading duration -text [mc "Duration"]
-		$treef.tv_rec column duration -anchor center -stretch 0 -width [expr [font measure $font [mc "Duration"]] + 25]
-		$treef.tv_rec heading resolution -text [mc "Resolution"]
-		$treef.tv_rec column resolution -anchor center -stretch 0 -width [expr [font measure $font [mc "Resolution"]] + 20]
-		$treef.tv_rec heading file -text [mc "Output file"]
-		$treef.tv_rec column file -anchor center -width [expr [font measure $font [mc "Output file"]] + 330]
+		$treef.cv.f.tv_rec heading jobid -text [mc "Job ID"]
+		$treef.cv.f.tv_rec column jobid -anchor center -stretch 0 -width [expr [font measure $font [mc "Job ID"]] + 15]
+		set widthItemConfigure [expr [font measure $font [mc "Job ID"]] + 15]
+		$treef.cv.f.tv_rec heading station -text [mc "Station"]
+		$treef.cv.f.tv_rec column station -anchor center -stretch 0 -width [expr [font measure $font [mc "Station"]] + 80]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Station"]] + 80)]
+		$treef.cv.f.tv_rec heading time -text [mc "Time"]
+		$treef.cv.f.tv_rec column time -anchor center -stretch 0 -width [expr [font measure $font [mc "Time"]] + 55]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Time"]] + 55)]
+		$treef.cv.f.tv_rec heading date -text [mc "Date"]
+		$treef.cv.f.tv_rec column date -anchor center -stretch 0 -width [expr [font measure $font [mc "Date"]] + 60]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Date"]] + 60)]
+		$treef.cv.f.tv_rec heading duration -text [mc "Duration"]
+		$treef.cv.f.tv_rec column duration -anchor center -stretch 0 -width [expr [font measure $font [mc "Duration"]] + 25]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Duration"]] + 25)]
+		$treef.cv.f.tv_rec heading repeat -text [mc "Repeat"]
+		$treef.cv.f.tv_rec column repeat -anchor center -stretch 0 -width [expr [font measure $font [mc "Repeat"]] + 25]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Repeat"]] + 25)]
+		$treef.cv.f.tv_rec heading reps -text [mc "Repetitions"]
+		$treef.cv.f.tv_rec column reps -anchor center -stretch 0 -width [expr [font measure $font [mc "Repetitions"]] + 25]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Repetitions"]] + 25)]
+		$treef.cv.f.tv_rec heading resolution -text [mc "Resolution"]
+		$treef.cv.f.tv_rec column resolution -anchor center -stretch 0 -width [expr [font measure $font [mc "Resolution"]] + 20]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Resolution"]] + 20)]
+		$treef.cv.f.tv_rec heading file -text [mc "Output file"]
+		$treef.cv.f.tv_rec column file -anchor center -stretch 1 -minwidth [expr [font measure $font [mc "Output file"]] + 330]
+		set widthItemConfigure [expr $widthItemConfigure + ([font measure $font [mc "Output file"]] + 330)]
 		
-		bind $treef.tv_rec <B1-Motion> break
-		bind $treef.tv_rec <Motion> break
-		bind $treef.tv_rec <Double-ButtonPress-1> [list record_add_edit $treef.tv_rec 1]
-		bind $treef.tv_rec <Key-Delete> [list record_add_editDelete $treef.tv_rec]
-		bind $treef.tv_rec <ButtonPress-3> [list record_wizardUiMenu $treef.tv_rec %X %Y]
+		$treef.cv itemconfigure cont_record -width [expr $widthItemConfigure + 5]
+		bind $treef.cv <Map> {
+			%W itemconfigure cont_record -height [winfo height %W]
+			set ::record(bbox) [%W bbox all]
+			%W configure -scrollregion $::record(bbox)
+			%W xview moveto 0
+		}
+		bind $treef.cv <Configure> {
+			if {[info exists ::record(bbox)]} {
+				puts "%w bbox all [%W bbox all]"
+				if {[winfo width %W] >= [lindex $::record(bbox) 2]} {
+					%W itemconfigure cont_record -width [winfo width %W]
+				}
+				if {[winfo height %W] >= [lindex $::record(bbox) 3]} {
+					%W itemconfigure cont_record -height [winfo height %W]
+					set scrollregion [lreplace [%W bbox all] 0 0 [lindex $::record(bbox) 0]]
+					set scrollregion [lreplace $scrollregion 2 2 [lindex $::record(bbox) 2]]
+					%W configure -scrollregion $scrollregion
+				}
+				if {[lindex [%W bbox all] 2] >= [expr [winfo screenwidth .] -100] && [winfo height .record_wizard] <= [expr [winfo screenheight .] -100] && [winfo width %W] < [lindex $::record(bbox) 2]} {
+					%W itemconfigure cont_record -width [lindex $::record(bbox) 2]
+				}
+			}
+		}
+		bind $treef.cv.f.tv_rec <B1-Motion> break
+		bind $treef.cv.f.tv_rec <Motion> break
+		bind $treef.cv.f.tv_rec <Double-ButtonPress-1> [list record_add_edit $treef.cv.f.tv_rec 1]
+		bind $treef.cv.f.tv_rec <Key-Delete> [list record_add_editDelete $treef.cv.f.tv_rec]
+		bind $treef.cv.f.tv_rec <ButtonPress-3> [list record_wizardUiMenu $treef.cv.f.tv_rec %X %Y]
+		bind $w <Key-x> {puts [winfo width .record_wizard]}
+		bind $w <Key-y> {puts [winfo height .record_wizard]}
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <<help>> [list info_helpHelp]
+		
+		$treef.l_repeat configure -font "TkDefaultFont [font actual TkDefaultFont -displayof $treef.l_repeat -size] italic"
 		
 		set status_record [monitor_partRunning 3]
 		if {[lindex $status_record 0] == 1} {
@@ -217,7 +269,7 @@ proc record_wizardUi {} {
 			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
 			while {[gets $f_open line]!=-1} {
 				if {[string trim $line] == {} || [string match #* $line]} continue
-				$treef.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6]]
+				$treef.cv.f.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6] [lindex $line 7] [lindex $line 8]]
 			}
 		}
 		if {$::option(tooltips) == 1} {
@@ -235,7 +287,8 @@ start recording immediately."]
 			}
 		}
 		tkwait visibility $w
-		wm minsize .record_wizard [winfo reqwidth .record_wizard] [winfo reqheight .record_wizard]
+		wm minsize .record_wizard [expr [winfo reqwidth .record_wizard] + 200] [winfo reqheight .record_wizard]
+		#~ wm maxsize .record_wizard [expr [winfo screenwidth .] -100] [expr [winfo screenheight .] -100]
 	} else {
 		raise .record_wizard
 	}

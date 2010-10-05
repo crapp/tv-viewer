@@ -189,14 +189,14 @@ Started at %" $station $stime]
 
 proc record_linkerWizardReread {} {
 	if {[winfo exists .record_wizard]} {
-		foreach ritem [split [.record_wizard.tree_frame.tv_rec children {}]] {
-			.record_wizard.tree_frame.tv_rec delete $ritem
+		foreach ritem [split [.record_wizard.tree_frame.cv.f.tv_rec children {}]] {
+			.record_wizard.tree_frame.cv.f.tv_rec delete $ritem
 		}
 		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
 			while {[gets $f_open line]!=-1} {
 				if {[string trim $line] == {} || [string match #* $line]} continue
-				.record_wizard.tree_frame.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6]]
+				.record_wizard.tree_frame.cv.f.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6] [lindex $line 7] [lindex $line 8]]
 			}
 		}
 	}

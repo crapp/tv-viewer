@@ -228,6 +228,7 @@ proc scheduler_recordings {} {
 		while {[gets $f_open line]!=-1} {
 			if {[string trim $line] == {} || [string match #* $line] == 1} continue
 			set ::recjob($i) $line
+			# 0 - JobID; 1 - Station; 2 - time; 3 - Date; 4 - Duration; 5 - Repeat; 6 - Repetitions; 7 - Resolution; 8 - File
 			if {"[lindex $::recjob($i) 3]" == "[clock format [clock scan now] -format {%Y-%m-%d}]"} {
 				scheduler_at [lindex $::recjob($i) 2] $i
 			} else {
@@ -235,7 +236,7 @@ proc scheduler_recordings {} {
 				set delta [difftime [clock scan $diffdate] [clock scan [clock format [clock scan now] -format {%Y%m%d}]]]
 				lassign $delta dy dm dd
 				if {$dy < 0 || $dm < 0 || $dd < 0} {
-					scheduler_logWriteOut 1 "Job $i expired."
+					scheduler_logWriteOut 1 "Job $::recjob($i) expired."
 					scheduler_logWriteOut 1 "Will be deleted."
 					lappend deljobs $i
 				}
@@ -243,7 +244,7 @@ proc scheduler_recordings {} {
 			incr i
 		}
 		if {[info exists deljobs]} {
-			scheduler_delete [list $deljobs]
+			scheduler_delete $deljobs
 		}
 		if {[array exists ::recjob] == 0} {
 			scheduler_logWriteOut 1 "No recordings in config file. Scheduler will be terminated."
@@ -267,22 +268,80 @@ proc scheduler_at {time jobid} {
 	} else {
 		scheduler_logWriteOut 1 "Job $::recjob($jobid) expired."
 		scheduler_logWriteOut 1 "Will be deleted."
-		scheduler_delete [list $jobid]
+		scheduler_delete $jobid
 	}
 }
 
 proc scheduler_delete {args} {
-	file delete -force "$::option(home)/config/scheduled_recordings.conf"
-	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
-	if {[llength $args] > 1} {
-		foreach id $args {
-			lappend ::recjob(delete) $id
-		}
-	} else {
-		lappend ::recjob(delete) $args
-	}
+	catch {file delete "$::option(home)/config/scheduled_recordings.conf"}
+	set f_open [open "$::option(home)/config/scheduled_recordings.conf" w+]
+	lappend ::scheduler(delJobList) [join $args]
+	set reInit 0
 	for {set i 1} {$i <= $::scheduler(max_recordings)} {incr i} {
-		if {[string match *$i* $::recjob(delete)]} continue
+		if {[lsearch $::scheduler(delJobList) $i] != -1} {
+			if {[lindex $::recjob($i) 5] == 1} {
+				# daily repeat
+				if {[lindex $::recjob($i) 6] == 0} {
+					# no more repetitions
+					continue
+				} else {
+					# replace start date
+					set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + 86400] -format {%Y-%m-%d}]]
+					# replace repetitions
+					set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
+					# replace file name
+					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
+					# delete number from list
+					set ::scheduler(delJobList) [lreplace $::scheduler(delJobList) [lsearch $::scheduler(delJobList) $i] [lsearch $::scheduler(delJobList) $i]]
+					set reInit 1
+					puts $f_open "$::recjob($i)"
+					continue
+				}
+			}
+			if {[lindex $::recjob($i) 5] == 2} {
+				# weekday repeat
+				if {[lindex $::recjob($i) 6] == 0} {
+					# no more repetitions
+					continue
+				} else {
+					# replace start date
+					if {[clock format [clock scan [lindex $::recjob($i) 3]] -format %u] == 5} {
+						# on friday replace with next moday and reduce repetitions
+						set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + (86400 * 3)] -format {%Y-%m-%d}]]
+						set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
+					} else {
+						set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + 86400] -format {%Y-%m-%d}]]
+					}
+					# replace file name
+					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
+					# delete number from list
+					set ::scheduler(delJobList) [lreplace $::scheduler(delJobList) [lsearch $::scheduler(delJobList) $i] [lsearch $::scheduler(delJobList) $i]]
+					set reInit 1
+					puts $f_open "$::recjob($i)"
+					continue
+				}
+			}
+			if {[lindex $::recjob($i) 5] == 3} {
+				# weekly repeat
+				if {[lindex $::recjob($i) 6] == 0} {
+					# no more repetitions
+					continue
+				} else {
+					# replace start date
+					set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + (86400 * 7)] -format {%Y-%m-%d}]]
+					# replace repetitions
+					set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
+					# file name
+					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
+					# delete number from list
+					set ::scheduler(delJobList) [lreplace $::scheduler(delJobList) [lsearch $::scheduler(delJobList) $i] [lsearch $::scheduler(delJobList) $i]]
+					set reInit 1
+					puts $f_open "$::recjob($i)"
+					continue
+				}
+			}
+			continue
+		}
 		puts $f_open "$::recjob($i)"
 	}
 	close $f_open
@@ -290,8 +349,12 @@ proc scheduler_delete {args} {
 	if {[lindex $status_main 0]} {
 		command_WritePipe 0 "tv-viewer_main record_linkerWizardReread"
 	}
-	if {[llength $::recjob(delete)] == $::scheduler(max_recordings)} {
-		scheduler_exit
+	if {$reInit == 1} {
+		#scheduler_Init 1
+	} else {
+		if {[llength $::scheduler(delJobList)] == $::scheduler(max_recordings)} {
+			scheduler_exit
+		}
 	}
 }
 
@@ -327,7 +390,7 @@ proc scheduler_rec_prestart {jobid} {
 	if {$::option(forcevideo_standard) == 1} {
 		main_pic_streamForceVideoStandard
 	}
-	set dimensions [string map {{/} { }} [lindex $::recjob($jobid) 5]]
+	set dimensions [string map {{/} { }} [lindex $::recjob($jobid) 7]]
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-fmt-video=width=[lindex $dimensions 0],height=[lindex $dimensions 1]}
 	if {$::option(streambitrate) == 1} {
 		main_pic_streamVbitrate
@@ -440,7 +503,7 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
 			}
-			scheduler_delete [list $jobid]
+			scheduler_delete $jobid
 		} else {
 			catch {exec kill $rec_pid}
 			catch {exec ""}

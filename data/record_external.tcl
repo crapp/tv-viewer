@@ -26,6 +26,8 @@
 # --start_time = Provide a start time in 12-hour or 24-hour format*
 # --start_date = Start date YYYY-MM-DD*
 # --duration = Specify the duration of the recording in seconds*
+# --repeat = repeat the recording (0 - never; 1 - daily; 2 - weekday; 3 - weekly)
+# --repetitions = how often to repeat a recording
 # --title = Title for the recording*
 # --station_ext = Station to record. You need to provide the same as in TV-Viewer.*
 # --path = Output path
@@ -74,7 +76,7 @@ proc record_externalExit {logw logc returnm returnc} {
 	exit $returnc
 }
 
-array set start_options {--duration 0 --start_time 0 --start_date 0 --title 0 --resolution 0 --path 0 --station_ext 0 --delete 0 --help 0}
+array set start_options {--duration 0 --start_time 0 --start_date 0 --repeat 0 --repetition 0 --title 0 --resolution 0 --path 0 --station_ext 0 --delete 0 --help 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -89,7 +91,7 @@ foreach command_argument $argv {
 	}
 }
 
-if {[array size start_options] != 9} {
+if {[array size start_options] != 11} {
 	record_externalExit "External record scheduler received unknown option $argv" 2 "Received unknown option $argv
 	
 Usage: tv-viewer_recext \[OPTION...\]
@@ -100,6 +102,8 @@ Usage: tv-viewer_recext \[OPTION...\]
   --start_time=TIME    specify start time (HH:MM 24-hour clock, HH:MM am/pm 12-hour clock)
   --start_date=DATE    provide start date (YYYY-MM-DD)
   --duration=DURATION  duration of the recording in SECONDS
+  --repeat=NUMBER      repeat the recording (0 - never; 1 - daily; 2 - weekday; 3 - weekly)
+  --repetitions=COUNT  how often to repeat a recording
   --title=NAME         name/title for the recording
   --station_ext=NO     provide the station number as specified in TV-Viewer
  
@@ -120,6 +124,8 @@ if {$::start_options(--help)} {
   --start_time=TIME    specify start time (HH:MM 24-hour clock, HH:MM am/pm 12-hour clock)
   --start_date=DATE    provide start date (YYYY-MM-DD)
   --duration=DURATION  duration of the recording in SECONDS
+  --repeat=NUMBER      repeat the recording (0 - never; 1 - daily; 2 - weekday; 3 - weekly)
+  --repetitions=COUNT  how often to repeat a recording
   --title=NAME         name/title for the recording
   --station_ext=NO     provide the station number as specified in TV-Viewer
  
@@ -214,6 +220,27 @@ proc record_externalDate {} {
 	}
 	if {$exit_now} {
 		record_externalExit "External record scheduler: Specify a start date" 2 "Specify a start date" 1
+	}
+}
+
+proc record_externalRepeat {} {
+	if {$::start_options(--repeat) == 0} {
+		set ::record(rbRepeat) 0
+	} else {
+		if {[info exists ::start_values(--repeat)]} {
+			set ::record(rbRepeat) $::start_values(--repeat)
+		} else {
+			record_externalExit "External record scheduler: Specify a value for repeat" 2 "Specify a value for repeat" 1
+		}
+	}
+	if {$::start_options(--repetition) == 0} {
+		set ::record(sbRepeat) 1
+	} else {
+		if {[info exists ::start_values(--repetition)]} {
+			set ::record(sbRepeat) $::start_values(--repetition)
+		} else {
+			set ::record(sbRepeat) 1
+		}
 	}
 }
 
@@ -325,7 +352,7 @@ proc record_externalAdd {} {
 		set start 1
 	}
 	log_writeOutTv 0 "Adding new recording:"
-	log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+	log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 		set fh [open "$::option(home)/config/scheduled_recordings.conf" r]
 		while {[gets $fh line]!=-1} {
@@ -333,7 +360,7 @@ proc record_externalAdd {} {
 			lappend recordings $line
 		}
 		close $fh
-		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
+		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
 		lappend recordings $new_recording
 		catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
 		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
@@ -343,11 +370,11 @@ proc record_externalAdd {} {
 		close $sched_rec
 	} else {
 		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
-		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
+		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
 		puts $sched_rec $new_recording
 		close $sched_rec
 	}
-	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(time) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
+	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(time) ::record(date) ::record(sbRepeat) ::record(rbRepeat) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
 	if {$start} {
 		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
@@ -412,10 +439,11 @@ if {$start_options(--delete) == 0} {
 	record_externalDuration
 	record_externalTime
 	record_externalDate
+	record_externalRepeat
 	record_externalResolution
 	record_externalStation
 	record_externalTitle
-	set tree .record_wizard.tree_frame.tv_rec 
+	set tree .record_wizard.tree_frame.cv.f.tv_rec 
 	set lb .record_wizard.add_edit.listbox_frame.lb_stations 
 	set w .record_wizard.add_edit
 	set handler add
