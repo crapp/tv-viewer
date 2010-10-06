@@ -145,6 +145,7 @@ proc vid_wmCompact {} {
 		} else {
 			wm geometry . $widthc\x$heightc
 		}
+		wm title . "TV-Viewer"
 		log_writeOutTv 0 "Normal window mode"
 		set ::main(compactMode) 0
 	} else {
@@ -166,6 +167,7 @@ proc vid_wmCompact {} {
 		} else {
 			wm geometry . $width\x$height
 		}
+		wm title . "TV-Viewer - [.ftoolb_Disp.fIcTxt.lDispText cget -text]"
 		log_writeOutTv 0 "Compact mode"
 		set ::main(compactMode) 1
 	}

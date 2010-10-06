@@ -31,10 +31,7 @@ proc station_after_msg {var0 var1} {
 	set status_tv [vid_callbackMplayerRemote alive]
 		if {$status_tv != 1} {
 			if {$::vid(pbMode) != 1} {
-				if {"[.ftoolb_Disp.fIcTxt.lDispIcon cget -image]" != "$::icon_s(starttv)"} {
-					.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
-				}
-				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" $::kanalid($var0)]
+				status_feedbMsgs 0 [mc "Now playing %" $::kanalid($var0)]
 				if {[winfo exists .tray]} {
 					settooltip .tray [mc "TV-Viewer playing - %" [lindex $::station(last) 0]]
 				}

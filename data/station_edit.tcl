@@ -37,13 +37,13 @@ proc station_editPreview {w} {
 				} else {
 					catch {exec {*}[lindex [$w item [lindex [$w selection] end] -values] 3] &}
 				}
-				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
+				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				vid_Playback .fvidBg .fvidBg.cont 0 0
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
-				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
+				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
 			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
@@ -65,13 +65,13 @@ proc station_editZap {w} {
 				} else {
 					catch {exec {*}[lindex [$w item [lindex [$w selection] end] -values] 3] &}
 				}
-				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
+				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 				return
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
 				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
-				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
+				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
 			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."

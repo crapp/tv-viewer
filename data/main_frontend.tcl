@@ -485,7 +485,7 @@ proc main_frontendUi {} {
 		after 5000 main_newsreaderAutomaticUpdate
 	}
 	
-	wm title . [mc "TV-Viewer %" [lindex $::option(release_version) 0]]
+	wm title . "TV-Viewer"
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	

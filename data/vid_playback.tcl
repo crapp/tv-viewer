@@ -423,8 +423,7 @@ proc vid_playbackRendering {} {
 				}
 				set ::main(running_recording) 0
 			}
-			.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
-			.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+			status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
 			set status [vid_callbackMplayerRemote alive]
 			if {$status != 1} {
 				after 100 {vid_playbackLoop}
@@ -473,8 +472,7 @@ proc vid_playbackRendering {} {
 			if {[file exists "[subst $::option(timeshift_path)/timeshift.mpeg]"]} {
 				catch {file delete -force "[subst $::option(timeshift_path)/timeshift.mpeg]"}
 			}
-			.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
-			.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+			status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
 		}
 		main_pic_streamDimensions
 		vid_Playback .fvidBg .fvidBg.cont 0 0

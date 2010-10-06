@@ -209,7 +209,6 @@ proc record_wizardUi {} {
 		}
 		bind $treef.cv <Configure> {
 			if {[info exists ::record(bbox)]} {
-				puts "%w bbox all [%W bbox all]"
 				if {[winfo width %W] >= [lindex $::record(bbox) 2]} {
 					%W itemconfigure cont_record -width [winfo width %W]
 				}
@@ -288,7 +287,6 @@ start recording immediately."]
 		}
 		tkwait visibility $w
 		wm minsize .record_wizard [expr [winfo reqwidth .record_wizard] + 200] [winfo reqheight .record_wizard]
-		#~ wm maxsize .record_wizard [expr [winfo screenwidth .] -100] [expr [winfo screenheight .] -100]
 	} else {
 		raise .record_wizard
 	}

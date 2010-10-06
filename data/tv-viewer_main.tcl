@@ -353,6 +353,8 @@ source $::option(root)/data/key_sequences.tcl
 source $::option(root)/data/tooltip.tcl
 #Source menu creating procs
 source $::option(root)/data/main_menu.tcl
+#Source status message function and warning dialogue
+source $::option(root)/data/status_feedb.tcl
 #Source main ui and related functions
 source $::option(root)/data/main_frontend.tcl
 #Source command socket

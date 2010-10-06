@@ -75,12 +75,7 @@ proc vid_callbackVidData {} {
 				if {[winfo exists .tray] == 1} {
 					settooltip .tray [mc "TV-Viewer idle"]
 				}
-				if {$::vid(pbMode)} {
-					.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
-				} else {
-					.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
-				}
-				.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "idle"]
+				status_feedbMsgs 4 [mc "idle"]
 			}
 			if {$::vid(stayontop) == 2} {
 				wm attributes . -topmost 0
@@ -168,11 +163,9 @@ proc vid_callbackVidData {} {
 					bind . <<input_prior>> "chan_zapperInput 1 -1"
 					bind . <<teleview>> {vid_playbackRendering}
 					if {$::vid(pbMode)} {
-						.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
-						.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::vid(current_rec_file)]
+						status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
 					} else {
-						.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(starttv)
-						.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Now playing %" [lindex $::station(last) 0]]
+						status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
 					}
 				}
 				if {[info exists ::wizard(Pos)] && $::wizard(Pos) > 0} {

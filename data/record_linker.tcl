@@ -155,11 +155,9 @@ Started at %" $station $stime]
 		}
 	}
 	if {"$handler" != "timeshift"} {
-		.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(record)
-		.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Recording % - Ends at % %" $station $edate $etime]
+		status_feedbMsgs 1 [mc "Recording % - Ends at % %" $station $edate $etime]
 	} else {
-		.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(timeshift)
-		.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
+		status_feedbMsgs 2 [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
 		set ::vid(recStart) 0;# prevents auto fileplayback of recordings
@@ -242,8 +240,7 @@ proc record_linkerPreStop {handler} {
 		.fvidBg.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
-	.ftoolb_Disp.fIcTxt.lDispIcon configure -image $::icon_s(video)
-	.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Playing file: %" $::vid(current_rec_file)]
+	status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
 			.record_wizard.status_frame.l_rec_current_info configure -text "Idle"
