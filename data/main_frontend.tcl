@@ -347,7 +347,7 @@ proc main_frontendUi {} {
 	ttk::scale $toolbPlay.scVolume -orient horizontal -from 0 -to 100 -variable main(volume_scale) -command [list vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute]
 	
 	label $toolbDispIcTxt.lDispIcon -compound center -background black -foreground white -image $::icon_s(starttv)
-	label $toolbDispIcTxt.lDispText -background black -foreground white -text [mc "Welcome to TV-Viewer"] -anchor center
+	label $toolbDispIcTxt.lDispText -background black -foreground white -text [mc "Welcome to TV-Viewer %" [lindex $::option(release_version) 0]] -anchor center
 	label $toolbDisp.lTime -background black -foreground white -anchor center -textvariable main(label_file_time)
 	
 	if {[clock format [clock seconds] -format {%d%m}] == 2412} {

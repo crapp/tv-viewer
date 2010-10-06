@@ -448,7 +448,7 @@ mcset en {No}
 mcset en {Navigation}
 mcset en {View}
 mcset en {Help}
-mcset en {Welcome to TV-Viewer}
+mcset en {Welcome to TV-Viewer %} {Welcome to TV-Viewer %s}
 mcset en {TV-Viewer %} {TV-Viewer %s}
 mcset en {TV-Viewer idle}
 

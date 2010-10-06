@@ -520,7 +520,7 @@ mcset de {No} {Nr}
 mcset de {Navigation} {Navigation}
 mcset de {View} {Ansicht}
 mcset de {Help} {Hilfe}
-mcset de {Welcome to TV-Viewer} {Willkommen bei TV-Viewer}
+mcset de {Welcome to TV-Viewer %} {Willkommen bei TV-Viewer %s}
 mcset de {TV-Viewer %} {TV-Viewer %s}
 mcset de {TV-Viewer idle} {TV-Viewer inaktiv}
 

@@ -162,6 +162,7 @@ Started at %" $station $stime]
 		.ftoolb_Disp.fIcTxt.lDispText configure -text [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
 	if {"$handler" != "timeshift"} {
+		set ::vid(recStart) 0;# prevents auto fileplayback of recordings
 		vid_Playback .fvidBg .fvidBg.cont record "$::vid(current_rec_file)"
 	} else {
 		vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"
