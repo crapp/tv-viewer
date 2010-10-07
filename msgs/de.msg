@@ -521,7 +521,6 @@ mcset de {Navigation} {Navigation}
 mcset de {View} {Ansicht}
 mcset de {Help} {Hilfe}
 mcset de {Welcome to TV-Viewer %} {Willkommen bei TV-Viewer %s}
-mcset de {TV-Viewer %} {TV-Viewer %s}
 mcset de {TV-Viewer idle} {TV-Viewer inaktiv}
 
 ### ../data/main_menu.tcl ###
@@ -636,10 +635,15 @@ mcset de {Record options} {Aufnahme Optionen}
 mcset de {Time:} {Zeit:}
 mcset de {Date:} {Datum:}
 mcset de {Duration:} {Dauer:}
+mcset de {Repeat:} {Wiederholung:}
+mcset de {Repetitions:} {Wiederholungen:}
 mcset de {Resolution:} {Auflösung:}
 mcset de {Output file} {Ausgabedatei}
 mcset de {Add a new recording} {Eine neue Aufnahme hinzufügen}
 mcset de {Edit recording} {Aufnahme bearbeiten}
+mcset de {Daily} {Täglich}
+mcset de {Weekday} {Wochentag}
+mcset de {Weekly} {Wöchentlich}
 mcset de {Choose station to record} {Sender wählen der aufgenommen werden soll}
 mcset de {Time when recording should start (Hour)} {Uhrzeit, wann die Aufnahme beginnen soll (Stunde)}
 mcset de {Time when recording should start (Minute)} {Uhrzeit, wann die Aufnahme beginnen soll (Minute)}
@@ -651,6 +655,10 @@ mcset de {Choose date on which recording should occur} {Wähle das Datum, wann d
 mcset de {Duration for the recording (Hours)} {Dauer der Aufnahme (Stunden)}
 mcset de {Duration for the recording (Minutes)} {Dauer der Aufnahme (Minuten)}
 mcset de {Duration for the recording (Seconds)} {Dauer der Aufnahme (Sekunden)}
+mcset de {Choose between never, daily (Mo - Su),
+weekday (Mo - Fr), weekly} {Wählen zwischen niemlas, täglich (Mo - So),
+wochentags (Mo - Fr), wöchentlich}
+mcset de {Choose the quantity of repetitions} {Anzahl der Wiederholungen festlegen}
 mcset de {Resolution (width) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
@@ -716,6 +724,7 @@ mcset de {Stopped} {Angehalten}
 mcset de {Start Scheduler} {Scheduler starten}
 mcset de {New recording} {Neue Aufnahme}
 mcset de {Edit} {Bearbeiten}
+mcset de {Repeat: 0 - Never; 1 - Daily; 2 - Weekday; 3 - Weekly} {Wiederholen: 0 - niemals; 1 - täglich; 2 - wochentags; 3 - wöchentlich}
 mcset de {Status} {Status}
 mcset de {Scheduler status:} {Scheduler Status:}
 mcset de {Currently recording:} {Aktuelle Aufnahme:}
@@ -724,6 +733,8 @@ mcset de {Job ID} {Job ID}
 mcset de {Time} {Zeit}
 mcset de {Date} {Datum}
 mcset de {Duration} {Dauer}
+mcset de {Repeat} {Wiederholung}
+mcset de {Repetitions} {Wiederholungen}
 mcset de {Resolution} {Auflösung}
 mcset de {Add a scheduled recording or
 start recording immediately.} {Eine geplante Aufnahme hinzufügen,
@@ -839,6 +850,9 @@ Bitte warten...}
 mcset de {Channel: %} {Kanal: %s}
 mcset de {Station search finished!} {Station search finished!}
 mcset de {Frequency: %} {Frequenz: %s}
+
+### ../data/status_feedb.tcl ###
+
 
 ### ../data/system_tray.tcl ###
 

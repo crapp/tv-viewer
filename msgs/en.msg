@@ -449,7 +449,6 @@ mcset en {Navigation}
 mcset en {View}
 mcset en {Help}
 mcset en {Welcome to TV-Viewer %} {Welcome to TV-Viewer %s}
-mcset en {TV-Viewer %} {TV-Viewer %s}
 mcset en {TV-Viewer idle}
 
 ### ../data/main_menu.tcl ###
@@ -543,6 +542,9 @@ mcset en {Move video right}
 mcset en {Move video left}
 mcset en {Original window size}
 mcset en {Double window size}
+mcset en {Show/hide main toolbar}
+mcset en {Show/hide station list}
+mcset en {Show/hide control bar}
 mcset en {Take a screenshot}
 mcset en {Record wizard}
 mcset en {Toggle pause}
@@ -561,10 +563,15 @@ mcset en {Record options}
 mcset en {Time:}
 mcset en {Date:}
 mcset en {Duration:}
+mcset en {Repeat:}
+mcset en {Repetitions:}
 mcset en {Resolution:}
 mcset en {Output file}
 mcset en {Add a new recording}
 mcset en {Edit recording}
+mcset en {Daily}
+mcset en {Weekday}
+mcset en {Weekly}
 mcset en {Choose station to record}
 mcset en {Time when recording should start (Hour)}
 mcset en {Time when recording should start (Minute)}
@@ -574,6 +581,9 @@ mcset en {Choose date on which recording should occur}
 mcset en {Duration for the recording (Hours)}
 mcset en {Duration for the recording (Minutes)}
 mcset en {Duration for the recording (Seconds)}
+mcset en {Choose between never, daily (Mo - Su),
+weekday (Mo - Fr), weekly}
+mcset en {Choose the quantity of repetitions}
 mcset en {Resolution (width) in which the recording
 should be made. In most cases it doesn't
 make sense to change this value. It is better
@@ -630,6 +640,7 @@ mcset en {Stopped}
 mcset en {Start Scheduler}
 mcset en {New recording}
 mcset en {Edit}
+mcset en {Repeat: 0 - Never; 1 - Daily; 2 - Weekday; 3 - Weekly}
 mcset en {Status}
 mcset en {Scheduler status:}
 mcset en {Currently recording:}
@@ -638,6 +649,8 @@ mcset en {Job ID}
 mcset en {Time}
 mcset en {Date}
 mcset en {Duration}
+mcset en {Repeat}
+mcset en {Repetitions}
 mcset en {Resolution}
 mcset en {Add a scheduled recording or
 start recording immediately.}
@@ -732,6 +745,9 @@ Please wait...}
 mcset en {Channel: %} {Channel: %s}
 mcset en {Station search finished!}
 mcset en {Frequency: %} {Frequency: %s}
+
+### ../data/status_feedb.tcl ###
+
 
 ### ../data/system_tray.tcl ###
 

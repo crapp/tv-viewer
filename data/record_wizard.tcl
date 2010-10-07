@@ -286,7 +286,7 @@ start recording immediately."]
 			}
 		}
 		tkwait visibility $w
-		wm minsize .record_wizard [expr [winfo reqwidth .record_wizard] + 200] [winfo reqheight .record_wizard]
+		wm minsize .record_wizard [expr [winfo reqwidth .record_wizard] + 350] [winfo reqheight .record_wizard]
 	} else {
 		raise .record_wizard
 	}

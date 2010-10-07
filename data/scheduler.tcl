@@ -161,21 +161,28 @@ proc scheduler_stations {} {
 		catch {array unset ::kanalcall}
 		catch {array unset ::kanalinput}
 		catch {array unset ::kanalext}
+		catch {array unset ::kanalextfreq}
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
-			if {[llength $line] < 4} {
+			if {[llength $line] < 5} {
 				if {[llength $line] == 2} {
 					lassign $line ::kanalid($i) ::kanalcall($i)
 					set ::kanalinput($i) $::option(video_input)
 					set ::kanalext($i) 0
+					set ::kanalextfreq($i) 0
 				}
 				if {[llength $line] == 3} {
 					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
 					set ::kanalext($i) 0
+					set ::kanalextfreq($i) 0
+				}
+				if {[llength $line] == 4} {
+					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
+					set ::kanalextfreq($i) 0
 				}
 			} else {
-				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
+				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i) ::kanalextfreq($i)
 			}
 			set ::scheduler(max_stations) $i
 			incr i
@@ -283,12 +290,14 @@ proc scheduler_delete {args} {
 				# daily repeat
 				if {[lindex $::recjob($i) 6] == 0} {
 					# no more repetitions
+					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
 					continue
 				} else {
 					# replace start date
 					set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + 86400] -format {%Y-%m-%d}]]
 					# replace repetitions
 					set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
+					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
 					# replace file name
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
@@ -302,6 +311,7 @@ proc scheduler_delete {args} {
 				# weekday repeat
 				if {[lindex $::recjob($i) 6] == 0} {
 					# no more repetitions
+					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
 					continue
 				} else {
 					# replace start date
@@ -312,6 +322,7 @@ proc scheduler_delete {args} {
 					} else {
 						set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + 86400] -format {%Y-%m-%d}]]
 					}
+					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
 					# replace file name
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
@@ -325,12 +336,14 @@ proc scheduler_delete {args} {
 				# weekly repeat
 				if {[lindex $::recjob($i) 6] == 0} {
 					# no more repetitions
+					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
 					continue
 				} else {
 					# replace start date
 					set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + (86400 * 7)] -format {%Y-%m-%d}]]
 					# replace repetitions
 					set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
+					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
 					# file name
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
@@ -447,6 +460,9 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 			if {$::kanalext($snumber) == 0} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalcall($snumber)}
 			} else {
+				if {$::kanalextfreq($snumber) != 0} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq($snumber)}
+				}
 				catch {exec {*}$::kanalext($snumber) &}
 			}
 			set status [monitor_partRunning 1]

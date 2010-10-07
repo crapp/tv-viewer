@@ -232,10 +232,14 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 						if {$::kanalext($snumber) == 0} {
 							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq} resultat_v4l2ctl
 						} else {
+							if {$::kanalextfreq($snumber) != 0} {
+								catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq($snumber)} resultat_v4l2ctl
+							}
 							catch {exec {*}$::kanalext($snumber) &}
 							set resultat_v4l2ctl External
 						}
 					} else {
+						puts "snumber strange $snumber"
 						catch {exec {*}$snumber &}
 						set resultat_v4l2ctl External
 					}
@@ -317,6 +321,9 @@ proc chan_zapperInputStart {tree lasts} {
 			if {$::kanalext([lindex $::station($lasts) 2]) == 0} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station($lasts) 1]} resultat_v4l2ctl
 			} else {
+				if {$::kanalextfreq([lindex $::station($lasts) 2]) != 0} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq([lindex $::station($lasts) 2])} resultat_v4l2ctl
+				}
 				catch {exec {*}$::kanalext([lindex $::station($lasts) 2]) &}
 				set resultat_v4l2ctl External
 			}

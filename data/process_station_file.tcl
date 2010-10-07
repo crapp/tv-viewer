@@ -29,18 +29,24 @@ proc process_StationFile {} {
 		set i 1
 		while {[gets $open_channel_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
-			if {[llength $line] < 4} {
+			if {[llength $line] < 5} {
 				if {[llength $line] == 2} {
 					lassign $line ::kanalid($i) ::kanalcall($i)
 					set ::kanalinput($i) $::option(video_input)
 					set ::kanalext($i) 0
+					set ::kanalextfreq($i) 0
 				}
 				if {[llength $line] == 3} {
 					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
 					set ::kanalext($i) 0
+					set ::kanalextfreq($i) 0
+				}
+				if {[llength $line] == 4} {
+					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
+					set ::kanalextfreq($i) 0
 				}
 			} else {
-				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
+				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i) ::kanalextfreq($i)
 			}
 			set ::station(max) $i
 			incr i
@@ -76,6 +82,9 @@ proc process_StationFile {} {
 							if {$::kanalext([lindex $::station(last) 2]) == 0} {
 								catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 							} else {
+								if {$::kanalextfreq([lindex $::station(last) 2]) != 0} {
+									catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq([lindex $::station(last) 2])} resultat_v4l2ctl
+								}
 								catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
 								set resultat_v4l2ctl External
 							}
@@ -104,6 +113,9 @@ proc process_StationFile {} {
 							if {$::kanalext([lindex $::station(last) 2]) == 0} {
 								catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
 							} else {
+								if {$::kanalextfreq([lindex $::station(last) 2]) != 0} {
+									catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq([lindex $::station(last) 2])} resultat_v4l2ctl
+								}
 								catch {exec {*}$::kanalext([lindex $::station(last) 2] &}
 								set resultat_v4l2ctl External
 							}

@@ -193,7 +193,11 @@ consider creating one and place it into extensions/fsdialog."
 		close $msgFile($::start_value(--lang))
 	}
 	puts "\nfinished"
-	puts "processed $amountFile files with $amountString text strings"
+	if {[info exists fileDiffList]} {
+		puts "processed $amountFile files with $amountString text strings. there are [llength $fileDiffList] new lines in $::start_value(--lang).msg"
+	} else {
+		puts "processed $amountFile files with $amountString text strings"
+	}
 	puts "please edit \"$::start_value(--lang).msg\" manually and provide translations,
 when finished send this file to the developers"
 	exit 0
