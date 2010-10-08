@@ -35,6 +35,7 @@ proc station_editPreview {w} {
 				if {[lindex [$w item [lindex [$w selection] end] -values] 3] == 0} {
 					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}
 				} else {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 4]}
 					catch {exec {*}[lindex [$w item [lindex [$w selection] end] -values] 3] &}
 				}
 				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
@@ -42,7 +43,11 @@ proc station_editPreview {w} {
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
-				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
+				if {[lindex [$w item [lindex [$w selection] end] -values] 3] != 0 && [lindex [$w item [lindex [$w selection] end] -values] 4] != 0} {
+					set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] "[lindex [$w item [lindex [$w selection] end] -values] 3] [lindex [$w item [lindex [$w selection] end] -values] 4]" 1 0]]
+				} else {
+					set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
+				}
 				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
@@ -63,6 +68,7 @@ proc station_editZap {w} {
 				if {[lindex [$w item [lindex [$w selection] end] -values] 3] == 0} {
 					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 1]}
 				} else {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex [$w item [lindex [$w selection] end] -values] 4]}
 					catch {exec {*}[lindex [$w item [lindex [$w selection] end] -values] 3] &}
 				}
 				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
@@ -70,7 +76,11 @@ proc station_editZap {w} {
 			} else {
 				vid_playbackStop 0 nopic
 				chan_zapperInputLoop cancel 0 0 0 0 0
-				set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
+				if {[lindex [$w item [lindex [$w selection] end] -values] 3] != 0 && [lindex [$w item [lindex [$w selection] end] -values] 4] != 0} {
+					set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] "[lindex [$w item [lindex [$w selection] end] -values] 3] [lindex [$w item [lindex [$w selection] end] -values] 4]" 1 0]]
+				} else {
+					set ::chan(change_inputLoop_id) [after 200 [list chan_zapperInputLoop 0 [lindex [$w item [lindex [$w selection] end] -values] 2] [lindex [$w item [lindex [$w selection] end] -values] 1] [lindex [$w item [lindex [$w selection] end] -values] 3] 1 0]]
+				}
 				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {

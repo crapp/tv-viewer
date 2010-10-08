@@ -239,8 +239,9 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 							set resultat_v4l2ctl External
 						}
 					} else {
-						puts "snumber strange $snumber"
-						catch {exec {*}$snumber &}
+						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $snumber end]} resultat_v4l2ctl
+						set extCommand [lrange $snumber 0 end-1]
+						catch {exec {*}$extCommand &}
 						set resultat_v4l2ctl External
 					}
 				}

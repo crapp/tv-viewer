@@ -482,7 +482,7 @@ proc main_frontendUi {} {
 	tooltips $toolbTop $toolbChanCtrl $toolbPlay main
 	
 	if {$::option(newsreader) == 1} {
-		after 5000 main_newsreaderAutomaticUpdate
+		after 3000 {main_newsreaderAutomaticUpdate}
 	}
 	
 	wm title . "TV-Viewer"

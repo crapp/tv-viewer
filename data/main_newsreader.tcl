@@ -117,10 +117,6 @@ proc main_newsreaderCheckUpdate {handler} {
 			
 			autoscroll $mf.scrollb_newsr
 			
-			bind .top_newsreader <Key-x> {puts [.top_newsreader.mf.t_top_newsr tag ranges _hylinkSF_bazaar_de]}
-			bind .top_newsreader <Key-c> {puts [.top_newsreader.mf.t_top_newsr mark current]}
-			bind .top_newsreader <Key-v> {puts [.top_newsreader.mf.t_top_newsrmark mark insert]}
-			
 			wm title $w [mc "Newsreader"]
 			wm protocol $w WM_DELETE_WINDOW [list main_newsreaderExit $w]
 			wm resizable $w 0 0
@@ -208,7 +204,6 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 		set search_index 0.0
 		foreach {key elem} [dict get $hyperlinks] {
 			set index [$textw search -all -exact -- $key $search_index end]
-			puts "index $index key $key"
 			if {[string trim $index] == {}} continue
 			if {[llength $index] > 1} {
 				set index [lreverse $index]
@@ -227,24 +222,19 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 								lappend tagIds $lid
 							}
 						}
-						puts "tagIds $tagIds"
 						if {[llength $tagIds] > 1} {
 							for {set forI 0} {$forI < [expr [llength $tagIds] -1]} {incr forI} {
 								set wordIndex [$textw index "[lindex $tagIds $forI] wordstart"]
 								set wordNextIndex [$textw index "$wordIndex -2c wordstart"]
-								puts "forI $forI"
 								if {$wordNextIndex == [$textw index "[lindex $tagIds [expr $forI + 1]] wordstart"]} {
-									puts [list $wordNextIndex [$textw index "[lindex $tagIds [expr $forI + 1]] wordstart"]]
 									if {[info exists tagFusion] == 0} {
 										lappend tagFusion [lindex $tagIds $forI]
 									}
 									lappend tagFusion [lindex $tagIds [expr $forI + 1]]
 								}
 							}
-							puts "tagFusion $tagFusion"
 							set tagStart [$textw index "[lindex $tagFusion end] wordstart"]
 							set tagEnd [lindex $tagFusion 0]
-							puts "tagStart $tagStart tagEnd $tagEnd"
 							$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
 							$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
 							$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
@@ -252,7 +242,6 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 							$textw tag add [subst $key]($i) $tagStart $tagEnd
 							set delI 0
 							foreach delTag $tagFusion {
-								puts "delTag $delTag"
 								if {$delI == 0} {
 									$textw delete $delTag "$delTag wordend"
 									incr delI
@@ -265,7 +254,6 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 						} else {
 							set tagStart [$textw index "$id wordstart"]
 							set tagEnd $id
-							puts "tagStart $tagStart tagEnd $tagEnd"
 							$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
 							$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
 							$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
@@ -276,7 +264,6 @@ proc main_newsreaderApplyTags {textw word_tags hyperlinks handler} {
 					} else {
 						set tagStart [$textw index "$id wordstart"]
 						set tagEnd $id
-						puts "tagStart $tagStart tagEnd $tagEnd"
 						$textw tag configure [subst $key]($i) -foreground #0064FF -underline on
 						$textw tag bind [subst $key]($i) <Any-Enter> "$textw tag configure [subst $key]($i) $hylink_enter; $textw configure -cursor hand1"
 						$textw tag bind [subst $key]($i) <Any-Leave> "$textw tag configure [subst $key]($i) $hylink_leave; $textw configure -cursor {}"
