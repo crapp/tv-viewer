@@ -31,7 +31,7 @@ proc error_interpUi {msg options} {
 	set bf [ttk::frame $w.f_buttons -style TLabelframe]
 	
 	ttk::label $mf.l_info -image $::icon_m(dialog-warning) -compound left
-	text $mf.t_info -yscrollcommand [list $mf.scrollb_info set] -wrap word -height 10
+	text $mf.t_info -yscrollcommand [list $mf.scrollb_info set] -wrap word -height 10 -insertwidth 0
 	ttk::scrollbar $mf.scrollb_info -command [list $mf.t_info yview]
 	ttk::checkbutton $mf.cb_stoperr -variable err(cb_stoperr) -text [mc "Skip further error messages"]
 	ttk::button $bf.b_ok -text [mc "OK"] -command [list destroy $w]
@@ -106,7 +106,7 @@ proc error_interpSdisk {msg options} {
 	set types {
 	{{Log Files}      {.log}       }
 	}
-	set infile "tv-viewer_error.log"
+	set infile "tv-viewer_crash.log"
 	set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".log" -initialfile "$infile" -initialdir "$::env(HOME)" -hidden 0 -title [mc "Choose name and location"] -parent .error_w]
 	if {[string trim $ofile] != {}} {
 		if {[file isdirectory [file dirname "$ofile"]]} {
@@ -125,7 +125,7 @@ proc error_interpSdisk {msg options} {
 			}
 			close $ofilew
 		} else {
-			log_writeOutTv 2 "Can not save timeshift video file."
+			log_writeOutTv 2 "Can not save crash log"
 			log_writeOutTv 2 "[file dirname $ofile]"
 			log_writeOutTv 2 "Not a directory."
 		}

@@ -42,6 +42,9 @@ proc vid_callbackVidData {} {
 					if {[string match "*while executing*" $line]} break
 					log_writeOutMpl 2 "$line"
 				}
+				if {$::option(log_warnDialogue)} {
+					status_feedbWarn 2 [mc "MPlayer has finished unexpectedly"]
+				}
 			}
 			unset -nocomplain ::data(mplayer)
 			place forget .fvidBg.cont
@@ -72,6 +75,9 @@ proc vid_callbackVidData {} {
 			set status_time [monitor_partRunning 4]
 			set status_record [monitor_partRunning 3]
 			if {[lindex $status_time 0] == 0 && [lindex $status_record 0] == 0 } {
+				bind . <<input_next>> "chan_zapperInput 1 1"
+				bind . <<input_prior>> "chan_zapperInput 1 -1"
+				bind . <<teleview>> {vid_playbackRendering}
 				if {[winfo exists .tray] == 1} {
 					settooltip .tray [mc "TV-Viewer idle"]
 				}

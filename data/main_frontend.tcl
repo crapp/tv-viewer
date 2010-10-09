@@ -490,7 +490,7 @@ proc main_frontendUi {} {
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
 	bind . <Key-x> {puts [dict get $::keyseq preferences label]}
-	bind . <Key-y> {puts "focus [focus -displayof .]"}
+	bind . <Key-y> {irgendwas}
 	
 	command_socket
 	
@@ -504,6 +504,9 @@ proc main_frontendUi {} {
 				}
 			} else {
 				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
+				if {$::option(log_warnDialogue)} {
+					status_feedbWarn 1 [mc "Could not detect MPlayer"]
+				}
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
@@ -520,6 +523,9 @@ proc main_frontendUi {} {
 			} else {
 				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
 				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
+				if {$::option(log_warnDialogue)} {
+					status_feedbWarn 1 [mc "Could not detect MPlayer"]
+				}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
 				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
@@ -536,6 +542,9 @@ proc main_frontendUi {} {
 				}
 			} else {
 				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				if {$::option(log_warnDialogue)} {
+					status_feedbWarn 1 [mc "Could not detect MPlayer"]
+				}
 				after 1500 {wm deiconify .}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
@@ -546,6 +555,9 @@ proc main_frontendUi {} {
 			if {[string trim [auto_execok mplayer]] == {}} {
 				after 1500 {wm deiconify .}
 				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				if {$::option(log_warnDialogue)} {
+					status_feedbWarn 1 [mc "Could not detect MPlayer"]
+				}
 				after 1500 {wm deiconify .}
 				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}

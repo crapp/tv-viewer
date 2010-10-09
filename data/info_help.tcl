@@ -125,17 +125,17 @@ Christian Rapp"] -justify center
 		
 		set nb2 [ttk::frame $mf.nb.f_credits]
 		$mf.nb add $nb2 -text [mc "Credits"] -padding 2
-		text $nb2.t_credits -yscrollcommand [list $nb2.scrollb_credits set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		text $nb2.t_credits -yscrollcommand [list $nb2.scrollb_credits set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0 -insertwidth 0
 		ttk::scrollbar $nb2.scrollb_credits -command [list $nb2.t_credits yview]
 		
 		set nb3 [ttk::frame $mf.nb.f_license]
 		$mf.nb add $nb3 -text [mc "License"] -padding 2
-		text $nb3.t_license -yscrollcommand [list $nb3.scrollb_license set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		text $nb3.t_license -yscrollcommand [list $nb3.scrollb_license set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0 -insertwidth 0
 		ttk::scrollbar $nb3.scrollb_license -command [list $nb3.t_license yview]
 		
 		set nb4 [ttk::frame $mf.nb.f_changelog]
 		$mf.nb add $nb4 -text [mc "Changelog"] -padding 2
-		text $nb4.t_changelog -yscrollcommand [list $nb4.scrollb_changelog set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		text $nb4.t_changelog -yscrollcommand [list $nb4.scrollb_changelog set] -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0 -insertwidth 0
 		ttk::scrollbar $nb4.scrollb_changelog -command [list $nb4.t_changelog yview]
 		
 		

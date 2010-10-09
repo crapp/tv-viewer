@@ -117,7 +117,7 @@ proc log_viewerSaveLog {handler parent} {
 
 proc log_viewerUi {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerUi \033\[0m \{$handler\}"
-	# 1 = TV-Viewer 2 =  MPlayer 3 = Scheduler
+	#handler 1 = TV-Viewer 2 =  MPlayer 3 = Scheduler
 	
 	array set ident {
 		1 tv
@@ -159,7 +159,7 @@ proc log_viewerUi {handler} {
 		ttk::checkbutton $ftop.cb_verb_err -text Error -variable log(verbose_$ident(op\($handler\))_err) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
 		listbox $mf.lb_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_lb_log_$ident(op\($handler\)) set] -width 0
 		ttk::scrollbar $mf.scrollb_lb_log_$ident(op\($handler\)) -command [list $mf.lb_log_$ident(op\($handler\)) yview]
-		text $mf.t_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_log_$ident(op\($handler\)) set] -wrap word
+		text $mf.t_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_log_$ident(op\($handler\)) set] -wrap word -insertwidth 0
 		ttk::scrollbar $mf.scrollb_log_$ident(op\($handler\)) -command [list $mf.t_log_$ident(op\($handler\)) yview]
 		ttk::button $wfbottom.b_exit_log_$ident(op\($handler\)) -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
 		

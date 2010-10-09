@@ -37,6 +37,9 @@ proc record_linkerPrestart {handler} {
 		if {[winfo exists .station.top_search]} {
 			log_writeOutTv 2 "You are running a station search while a recording fired."
 			log_writeOutTv 2 "The recording might be screwed up."
+			if {$::option(log_warnDialogue)} {
+				status_feedbWarn 1 [mc "Station search running while a recording fired"]
+			}
 			station_search 0 cancel 0 0 0 0
 			#FIXME Does station editor make a grab?
 			grab release .station.top_search
@@ -144,6 +147,9 @@ proc record_linkerRec {handler} {
 			}
 		} else {
 			log_writeOutTv 2 "Fatal, could not detect current_rec.conf"
+			if {$::option(log_warnDialogue)} {
+				status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+			}
 		}
 	}
 	if {[winfo exists .tray]} {
@@ -263,6 +269,9 @@ File size %" $file_size]
 		} else {
 			log_writeOutTv 2 "Can not detect timeshift video file."
 			log_writeOutTv 2 "Saving timeshift video file not possible"
+			if {$::option(log_warnDialogue)} {
+				status_feedbWarn 1 [mc "Missing file $::option(timeshift_path)/timeshift.mpeg"]
+			}
 		}
 	}
 	if {[winfo exists .fvidBg.l_anigif]} {

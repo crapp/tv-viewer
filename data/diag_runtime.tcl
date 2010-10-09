@@ -534,6 +534,47 @@ $mplayer_vo"
 	}
 }
 
+proc diag_checkLog {diag_file_append} {
+	diag_writeOut $diag_file_append "
+#######@@@ diag_checkLog @@@#######"
+	# read tvviewer log and append content
+	if {[file exists "$::env(HOME)/.tv-viewer/log/tvviewer.log"]} {
+		set open_LogTV [open "$::env(HOME)/.tv-viewer/log/tvviewer.log" r]
+		set logfileTV [read $open_LogTV]
+		close $open_LogTV
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Logfile TV-Viewer:
+$logfileTV
+
+***********************************************************************"
+	}
+	# read videoplayer log and append content
+	if {[file exists "$::env(HOME)/.tv-viewer/log/videoplayer.log"]} {
+		set open_LogVideo [open "$::env(HOME)/.tv-viewer/log/videoplayer.log" r]
+		set logfileVideo [read $open_LogVideo]
+		close $open_LogVideo
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Logfile Videoplayer:
+$logfileVideo
+
+***********************************************************************"
+	}
+	# read scheduler log and append content
+	if {[file exists "$::env(HOME)/.tv-viewer/log/scheduler.log"]} {
+		set open_LogSched [open "$::env(HOME)/.tv-viewer/log/scheduler.log" r]
+		set logfileSched [read $open_LogSched]
+		close $open_LogSched
+		diag_writeOut $diag_file_append "
+***********************************************************************
+Logfile Scheduler
+$logfileSched
+
+***********************************************************************"
+	}
+}
+
 proc diag_exit {diag_file_append} {
 	# Program collected all necessary data.
 	diag_writeOut $diag_file_append "
@@ -604,5 +645,7 @@ after 200
 diag_checkStation $diag_file_append
 after 200
 diag_checkDep $diag_file_append
+after 200
+diag_checkLog $diag_file_append
 after 200
 diag_exit $diag_file_append

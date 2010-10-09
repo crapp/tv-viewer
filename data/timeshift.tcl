@@ -40,6 +40,9 @@ proc timeshift {tbutton} {
 	if {[file exists $::option(video_device)] == 0} {
 		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
 		log_writeOutTv 2 "Have a look into the preferences and change it."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
+		}
 		return
 	}
 	record_linkerPrestart timeshift

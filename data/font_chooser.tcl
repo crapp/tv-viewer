@@ -135,6 +135,9 @@ proc font_chooserUi {returnw cvar} {
 	
 	if {[info exists fontindex] == 0 || [info exists styleindex] == 0 || [info exists sizeindex] == 0} {
 		log_writeOutTv 2 "Can not identify font. Font chooser will be closed. Report this incident to the Author."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Font chooser Ui has finished unexpectedly"]
+		}
 		destroy $w
 		return
 	} else {

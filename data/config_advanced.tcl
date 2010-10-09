@@ -73,6 +73,9 @@ proc option_screen_8 {} {
 		spinbox $::window(advanced_nb3).sb_logging_sched -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_sched)
 		ttk::label $::window(advanced_nb3).l_logging_tv -text [mc "TV-Viewer logfile size in kBytes"]
 		spinbox $::window(advanced_nb3).sb_logging_tv -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_tv)
+		ttk::labelframe $::window(advanced_nb3).lf_warn -text [mc "Warning dialogue"]
+		set lf_warn $::window(advanced_nb3).lf_warn
+		ttk::checkbutton $lf_warn.cb_logWarn -text [mc "Enable warning dialogue"] -variable choice(cb_logWarn)
 		
 		grid columnconfigure $::window(advanced_nb1) 0 -weight 1
 		grid columnconfigure $lf_aspect 1 -minsize 100
@@ -109,6 +112,8 @@ proc option_screen_8 {} {
 		grid $::window(advanced_nb3).sb_logging_sched -in $::window(advanced_nb3).lf_logging -row 1 -column 1 -pady "0 3"
 		grid $::window(advanced_nb3).l_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $::window(advanced_nb3).sb_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 1 -pady "0 3"
+		grid $lf_warn -in $::window(advanced_nb3) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_warn.cb_logWarn -in $lf_warn -row 0 -column 0 -sticky w -padx 7 -pady 3
 		
 		#Additional Code
 		
@@ -193,6 +198,13 @@ proc option_screen_8 {} {
 			#Collect and set data for advanced section.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt8 \033\[0m \{$w\} \{$w2\}"
 			log_writeOutTv 0 "Starting to collect data for advanced section."
+			
+			set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
+			set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
+			set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
+			set lf_factory $::window(advanced_nb1).lf_advanced_factory
+			set lf_warn $::window(advanced_nb3).lf_warn
+			
 			if {[info exists ::option(player_aspect)]} {
 				set ::choice(cb_lf_aspect) $::option(player_aspect)
 			} else {
@@ -228,8 +240,8 @@ proc option_screen_8 {} {
 			} else {
 				set ::choice(cb_advanced_mconfig) $::stnd_opt(player_mconfig)
 			}
-			config_advancedAspectLF $::window(advanced_nb1).lf_advanced_aspect.cb_keepaspect $::window(advanced_nb1).lf_advanced_aspect.rb_moniaspect $::window(advanced_nb1).lf_advanced_aspect.mb_moniaspect $::window(advanced_nb1).lf_advanced_aspect.rb_monipixaspect $::window(advanced_nb1).lf_advanced_aspect.sb_monipixaspect
-			config_advancedAspect $::window(advanced_nb1).lf_advanced_aspect.mb_moniaspect $::window(advanced_nb1).lf_advanced_aspect.sb_monipixaspect
+			config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.lf_advanced_aspect.mb_moniaspect $:lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect
+			config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect
 			
 			if {[info exists ::option(player_additional_commands)]} {
 				set ::choice(entry_mplayer_add_coms) $::option(player_additional_commands)
@@ -246,47 +258,27 @@ proc option_screen_8 {} {
 			} else {
 				set ::choice(entry_af_mplayer) $::stnd_opt(player_add_af_commands)
 			}
-			
-			if {[info exists ::option(log_files)]} {
-				set ::choice(cb_lf_logging) $::option(log_files)
-			} else {
-				set ::choice(cb_lf_logging) $::stnd_opt(log_files)
-			}
-			if {[info exists ::option(log_size_tvviewer)]} {
-				if {$::option(log_size_tvviewer) > 100} {
-					set ::choice(sb_logging_tv) $::stnd_opt(log_size_tvviewer)
-				} else {
-					set ::choice(sb_logging_tv) $::option(log_size_tvviewer)
-				}
-			} else {
+			set ::choice(cb_lf_logging) $::option(log_files)
+			if {$::option(log_size_tvviewer) > 100} {
 				set ::choice(sb_logging_tv) $::stnd_opt(log_size_tvviewer)
-			}
-			if {[info exists ::option(log_size_mplay)]} {
-				if {$::option(log_size_mplay) > 100} {
-					set ::choice(sb_logging_mplayer) $::stnd_opt(log_size_mplay)
-				} else {
-					set ::choice(sb_logging_mplayer) $::option(log_size_mplay)
-				}
 			} else {
+				set ::choice(sb_logging_tv) $::option(log_size_tvviewer)
+			}
+			if {$::option(log_size_mplay) > 100} {
 				set ::choice(sb_logging_mplayer) $::stnd_opt(log_size_mplay)
-			}
-			if {[info exists ::option(log_size_scheduler)]} {
-				if {$::option(log_size_scheduler) > 100} {
-					set ::choice(sb_logging_sched) $::stnd_opt(log_size_scheduler)
-				} else {
-					set ::choice(sb_logging_sched) $::option(log_size_scheduler)
-				}
 			} else {
+				set ::choice(sb_logging_mplayer) $::option(log_size_mplay)
+			}
+			if {$::option(log_size_scheduler) > 100} {
 				set ::choice(sb_logging_sched) $::stnd_opt(log_size_scheduler)
+			} else {
+				set ::choice(sb_logging_sched) $::option(log_size_scheduler)
 			}
 			config_advancedLogging $::window(advanced_nb3)
+			set ::choice(cb_logWarn) $::option(log_warnDialogue)
 			
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
-					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
-					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
-					set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
-					set lf_factory $::window(advanced_nb1).lf_advanced_factory
 					settooltip $::window(advanced_nb1).cb_advanced_aspect [mc "Let TV-Viewer manage video aspect ratio (recommended)"]
 					settooltip $lf_aspect.cb_keepaspect [mc "Keep video aspect ratio"]
 					settooltip $lf_aspect.rb_moniaspect [mc "Choose either monitor aspect ratio or monitor pixel aspect.
@@ -326,11 +318,13 @@ Minimum: 10kb Maximum: 100kb"]
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
 Minimum: 10kb Maximum: 100kb"]
+					settooltip $lf_warn.cb_logWarn [mc "If activated a warning dialogue will popup in case of serious errors"]
 				} else {
 					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
 					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
 					set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
 					set lf_factory $::window(advanced_nb1).lf_advanced_factory
+					set lf_warn $::window(advanced_nb3).lf_warn
 					settooltip $::window(advanced_nb1).cb_advanced_aspect {}
 					settooltip $lf_aspect.cb_keepaspect {}
 					settooltip $lf_aspect.rb_moniaspect {}
@@ -346,6 +340,7 @@ Minimum: 10kb Maximum: 100kb"]
 					settooltip $::window(advanced_nb3).sb_logging_mplayer {}
 					settooltip $::window(advanced_nb3).sb_logging_tv {}
 					settooltip $::window(advanced_nb3).sb_logging_sched {}
+					settooltip $lf_warn.cb_logWarn {}
 				}
 			}
 		}
@@ -353,6 +348,13 @@ Minimum: 10kb Maximum: 100kb"]
 		proc stnd_opt8 {w w2 w3} {
 			#Defaults for advanced section.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt8 \033\[0m \{$w\} \{$w2\}"
+			
+			set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
+			set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
+			set lf_mconfig $::window(advanced_nb1).lf_advanced_mconfig
+			set lf_factory $::window(advanced_nb1).lf_advanced_factory
+			set lf_warn $::window(advanced_nb3).lf_warn
+			
 			log_writeOutTv 1 "Setting advanced options to default."
 			set ::choice(cb_lf_aspect) $::stnd_opt(player_aspect)
 			set ::choice(cb_keepaspect) $::stnd_opt(player_keepaspect)
@@ -361,8 +363,8 @@ Minimum: 10kb Maximum: 100kb"]
 			set ::choice(sb_monipixaspect) $::stnd_opt(player_pixaspect_val)
 			set ::choice(cb_advanced_shot) $::stnd_opt(player_shot)
 			set ::choice(cb_advanced_mconfig) $::stnd_opt(player_mconfig)
-			config_advancedAspectLF $::window(advanced_nb1).lf_advanced_aspect.cb_keepaspect $::window(advanced_nb1).lf_advanced_aspect.rb_moniaspect $::window(advanced_nb1).lf_advanced_aspect.mb_moniaspect $::window(advanced_nb1).lf_advanced_aspect.rb_monipixaspect $::window(advanced_nb1).lf_advanced_aspect.sb_monipixaspect
-			config_advancedAspect $::window(advanced_nb1).lf_advanced_aspect.mb_moniaspect $::window(advanced_nb1).lf_advanced_aspect.sb_monipixaspect
+			config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.lf_advanced_aspect.mb_moniaspect $:lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect
+			config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect
 			set ::choice(entry_mplayer_add_coms) $::stnd_opt(player_additional_commands)
 			set ::choice(entry_vf_mplayer) $::stnd_opt(player_add_vf_commands)
 			set ::choice(entry_af_mplayer) $::stnd_opt(player_add_af_commands)
@@ -371,6 +373,7 @@ Minimum: 10kb Maximum: 100kb"]
 			set ::choice(sb_logging_mplayer) $::stnd_opt(log_size_mplay)
 			set ::choice(sb_logging_sched) $::stnd_opt(log_size_scheduler)
 			config_advancedLogging $::window(advanced_nb3)
+			set ::choice(cb_logWarn) $::stnd_opt(log_warnDialogue)
 		}
 		default_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)
 	}

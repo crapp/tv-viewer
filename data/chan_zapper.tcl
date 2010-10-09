@@ -201,11 +201,17 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 	if {$secs == 3000} {
 		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
 		log_writeOutTv 2 "This didn't work, BAD."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Timeout for changing video input"]
+		}
 		return
 	}
 	if {[file exists $::option(video_device)] == 0} {
 		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
 		log_writeOutTv 2 "Have a look into the preferences and change it."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
+		}
 		return
 	}
 	set status_tv [vid_callbackMplayerRemote alive]
@@ -282,11 +288,17 @@ proc chan_zapperInputQuery {secs input restart} {
 	if {$secs == 3000} {
 		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
 		log_writeOutTv 2 "This didn't work, BAD."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Timeout for changing video input"]
+		}
 		return
 	}
 	if {[file exists $::option(video_device)] == 0} {
 		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
 		log_writeOutTv 2 "Have a look into the preferences and change it."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
+		}
 		return
 	}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} check_back_input

@@ -96,7 +96,7 @@ proc main_newsreaderCheckUpdate {handler} {
 			set mf [ttk::frame $w.mf]
 			set fb [ttk::frame $w.mf.btn -style TLabelframe]
 			ttk::label $mf.l_top_newsr -justify left
-			text $mf.t_top_newsr -yscrollcommand [list $mf.scrollb_newsr set] -width 0 -height 0
+			text $mf.t_top_newsr -yscrollcommand [list $mf.scrollb_newsr set] -width 0 -height 0 -insertwidth 0
 			ttk::scrollbar $mf.scrollb_newsr -command [list $mf.t_top_newsr yview]
 			ttk::button $fb.b_newsr_homepage -text [mc "Homepage"] -compound left -image $::icon_s(internet) -command main_newsreaderHomepage
 			ttk::button $fb.b_newsr_ok -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command [list main_newsreaderExit $w]

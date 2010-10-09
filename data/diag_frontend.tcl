@@ -35,7 +35,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 		
 		ttk::button $fbottom.b_close -command {diag_UiExit} -text [mc "Exit"] -compound left -image $::icon_s(dialog-close)
 		
-		text $mf.t_diagtext -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0
+		text $mf.t_diagtext -width 0 -height 0 -bd 0 -relief flat -highlightthickness 0 -insertwidth 0
 		
 		grid columnconfigure $mf 0 -weight 1 -minsize 350
 		

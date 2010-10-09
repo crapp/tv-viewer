@@ -259,7 +259,7 @@ proc system_trayToggle {handler} {
 			}
 		} else {
 			set doIt 0
-			set w {.station .station.delete .station.top_AddEdit .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .record_wizard.delete .error_w .key.default .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
+			set w {.station .station.delete .station.top_AddEdit .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .record_wizard.delete .error_w .topWarn .key.default .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
 			foreach window $w {
 				if {[winfo exists $window]} {
 					set doIt 1

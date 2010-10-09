@@ -28,10 +28,11 @@ proc process_config_wizardRead {} {
 		newsreader 1
 		newsreader_interval 3
 		epg_command "[auto_execok tvbrowser]"
-		#log_files 1
-		#log_size_tvviewer 30
-		#log_size_mplay 30
-		#log_size_scheduler 30
+		log_files 1
+		log_size_tvviewer 30
+		log_size_mplay 30
+		log_size_scheduler 30
+		log_warnDialogue 1
 		#video_device /dev/video0
 		video_standard PAL
 		forcevideo_standard 0
@@ -124,6 +125,7 @@ proc process_config_wizardRead {} {
 		log_size_tvviewer 30
 		log_size_mplay 30
 		log_size_scheduler 30
+		log_warnDialogue 1
 		#video_device /dev/video0
 		video_standard PAL
 		forcevideo_standard 0
@@ -303,6 +305,7 @@ proc process_config_wizardRead {} {
 		sb_logging_tv log_size_tvviewer
 		sb_logging_mplayer log_size_mplay
 		sb_logging_sched log_size_scheduler
+		cb_logWarn log_warnDialogue
 	}
 
 	if {[file exists "$::option(home)/config/tv-viewer.conf"]} {
