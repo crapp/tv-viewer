@@ -146,7 +146,7 @@ proc record_linkerRec {handler} {
 				lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
 			}
 		} else {
-			log_writeOutTv 2 "Fatal, could not detect current_rec.conf"
+			log_writeOutTv 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 			}

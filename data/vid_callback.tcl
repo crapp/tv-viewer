@@ -207,7 +207,10 @@ proc vid_callbackVidData {} {
 		}
 	} else {
 		log_writeOutTv 2 "Tried to read channel ::data(mplayer)."
-		log_writeOutTv 2 "Pipe seems to be broken."
+		log_writeOutTv 2 "Socket seems to be broken, you should report this incident"
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Can not read callback channel"]
+		}
 	}
 }
 

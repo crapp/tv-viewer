@@ -278,12 +278,12 @@ proc station_itemApplyAddEdit {w warn tree handler} {
 	#handler 1 = add 2 = edit
 	if {[info exists ::sitem(e_Station)] == 0 || [info exists ::sitem(e_Freq)] == 0} {
 		$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-		log_writeOutTv 2 "Please specify name and frequency for each station."
+		log_writeOutTv 1 "Please specify name and frequency for each station."
 		return
 	} else {
 		if {[string trim $::sitem(e_Station)] == {} || [string trim $::sitem(e_Freq)] == {}} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 2 "Please specify name and frequency for each station."
+			log_writeOutTv 1 "Please specify name and frequency for each station."
 			return
 		}
 	}

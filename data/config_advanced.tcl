@@ -112,7 +112,7 @@ proc option_screen_8 {} {
 		grid $::window(advanced_nb3).sb_logging_sched -in $::window(advanced_nb3).lf_logging -row 1 -column 1 -pady "0 3"
 		grid $::window(advanced_nb3).l_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $::window(advanced_nb3).sb_logging_tv -in $::window(advanced_nb3).lf_logging -row 2 -column 1 -pady "0 3"
-		grid $lf_warn -in $::window(advanced_nb3) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
+		grid $lf_warn -in $::window(advanced_nb3) -row 1 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $lf_warn.cb_logWarn -in $lf_warn -row 0 -column 0 -sticky w -padx 7 -pady 3
 		
 		#Additional Code
@@ -240,7 +240,7 @@ proc option_screen_8 {} {
 			} else {
 				set ::choice(cb_advanced_mconfig) $::stnd_opt(player_mconfig)
 			}
-			config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.lf_advanced_aspect.mb_moniaspect $:lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect
+			config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.mb_moniaspect $lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect
 			config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect
 			
 			if {[info exists ::option(player_additional_commands)]} {
@@ -363,7 +363,7 @@ Minimum: 10kb Maximum: 100kb"]
 			set ::choice(sb_monipixaspect) $::stnd_opt(player_pixaspect_val)
 			set ::choice(cb_advanced_shot) $::stnd_opt(player_shot)
 			set ::choice(cb_advanced_mconfig) $::stnd_opt(player_mconfig)
-			config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.lf_advanced_aspect.mb_moniaspect $:lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect
+			config_advancedAspectLF $lf_aspect.cb_keepaspect $lf_aspect.rb_moniaspect $lf_aspect.mb_moniaspect $lf_aspect.rb_monipixaspect $lf_aspect.sb_monipixaspect
 			config_advancedAspect $lf_aspect.mb_moniaspect $lf_aspect.sb_monipixaspect
 			set ::choice(entry_mplayer_add_coms) $::stnd_opt(player_additional_commands)
 			set ::choice(entry_vf_mplayer) $::stnd_opt(player_add_vf_commands)

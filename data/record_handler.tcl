@@ -23,19 +23,19 @@ proc record_applyTimeDate {tree lb w handler} {
 	if {$::option(rec_hour_format) == 24} {
 		if {$thour > 23 || $thour < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (%-hour clock)!" $::option(rec_hour_format)]
-			log_writeOutTv 2 "Time format incorrect (24-hour clock)."
+			log_writeOutTv 1 "Time format incorrect (24-hour clock)."
 			return
 		}
 	} else {
 		if {$thour > 12 || $thour < 1} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (%-hour clock)!" $::option(rec_hour_format)]
-			log_writeOutTv 2 "Time format incorrect (12-hour clock)."
+			log_writeOutTv 1 "Time format incorrect (12-hour clock)."
 			return
 		}
 	}
 	if {$tmin > 59 || $tmin < 0} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (min)!"]
-		log_writeOutTv 2 "Time format incorrect (min)."
+		log_writeOutTv 1 "Time format incorrect (min)."
 		return
 	}
 	set curr_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
@@ -43,7 +43,7 @@ proc record_applyTimeDate {tree lb w handler} {
 	foreach diff [difftime $chos_date $curr_date] {
 		if {$diff < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Chosen date is in the past!"]
-			log_writeOutTv 2 "Chosen date is in the past."
+			log_writeOutTv 1 "Chosen date is in the past."
 			return
 		}
 	}
@@ -59,7 +59,7 @@ proc record_applyTimeDate {tree lb w handler} {
 		set timeoff [expr {([clock scan $thour\:$tmin]-[clock seconds])*1000}]
 		if {$timeoff < -500000} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time is in the past!"]
-			log_writeOutTv 2 "Time is in the past."
+			log_writeOutTv 1 "Time is in the past."
 			return
 		}
 	}
@@ -78,17 +78,17 @@ proc record_applyDuration {tree lb w handler} {
 	set dsec [scan $::record(duration_sec) %d]
 	if {$dhour < 0 || $dhour > 99} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Duration not specified correctly (hour)!"]
-		log_writeOutTv 2 "Duration not specified correctly (hour)."
+		log_writeOutTv 1 "Duration not specified correctly (hour)."
 		return
 	}
 	if {$dmin < 0 || $dmin > 59} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Duration not specified correctly (min)!"]
-		log_writeOutTv 2 "Duration not specified correctly (min)."
+		log_writeOutTv 1 "Duration not specified correctly (min)."
 		return
 	}
 	if {$dsec < 0 || $dsec > 59} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Duration not specified correctly (sec)!"]
-		log_writeOutTv 2 "Duration not specified correctly (sec)."
+		log_writeOutTv 1 "Duration not specified correctly (sec)."
 		return
 	}
 	set duration_calc [expr ($dhour * 3600) + ($dmin * 60) + $dsec]
@@ -101,13 +101,13 @@ proc record_applyResolution {tree lb duration_calc w handler} {
 	if {[string tolower $::option(video_standard)] == "ntsc" } {
 		if {$::record(resolution_width) > 720 || $::record(resolution_width) < 0 || $::record(resolution_height) > 480 || $::record(resolution_height) < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Resolution format incorrect!"]
-			log_writeOutTv 2 "Resolution format incorrect."
+			log_writeOutTv 1 "Resolution format incorrect."
 			return
 		}
 	} else {
 		if {$::record(resolution_width) > 720 || $::record(resolution_width) < 0 || $::record(resolution_height) > 576 || $::record(resolution_height) < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Resolution format incorrect!"]
-			log_writeOutTv 2 "Resolution format incorrect."
+			log_writeOutTv 1 "Resolution format incorrect."
 			return
 		}
 	}

@@ -365,6 +365,9 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 						catch {set ::choice(mbVideo_input) $vinput(1)}
 					}
 				} else {
+					if {$::option(log_warnDialogue)} {
+						status_feedbWarn 1 [mc "No video device nodes"]
+					}
 					log_writeOutTv 2 "Couldn't detect any video device nodes."
 					log_writeOutTv 2 "Is your tv-card set up correctly?"
 					$w1.lf_video_device state disabled

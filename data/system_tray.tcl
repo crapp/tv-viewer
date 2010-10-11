@@ -64,7 +64,11 @@ proc system_trayActivate {handler} {
 				}
 			}
 		} else {
-			log_writeOutTv 2 "Could not create an icon in system tray."
+			if {$::option(log_warnDialogue)} {
+				status_feedbWarn 1 [mc "Can not create system tray icon"]
+			}
+			log_writeOutTv 2 "Can not create an icon in the system tray"
+			log_writeOutTv 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
 		}
 	} else {
 		system_trayResizer cancel

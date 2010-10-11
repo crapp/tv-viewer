@@ -541,7 +541,7 @@ proc main_frontendUi {} {
 					after 1500 {wm deiconify . ; event generate . <<teleview>>}
 				}
 			} else {
-				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
 				if {$::option(log_warnDialogue)} {
 					status_feedbWarn 1 [mc "Could not detect MPlayer"]
 				}
@@ -554,7 +554,7 @@ proc main_frontendUi {} {
 		} else {
 			if {[string trim [auto_execok mplayer]] == {}} {
 				after 1500 {wm deiconify .}
-				log_writeOutTv 2 "Can't start tv playback, MPlayer is not installed on this system."
+				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
 				if {$::option(log_warnDialogue)} {
 					status_feedbWarn 1 [mc "Could not detect MPlayer"]
 				}
