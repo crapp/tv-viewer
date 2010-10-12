@@ -6,6 +6,8 @@ namespace import -force msgcat::mcset
 
 ### ../data/chan_zapper.tcl ###
 
+mcset de {Timeout for changing video input} {Timeout während des Versuchs den Videoeingang zu wechseln}
+mcset de {Video device % does not exist} {Das Video device %s existiert nicht}
 
 ### ../data/colorm.tcl ###
 
@@ -50,6 +52,8 @@ mcset de {Enable Logging} {Logging aktivieren}
 mcset de {MPlayer logfile size in kBytes} {MPlayer Logfile Größe in kBytes}
 mcset de {Scheduler logfile size in kBytes} {Scheduler Logfile Größe in kBytes}
 mcset de {TV-Viewer logfile size in kBytes} {TV-Viewer Logfile Größe in kBytes}
+mcset de {Report errors} {Fehler melden}
+mcset de {Popup dialogue box for errors} {Dialogbox einblenden wenn es einen Fehler gibt}
 mcset de {Let TV-Viewer manage video aspect ratio (recommended)} {TV-Viewer das Video Seitenverhältnis steuern lassen (Empfohlen)}
 mcset de {Choose either monitor aspect ratio or monitor pixel aspect.
 This may improve picture quality.} {Wählen zwischen Monitor Seitenverhältnis oder
@@ -106,6 +110,7 @@ Minimum: 10kb Maximum: 100kb} {Legt fest, wie groß das Logfile für den Schedul
 Wenn die Größe erreicht ist wird die Datei gelöscht und eine
 neue angelegt.
 Minimum: 10kb Maximum: 100kb}
+mcset de {If activated a dialogue box will popup in case of serious errors} {Wenn aktiviert wird bei schweren Fehler eine Dialogbox eingeblendet}
 
 ### ../data/config_analog.tcl ###
 
@@ -131,6 +136,7 @@ mcset de {Disabled} {Deaktiviert}
 mcset de {Analog settings are disabled,
 while running a recording or timeshift} {Die Einstellungen Analog sind deaktiviert
 während eine Aufnahme oder Timeshift läuft}
+mcset de {No video device nodes} {Keine Video Device Gerätedateien}
 mcset de {Choose the video device node.
 See "dmesg | grep ivtv || pvrusb2 || cx18"} {Wähle das Video Device.
 Siehe "dmesg | grep ivtv || pvrusb2 || cx18"}
@@ -445,6 +451,7 @@ mcset de {right} {Rechts}
 mcset de {bottom left} {Unten links}
 mcset de {bottom} {Unten}
 mcset de {bottom right} {Unten rechts}
+mcset de {Font chooser Ui has finished unexpectedly} {Dialog zur Schriftauswahl wurde unerwartet beendet}
 mcset de {Choose a font} {Wähle eine Schrift}
 mcset de {Choose font style} {Schriftstil auswählen}
 mcset de {Choose font size} {Schriftgröße auswählen}
@@ -474,7 +481,7 @@ mcset de {About TV-Viewer} {Über TV-Viewer}
 ### ../data/key_sequences.tcl ###
 
 mcset de {Available Key Sequences} {Verfügbare Tastenkombinationen}
-mcset de {Change shortcut} {Change shortcut}
+mcset de {Change shortcut} {Tastenkombination bearbeiten}
 mcset de {Key Sequences} {Tastenkombinationen}
 mcset de {Action} {Aktion}
 mcset de {Key Sequence} {Tastenkombination}
@@ -521,6 +528,7 @@ mcset de {Navigation} {Navigation}
 mcset de {View} {Ansicht}
 mcset de {Help} {Hilfe}
 mcset de {Welcome to TV-Viewer %} {Willkommen bei TV-Viewer %s}
+mcset de {Could not detect MPlayer} {Konnte MPlayer nicht finden}
 mcset de {TV-Viewer idle} {TV-Viewer inaktiv}
 
 ### ../data/main_menu.tcl ###
@@ -545,7 +553,10 @@ mcset de {+10 minutes} {+10 Minuten}
 mcset de {File end} {Dateiende}
 mcset de {Pan&Scan} {Pan&Scan}
 mcset de {Zoom +} {Zoom +}
+mcset de {Zoom ++} {Zoom ++}
 mcset de {Zoom -} {Zoom -}
+mcset de {Zoom --} {Zoom --}
+mcset de {Reset zoom} {Zoom zrücksetzen}
 mcset de {Pan&Scan (16:9 / 4:3)} {Pan&Scan (16:9 / 4:3)}
 mcset de {Move up} {Nach oben bewegen}
 mcset de {Move down} {Nach unten bewegen}
@@ -606,8 +617,10 @@ mcset de {Increase audio delay} {Audioverzögerung erhöhen}
 mcset de {Decrease audio delay} {Audioverzögerung verringern}
 mcset de {Toggle mute} {Stummschalten}
 mcset de {Toggle Fullscreen} {In den Vollbildmodus wechseln}
-mcset de {Increase Zoom} {Zoom vergrößern}
-mcset de {Decrease Zoom} {Zoom verringern}
+mcset de {Increase Zoom small step} {Hineinzoomen kleiner Schritt}
+mcset de {Increase Zoom big step} {Hineinzoomen großer Schritt}
+mcset de {Decrease Zoom small step} {Herauszoomen kleiner Schritt}
+mcset de {Decrease Zoom big step} {Herauszoomen großer Schritt}
 mcset de {Move video up} {Video nach oben bewegen}
 mcset de {Move video down} {Video nach unten bewegen}
 mcset de {Move video right} {Video nach rechts bewegen}
@@ -705,6 +718,8 @@ mcset de {Resolution format incorrect!} {Format der Auflösung falsch!}
 
 ### ../data/record_linker.tcl ###
 
+mcset de {Station search running while a recording fired} {Sendersuche lief während eine Aufnahme gestartet wurde}
+mcset de {Missing file ../.tv-viewer/config/current_rec.conf} {Datei ../.tv-viewer/config/current_rec.conf fehlt}
 mcset de {Currently recording %
 Started at %} {Aufnahme von %s läuft.
 Gestarted um %s}
@@ -715,6 +730,7 @@ mcset de {Playing file: %} {Dateiwiedergabe: %s}
 mcset de {Save timeshift video file
 File size %} {Timeshift Videodatei speichern
 Dateigröße %s}
+mcset de {Missing file $::option(timeshift_path)/timeshift.mpeg} {Datei $::option(timeshift_path)/timeshift.mpeg fehlt}
 
 ### ../data/record_wizard.tcl ###
 
@@ -772,6 +788,7 @@ mcset de {Unlock} {Entsperren}
 mcset de {Frequency} {Fequenz}
 mcset de {Video input} {Videoeingang}
 mcset de {External Tuner} {Externer Tuner}
+mcset de {Int Frequency} {Int Frequenz}
 mcset de {Perform an automatic station search} {Automatische Sendersuche durchführen}
 mcset de {Add a new television station} {Einen neuen Sender hinzufügen}
 mcset de {Delete selected television station} {Den gewählten Kanal entfernen}
@@ -792,6 +809,8 @@ mcset de {Delete stations} {Sender löschen}
 mcset de {Station:} {Sender:}
 mcset de {Frequency:} {Frequenz:}
 mcset de {Video input:} {Videoeingang:}
+mcset de {Command:} {Befehl:}
+mcset de {Internal frequency:} {Interne Frequenz:}
 mcset de {Add a new station} {Neuen Sender hinzufügen}
 mcset de {Edit Station / Frequency} {Sender / Frequenz bearbeiten}
 mcset de {Provide a name for the television station} {Einen Namen für den Sender angeben}
@@ -811,6 +830,15 @@ Man kann Stellvertreter verwenden:
 %%F  Frequenz
 %%S  Sendername
 z.B. externalTune %%F %%S}
+mcset de {If you use an external tuner that is connected to the TV input
+of your device you may need to set the internal tuner to a
+specific frequency.
+Use a value of "0" if you do not need your internal tuner
+(e.g. if you are using composite or s-video)} {Wenn man einen externen tuner am TV-Eingang angeschlossen hat,
+muss man den internen Tuner möglicherweise auf eine spezielle
+Frequenz einstellen.
+Der Wert "0" bedeutet, dass keine Änderung notwendig ist
+(z.B. wenn man den Composite oder S-Video Eingang verwendet}
 mcset de {Please specify name and frequency for each station} {Name und Frequenz für Sender angeben}
 
 ### ../data/station_search.tcl ###
@@ -853,9 +881,12 @@ mcset de {Frequency: %} {Frequenz: %s}
 
 ### ../data/status_feedb.tcl ###
 
+mcset de {Show log} {Log anzeigen}
+mcset de {TV-Viewer Error} {TV-Viewer Fehler}
 
 ### ../data/system_tray.tcl ###
 
+mcset de {Can not create system tray icon} {Kann Icon nicht in den System Tray stellen}
 mcset de {Hide} {Verstecken}
 mcset de {Restore} {Wiederherstellen}
 
@@ -896,7 +927,9 @@ mcset de {Current position / File length} {Aktuelle Position / Länge der Aufnah
 
 ### ../data/vid_callback.tcl ###
 
+mcset de {MPlayer has finished unexpectedly} {MPlayer wurde unerwartet beendet}
 mcset de {idle} {inaktiv}
+mcset de {Can not read callback channel} {Kein Zugriff auf Callback Sockel}
 
 ### ../data/vid_file_calc.tcl ###
 
@@ -906,6 +939,7 @@ mcset de {idle} {inaktiv}
 
 ### ../data/vid_playback.tcl ###
 
+mcset de {Missing file for file playback} {File für die Dateiwiedergabe nicht gefunden}
 
 ### ../data/vid_pmhandler.tcl ###
 

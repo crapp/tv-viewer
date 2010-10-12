@@ -75,10 +75,16 @@ proc event_constr {handler} {
 	bind .fvidBg <Double-ButtonPress-1> {event generate . <<wmFull>>}
 	event add <<wmCompact>> {*}[dict get $::keyseq wmCompact seq]
 	bind . <<wmCompact>> vid_wmCompact
-	event add <<wmZoomInc>> {*}[dict get $::keyseq wmZoomInc seq]
-	bind . <<wmZoomInc>> [list vid_wmPanscan .fvidBg.cont 1]
-	event add <<wmZoomDec>> {*}[dict get $::keyseq wmZoomDec seq]
-	bind . <<wmZoomDec>> [list vid_wmPanscan .fvidBg.cont -1]
+	event add <<wmZoomIncSmall>> {*}[dict get $::keyseq wmZoomIncSmall seq]
+	bind . <<wmZoomIncSmall>> [list vid_wmPanscan .fvidBg.cont 1 1]
+	event add <<wmZoomIncBig>> {*}[dict get $::keyseq wmZoomIncBig seq]
+	bind . <<wmZoomIncBig>> [list vid_wmPanscan .fvidBg.cont 1 2]
+	event add <<wmZoomDecSmall>> {*}[dict get $::keyseq wmZoomDecSmall seq]
+	bind . <<wmZoomDecSmall>> [list vid_wmPanscan .fvidBg.cont -1 1]
+	event add <<wmZoomDecBig>> {*}[dict get $::keyseq wmZoomDecBig seq]
+	bind . <<wmZoomDecBig>> [list vid_wmPanscan .fvidBg.cont -1 2]
+	event add <<wmZoomReset>> {*}[dict get $::keyseq wmZoomReset seq]
+	bind . <<wmZoomReset>> {vid_wmPanscan .fvidBg.cont 2 1}
 	event add <<wmZoomAuto>> {*}[dict get $::keyseq wmZoomAuto seq]
 	bind . <<wmZoomAuto>> {vid_wmPanscanAuto}
 	event add <<wmMoveRight>> {*}[dict get $::keyseq wmMoveRight seq]

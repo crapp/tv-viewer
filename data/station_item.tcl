@@ -253,7 +253,7 @@ You may use this substitutions:
 %%F  Frequency
 %%S  Station name
 e.g. externalTune %%F %%S"]
-			settooltip $lf_external.e_ExternalFreq [mc "If you use an external tuner that is connected to the TV input 
+			settooltip $lf_external.e_ExternalFreq [mc "If you use an external tuner that is connected to the TV input
 of your device you may need to set the internal tuner to a
 specific frequency.
 Use a value of \"0\" if you do not need your internal tuner

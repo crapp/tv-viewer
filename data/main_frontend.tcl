@@ -489,8 +489,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts [dict get $::keyseq preferences label]}
-	bind . <Key-y> {irgendwas}
+	#~ bind . <Key-x> {puts [dict get $::keyseq preferences label]}
+	#~ bind . <Key-y> {irgendwas}
 	
 	command_socket
 	

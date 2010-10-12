@@ -268,16 +268,29 @@ proc vid_wmViewStatus {lbl} {
 	set ::mem(sbarTime) $::menu(cbViewStatust)
 }
 
-proc vid_wmPanscan {w direct} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmPanscan \033\[0m \{$w\} \{$direct\}"
+proc vid_wmPanscan {w direct value} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmPanscan \033\[0m \{$w\} \{$direct\} \{$value\}"
+	#direct 1 increase zoom by value; -1 decrease zoom by value; 0 reset zoom when pan&scan4:3; 2 reset zoom
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
+	array set zoom {
+		1 1
+		2 5
+	}
+	array set zoomPlace {
+		1 0.01
+		2 0.05
+	}
 	if {$direct == 1} {
 		if {$::data(panscan) == 100} return
 		if {[string trim [place info $w]] == {}} return
-		place $w -relheight [expr {[dict get [place info $w] -relheight] + 0.05}]
-		log_writeOutTv 0 "Increasing zoom by 5%."
-		set ::data(panscan) [expr $::data(panscan) + 5]
+		if {[expr $::data(panscan) + $zoom($value)] > 100} {
+			set zoom($value) [expr (100 - $::data(panscan))]
+			set zoomPlace($value) [expr $zoom($value) / 100]
+		}
+		place $w -relheight [expr {[dict get [place info $w] -relheight] + $zoomPlace($value)}]
+		log_writeOutTv 0 "Increasing zoom by $zoom($value)%."
+		set ::data(panscan) [expr $::data(panscan) + $zoom($value)]
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 "Zoom $::data(panscan)"]
@@ -289,9 +302,13 @@ proc vid_wmPanscan {w direct} {
 	if {$direct == -1} {
 		if {$::data(panscan) == -50} return
 		if {[string trim [place info $w]] == {}} return
-		place $w -relheight [expr {[dict get [place info $w] -relheight] - 0.05}]
-		log_writeOutTv 0 "Decreasing zoom by 5%."
-		set ::data(panscan) [expr $::data(panscan) - 5]
+		if {[expr $::data(panscan) - $zoom($value)] < -50} {
+			set zoom($value) [expr (-50 - $::data(panscan)) * -1]
+			set zoomPlace($value) [expr $zoom($value) / 100]
+		}
+		place $w -relheight [expr {[dict get [place info $w] -relheight] - $zoomPlace($value)}]
+		log_writeOutTv 0 "Decreasing zoom by $zoom($value)%."
+		set ::data(panscan) [expr $::data(panscan) - $zoom($value)]
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 "Zoom $::data(panscan)"]
@@ -311,6 +328,19 @@ proc vid_wmPanscan {w direct} {
 		}
 		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 			after 0 [vid_osd osd_group_f 1000 "Pan&Scan 4:3"]
+		}
+	}
+	if {$direct == 2} {
+		if {[string trim [place info $w]] == {}} return
+		place $w -relheight 1
+		log_writeOutTv 0 "Setting zoom to 100%"
+		set ::data(panscan) 0
+		set ::data(panscanAuto) 0
+		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+			after 0 [vid_osd osd_group_w 1000 "Zoom $::data(panscan)"]
+		}
+		if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+			after 0 [vid_osd osd_group_f 1000 "Zoom $::data(panscan)"]
 		}
 	}
 }
@@ -388,7 +418,7 @@ proc vid_wmPanscanAuto {} {
 				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
 				wm geometry . [winfo width .]x$heightwp
 			}
-			vid_wmPanscan .fvidBg.cont 0
+			vid_wmPanscan .fvidBg.cont 0 1
 		}
 	} else {
 		if {$::data(panscanAuto) == 0} {
@@ -428,7 +458,7 @@ proc vid_wmPanscanAuto {} {
 				place .fvidBg.cont -relheight $relheight
 			}
 		} else {
-			vid_wmPanscan .fvidBg.cont 0
+			vid_wmPanscan .fvidBg.cont 0 1
 		}
 	}
 }

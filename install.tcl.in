@@ -231,6 +231,10 @@ proc install_copyData {where_is prefix eprefix bindir bintarget libdir datadir m
 	set pincr [format %.2f [expr 100.0 / $delements.0]]
 	set percentage 0
 	foreach dfile [file normalize $filelist ] {
+		if {[string match *tv-viewer.desktop "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"]} {
+			# do not copy file tv-viewer.desktop to data folder, because it has not to be there
+			continue
+		}
 		set status_dfile [catch {file copy -force "$dfile" "$datadir/tv-viewer/data/"} resultat_dfile]
 		if { $status_dfile != 0 } {
 			puts "

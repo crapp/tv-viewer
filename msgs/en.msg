@@ -6,6 +6,8 @@ namespace import -force msgcat::mcset
 
 ### ../data/chan_zapper.tcl ###
 
+mcset en {Timeout for changing video input}
+mcset en {Video device % does not exist} {Video device %s does not exist}
 
 ### ../data/colorm.tcl ###
 
@@ -50,6 +52,8 @@ mcset en {Enable Logging}
 mcset en {MPlayer logfile size in kBytes}
 mcset en {Scheduler logfile size in kBytes}
 mcset en {TV-Viewer logfile size in kBytes}
+mcset en {Report errors}
+mcset en {Popup dialogue box for errors}
 mcset en {Let TV-Viewer manage video aspect ratio (recommended)}
 mcset en {Choose either monitor aspect ratio or monitor pixel aspect.
 This may improve picture quality.}
@@ -84,6 +88,7 @@ mcset en {Specify the amount of space in kBytes the Scheduler logfile can claim.
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
 Minimum: 10kb Maximum: 100kb}
+mcset en {If activated a dialogue box will popup in case of serious errors}
 
 ### ../data/config_analog.tcl ###
 
@@ -108,6 +113,7 @@ mcset en {v4l2-ctl}
 mcset en {Disabled}
 mcset en {Analog settings are disabled,
 while running a recording or timeshift}
+mcset en {No video device nodes}
 mcset en {Choose the video device node.
 See "dmesg | grep ivtv || pvrusb2 || cx18"}
 mcset en {Constrain setting of the video standard.
@@ -377,6 +383,7 @@ mcset en {right}
 mcset en {bottom left}
 mcset en {bottom}
 mcset en {bottom right}
+mcset en {Font chooser Ui has finished unexpectedly}
 mcset en {Choose a font}
 mcset en {Choose font style}
 mcset en {Choose font size}
@@ -449,6 +456,7 @@ mcset en {Navigation}
 mcset en {View}
 mcset en {Help}
 mcset en {Welcome to TV-Viewer %} {Welcome to TV-Viewer %s}
+mcset en {Could not detect MPlayer}
 mcset en {TV-Viewer idle}
 
 ### ../data/main_menu.tcl ###
@@ -473,7 +481,10 @@ mcset en {+10 minutes}
 mcset en {File end}
 mcset en {Pan&Scan}
 mcset en {Zoom +}
+mcset en {Zoom ++}
 mcset en {Zoom -}
+mcset en {Zoom --}
+mcset en {Reset zoom}
 mcset en {Pan&Scan (16:9 / 4:3)}
 mcset en {Move up}
 mcset en {Move down}
@@ -534,8 +545,10 @@ mcset en {Increase audio delay}
 mcset en {Decrease audio delay}
 mcset en {Toggle mute}
 mcset en {Toggle Fullscreen}
-mcset en {Increase Zoom}
-mcset en {Decrease Zoom}
+mcset en {Increase Zoom small step}
+mcset en {Increase Zoom big step}
+mcset en {Decrease Zoom small step}
+mcset en {Decrease Zoom big step}
 mcset en {Move video up}
 mcset en {Move video down}
 mcset en {Move video right}
@@ -621,6 +634,8 @@ mcset en {Resolution format incorrect!}
 
 ### ../data/record_linker.tcl ###
 
+mcset en {Station search running while a recording fired}
+mcset en {Missing file ../.tv-viewer/config/current_rec.conf}
 mcset en {Currently recording %
 Started at %} {Currently recording %s
 Started at %s}
@@ -631,6 +646,7 @@ mcset en {Playing file: %} {Playing file: %s}
 mcset en {Save timeshift video file
 File size %} {Save timeshift video file
 File size %s}
+mcset en {Missing file $::option(timeshift_path)/timeshift.mpeg}
 
 ### ../data/record_wizard.tcl ###
 
@@ -687,6 +703,7 @@ mcset en {Unlock}
 mcset en {Frequency}
 mcset en {Video input}
 mcset en {External Tuner}
+mcset en {Int Frequency}
 mcset en {Perform an automatic station search}
 mcset en {Add a new television station}
 mcset en {Delete selected television station}
@@ -706,6 +723,8 @@ mcset en {Delete stations}
 mcset en {Station:}
 mcset en {Frequency:}
 mcset en {Video input:}
+mcset en {Command:}
+mcset en {Internal frequency:}
 mcset en {Add a new station}
 mcset en {Edit Station / Frequency}
 mcset en {Provide a name for the television station}
@@ -719,6 +738,11 @@ You may use this substitutions:
 %%F  Frequency
 %%S  Station name
 e.g. externalTune %%F %%S}
+mcset en {If you use an external tuner that is connected to the TV input
+of your device you may need to set the internal tuner to a
+specific frequency.
+Use a value of "0" if you do not need your internal tuner
+(e.g. if you are using composite or s-video)}
 mcset en {Please specify name and frequency for each station}
 
 ### ../data/station_search.tcl ###
@@ -748,9 +772,12 @@ mcset en {Frequency: %} {Frequency: %s}
 
 ### ../data/status_feedb.tcl ###
 
+mcset en {Show log}
+mcset en {TV-Viewer Error}
 
 ### ../data/system_tray.tcl ###
 
+mcset en {Can not create system tray icon}
 mcset en {Hide}
 mcset en {Restore}
 
@@ -790,7 +817,9 @@ mcset en {Current position / File length}
 
 ### ../data/vid_callback.tcl ###
 
+mcset en {MPlayer has finished unexpectedly}
 mcset en {idle}
+mcset en {Can not read callback channel}
 
 ### ../data/vid_file_calc.tcl ###
 
@@ -800,6 +829,7 @@ mcset en {idle}
 
 ### ../data/vid_playback.tcl ###
 
+mcset en {Missing file for file playback}
 
 ### ../data/vid_pmhandler.tcl ###
 

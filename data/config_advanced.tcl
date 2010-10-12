@@ -73,9 +73,9 @@ proc option_screen_8 {} {
 		spinbox $::window(advanced_nb3).sb_logging_sched -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_sched)
 		ttk::label $::window(advanced_nb3).l_logging_tv -text [mc "TV-Viewer logfile size in kBytes"]
 		spinbox $::window(advanced_nb3).sb_logging_tv -from 10 -to 100 -increment 10 -state readonly -textvariable choice(sb_logging_tv)
-		ttk::labelframe $::window(advanced_nb3).lf_warn -text [mc "Warning dialogue"]
+		ttk::labelframe $::window(advanced_nb3).lf_warn -text [mc "Report errors"]
 		set lf_warn $::window(advanced_nb3).lf_warn
-		ttk::checkbutton $lf_warn.cb_logWarn -text [mc "Enable warning dialogue"] -variable choice(cb_logWarn)
+		ttk::checkbutton $lf_warn.cb_logWarn -text [mc "Popup dialogue box for errors"] -variable choice(cb_logWarn)
 		
 		grid columnconfigure $::window(advanced_nb1) 0 -weight 1
 		grid columnconfigure $lf_aspect 1 -minsize 100
@@ -318,7 +318,7 @@ Minimum: 10kb Maximum: 100kb"]
 If this limit is reached, the file will be deleted and TV-Viewer
 restarts the log cycle.
 Minimum: 10kb Maximum: 100kb"]
-					settooltip $lf_warn.cb_logWarn [mc "If activated a warning dialogue will popup in case of serious errors"]
+					settooltip $lf_warn.cb_logWarn [mc "If activated a dialogue box will popup in case of serious errors"]
 				} else {
 					set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
 					set lf_shot $::window(advanced_nb1).lf_advanced_screenshot

@@ -146,6 +146,7 @@ consider creating one and place it into extensions/fsdialog."
 		close $msgFileTmp($::start_value(--lang))
 		unset -nocomplain transLc
 		
+		set newLine 0
 		catch {exec diff -u "$::msgsDir/$::start_value(--lang).msg" "$::msgsDir/$::start_value(--lang).tmp" | grep +mcset} fileDiff
 		if {[string trim $fileDiff] != {}} {
 			foreach line [split $fileDiff \n] {
@@ -161,6 +162,7 @@ consider creating one and place it into extensions/fsdialog."
 					} else {
 						append transLc "\n$line ;#Newline"; # mark newlines to find them easier
 					}
+					incr newLines
 				} else {
 					if {$i == 0} {
 						append transLc "$line"
@@ -193,8 +195,8 @@ consider creating one and place it into extensions/fsdialog."
 		close $msgFile($::start_value(--lang))
 	}
 	puts "\nfinished"
-	if {[info exists fileDiffList]} {
-		puts "processed $amountFile files with $amountString text strings. there are [llength $fileDiffList] new lines in $::start_value(--lang).msg"
+	if {[info exists newLine] && $newLine > 0} {
+		puts "processed $amountFile files with $amountString text strings. there are $newLine new lines in $::start_value(--lang).msg"
 	} else {
 		puts "processed $amountFile files with $amountString text strings"
 	}

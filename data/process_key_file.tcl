@@ -97,12 +97,21 @@ proc process_KeyFile {handler} {
 	dict set ::keyseq wmCompact name Ctrl+C
 	dict set ::keyseq wmCompact seq <Control-Key-c>
 	dict set ::keyseq wmCompact label [mc "Compact mode"]
-	dict set ::keyseq wmZoomInc name E
-	dict set ::keyseq wmZoomInc seq <Key-e>
-	dict set ::keyseq wmZoomInc label [mc "Increase Zoom"]
-	dict set ::keyseq wmZoomDec name W
-	dict set ::keyseq wmZoomDec seq <Key-w>
-	dict set ::keyseq wmZoomDec label [mc "Decrease Zoom"]
+	dict set ::keyseq wmZoomIncSmall name E
+	dict set ::keyseq wmZoomIncSmall seq <Key-e>
+	dict set ::keyseq wmZoomIncSmall label [mc "Increase Zoom small step"]
+	dict set ::keyseq wmZoomIncBig name Alt+E
+	dict set ::keyseq wmZoomIncBig seq <Alt-Key-e>
+	dict set ::keyseq wmZoomIncBig label [mc "Increase Zoom big step"]
+	dict set ::keyseq wmZoomDecSmall name W
+	dict set ::keyseq wmZoomDecSmall seq <Key-w>
+	dict set ::keyseq wmZoomDecSmall label [mc "Decrease Zoom small step"]
+	dict set ::keyseq wmZoomDecBig name Alt+W
+	dict set ::keyseq wmZoomDecBig seq <Alt-Key-w>
+	dict set ::keyseq wmZoomDecBig label [mc "Decrease Zoom big step"]
+	dict set ::keyseq wmZoomReset name Shift+E
+	dict set ::keyseq wmZoomReset seq <Shift-Key-E>
+	dict set ::keyseq wmZoomReset label [mc "Reset zoom"]
 	dict set ::keyseq wmZoomAuto name Shift+W
 	dict set ::keyseq wmZoomAuto seq <Shift-Key-W>
 	dict set ::keyseq wmZoomAuto label [mc "Pan&Scan (16:9 / 4:3)"]

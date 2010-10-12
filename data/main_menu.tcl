@@ -186,14 +186,17 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 	}
 	
 	if {$changeAccels} {
-			$mViewPan entryconfigure 0 -accelerator [dict get $::keyseq wmZoomInc name]
-			$mViewPan entryconfigure 1 -accelerator [dict get $::keyseq wmZoomDec name]
-			$mViewPan entryconfigure 2 -accelerator [dict get $::keyseq wmZoomAuto name]
-			$mViewPan entryconfigure 4 -accelerator [dict get $::keyseq wmMoveUp name]
-			$mViewPan entryconfigure 5 -accelerator [dict get $::keyseq wmMoveDown name]
-			$mViewPan entryconfigure 6 -accelerator [dict get $::keyseq wmMoveLeft name]
-			$mViewPan entryconfigure 7 -accelerator [dict get $::keyseq wmMoveRight name]
-			$mViewPan entryconfigure 8 -accelerator [dict get $::keyseq wmMoveCenter name]
+			$mViewPan entryconfigure 0 -accelerator [dict get $::keyseq wmZoomIncSmall name]
+			$mViewPan entryconfigure 1 -accelerator [dict get $::keyseq wmZoomIncBig name]
+			$mViewPan entryconfigure 2 -accelerator [dict get $::keyseq wmZoomDecSmall name]
+			$mViewPan entryconfigure 3 -accelerator [dict get $::keyseq wmZoomDecBig name]
+			$mViewPan entryconfigure 4 -accelerator [dict get $::keyseq wmZoomReset name]
+			$mViewPan entryconfigure 5 -accelerator [dict get $::keyseq wmZoomAuto name]
+			$mViewPan entryconfigure 7 -accelerator [dict get $::keyseq wmMoveUp name]
+			$mViewPan entryconfigure 8 -accelerator [dict get $::keyseq wmMoveDown name]
+			$mViewPan entryconfigure 9 -accelerator [dict get $::keyseq wmMoveLeft name]
+			$mViewPan entryconfigure 10 -accelerator [dict get $::keyseq wmMoveRight name]
+			$mViewPan entryconfigure 11 -accelerator [dict get $::keyseq wmMoveCenter name]
 			$mViewSize entryconfigure 2 -accelerator [dict get $::keyseq wmSize1 name]
 			$mViewSize entryconfigure 6 -accelerator [dict get $::keyseq wmSize2 name]
 			$mViewToolb entryconfigure 0 -accelerator [dict get $::keyseq wmMainToolbar name]
@@ -203,8 +206,11 @@ proc main_menuView {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		$mView entryconfigure 6 -accelerator [dict get $::keyseq wmFull name]
 	} else {
 		$mView add cascade -label [mc "Pan&Scan"] -compound left -image $::icon_men(placeholder) -menu $mViewPan
-			$mViewPan add command -label [mc "Zoom +"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomInc>>} -accelerator [dict get $::keyseq wmZoomInc name]
-			$mViewPan add command -label [mc "Zoom -"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomDec>>} -accelerator [dict get $::keyseq wmZoomDec name]
+			$mViewPan add command -label [mc "Zoom +"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomIncSmall>>} -accelerator [dict get $::keyseq wmZoomIncSmall name]
+			$mViewPan add command -label [mc "Zoom ++"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomIncBig>>} -accelerator [dict get $::keyseq wmZoomIncBig name]
+			$mViewPan add command -label [mc "Zoom -"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomDecSmall>>} -accelerator [dict get $::keyseq wmZoomDecSmall name]
+			$mViewPan add command -label [mc "Zoom --"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomDecBig>>} -accelerator [dict get $::keyseq wmZoomDecBig name]
+			$mViewPan add command -label [mc "Reset zoom"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomReset>>} -accelerator [dict get $::keyseq wmZoomReset name]
 			$mViewPan add command -label [mc "Pan&Scan (16:9 / 4:3)"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmZoomAuto>>} -accelerator [dict get $::keyseq wmZoomAuto name]
 			$mViewPan add separator
 			$mViewPan add command -label [mc "Move up"] -compound left -image $::icon_men(placeholder) -command {event generate . <<wmMoveUp>>} -accelerator [dict get $::keyseq wmMoveUp name]

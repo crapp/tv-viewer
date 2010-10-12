@@ -45,9 +45,10 @@ proc key_sequences {} {
 		grid $mftree.tv_key -in $mftree -row 0 -column 0 -sticky nesw
 		grid $mftree.sb_key -in $mftree -row 0 -column 1 -sticky ns -pady 5
 		grid $mftree.b_ChangeKey -in $mftree -row 1 -column 0 -sticky e -padx 3 -pady "7 7"
-		grid $mfbottom.b_save -in $mfbottom -row 0 -column 0 -pady 7 -padx "0 3"
+		grid $mfbottom.b_save -in $mfbottom -row 0 -column 0 -pady 7 -padx 3
 		grid $mfbottom.b_default -in $mfbottom -row 0 -column 1 -pady 7 -padx "0 3" -sticky ns
 		grid $mfbottom.b_quit -in $mfbottom -row 0 -column 2 -pady 7 -padx "0 3"
+		#grid columnconfigure $mftree 0 -weight 1
 		
 		foreach col {action key} name {"Action" "Key Sequence"} {
 			$mftree.tv_key heading $col -text $name
@@ -126,11 +127,11 @@ proc key_sequencesRead {handler tree} {
 		36 {}
 		37 {}
 		38 {}
-		39 noedit
-		40 noedit
+		39 {}
+		40 {}
 		41 {}
-		42 {}
-		43 {}
+		42 noedit
+		43 noedit
 		44 {}
 		45 {}
 		46 {}
@@ -139,6 +140,9 @@ proc key_sequencesRead {handler tree} {
 		49 {}
 		50 {}
 		51 {}
+		52 {}
+		53 {}
+		54 {}
 	}
 	set line_length 0
 	set i 1
@@ -162,13 +166,16 @@ proc key_sequencesRead {handler tree} {
 			$tree insert {} end -values " " -tags {small noedit}
 			$tree insert {} end -values [list [mc "Window management"]] -tags {fat noedit}
 		}
-		if {$i == 38} {
+		if {$i == 41} {
 			$tree insert {} end -values " " -tags {small noedit}
 			$tree insert {} end -values [list [mc "Recording / File playback"]] -tags {fat noedit}
 		}
 		$tree insert {} end -values [list "[dict get $::keyseq $id label]" "[dict get $::keyseq $id name]"] -tags $keyTags($i)
 		if {[font measure $font "[dict get $::keyseq $id label]"] > $line_length} {
 			set line_length [font measure $font "[dict get $::keyseq $id label]"]
+		}
+		if {[array size keyTags] == $i} {
+			break
 		}
 		incr i
 	}

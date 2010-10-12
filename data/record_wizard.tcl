@@ -251,7 +251,7 @@ proc record_wizardUi {} {
 				log_writeOutTv 2 "Although there is an active recording, no current_rec.conf in config path."
 				log_writeOutTv 2 "You may want to report this incident."
 				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf "]
+					status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 				}
 			}
 		} else {
