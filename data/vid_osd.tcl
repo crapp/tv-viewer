@@ -18,12 +18,18 @@
 
 proc vid_osd {ident atime osd_text} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_osd \033\[0m \{$ident\} \{$atime\} \{$osd_text\}"
-	if {[info exists ::data(after_id_osd)]} {
-		foreach id [split $::data(after_id_osd)] {
+	if {[info exists ::osd(after_id_osd)]} {
+		foreach id [split $::osd(after_id_osd)] {
 			after cancel $id
 		}
-		unset -nocomplain ::data(after_id_osd)
-		destroy .fvidBg.osd
+		unset -nocomplain ::osd(after_id_osd)
+		if {$::osd(id_old) == $ident && [winfo exists .fvidBg.osd.label]} {
+			.fvidBg.osd.label configure -text "$osd_text"
+			set ::osd(after_id_osd) [after $atime "destroy .fvidBg.osd"]
+			return
+		} else {
+			destroy .fvidBg.osd
+		}
 	}
 	array set alignment {
 		0 {-anchor nw -x 10 -y 10}
@@ -77,6 +83,7 @@ proc vid_osd {ident atime osd_text} {
 		$osd.label configure -foreground #000000
 	}
 	
-	set ::data(after_id_osd) [after $atime "destroy .fvidBg.osd"]
+	set ::osd(id_old) $ident
+	set ::osd(after_id_osd) [after $atime "destroy .fvidBg.osd"]
 	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
 }

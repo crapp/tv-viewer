@@ -725,8 +725,17 @@ Started at %} {Aufnahme von %s läuft.
 Gestarted um %s}
 mcset de {Timeshift %} {Timeshift %s}
 mcset de {Recording % - Ends at % %} {Aufnahme %s - Endet am %s um %s}
-mcset de {% -- ends % at %} {%s -- endet am %s um %s}
+mcset de {Station
+%} {Sender
+%s}
+mcset de {Started
+% at %} {Gestartet
+%s at %s}
+mcset de {Ends
+% at %} {Endet
+%s at %s}
 mcset de {Playing file: %} {Dateiwiedergabe: %s}
+mcset de {Idle} {Idle}
 mcset de {Save timeshift video file
 File size %} {Timeshift Videodatei speichern
 Dateigröße %s}

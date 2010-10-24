@@ -155,14 +155,45 @@ consider creating one and place it into extensions/fsdialog."
 			}
 			set tmpOpen [open "$::msgsDir/$::start_value(--lang).tmp" r]
 			set i 0
+			set doCurly 0
 			while {[gets $tmpOpen line] != -1} {
+				if {$doCurly} {
+					if {"[string range $line end end]" == "\}"} {
+						incr countCurly
+						if {$countCurly == 1} {
+							append transLc "\n$line ;#Newline"; # mark newlines to find them easier
+							set doCurly 0
+							set countCurly 0
+							incr i
+							continue
+						} else {
+							append transLc "\n$line"
+							incr i
+							continue
+						}
+					}
+				}
 				if {[lsearch $fileDiffList $line] != -1} {
 					if {$i == 0} {
-						append transLc "$line ;#Newline"; # mark newlines to find them easier
+						if {"[string range $line end end]" == "\}"} {
+							append transLc "$line ;#Newline"; # mark newlines to find them easier
+							set doCurly 0
+						} else {
+							append transLc "$line"
+							set doCurly 1
+							set countCurly 0
+						}
 					} else {
-						append transLc "\n$line ;#Newline"; # mark newlines to find them easier
+						if {"[string range $line end end]" == "\}"} {
+							append transLc "\n$line ;#Newline"; # mark newlines to find them easier
+							set doCurly 0
+						} else {
+							append transLc "\n$line"
+							set doCurly 1
+							set countCurly 0
+						}
 					}
-					incr newLines
+					incr newLine
 				} else {
 					if {$i == 0} {
 						append transLc "$line"

@@ -51,13 +51,13 @@ proc record_wizardExecSchedulerCback {com} {
 	if {$com == 0} {
 		if {[winfo exists .record_wizard]} {
 			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Running"]
-			.record_wizard.status_frame.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardExecScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
+			.record_wizard.status_frame.lf_status.f_btn.b_rec_sched configure -text [mc "Stop Scheduler"] -command [list record_wizardExecScheduler .record_wizard.status_frame.lf_status.f_btn.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 0]
 		}
 	}
 	if {$com == 1} {
 		if {[winfo exists .record_wizard]} {
 			.record_wizard.status_frame.l_rec_sched_info configure -text [mc "Stopped"]
-			.record_wizard.status_frame.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardExecScheduler .record_wizard.status_frame.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
+			.record_wizard.status_frame.lf_status.f_btn.b_rec_sched configure -text [mc "Start Scheduler"] -command [list record_wizardExecScheduler .record_wizard.status_frame.lf_status.f_btn.b_rec_sched .record_wizard.status_frame.l_rec_sched_info 1]
 		}
 	}
 }
@@ -112,12 +112,17 @@ proc record_wizardUi {} {
 		ttk::label $treef.l_repeat -text [mc "Repeat: 0 - Never; 1 - Daily; 2 - Weekday; 3 - Weekly"]
 		
 		ttk::labelframe $statf.lf_status -text [mc "Status"]
+		set lf_status $statf.lf_status
 		ttk::label $statf.l_rec_sched -text [mc "Scheduler status:"]
 		ttk::label $statf.l_rec_sched_info
-		ttk::button $statf.b_rec_sched -text [mc "Stop Scheduler"]
+		
 		ttk::label $statf.l_rec_current -text [mc "Currently recording:"]
-		ttk::label $statf.l_rec_current_info
-		ttk::button $statf.b_rec_current -text [mc "Stop recording"] -command [list record_linkerPreStop record]
+		ttk::label $statf.l_rec_current_station
+		ttk::label $statf.l_rec_current_start
+		ttk::label $statf.l_rec_current_end
+		ttk::frame $lf_status.f_btn
+		ttk::button $lf_status.f_btn.b_rec_sched -text [mc "Stop Scheduler"]
+		ttk::button $lf_status.f_btn.b_rec_current -text [mc "Stop recording"] -command [list record_linkerPreStop record]
 		
 		ttk::button $bf.b_exit -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command record_wizardExit
 		
@@ -131,7 +136,7 @@ proc record_wizardUi {} {
 		
 		grid columnconfigure $statf {0} -weight 1
 		
-		grid columnconfigure $statf.lf_status {2} -minsize 120
+		grid columnconfigure $lf_status {2} -minsize 120
 		
 		grid $topf -in $w -row 0 -column 0 -sticky new
 		grid $treef -in $w -row 1 -column 0 -sticky nesw
@@ -150,12 +155,15 @@ proc record_wizardUi {} {
 		grid $treef.l_repeat -in $treef -row 2 -column 0 -sticky w -padx 10 -pady 2
 		
 		grid $statf.lf_status -in $statf -row 0 -column 0 -sticky ew -padx 15 -pady 10
-		grid $statf.l_rec_sched -in $statf.lf_status -row 0 -column 0 -sticky w -padx 7 -pady 4
-		grid $statf.l_rec_sched_info -in $statf.lf_status -row 0 -column 1 -sticky w -padx "0 7" -pady 4
-		grid $statf.b_rec_sched -in $statf.lf_status -row 0 -column 2 -sticky ew -padx "0 7" -pady 4
-		grid $statf.l_rec_current -in $statf.lf_status -row 1 -column 0 -sticky w -padx 7 -pady "0 4"
-		grid $statf.l_rec_current_info -in $statf.lf_status -row 1 -column 1 -sticky w -padx "0 7" -pady "0 4"
-		grid $statf.b_rec_current -in $statf.lf_status -row 1 -column 2 -sticky ew -padx "0 7" -pady "0 4"
+		grid $statf.l_rec_sched -in $statf.lf_status -row 0 -column 0 -sticky nw -padx 7 -pady 4
+		grid $statf.l_rec_sched_info -in $statf.lf_status -row 0 -column 1 -sticky nw -padx "0 7" -pady 4
+		grid $statf.l_rec_current -in $statf.lf_status -row 1 -column 0 -sticky nw -padx 7 -pady "0 4"
+		grid $statf.l_rec_current_station -in $statf.lf_status -row 1 -column 1 -sticky nw -padx "0 7" -pady "0 4"
+		grid $statf.l_rec_current_start -in $statf.lf_status -row 1 -column 2 -sticky nw -padx "0 7" -pady "0 4"
+		grid $statf.l_rec_current_end -in $statf.lf_status -row 1 -column 3 -sticky nw -padx "0 7" -pady "0 4"
+		grid $lf_status.f_btn -in $statf.lf_status -row 0 -column 4 -rowspan 2 -sticky nesw
+		grid $lf_status.f_btn.b_rec_sched -in $lf_status.f_btn -row 0 -column 0 -sticky ew -padx "0 7" -pady "0 4"
+		grid $lf_status.f_btn.b_rec_current -in $lf_status.f_btn -row 1 -column 0 -sticky ew -padx "0 7" -pady "0 4"
 		
 		grid $bf.b_exit -in $bf -row 0 -column 0 -pady 7 -padx 3
 		grid anchor $bf e
@@ -242,8 +250,13 @@ proc record_wizardUi {} {
 				while {[gets $f_open line]!=-1} {
 					if {[string trim $line] == {}} continue
 					lassign $line station sdate stime edate etime duration recfile
-					$statf.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
-					$statf.b_rec_current state !disabled
+					$statf.l_rec_current_station configure -text [mc "Station
+%" $station]
+					$statf.l_rec_current_start configure -text [mc "Started
+% at %" $sdate $stime]
+					$statf.l_rec_current_end configure -text [mc "Ends
+% at %" $edate $etime]
+					$statf.lf_status.f_btn.b_rec_current state !disabled
 					log_writeOutTv 0 "Found an active recording (PID [lindex $status_record 1])."
 				}
 				close $f_open
@@ -256,8 +269,10 @@ proc record_wizardUi {} {
 			}
 		} else {
 			log_writeOutTv 0 "No active recording."
-			$statf.l_rec_current_info configure -text "Idle"
-			$statf.b_rec_current state disabled
+			$statf.l_rec_current_station configure -text [mc "Idle"]
+			$statf.l_rec_current_start configure -text ""
+			$statf.l_rec_current_end configure -text ""
+			$statf.lf_status.f_btn.b_rec_current state disabled
 		}
 		catch {exec ""}
 		set status [monitor_partRunning 2]
@@ -284,13 +299,19 @@ start recording immediately."]
 				settooltip $statf.l_rec_sched [mc "Indicates whether the Scheduler is running or not"]
 				settooltip $statf.l_rec_sched_info [mc "Indicates whether the Scheduler is running or not"]
 				settooltip $statf.l_rec_current [mc "Provides informations about the current recording"]
-				settooltip $statf.l_rec_current_info [mc "Provides informations about the current recording"]
-				settooltip $statf.b_rec_current [mc "If there is a running recording, click here to stop it"]
+				settooltip $statf.l_rec_current_station [mc "Provides informations about the current recording"]
+				settooltip $statf.l_rec_current_start [mc "Provides informations about the current recording"]
+				settooltip $statf.l_rec_current_end [mc "Provides informations about the current recording"]
+				settooltip $statf.lf_status.f_btn.b_rec_current [mc "If there is a running recording, click here to stop it"]
 				settooltip $bf.b_exit [mc "Exit Record Wizard"]
 			}
 		}
 		tkwait visibility $w
-		wm minsize .record_wizard [expr [winfo reqwidth .record_wizard] + 350] [winfo reqheight .record_wizard]
+		if {[winfo reqwidth .record_wizard] < 750} {
+			wm minsize .record_wizard 750 [winfo reqheight .record_wizard]
+		} else {
+			wm minsize .record_wizard [winfo reqwidth .record_wizard] [winfo reqheight .record_wizard]
+		}
 	} else {
 		raise .record_wizard
 	}

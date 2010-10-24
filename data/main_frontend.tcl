@@ -72,8 +72,12 @@ proc main_frontendExitViewer {} {
 		}
 		if {$::option(volRem)} {
 			if {"$okey" == "volume"} {
-				puts $wconfig_mem "volume $::main(volume_scale)"
-				set ::mem(volume) $::main(volume_scale)
+				if {[.ftoolb_Play.scVolume instate disabled]} {
+					set ::mem(volume) $::volume(mute_old_value)
+				} else {
+					set ::mem(volume) $::main(volume_scale)
+				}
+				puts $wconfig_mem "volume $::mem(volume)"
 				set done 1
 				continue
 			}

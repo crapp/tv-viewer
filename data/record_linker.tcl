@@ -177,8 +177,13 @@ Started at %" $station $stime]
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard]} {
 			.record_wizard configure -cursor left_ptr
-			.record_wizard.status_frame.l_rec_current_info configure -text [mc "% -- ends % at %" $station $edate $etime]
-			.record_wizard.status_frame.b_rec_current state !disabled
+			.record_wizard.status_frame.l_rec_current_station configure -text [mc "Station
+%" $station]
+			.record_wizard.status_frame.l_rec_current_start configure -text [mc "Started
+% at %" $sdate $stime]
+			.record_wizard.status_frame.l_rec_current_end configure -text [mc "Ends
+% at %" $edate $etime]
+			.record_wizard.status_frame.lf_status.f_btn.b_rec_current state !disabled
 			record_linkerWizardReread
 		}
 		if {$::main(running_recording) == 1} {
@@ -249,8 +254,10 @@ proc record_linkerPreStop {handler} {
 	status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
-			.record_wizard.status_frame.l_rec_current_info configure -text "Idle"
-			.record_wizard.status_frame.b_rec_current state disabled
+			.record_wizard.status_frame.l_rec_current_station configure -text [mc "Idle"]
+			.record_wizard.status_frame.l_rec_current_start configure -text ""
+			.record_wizard.status_frame.l_rec_current_end configure -text ""
+			.record_wizard.status_frame.lf_status.f_btn.b_rec_current state disabled
 		}
 	} else {
 		if {[file exists "$::option(timeshift_path)/timeshift.mpeg"]} {
