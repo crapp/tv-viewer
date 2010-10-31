@@ -236,8 +236,9 @@ proc record_wizardUi {} {
 		bind $treef.cv.f.tv_rec <Double-ButtonPress-1> [list record_add_edit $treef.cv.f.tv_rec 1]
 		bind $treef.cv.f.tv_rec <Key-Delete> [list record_add_editDelete $treef.cv.f.tv_rec]
 		bind $treef.cv.f.tv_rec <ButtonPress-3> [list record_wizardUiMenu $treef.cv.f.tv_rec %X %Y]
-		bind $w <Key-x> {puts [winfo width .record_wizard]}
-		bind $w <Key-y> {puts [winfo height .record_wizard]}
+		#FIXME Test bindings for width height of rec wizard
+		#~ bind $w <Key-x> {puts [winfo width .record_wizard]}
+		#~ bind $w <Key-y> {puts [winfo height .record_wizard]}
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <<help>> [list info_helpHelp]
 		

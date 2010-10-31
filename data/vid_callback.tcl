@@ -98,9 +98,6 @@ proc vid_callbackVidData {} {
 						set ::option(resolx) $resolx
 						set ::option(resoly) $resoly
 					}
-					#FIXME Do we need to set video frame to reported resolution?!
-					#~ wm geometry . {}
-					#~ .fvidBg configure -width $::option(resolx) -height $::option(resoly)
 					bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
 					bind .fvidBg.cont <Configure> {}

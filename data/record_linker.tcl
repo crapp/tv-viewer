@@ -41,7 +41,6 @@ proc record_linkerPrestart {handler} {
 				status_feedbWarn 1 [mc "Station search running while a recording fired"]
 			}
 			station_search 0 cancel 0 0 0 0
-			#FIXME Does station editor make a grab?
 			grab release .station.top_search
 			destroy .station.top_search
 		}

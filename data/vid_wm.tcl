@@ -471,7 +471,6 @@ proc vid_wmMoveVideo {dir} {
 	}
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
-	#FIXME Why check for ismapped? Deprecated?
 	if {[winfo ismapped .fvidBg.cont] == 0} {
 		log_writeOutTv 1 "Video frame is not mapped."
 		log_writeOutTv 1 "Auto Pan&Scan not possible."

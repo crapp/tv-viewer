@@ -42,26 +42,45 @@ proc record_add_edit {tree com} {
 	set lf_recValues $recf.lf_rec_values
 	ttk::label $lf_recValues.l_time -text [mc "Time:"]
 	
-	proc record_add_editTimeHourValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHourValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is integer $value] != 1 || [string length $value] > 2} {
+	proc record_add_editTimeHourValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeHourValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 2} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		if {$::option(rec_hour_format) == 12} {
+			if {$value > 12} {
+				return 0
+			}
+		}
+		if {$::option(rec_hour_format) == 24} {
+			if {$value > 24} {
+				return 0
+			}
+		}
+		return 1
 	}
-	proc record_add_editTimeMinValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMinValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is integer $value] != 1 || [string length $value] > 2} {
+	proc record_add_editTimeMinValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editTimeMinValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 2} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		if {$value > 60} {
+			return 0
+		}
+		return 1
 	}
 	
-	spinbox $lf_recValues.sb_time_hour -from -1 -to 24 -width 3 -validate key -vcmd {record_add_editTimeHourValidate %P %W} -repeatinterval 80 -command record_add_editTimeHour -textvariable record(time_hour)
+	spinbox $lf_recValues.sb_time_hour -from -1 -to 24 -width 3 -validate key -vcmd {record_add_editTimeHourValidate %P %S} -repeatinterval 80 -command record_add_editTimeHour -textvariable record(time_hour)
 	ttk::label $lf_recValues.l_time_colon -text ":"
-	spinbox $lf_recValues.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %W} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
+	spinbox $lf_recValues.sb_time_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editTimeMinValidate %P %S} -repeatinterval 25 -command record_add_editTimeMin -textvariable record(time_min)
 	ttk::menubutton $lf_recValues.mbHourFormat -menu $recf.mbHourFormat.mHour -textvariable record(mbHourFormat) -state disabled -width 0
 	menu $lf_recValues.mbHourFormat.mHour -tearoff 0
 	
@@ -73,36 +92,51 @@ proc record_add_edit {tree com} {
 	ttk::separator $lf_recValues.sep2 -orient horizontal
 	ttk::label $lf_recValues.l_duration -text [mc "Duration:"]
 	
-	proc record_add_editDurHourValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHourValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is integer $value] != 1 || [string length $value] > 2} {
+	proc record_add_editDurHourValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurHourValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 2} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		return 1
 	}
-	proc record_add_editDurMinValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurMinValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is integer $value] != 1 || [string length $value] > 2} {
+	proc record_add_editDurMinValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurMinValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 2} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		if {$value > 60} {
+			return 0
+		}
+		return 1
 	}
-	proc record_add_editDurSecValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurSecValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is integer $value] != 1 || [string length $value] > 2} {
+	proc record_add_editDurSecValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDurSecValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 2} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		if {$value > 60} {
+			return 0
+		}
+		return 1
 	}
 	
-	spinbox $lf_recValues.sb_duration_hour -from -1 -to 99 -width 3 -validate key -vcmd {record_add_editDurHourValidate %P %W} -repeatinterval 25 -command record_add_editDurHour -textvariable record(duration_hour)
+	spinbox $lf_recValues.sb_duration_hour -from -1 -to 99 -width 3 -validate key -vcmd {record_add_editDurHourValidate %P %S} -repeatinterval 25 -command record_add_editDurHour -textvariable record(duration_hour)
 	ttk::label $lf_recValues.l_duration_colon1 -text ":"
-	spinbox $lf_recValues.sb_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurMinValidate %P %W} -repeatinterval 25 -command record_add_editDurMin -textvariable record(duration_min)
+	spinbox $lf_recValues.sb_duration_min -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurMinValidate %P %S} -repeatinterval 25 -command record_add_editDurMin -textvariable record(duration_min)
 	ttk::label $lf_recValues.l_duration_colon2 -text ":"
-	spinbox $lf_recValues.sb_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurSecValidate %P %W} -repeatinterval 25 -command record_add_editDurSec -textvariable record(duration_sec)
+	spinbox $lf_recValues.sb_duration_sec -from -1 -to 60 -width 3 -validate key -vcmd {record_add_editDurSecValidate %P %S} -repeatinterval 25 -command record_add_editDurSec -textvariable record(duration_sec)
 	
 	ttk::separator $lf_recValues.sep3 -orient vertical
 	
@@ -116,26 +150,44 @@ proc record_add_edit {tree com} {
 	
 	ttk::label $lf_recValues.l_resol -text [mc "Resolution:"]
 	
-	proc record_add_editResolWidthValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidthValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is digit $value] != 1 || [string length $value] > 3} {
+	proc record_add_editResolWidthValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolWidthValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 3} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		if {$value < 99 || $value > 721} {
+			return 0
+		}
+		return 1
 	}
-	proc record_add_editResolHeightValidate {value widget} {
-		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolHeightValidate \033\[0m \{$value\} \{$widget\}"
-		if {[string is digit $value] != 1 || [string length $value] > 3} {
+	proc record_add_editResolHeightValidate {value valnew} {
+		puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editResolHeightValidate \033\[0m \{$value\} \{$valnew\}"
+		if {[string length $value] > 3} {
 			return 0
-		} else {
-			return 1
 		}
+		set value [scan $value %d]
+		if {[string is integer $value] == 0 || [string is integer $valnew] == 0} {
+			return 0
+		}
+		if {"$::option(video_standard)" == "NTSC"} {
+			if {$value < 99 || $value > 481} {
+				return 0
+			}
+		} else {
+			if {$value < 99 || $value > 577} {
+				return 0
+			}
+		}
+		return 1
 	}
 	
-	spinbox $lf_recValues.sb_resol_width -from 99 -to 721 -width 3 -validate key -vcmd {record_add_editResolWidthValidate %P %W} -repeatinterval 10 -command record_add_editResolWidth -textvariable record(resolution_width)
+	spinbox $lf_recValues.sb_resol_width -from 99 -to 721 -width 3 -validate key -vcmd {record_add_editResolWidthValidate %P %S} -repeatinterval 10 -command record_add_editResolWidth -textvariable record(resolution_width)
 	ttk::label $lf_recValues.l_resol_slash -text "/"
-	spinbox $lf_recValues.sb_resol_height -width 3 -validate key -vcmd {record_add_editResolHeightValidate %P %W} -repeatinterval 10 -command record_add_editResolHeight -textvariable record(resolution_height)
+	spinbox $lf_recValues.sb_resol_height -width 3 -validate key -vcmd {record_add_editResolHeightValidate %P %S} -repeatinterval 10 -command record_add_editResolHeight -textvariable record(resolution_height)
 	if {"$::option(video_standard)" == "NTSC"} {
 		$lf_recValues.sb_resol_height configure -from 99 -to 481
 		set ::record(resolution_height_max) 480

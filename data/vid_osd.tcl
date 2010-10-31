@@ -50,8 +50,6 @@ proc vid_osd {ident atime osd_text} {
 	
 	set osd [frame .fvidBg.osd -bg #004AFF -padx 5 -pady 5]
 	
-	#FIXME Is 100 ok as value to add to font measure so osd shrinks and fits into video frame.
-	
 	if {"$style" == "regular"} {
 		set fmeasure [font measure "{$font} $size" "$osd_text"]
 		if {[expr $fmeasure + 100] > [winfo width .fvidBg]} {
