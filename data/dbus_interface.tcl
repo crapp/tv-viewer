@@ -20,7 +20,6 @@
 proc dbus_interfaceStart {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: dbus_interfaceStart \033\[0m"}
 	set status_present [catch {package present dbus-tcl 1.0} result_present]
-	puts "status_present $status_present"
 	if {$status_present == 1} {
 		catch {log_writeOutTv 0 "Loading shared library dbus-tcl"}
 		set status_dbus [catch {package require dbus-tcl 1.0} result_dbustcl]
@@ -67,17 +66,25 @@ proc dbus_interfaceNotification {icon summary body action hints timeout} {
 proc dbus_interfaceAction {dbusinfo id action} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: dbus_interfaceAction \033\[0m \{$dbusinfo\} \{$id\} \{$action\}"}
 	#FIXME Make TV-Viewer react on actions from dbus.
-	#puts "dbusinfo $dbusinfo"
-	#puts "id $id"
-	#puts "action $action"
+	#~ puts "dbusinfo $dbusinfo"
+	#~ puts "id $id"
+	#~ puts "action $action"
+	#~ puts "::dbus(notification_id) $::dbus(notification_id)"
 	if {$id == $::dbus(notification_id)} {
-		if {"$action" == "tvviewerStart"} {
+		if {"[string trim $action]" == "tvviewerStart"} {
 			if {[file exists $::option(root)/tv-viewer_main.tcl]} {
 				exec $::option(root)/tv-viewer_main.tcl &
 			}
 			if {[file exists $::option(root)/data/tv-viewer_main.tcl]} {
 				exec $::option(root)/data/tv-viewer_main.tcl &
 			}
+		}
+		if {"$action" == "tvviewerNewsreader"} {
+			set update_news [dict get $::newsreader news content]
+			set word_tags [dict get $::newsreader news tags]
+			set hyperlinks [dict get $::newsreader news hyperlinks]
+			main_newsreaderUi $update_news $word_tags $hyperlinks
+			dbus call -signature u -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications CloseNotification $::dbus(notification_id)
 		}
 	}
 }

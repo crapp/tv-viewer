@@ -107,7 +107,9 @@ if {"$lifespan" != "infinite"} {
 		if {[lindex $status_main 0]} {
 			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
 		} else {
-			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" {tvviewerStart {Start TV-Viewer}} "" 7000
+			#FIXME Not working if dbus action reader died
+			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
+			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" {tvviewerStart {Start TV-Viewer}} "" 7000
 		}
 		exit 0
 	}

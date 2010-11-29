@@ -543,7 +543,9 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
 				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
 			} else {
-				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" {tvviewerStart {Start TV-Viewer}} "" 7000
+				#FIXME Not working if dbus action reader died
+				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" {tvviewerStart {Start TV-Viewer}} "" 7000
+				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
 			}
 			scheduler_delete $jobid
 		} else {

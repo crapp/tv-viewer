@@ -16,6 +16,53 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+proc main_newsreaderUi {update_news word_tags hyperlinks} {
+	if {[winfo exists .top_newsreader] == 0} {
+		set w [toplevel .top_newsreader]
+		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+		
+		set mf [ttk::frame $w.mf]
+		set fb [ttk::frame $w.mf.btn -style TLabelframe]
+		ttk::label $mf.l_top_newsr -justify left
+		text $mf.t_top_newsr -yscrollcommand [list $mf.scrollb_newsr set] -width 0 -height 0 -insertwidth 0
+		ttk::scrollbar $mf.scrollb_newsr -command [list $mf.t_top_newsr yview]
+		ttk::button $fb.b_newsr_homepage -text [mc "Homepage"] -compound left -image $::icon_s(internet) -command main_newsreaderHomepage
+		ttk::button $fb.b_newsr_ok -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command [list main_newsreaderExit $w]
+		
+		grid $mf -in $w -row 0 -column 0
+		grid $fb -in $mf -row 2 -column 0 -sticky ew -columnspan 2 -pady 3 -padx 3
+		
+		grid anchor $fb e
+		
+		grid $mf.l_top_newsr -in $mf -row 0 -column 0 -sticky ew -columnspan 2
+		grid $mf.t_top_newsr -in $mf -row 1 -column 0 -sticky nesw
+		grid $mf.scrollb_newsr -in $mf -row 1 -column 1 -sticky nesw
+		grid $fb.b_newsr_homepage -in $fb -row 0 -column 0 -pady 7
+		grid $fb.b_newsr_ok -in $fb -row 0 -column 1 -padx 3
+		
+		grid rowconfigure $mf 1 -weight 1 -minsize 350
+		grid columnconfigure $mf 0 -weight 1 -minsize 520
+		
+		autoscroll $mf.scrollb_newsr
+		
+		wm title $w [mc "Newsreader"]
+		wm protocol $w WM_DELETE_WINDOW [list main_newsreaderExit $w]
+		wm resizable $w 0 0
+		wm iconphoto $w $::icon_b(newsreader)
+		
+		$mf.t_top_newsr insert end "$update_news\n"
+		main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
+		main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
+		$mf.t_top_newsr configure -state disabled
+		tkwait visibility $w
+		
+	} else {
+		log_writeOutTv 1 "Newsreader already opened."
+		raise .top_newsreader
+		return
+	}
+}
+
 proc main_newsreaderCheckUpdate {handler} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m"}
 	#handler 0 == check for updates; 1 == autocheck for updates.
@@ -67,105 +114,62 @@ proc main_newsreaderCheckUpdate {handler} {
 		set status 1
 	}
 	if {$status == 0} {
-		if {[winfo exists .top_newsreader] == 0} {
-			set get_current_news [http::data $get_news]
-			set get_current_tags [http::data $get_tags]
-			set get_current_links [http::data $get_links]
-			http::cleanup $get_news
-			http::cleanup $get_tags
-			http::cleanup $get_links
-			set update_news [join [lrange [split $get_current_news "\n"] 0 end] "\n"]
-			set word_tags [join [lrange [split $get_current_tags "\n"] 0 end] "\n"]
-			foreach line [split $get_current_links \n] {
-				if {[string trim $line] == {}} continue
-				if {[string match "*_$lang *" $line]} {
-					if {[info exists hyperlinks] == 0} {
-						set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
-					} else {
-						dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
-					}
+		#main_newsreaderUi $handler $get_news $get_tags $get_links $lang
+		set get_current_news [http::data $get_news]
+		set get_current_tags [http::data $get_tags]
+		set get_current_links [http::data $get_links]
+		http::cleanup $get_news
+		http::cleanup $get_tags
+		http::cleanup $get_links
+		set update_news [join [lrange [split $get_current_news "\n"] 0 end] "\n"]
+		set word_tags [join [lrange [split $get_current_tags "\n"] 0 end] "\n"]
+		foreach line [split $get_current_links \n] {
+			if {[string trim $line] == {}} continue
+			if {[string match "*_$lang *" $line]} {
+				if {[info exists hyperlinks] == 0} {
+					set hyperlinks [dict create [lindex $line 0] "[lindex $line 1]"]
+				} else {
+					dict lappend hyperlinks [lindex $line 0] "[lindex $line 1]"
 				}
 			}
-			catch {file delete "$::option(home)/config/last_update.date"}
-			set date_file [open "$::option(home)/config/last_update.date" w]
-			close $date_file
-			
-			set w [toplevel .top_newsreader]
-			place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-			
-			set mf [ttk::frame $w.mf]
-			set fb [ttk::frame $w.mf.btn -style TLabelframe]
-			ttk::label $mf.l_top_newsr -justify left
-			text $mf.t_top_newsr -yscrollcommand [list $mf.scrollb_newsr set] -width 0 -height 0 -insertwidth 0
-			ttk::scrollbar $mf.scrollb_newsr -command [list $mf.t_top_newsr yview]
-			ttk::button $fb.b_newsr_homepage -text [mc "Homepage"] -compound left -image $::icon_s(internet) -command main_newsreaderHomepage
-			ttk::button $fb.b_newsr_ok -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command [list main_newsreaderExit $w]
-			
-			grid $mf -in $w -row 0 -column 0
-			grid $fb -in $mf -row 2 -column 0 -sticky ew -columnspan 2 -pady 3 -padx 3
-			
-			grid anchor $fb e
-			
-			grid $mf.l_top_newsr -in $mf -row 0 -column 0 -sticky ew -columnspan 2
-			grid $mf.t_top_newsr -in $mf -row 1 -column 0 -sticky nesw
-			grid $mf.scrollb_newsr -in $mf -row 1 -column 1 -sticky nesw
-			grid $fb.b_newsr_homepage -in $fb -row 0 -column 0 -pady 7
-			grid $fb.b_newsr_ok -in $fb -row 0 -column 1 -padx 3
-			
-			grid rowconfigure $mf 1 -weight 1 -minsize 350
-			grid columnconfigure $mf 0 -weight 1 -minsize 520
-			
-			autoscroll $mf.scrollb_newsr
-			
-			wm title $w [mc "Newsreader"]
-			wm protocol $w WM_DELETE_WINDOW [list main_newsreaderExit $w]
-			wm resizable $w 0 0
-			wm iconphoto $w $::icon_b(newsreader)
-			
-			if {$handler == 1} {
-				if {[file exists "$::option(home)/config/last_read.conf"]} {
-					set open_last_read [open "$::option(home)/config/last_read.conf" r]
-					set open_last_read_content [read $open_last_read]
-					close $open_last_read
-					if {"$open_last_read_content" == "$update_news"} {
-						log_writeOutTv 0 "No newer messages."
-						destroy $w
-					} else {
-						log_writeOutTv 0 "Found newer messages."
-						file delete "$::option(home)/config/last_read.conf"
-						set open_last_write [open "$::option(home)/config/last_read.conf" w]
-						puts -nonewline $open_last_write "$update_news"
-						close $open_last_write
-						$mf.t_top_newsr insert end "$update_news\n"
-						main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
-						main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
-						$mf.t_top_newsr configure -state disabled
-						tkwait visibility $w
-					}
+		}
+		catch {file delete "$::option(home)/config/last_update.date"}
+		set date_file [open "$::option(home)/config/last_update.date" w]
+		close $date_file
+		
+		dict set ::newsreader news content "$update_news"
+		dict set ::newsreader news tags "$word_tags"
+		dict set ::newsreader news hyperlinks "$hyperlinks"
+		
+		if {$handler == 1} {
+			if {[file exists "$::option(home)/config/last_read.conf"]} {
+				set open_last_read [open "$::option(home)/config/last_read.conf" r]
+				set open_last_read_content [read $open_last_read]
+				close $open_last_read
+				if {"$open_last_read_content" == "$update_news"} {
+					log_writeOutTv 0 "There are no news about TV-Viewer"
+					return
 				} else {
+					log_writeOutTv 0 "There are news about TV-Viewer"
+					file delete "$::option(home)/config/last_read.conf"
 					set open_last_write [open "$::option(home)/config/last_read.conf" w]
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
-					$mf.t_top_newsr insert end "$update_news\n"
-					main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
-					main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
-					$mf.t_top_newsr configure -state disabled
-					tkwait visibility $w
+					dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
 				}
 			} else {
-				file delete "$::option(home)/config/last_read.conf"
+				log_writeOutTv 0 "There are news about TV-Viewer"
 				set open_last_write [open "$::option(home)/config/last_read.conf" w]
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write
-				$mf.t_top_newsr insert end "$update_news\n"
-				main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
-				main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
-				$mf.t_top_newsr configure -state disabled
-				tkwait visibility $w
+				dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
 			}
 		} else {
-			log_writeOutTv 1 "Newsreader already opened."
-			return
+			file delete "$::option(home)/config/last_read.conf"
+			set open_last_write [open "$::option(home)/config/last_read.conf" w]
+			puts -nonewline $open_last_write "$update_news"
+			close $open_last_write
+			main_newsreaderUi "$update_news" "$word_tags" "$hyperlinks"
 		}
 	} else {
 		log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
