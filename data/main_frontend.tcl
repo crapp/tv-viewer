@@ -493,8 +493,9 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	#~ bind . <Key-x> {puts [dict get $::keyseq preferences label]}
-	#~ bind . <Key-y> {irgendwas}
+	bind . <Key-x> {dbus_interfaceStart}
+	bind . <Key-y> {dbus_interfaceNotification "tv-viewer" "" "hello world" {tvviewerStart {Start TV-Viewer}} "" 5000}
+	bind . <Key-c> {dbus_interfaceNotification "tv-viewer" "" "hello world slkdfj sldknf sdhf szer 9woihdsf oisdfh " {tvviewerStart {Start TV-Viewer}} "" 5000}
 	
 	command_socket
 	

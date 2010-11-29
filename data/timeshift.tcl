@@ -62,7 +62,7 @@ proc timeshift_start_preRec {tbutton} {
 		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
 	} else {
 		catch {exec ""}
-		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite 0 &]
 		after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
 	}
 }
@@ -73,7 +73,7 @@ proc timeshift_Wait {tbutton} {
 		set ::timeshift(wait_id) [after 100 [list timeshift_Wait $tbutton]]
 	} else {
 		catch {exec ""}
-		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite 0 &]
 		after 3000 [list timeshift_start_Rec 0 $rec_pid $tbutton]
 	}
 }
@@ -104,7 +104,7 @@ proc timeshift_start_Rec {counter rec_pid tbutton} {
 	} else {
 		catch {exec kill $rec_pid}
 		catch {exec ""}
-		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite &]
+		set rec_pid [exec "$::option(root)/data/recorder.tcl" "[subst $::option(timeshift_path)/timeshift.mpeg]" $::option(video_device) infinite 0 &]
 		after 3000 [list timeshift_start_Rec [expr $counter + 1] $rec_pid $tbutton]
 	}
 }

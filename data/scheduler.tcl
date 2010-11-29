@@ -47,6 +47,28 @@ EXIT 1"
 	exit 1
 }
 
+set insertLocal 1
+set insertGlob 1
+foreach pa $auto_path {
+	if {[string match /usr/local/lib $pa]} {
+		set insertLocal 0
+	}
+	if {[string match /usr/lib $pa]} {
+		set insertGlob 0
+	}
+}
+if {$insertLocal} {
+	if {[file isdirectory /usr/local/lib]} {
+		set auto_path [linsert $auto_path 0 "/usr/local/lib"]
+	}
+}
+if {$insertGlob} {
+	if {[file isdirectory /usr/lib]} {
+		set auto_path [linsert $auto_path 0 "/usr/lib"]
+	}
+}
+unset -nocomplain insertLocal insertGlob pa
+
 source $option(root)/release_version.tcl
 source $option(root)/agrep.tcl
 source $option(root)/monitor.tcl
@@ -54,6 +76,7 @@ source $option(root)/process_config.tcl
 source $option(root)/main_picqual_stream.tcl
 source $option(root)/difftime.tcl
 source $option(root)/command_socket.tcl
+source $option(root)/dbus_interface.tcl
 
 set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
@@ -476,7 +499,7 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 			catch {file delete "$::option(home)/tmp/record_lockfile.tmp"}
 			set duration [string map {{:} { }} [lindex $::recjob($jobid) 4]]
 			set duration_calc [expr ([scan [lindex $duration 0] %d] * 3600) + ([scan [lindex $duration 1] %d] * 60) + [scan [lindex $duration 2] %d]]
-			set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc &]
+			set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
 			scheduler_logWriteOut 0 "Recorder has been executed for Job [lindex $::recjob($jobid) 0]."
 			after 3000 [list scheduler_rec $jobid 0 $rec_pid $duration_calc]
 		} else {
@@ -518,12 +541,15 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			set status [monitor_partRunning 1]
 			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
+				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
+			} else {
+				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" {tvviewerStart {Start TV-Viewer}} "" 7000
 			}
 			scheduler_delete $jobid
 		} else {
 			catch {exec kill $rec_pid}
 			catch {exec ""}
-			set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc &]
+			set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
 			incr counter
 			after 3000 [list scheduler_rec $jobid $counter $rec_pid $duration_calc]
 		}

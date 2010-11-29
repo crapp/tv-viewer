@@ -33,10 +33,15 @@ Optional Features
 TV-Viewer comes with some optional features. You may choose if you want 
 them to be installed or not.
 
-* tktray - A Tk library to dock Tk to the system tray. (default: enabled)
-           Depends on glibc; libxdmcp; libxau; libxcb; libx11
-           These dependencies should be installed by default on every linux
-           distribution.
+* tktray -   A Tk library to dock Tk to the system tray. (default: enabled)
+             Depends on glibc; libxdmcp; libxau; libxcb; libx11
+             These dependencies should be installed by default on every linux
+             distribution.
+* dbus-tcl - This library provides a dbus interface for Tcl applications
+             (default: enabled)
+             Depends on glibc
+             This dependency is installed by default on every linux
+             distribution. Of course a dbus daemon needs to be running.
 
 If you do not want to install one of this features use the switch
 
@@ -100,6 +105,12 @@ license.
 
 http://sw4me.com/wiki/Tktray
 --
+dbus-tcl:
+
+libdbus-tcl1.0.so developed and maintained by (C) Schelte Bron
+
+http://dbus-tcl.sourceforge.net/
+--
 callib:
 
 Callib is a calendar widget of which TV-Viewer makes us of. It is copyrighted by Jaafar Mejri.
@@ -113,14 +124,14 @@ For copyright infos see .../tv-viewer/extensions/autoscroll/license.terms
 --
 fsdialog:
 
-Copyright (C) Schelte Bron.  Freely redistributable.
+Copyright (C) Schelte Bron. Freely redistributable.
 
 http://wiki.tcl.tk/15897
 
 Ideas, questions, patches and bug reports
 -----------------------------------------
 Project site http://sourceforge.net/projects/tv-viewer/
-Wiki http://tv-viewer.sourceforge.net
+Homepage http://tv-viewer.sourceforge.net
 
 --
 2007-2010 by Christian Rapp

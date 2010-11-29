@@ -25,8 +25,31 @@ set ::option(appname) tv-viewer_recorder
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 
+set insertLocal 1
+set insertGlob 1
+foreach pa $auto_path {
+	if {[string match /usr/local/lib $pa]} {
+		set insertLocal 0
+	}
+	if {[string match /usr/lib $pa]} {
+		set insertGlob 0
+	}
+}
+if {$insertLocal} {
+	if {[file isdirectory /usr/local/lib]} {
+		set auto_path [linsert $auto_path 0 "/usr/local/lib"]
+	}
+}
+if {$insertGlob} {
+	if {[file isdirectory /usr/lib]} {
+		set auto_path [linsert $auto_path 0 "/usr/lib"]
+	}
+}
+unset -nocomplain insertLocal insertGlob pa
+
 source "$option(root)/agrep.tcl"
 source "$option(root)/monitor.tcl"
+source "$option(root)/dbus_interface.tcl"
 
 proc recorderCheckMain {com fdin fdout} {
 	if {"$com" == "cancel"} {
@@ -67,6 +90,7 @@ set bufsize  8192
 set lifespan [lindex $::argv 2]
 set fdin  [open [lindex $::argv 1] r]
 set fdout [open $filename w]
+set jobid [lindex $::argv 3]
  
 foreach chan [list $fdin $fdout] {
 		chan configure $chan -encoding binary \
@@ -79,6 +103,12 @@ if {"$lifespan" != "infinite"} {
 		catch { chan close $fdin }
 		catch { chan close $fdout }
 		catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
+		set status_main [monitor_partRunning 1]
+		if {[lindex $status_main 0]} {
+			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
+		} else {
+			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" {tvviewerStart {Start TV-Viewer}} "" 7000
+		}
 		exit 0
 	}
 } else {

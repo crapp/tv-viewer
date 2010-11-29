@@ -18,6 +18,18 @@
 
 proc system_trayActivate {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayActivate \033\[0m"
+	set status_present [catch {package present tktray 1.3.9} result_present]
+	if {$status_present == 0} {
+		log_writeOutTv 0 "Package tktray already loaded"
+	} else {
+		log_writeOutTv 0 "Loading shared library tktray"
+		set status_tray [catch {package require tktray 1.3.9} result_tktray]
+		if {$status_tray == 1} {
+			log_writeOutTv 2 "Can not load shared library tktray"
+			log_writeOutTv 2 "$result_tktray"
+			status_feedbWarn 1 [mc "Can not load shared library tktray"]
+		}
+	}
 	if {[winfo exists .tray] == 0} {
 		catch {tktray::icon .tray -image $::icon_men(placeholder) -visible 0}
 		if {[winfo exists .tray]} {

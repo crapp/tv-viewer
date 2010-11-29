@@ -16,8 +16,6 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-
-
 proc monitor_partRunning {handler} {
 	# handler: 1 main - 2 scheduler - 3 recording - 4 timeshift
 	# check if main is running

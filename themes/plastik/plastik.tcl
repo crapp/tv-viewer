@@ -5,7 +5,7 @@
 #  Copyright (c) 2004 Googie
 #  Copyright (c) 2005 Pat Thoyts <patthoyts@users.sourceforge.net>
 #
-# $Id: plastik.tcl,v 1.12 2010/09/05 13:54:20 sbron Exp $
+# $Id: plastik.tcl,v 1.13 2010/11/22 21:30:54 sbron Exp $
 
 package require Tk 8.4
 package require tile 0.8.0
@@ -234,7 +234,7 @@ ttk::style theme create plastik -parent default -settings {
       image [list $I(spinbox-n) focus $I(spinbox-f)] \
       -border {2 2 18 2} -padding {3 0 0} -sticky news
     ttk::style element create Spinbox.buttons \
-      image [list $I(spinbut-n) {hover !disabled} $I(spinbut-a)] \
+      image [list $I(spinbut-n) [list $hover !disabled] $I(spinbut-a)] \
       -border {5 3 3} -padding {0 0 1 0}
     ttk::style element create Spinbox.uparrow image [list $I(spinup-n) \
       disabled	$I(spinup-d) \

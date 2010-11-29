@@ -250,13 +250,6 @@ if {$insertGlob} {
 	}
 }
 unset -nocomplain insertLocal insertGlob pa
-puts "loading shared libraries"
-set status_tray [catch {package require tktray 1.3.9} result_tktray]
-if {$status_tray == 1} {
-	puts "
-ERROR:  $result_tktray
-"
-}
 #Source autoscroll function for scrollbars and load package autoscroll
 source $::option(root)/extensions/autoscroll/autoscroll.tcl
 package require autoscroll
@@ -359,6 +352,8 @@ source $::option(root)/data/status_feedb.tcl
 source $::option(root)/data/main_frontend.tcl
 #Source command socket
 source $::option(root)/data/command_socket.tcl
+#Source dbus interface
+source $::option(root)/data/dbus_interface.tcl
 #Source color management toplevel and related functions.
 source $::option(root)/data/colorm.tcl
 #Source diagnostic routine frontend.
