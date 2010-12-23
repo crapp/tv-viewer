@@ -252,6 +252,8 @@ mcset de {Minimize to tray} {In den Tray minimieren}
 mcset de {Close to tray} {In den Tray schließen}
 mcset de {Resize system tray icon} {Größe des Tray Icons ändern}
 mcset de {System tray icon size} {System Tray Icon Größe}
+mcset de {D-Bus Interface} {D-Bus Interface}
+mcset de {Enable D-Bus Interface} {D-Bus Interface aktivieren}
 mcset de {On screen Display} {On screen Display}
 mcset de {Station} {Sender}
 mcset de {Windowed mode} {Fenstermodus}
@@ -285,6 +287,11 @@ mcset de {Activate integration to system tray} {Integration in den System Tray a
 mcset de {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.} {Größe des System Tray icons automatisch anpassen wenn sich
 das Tray ändert. Diese Option ist mit Vorsicht zu genießen}
+mcset de {Activates D-Bus interface. This is used by
+TV-Viewer to display notifications about recordings
+and news about the project.} {Aktiviert das D-Bus Interface. Dieses wird von 
+TV-Viewer verwendet um Benachrichtigungen über Neuigkeiten
+oder Aufnahmen anzuzeigen.}
 mcset de {Choose the size for the system tray icon} {Größe des Icons wählen}
 mcset de {OSD for station name in windowed mode} {OSD Sendername im Fenstermodus}
 mcset de {OSD for station name in full-screen mode} {OSD Sendername im Vollbildmodus}
@@ -399,6 +406,10 @@ mcset de {Discard changes and close preferences dialog} {Änderungen verwerfen u
 
 ### ../data/create_icons.tcl ###
 
+
+### ../data/dbus_interface.tcl ###
+
+mcset de {Can not load shared library dbus-tcl} {Kann das Shared Library dbus-tcl nicht laden}
 
 ### ../data/diag_frontend.tcl ###
 
@@ -895,6 +906,7 @@ mcset de {TV-Viewer Error} {TV-Viewer Fehler}
 
 ### ../data/system_tray.tcl ###
 
+mcset de {Can not load shared library tktray} {Kann das Shared Library tktray nicht laden}
 mcset de {Can not create system tray icon} {Kann Icon nicht in den System Tray stellen}
 mcset de {Hide} {Verstecken}
 mcset de {Restore} {Wiederherstellen}

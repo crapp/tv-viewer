@@ -62,7 +62,7 @@ proc recorderCheckMain {com fdin fdout} {
 		# possible.
 		catch { chan close $fdin }
 		catch { chan close $fdout }
-		puts "Recorder error: Main app died while running timeshift."
+		puts "recorder error: Main app died while running timeshift."
 		exit 1
 	} else {
 		after 1000 [list recorderCheckMain 0 $fdin $fdout]
@@ -73,7 +73,7 @@ proc recorderShowProgress { fdin fdout size bytes {error ""} } {
 	if { $error != "" } {
 		catch { chan close $fdin }
 		catch { chan close $fdout }
-		puts "Recorder error: $error"
+		puts "recorder error: $error"
 		exit 1
 	}
 	if { [eof $fdin] } {
@@ -91,7 +91,19 @@ set lifespan [lindex $::argv 2]
 set fdin  [open [lindex $::argv 1] r]
 set fdout [open $filename w]
 set jobid [lindex $::argv 3]
- 
+
+catch {exec ps -eo "%p %a"} read_ps
+set status [catch {agrep -w "$read_ps" [lindex $::argv 1]} result]
+if {$status == 0} {
+	foreach line [split $result \n] {
+		set status [catch {agrep -m "$line" mplayer} result]
+		if {$status == 0} {
+			catch {exec kill [lindex $line 0]}
+			puts "recorder error: killing MPlayer PID [lindex $line 0] this should not be necessary"
+		}
+	}
+}
+
 foreach chan [list $fdin $fdout] {
 		chan configure $chan -encoding binary \
 		-translation binary -buffersize $bufsize

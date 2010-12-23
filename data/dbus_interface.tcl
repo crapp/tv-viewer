@@ -24,12 +24,18 @@ proc dbus_interfaceStart {} {
 		catch {log_writeOutTv 0 "Loading shared library dbus-tcl"}
 		set status_dbus [catch {package require dbus-tcl 1.0} result_dbustcl]
 		if {$status_dbus == 1} {
-			catch {log_writeOutTv 2 "Can not load shared library dbus-tcl"}
-			catch {log_writeOutTv 2 "$result_dbustcl"}
 			if {"$::option(appname)" == "tv-viewer_main"} {
+				log_writeOutTv 2 "Can not load shared library dbus-tcl"
+				log_writeOutTv 2 "$result_dbustcl"
+				log_writeOutTv 2 "Deactivate D-Bus in the interface section of the preferences"
 				status_feedbWarn 1 [mc "Can not load shared library dbus-tcl"]
 			}
-			return
+			if {"$::option(appname)" == "tv-viewer_scheduler"} {
+				scheduler_logWriteOut 2 "Can not load shared library dbus-tcl"
+				scheduler_logWriteOut 2 "$result_dbustcl"
+				scheduler_logWriteOut 2 "Deactivate D-Bus in the interface section of the preferences"
+			}
+			return 1
 		}
 		# connecting to dbus 
 		catch {dbus connect}
@@ -39,27 +45,46 @@ proc dbus_interfaceStart {} {
 		catch {dbus listen /org/freedesktop/Notifications org.freedesktop.Notifications.ActionInvoked dbus_interfaceAction}
 		#~ puts [dbus call -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.DBus.Introspectable Introspect]
 		set ::dbus(notification_id) 0
+		return 0
 	}
+	return 0
 }
 
 proc dbus_interfaceNotification {icon summary body action hints timeout} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: dbus_interfaceNotification \033\[0m \{$icon\} \{$summary\} \{$body\} \{$action\} \{$hints\} \{$timeout\}"}
-	# make sure dbus is up and running
-	dbus_interfaceStart
-	set names [dbus call -dest org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ListNames]
-	if {[lsearch -exact $names org.freedesktop.Notifications] != -1} {
-		# make sure last notifications gets closed
-		if {$::dbus(notification_id) != 0} {
-			dbus call -signature u -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications CloseNotification $::dbus(notification_id)
-		}
-		# send notification
-		catch {dbus call -signature susssasa{sv}i -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications Notify "TV-Viewer" $::dbus(notification_id) $icon "$summary" "$body" "$action" "$hints" $timeout} ::dbus(notification_id)
-		if {[string is digit $::dbus(notification_id)] == 0} {
-			set ::dbus(notification_id) 0
+	if {$::option(dbusInt) == 1} {
+		# make sure dbus is up and running
+		set dbusok [dbus_interfaceStart]
+		if {$dbusok == 0} {
+			catch {dbus call -dest org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus ListNames} names
+			if {[lsearch -exact $names org.freedesktop.Notifications] != -1} {
+				# make sure last notifications gets closed
+				if {$::dbus(notification_id) != 0} {
+					catch {dbus call -signature u -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications CloseNotification $::dbus(notification_id)}
+				}
+				# send notification
+				catch {dbus call -signature susssasa{sv}i -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.Notifications Notify "TV-Viewer" $::dbus(notification_id) $icon "$summary" "$body" "$action" "$hints" $timeout} ::dbus(notification_id)
+				if {[string is digit $::dbus(notification_id)] == 0} {
+					set ::dbus(notification_id) 0
+				}
+			} else {
+				if {"$::option(appname)" == "tv-viewer_main"} {
+					log_writeOutTv 2 "Can not access D-Bus notification interface"
+					log_writeOutTv 2 "$names"
+				}
+				if {"$::option(appname)" == "tv-viewer_scheduler"} {
+					scheduler_logWriteOut 2 "Can not access D-Bus notification interface"
+					scheduler_logWriteOut 2 "$names"
+				}
+			}
 		}
 	} else {
-		catch {log_writeOutTv 2 "Can not access dbus notification interface"}
-		catch {log_writeOutTv 2 "$names"}
+		if {"$::option(appname)" == "tv-viewer_main"} {
+			log_writeOutTv 1 "D-Bus Interface is deactivated"
+		}
+		if {"$::option(appname)" == "tv-viewer_scheduler"} {
+			scheduler_logWriteOut 1 "D-Bus Interface is deactivated"
+		}
 	}
 }
 

@@ -93,6 +93,7 @@ proc process_configRead {} {
 		systrayClose 0
 		systrayResize 0
 		systrayIcSize 22
+		dbusInt 1
 		osd_enabled 1
 		osd_font "DejaVu Sans Mono"
 		osd_font_size 72

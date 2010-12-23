@@ -53,11 +53,12 @@ proc status_feedbWarn {handler msg} {
 		
 		$fBut.b_warnLog configure -command "$btnCommand($handler); destroy $top; vid_wmCursor 1; ::tk::RestoreFocusGrab $top destroy"
 		
-		raise $top
 		vid_wmCursor 0
 		::tk::SetFocusGrab $top
 		
 		tkwait visibility $top
+		raise .
+		raise $top
 		focus $fBut.b_warnOk
 		log_writeOutTv 0 "Creating error dialogue"
 	} else {

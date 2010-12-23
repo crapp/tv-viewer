@@ -310,18 +310,18 @@ checking dependencies
 	if {$status_tk == 0} {
 		if {[package vsatisfies $version_tk 8.5]} {
 			puts $::printchan "\033\[0;1;32m OK\033\[0m"
-			puts $log "Tk $version_tk"
+			puts $log "Tk $version_tk OK"
 		} else {
-			puts $log "Tk $version_tk FAILED "
+			puts $log "Tk $version_tk FAILED with \"$version_tk\""
 			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 			puts $::printchan "
-TV-Viewer needs Tk >= 8.5 found $version_tk
+TV-Viewer needs Tk >= 8.5 found \"$version_tk\"
 see the README for system requirements
 EXIT 1"
 			exit 1
 		}
 	} else {
-		puts $log "Tk FAILED " 
+		puts $log "Tk FAILED with \"$version_tk\"" 
 		puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
 		puts $::printchan "
 TV-Viewer needs Tk >= 8.5
@@ -342,7 +342,7 @@ EXIT 1"
 			incr i
 		}
 		if {[string trim [auto_execok $key]] != {}} {
-			puts $log "[auto_execok $key]"
+			puts $log "[auto_execok $key] OK"
 			puts $::printchan "\033\[0;1;32m OK\033\[0m"
 		} else {
 			puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
@@ -494,7 +494,7 @@ $result_out"
 configure.tcl done
 exit 0"
 	puts $::printchan "
-configure: creating ./config.log
+configure: creating ./configure.log
 configure: creating ./install.tcl"
 
 if {$::start_options(--quiet) == 0} {
@@ -507,10 +507,10 @@ as root to install TV-Viewer
 	exit 0
 }
 
-set status_log [catch {set log [open "$where_is/config.log" w+]} result_log]
+set status_log [catch {set log [open "$where_is/configure.log" w+]} result_log]
 if {$status_log != 0} {
 	puts "
-fatal, can not write log file
+fatal, can not write to log file
 
 $result_log"
 

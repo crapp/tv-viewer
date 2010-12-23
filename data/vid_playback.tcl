@@ -242,6 +242,16 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		vid_pmhandlerMenuTray {{15 disabled} {16 disabled} {17 disabled}}
 		settooltip .ftoolb_Play.bSave {}
 		
+		catch {exec ps -eo "%p %a"} read_ps
+		set status [catch {agrep -w "$read_ps" $::option(video_device)} result]
+		if {$status == 0} {
+			foreach line [split $result \n] {
+				catch {exec kill [lindex $line 0]}
+				log_writeOutTv 2 "killing MPlayer PID [lindex $line 0] this should not be necessary"
+				log_writeOutMpl 2 "killing MPlayer PID [lindex $line 0] this should not be necessary"
+			}
+		}
+		
 		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
 		fileevent $::data(mplayer) readable [list vid_callbackVidData]
