@@ -453,6 +453,7 @@ proc main_frontendUi {} {
 	set ::main(label_file_time) " --:-- / --:--"
 	set ::chan(old_channel) 0
 	set ::vid(recStart) 0
+	set ::vid(pbStatus) 0
 	
 	#FIXME Simplify and wrap the following code. Additionally swap out something to different procs
 	

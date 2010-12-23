@@ -86,10 +86,64 @@ proc vid_callbackVidData {} {
 			if {$::vid(stayontop) == 2} {
 				wm attributes . -topmost 0
 			}
+			set ::vid(pbStatus) 0
 		} else {
 			if {[string match "A:*V:*A-V:*" $line] != 1} {
 				log_writeOutMpl 0 "$line"
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_callbackVidData \033\[0m \{$line\}"
+			} else {
+				if {$::vid(pbStatus) == 0} {
+					catch {launch_splashPlay cancel 0 0 0}
+					catch {place forget .fvidBg.l_anigif}
+					catch {destroy .fvidBg.l_anigif}
+					if {$::option(player_aspect) == 1} {
+						if {$::option(player_keepaspect) == 1} {
+							place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
+							bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
+						} else {
+							place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
+						}
+					} else {
+						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
+						bind .fvidBg.cont <Configure> {}
+					}
+					if {$::data(movevidX) != 0} {
+						place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
+					}
+					if {$::data(movevidY) != 0} {
+						place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
+					}
+					if {$::data(panscanAuto) == 1} {
+						set ::vid(id_panscanAuto) [after 500 {
+							catch {after cancel $::vid(id_panscanAuto)}
+							set ::data(panscanAuto) 0
+							event generate . <<wmZoomAuto>>
+						}]
+					} else {
+						if {$::data(panscan) != 0} {
+							place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
+						}
+					}
+					vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
+					vid_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
+					set status_time [monitor_partRunning 4]
+					set status_record [monitor_partRunning 3]
+					if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
+						bind . <<input_next>> "chan_zapperInput 1 1"
+						bind . <<input_prior>> "chan_zapperInput 1 -1"
+						bind . <<teleview>> {vid_playbackRendering}
+						if {$::vid(pbMode)} {
+							status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
+						} else {
+							status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
+						}
+					}
+					if {[info exists ::wizard(Pos)] && $::wizard(Pos) > 0} {
+						vid_seek $::wizard(Pos) 3
+						unset -nocomplain ::wizard(Pos)
+					}
+					set ::vid(pbStatus) 1
+				}
 			}
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
 				log_writeOutTv 0 "MPlayer reported video resolution $resolution."
@@ -124,57 +178,6 @@ proc vid_callbackVidData {} {
 				}
 				set ::data(file_pos_calc) [clock seconds]
 				after 10 [list vid_fileComputePos $::data(file_pos_calc)]
-			}
-			if {[string match -nocase "Starting playback*" $line]} {
-				catch {launch_splashPlay cancel 0 0 0}
-				catch {place forget .fvidBg.l_anigif}
-				catch {destroy .fvidBg.l_anigif}
-				if {$::option(player_aspect) == 1} {
-					if {$::option(player_keepaspect) == 1} {
-						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
-						bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
-					} else {
-						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
-					}
-				} else {
-					place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
-					bind .fvidBg.cont <Configure> {}
-				}
-				if {$::data(movevidX) != 0} {
-					place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
-				}
-				if {$::data(movevidY) != 0} {
-					place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
-				}
-				if {$::data(panscanAuto) == 1} {
-					set ::vid(id_panscanAuto) [after 500 {
-						catch {after cancel $::vid(id_panscanAuto)}
-						set ::data(panscanAuto) 0
-						event generate . <<wmZoomAuto>>
-					}]
-				} else {
-					if {$::data(panscan) != 0} {
-						place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
-					}
-				}
-				vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
-				vid_callbackMplayerRemote "audio_delay $::option(player_audio_delay) 1"
-				set status_time [monitor_partRunning 4]
-				set status_record [monitor_partRunning 3]
-				if {[lindex $status_record 0] == 0 && [lindex $status_time 0] == 0} {
-					bind . <<input_next>> "chan_zapperInput 1 1"
-					bind . <<input_prior>> "chan_zapperInput 1 -1"
-					bind . <<teleview>> {vid_playbackRendering}
-					if {$::vid(pbMode)} {
-						status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
-					} else {
-						status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
-					}
-				}
-				if {[info exists ::wizard(Pos)] && $::wizard(Pos) > 0} {
-					vid_seek $::wizard(Pos) 3
-					unset -nocomplain ::wizard(Pos)
-				}
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {
 				if {$::vid(getvid_seek) == 0} {
