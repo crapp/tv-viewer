@@ -596,8 +596,10 @@ proc vid_wmCursor {com} {
 		vid_wmCursorHide .fvidBg 1
 		set ::cursor(.fvidBg.cont) ""
 		set ::cursor(.fvidBg) ""
-		.fvidBg configure -cursor $::cursor(old_.fvidBg)
-		.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont)
+		if {[info exists ::cursor(old_.fvidBg)] && [info exists ::cursor(old_.fvidBg.cont)]} {
+			.fvidBg configure -cursor $::cursor(old_.fvidBg)
+			.fvidBg.cont configure -cursor $::cursor(old_.fvidBg.cont)
+		}
 	}
 	if {$com == 1} {
 		if {[wm attributes . -fullscreen] == 1} {

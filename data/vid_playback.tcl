@@ -419,20 +419,18 @@ proc vid_playbackRendering {} {
 			bind . <<forward_end>> {}
 			bind . <<rewind_start>> {}
 			if {$::main(running_recording) == 1} {
-				if {$::option(forcevideo_standard) == 1} {
-					main_pic_streamForceVideoStandard
-				}
-				main_pic_streamDimensions
+				stream_videoStandard 0
+				stream_dimensions
 				if {$::option(streambitrate) == 1} {
-					main_pic_streamVbitrate
+					stream_vbitrate
 				}
 				if {$::option(temporal_filter) == 1} {
-					main_pic_streamPicqualTemporal
+					stream_temporal
 				}
-				main_pic_streamColormControls
+				stream_colormControls
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
 				if {$::option(audio_v4l2) == 1} {
-					main_pic_streamAudioV4l2
+					stream_audioV4l2
 				}
 				set ::main(running_recording) 0
 			}
@@ -465,20 +463,18 @@ proc vid_playbackRendering {} {
 			bind . <<forward_end>> {}
 			bind . <<rewind_start>> {}
 			if {$::main(running_recording) == 1} {
-				if {$::option(forcevideo_standard) == 1} {
-					main_pic_streamForceVideoStandard
-				}
-				main_pic_streamDimensions
+				stream_videoStandard 0
+				stream_dimensions
 				if {$::option(streambitrate) == 1} {
-					main_pic_streamVbitrate
+					stream_vbitrate
 				}
 				if {$::option(temporal_filter) == 1} {
-					main_pic_streamPicqualTemporal
+					stream_temporal
 				}
-				main_pic_streamColormControls
+				stream_colormControls
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
 				if {$::option(audio_v4l2) == 1} {
-					main_pic_streamAudioV4l2
+					stream_audioV4l2
 				}
 				set ::main(running_recording) 0
 			}
@@ -487,7 +483,7 @@ proc vid_playbackRendering {} {
 			}
 			status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
 		}
-		main_pic_streamDimensions
+		stream_dimensions
 		vid_Playback .fvidBg .fvidBg.cont 0 0
 	}
 }

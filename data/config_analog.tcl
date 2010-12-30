@@ -198,7 +198,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 			}
 				.config_wizard.frame_buttons.b_default configure -command [list stnd_opt1 $::window(analog_nb1) $::window(analog_nb2)]
 			
-			set vidstds {PAL NTSC SECAM}
+			set vidstds {PAL PAL-N PAL-Nc PAL-M PAL-60 NTSC SECAM}
 			foreach vstds [split $vidstds] {
 				$::window(analog_nb1).mbVideo_standard add radiobutton \
 				-variable choice(mbVideo_standard) \

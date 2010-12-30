@@ -177,24 +177,22 @@ proc config_wizardExit {lbox nbook} {
 	process_configMem
 	
 	if {$::config(rec_running) == 0} {
-		if {$::option(forcevideo_standard) == 1} {
-			main_pic_streamForceVideoStandard
-		}
+		stream_videoStandard 0
 		
-		main_pic_streamDimensions
+		stream_dimensions
 		
 		if {$::option(streambitrate) == 1} {
-			main_pic_streamVbitrate
+			stream_vbitrate
 		}
 		if {$::option(temporal_filter) == 1} {
-			main_pic_streamPicqualTemporal
+			stream_temporal
 		}
-		main_pic_streamColormControls
+		stream_colormControls
 		
 		catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
 		
 		if {$::option(audio_v4l2) == 1} {
-			main_pic_streamAudioV4l2
+			stream_audioV4l2
 		}
 	}
 	if {[winfo exists .tray]} {

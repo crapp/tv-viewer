@@ -320,7 +320,7 @@ source $::option(root)/data/process_station_file.tcl
 #Execute reading of station list
 process_StationFile
 #Source stream and picqual related stuff.
-source $::option(root)/data/main_picqual_stream.tcl
+source $::option(root)/data/stream.tcl
 #Source video related functions
 source $::option(root)/data/vid_audio.tcl
 source $::option(root)/data/vid_callback.tcl

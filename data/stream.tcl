@@ -1,4 +1,4 @@
-#       main_picqual_stream.tcl
+#       stream.tcl
 #       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,13 +16,61 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-proc main_pic_streamForceVideoStandard {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamForceVideoStandard \033\[0m"}
-	catch {exec v4l2-ctl --device=$::option(video_device) --set-standard=[string tolower $::option(video_standard)]}
+proc stream_videoStandard {handler} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: stream_videoStandard \033\[0m \{$handler\}"}
+	#handler 0 = normal; 1 = called during startup
+	if {"$::option(appname)" == "tv-viewer_main"} {
+		set logCommand log_writeOutTv
+	}
+	if {"$::option(appname)" == "tv-viewer_scheduler"} {
+		set logCommand scheduler_logWriteOut
+	}
+	set check 0
+	if {$::option(forcevideo_standard)} {
+		$logCommand 1 "Forcing video standard $::option(video_standard)"
+		catch {exec v4l2-ctl --device=$::option(video_device) --set-standard=[string tolower $::option(video_standard)]}
+		set check 1
+	} else {
+		catch {exec v4l2-ctl --device=$::option(video_device) --get-standard} vidStandard
+		set status [catch {agrep -m "[string tolower $vidStandard]" [string tolower $::option(video_standard)]} result]
+		if {$status == 0} {
+			$logCommand 0 "Video standard \"[string trim $result]\", nothing to change"
+		} else {
+			$logCommand 0 "Changing video standard to $::option(video_standard)"
+			catch {exec v4l2-ctl --device=$::option(video_device) --set-standard=[string tolower $::option(video_standard)]}
+			set check 1
+		}
+	}
+	if {$check} {
+		#check if setting the video standard was successful
+		catch {exec v4l2-ctl --device=$::option(video_device) --get-standard} vidStandard
+		set status [catch {agrep -m "[string tolower $vidStandard]" [string tolower $::option(video_standard)]} result]
+		if {$status == 0} {
+			$logCommand 0 "Successfully changed video standard to \"[string trim $result]\""
+		} else {
+			if {"$::option(appname)" == "tv-viewer_main"} {
+				log_writeOutTv 2 "Can not change video standard to $::option(video_standard)"
+				log_writeOutTv 2 "Error message: \"$result\""
+				if {$handler} {
+					if {$::option(show_splash) == 1} {
+						after 3500 {status_feedbWarn 1 [mc "Can not change video standard"]}
+					} else {
+						after 2500 {status_feedbWarn 1 [mc "Can not change video standard"]}
+					}
+				} else {
+					status_feedbWarn 1 [mc "Can not change video standard"]
+				}
+			}
+			if {"$::option(appname)" == "tv-viewer_scheduler"} {
+				scheduler_logWriteOut 2 "Can not change video standard to $::option(video_standard)"
+				scheduler_logWriteOut 2 "Error message: \"$result\""
+			}
+		}
+	}
 }
 
-proc main_pic_streamDimensions {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamDimension \033\[0m"}
+proc stream_dimensions {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: stream_dimensions \033\[0m"}
 	catch {exec v4l2-ctl --device=$::option(video_device) -V} read_v4l2ctl
 	set status_grepwidthheight [catch {agrep -m "$read_v4l2ctl" width} read_resol]
 	if {$status_grepwidthheight == 0} {
@@ -40,8 +88,8 @@ proc main_pic_streamDimensions {} {
 	}
 }
 
-proc main_pic_streamPicqualTemporal {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamPicqualTemporal \033\[0m"}
+proc stream_temporal {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: stream_temporal \033\[0m"}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=temporal_filter} read_temporal
 	set temporal_filter_status [catch {agrep -m "$read_temporal" temporal} resultat_temporal_filter]
 	if {$temporal_filter_status == 0} {
@@ -57,8 +105,8 @@ proc main_pic_streamPicqualTemporal {} {
 	}
 }
 
-proc main_pic_streamVbitrate {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamVbitrate \033\[0m"}
+proc stream_vbitrate {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: stream_vbitrate \033\[0m"}
 	if {$::option(streambitrate) == 1} {
 		if {[info exists ::option(videopeakbitrate)]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_peak_bitrate} read_peak_bitrate
@@ -87,8 +135,8 @@ proc main_pic_streamVbitrate {} {
 	}
 }
 
-proc main_pic_streamColormControls {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamColormControls \033\[0m"}
+proc stream_colormControls {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: stream_colormControls \033\[0m"}
 	if {[info exists ::option(brightness)]} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=brightness} read_brightness
 		set status_grepbrightness [catch {agrep -m "$read_bridghtness" brightness} brightness_check]
@@ -131,8 +179,8 @@ proc main_pic_streamColormControls {} {
 	}
 }
 
-proc main_pic_streamAudioV4l2 {} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_pic_streamAudioV4l2 \033\[0m"}
+proc stream_audioV4l2 {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: stream_audioV4l2 \033\[0m"}
 	if {[info exists ::option(audio_v4l2_value)]} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=volume} read_volume
 		set status_audio [catch {agrep -m "$read_volume" volume} resultat_audio]

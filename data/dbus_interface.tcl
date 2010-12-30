@@ -43,6 +43,7 @@ proc dbus_interfaceStart {} {
 		catch {dbus filter add -type signal -path /org/freedesktop/Notifications -interface org.freedesktop.Notifications}
 		# listen on mentioned interface and invoke script when there is something going on
 		catch {dbus listen /org/freedesktop/Notifications org.freedesktop.Notifications.ActionInvoked dbus_interfaceAction}
+		# introspect dbus interfaces
 		#~ puts [dbus call -dest org.freedesktop.Notifications /org/freedesktop/Notifications org.freedesktop.DBus.Introspectable Introspect]
 		set ::dbus(notification_id) 0
 		return 0

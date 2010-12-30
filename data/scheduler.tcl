@@ -73,7 +73,7 @@ source $option(root)/release_version.tcl
 source $option(root)/agrep.tcl
 source $option(root)/monitor.tcl
 source $option(root)/process_config.tcl
-source $option(root)/main_picqual_stream.tcl
+source $option(root)/stream.tcl
 source $option(root)/difftime.tcl
 source $option(root)/command_socket.tcl
 source $option(root)/dbus_interface.tcl
@@ -423,21 +423,19 @@ proc scheduler_rec_prestart {jobid} {
 		scheduler_logWriteOut 0 "Scheduler detected TV-Viewer is running, sending commands via socket."
 		command_WritePipe 0 "tv-viewer_main record_linkerPrestart record"
 	}
-	if {$::option(forcevideo_standard) == 1} {
-		main_pic_streamForceVideoStandard
-	}
+	stream_videoStandard 0
 	set dimensions [string map {{/} { }} [lindex $::recjob($jobid) 7]]
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-fmt-video=width=[lindex $dimensions 0],height=[lindex $dimensions 1]}
 	if {$::option(streambitrate) == 1} {
-		main_pic_streamVbitrate
+		stream_vbitrate
 	}
 	if {$::option(temporal_filter) == 1} {
-		main_pic_streamPicqualTemporal
+		stream_temporal
 	}
-	main_pic_streamColormControls
+	stream_colormControls
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
 	if {$::option(audio_v4l2) == 1} {
-		main_pic_streamAudioV4l2
+		stream_audioV4l2
 	}
 	set match 0
 	for {set i 1} {$i <= $::scheduler(max_stations)} {incr i} {
