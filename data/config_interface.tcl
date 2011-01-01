@@ -89,10 +89,6 @@ proc option_screen_6 {} {
 		ttk::label $lf_systray.l_systrayIcSize -text [mc "System tray icon size"]
 		ttk::menubutton $lf_systray.mb_systrayIcSize -menu $lf_systray.mb_systrayIcSize.mIcSize
 		
-		ttk::labelframe $::window(interface_nb2_cont).f_windowprop2.lf_dbus -text [mc "D-Bus Interface"]
-		set lf_dbus $::window(interface_nb2_cont).f_windowprop2.lf_dbus
-		ttk::checkbutton $lf_dbus.cb_dbus -text [mc "Enable D-Bus Interface"] -variable choice(cb_dbus)
-		
 		set ::window(interface_nb3) [ttk::frame $w.f_osd]
 		$w add $::window(interface_nb3) -text [mc "On screen Display"] -padding 2
 		set ::window(interface_nb3_cont) [canvas $::window(interface_nb3).c_cont -yscrollcommand [list $::window(interface_nb3).scrollb_cont set] -highlightthickness 0]
@@ -161,8 +157,6 @@ proc option_screen_6 {} {
 		grid $lf_systray.cb_systrayResize -in $lf_systray -row 3 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $lf_systray.l_systrayIcSize -in $lf_systray -row 4 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $lf_systray.mb_systrayIcSize -in $lf_systray -row 4 -column 1 -sticky w -pady "0 3"
-		grid $lf_dbus -in $::window(interface_nb2_cont).f_windowprop2 -row 3 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $lf_dbus.cb_dbus -in $lf_dbus -row 0 -column 0 -sticky w -padx 7 -pady 3
 		
 		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
 		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
@@ -226,7 +220,6 @@ proc option_screen_6 {} {
 		proc config_interfaceSystray {size} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceSystray \033\[0m \{$size\}"
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
-			set lf_dbus $::window(interface_nb2_cont).f_windowprop2.lf_dbus
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			$lf_systray.mb_systrayIcSize configure -text "$size\px"
 			if {[winfo exists .tray]} {
@@ -265,7 +258,6 @@ proc option_screen_6 {} {
 			log_writeOutTv 0 "Starting to collect data for interface section."
 			
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
-			set lf_dbus $::window(interface_nb2_cont).f_windowprop2.lf_dbus
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
@@ -289,7 +281,6 @@ proc option_screen_6 {} {
 			set ::choice(cb_systrayResize) $::option(systrayResize)
 			set ::choice(mb_systrayIcSize) $::option(systrayIcSize)
 			$lf_systray.mb_systrayIcSize configure -text $::option(systrayIcSize)\px
-			set ::choice(cb_dbus) $::option(dbusInt)
 			set ::choice(osd_station_w) $::option(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {
@@ -362,9 +353,6 @@ mouse pointer is moved to the \"bottom\", of the screen."]
 					settooltip $lf_systray.cb_systrayClose [mc "Close to tray"]
 					settooltip $lf_systray.cb_systrayResize [mc "Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option."]
-					settooltip $lf_dbus.cb_dbus [mc "Activates D-Bus interface. This is used by
-TV-Viewer to display notifications about recordings
-and news about the project."]
 					settooltip $lf_systray.mb_systrayIcSize [mc "Choose the size for the system tray icon"]
 					settooltip $lf_osdStation.cb_osd_station_w [mc "OSD for station name in windowed mode"]
 					settooltip $lf_osdStation.cb_osd_station_f [mc "OSD for station name in full-screen mode"]
@@ -399,7 +387,6 @@ and news about the project."]
 					settooltip $lf_systray.cb_systrayClose {}
 					settooltip $lf_systray.cb_systrayResize {}
 					settooltip $lf_systray.mb_systrayIcSize {}
-					settooltip $lf_dbus.cb_dbus {}
 					settooltip $w3.cb_osd_station_w {}
 					settooltip $w3.cb_osd_station_f {}
 					settooltip $w3.b_osd_station_fnt_w {}
@@ -421,7 +408,6 @@ and news about the project."]
 			log_writeOutTv 1 "Setting interface options to default."
 			
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
-			set lf_dbus $::window(interface_nb2_cont).f_windowprop2.lf_dbus
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
@@ -446,7 +432,6 @@ and news about the project."]
 			set ::choice(cb_systrayResize) $::stnd_opt(systrayResize)
 			set ::choice(mb_systrayIcSize) $::stnd_opt(systrayIcSize)
 			$lf_systray.mb_systrayIcSize configure -text $::stnd_opt(systrayIcSize)\px
-			set ::choice(cb_dbus) $::stnd_opt(dbusInt)
 			set ::choice(osd_station_w) $::stnd_opt(osd_station_w)
 			set ::config_int(cb_osd_station_w) [lindex $::choice(osd_station_w) 0]
 			if {"[lindex $::choice(osd_station_w) 2]" == "Regular"} {

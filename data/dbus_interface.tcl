@@ -16,6 +16,7 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+#code in this file is not used currently. most likely we will create a dbus interface so tv-viewer can be controlled with it.
 
 proc dbus_interfaceStart {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: dbus_interfaceStart \033\[0m"}

@@ -494,7 +494,6 @@ proc main_frontendUi {} {
 	
 	bind . <Key-x> {after 2000 {status_feedbWarn 1 "Test message"}}
 	bind . <Key-y> {sdf}
-	#bind . <Key-c> {dbus_interfaceNotification "tv-viewer" "" "hello world slkdfj sldknf sdhf szer 9woihdsf oisdfh " {tvviewerStart {Start TV-Viewer}} "" 5000}
 	
 	command_socket
 	

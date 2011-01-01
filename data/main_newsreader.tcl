@@ -155,14 +155,14 @@ proc main_newsreaderCheckUpdate {handler} {
 					set open_last_write [open "$::option(home)/config/last_read.conf" w]
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
-					dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
+					#~ dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
 				}
 			} else {
 				log_writeOutTv 0 "There are news about TV-Viewer"
 				set open_last_write [open "$::option(home)/config/last_read.conf" w]
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write
-				dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
+				#~ dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
 			}
 		} else {
 			file delete "$::option(home)/config/last_read.conf"

@@ -251,11 +251,6 @@ The Icons, distributed with TV-Viewer, are covered by "
 		$nb3.t_license insert end " is copyrighted by Anton Kovalenko
 under the BSD license."
 		$nb3.t_license insert end "\n"
-		$nb3.t_license insert end "\ndbus-tcl" big
-		$nb3.t_license insert end "\n\n"
-		$nb3.t_license insert end "libdbus-tcl1.0.so" link_dbustcl
-		$nb3.t_license insert end " developed and maintained by (C) Schelte Bron" 
-		$nb3.t_license insert end "\n"
 		$nb3.t_license insert end "\ncallib" big
 		$nb3.t_license insert end "\n\ncallib is a "
 		$nb3.t_license insert end "calendar widget" link_callib
@@ -289,11 +284,6 @@ written by Kevin B Kenny. For copyright infos see "
 		$nb3.t_license tag bind link_tktray <Any-Enter> "$nb3.t_license tag configure link_tktray $hylink_enter; $nb3.t_license configure -cursor hand1"
 		$nb3.t_license tag bind link_tktray <Any-Leave> "$nb3.t_license tag configure link_tktray $hylink_leave; $nb3.t_license configure -cursor {}"
 		$nb3.t_license tag bind link_tktray <Button-1> {catch {exec sh -c "xdg-open http://sw4me.com/wiki/Tktray" &}}
-		
-		$nb3.t_license tag configure link_dbustcl -foreground #0064FF -underline on
-		$nb3.t_license tag bind link_dbustcl <Any-Enter> "$nb3.t_license tag configure link_dbustcl $hylink_enter; $nb3.t_license configure -cursor hand1"
-		$nb3.t_license tag bind link_dbustcl <Any-Leave> "$nb3.t_license tag configure link_dbustcl $hylink_leave; $nb3.t_license configure -cursor {}"
-		$nb3.t_license tag bind link_dbustcl <Button-1> {catch {exec sh -c "xdg-open http://dbus-tcl.sourceforge.net/" &}}
 		
 		$nb3.t_license tag configure link_callib -foreground #0064FF -underline on
 		$nb3.t_license tag bind link_callib <Any-Enter> "$nb3.t_license tag configure link_callib $hylink_enter; $nb3.t_license configure -cursor hand1"

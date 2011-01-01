@@ -49,7 +49,7 @@ unset -nocomplain insertLocal insertGlob pa
 
 source "$option(root)/agrep.tcl"
 source "$option(root)/monitor.tcl"
-source "$option(root)/dbus_interface.tcl"
+#~ source "$option(root)/dbus_interface.tcl"
 
 proc recorderCheckMain {com fdin fdout} {
 	if {"$com" == "cancel"} {
@@ -117,10 +117,10 @@ if {"$lifespan" != "infinite"} {
 		catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
 		set status_main [monitor_partRunning 1]
 		if {[lindex $status_main 0]} {
-			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
+			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
 		} else {
 			#FIXME Not working if dbus action reader died
-			dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
+			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
 			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" {tvviewerStart {Start TV-Viewer}} "" 7000
 		}
 		exit 0

@@ -353,7 +353,7 @@ source $::option(root)/data/main_frontend.tcl
 #Source command socket
 source $::option(root)/data/command_socket.tcl
 #Source dbus interface
-source $::option(root)/data/dbus_interface.tcl
+#source $::option(root)/data/dbus_interface.tcl
 #Source color management toplevel and related functions.
 source $::option(root)/data/colorm.tcl
 #Source diagnostic routine frontend.

@@ -43,7 +43,6 @@ set mandir $prefix/share/man
 set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
-set dbustcl 1
 set printchan stdout
 
 if {[file exists $where_is/data/release_version.tcl]} {
@@ -57,7 +56,7 @@ EXIT 1"
 	exit 1
 }
 
-array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --enable-dbustcl 0 --host 0}
+array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --host 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -71,7 +70,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 15} {
+if {[array size start_options] != 14} {
 	puts "
 `configure' configures TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] to adapt to many kinds of systems.
 	
@@ -232,14 +231,6 @@ if {$start_options(--enable-tktray)} {
 		set tktray 0
 	}
 }
-if {$start_options(--enable-dbustcl)} {
-	if {"$start_values(--enable-dbustcl)" == "yes"} {
-		set dbustcl 1
-	}
-	if {"$start_values(--enable-dbustcl)" == "no"} {
-		set dbustcl 0
-	}
-}
 if {$start_options(--host)} {
 	if {"$start_values(--host)" == "i686"} {
 		set arch 32
@@ -287,7 +278,7 @@ Configuring build environment for TV-Viewer [lindex $::option(release_version) 0
 "
 }
 
-proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray dbustcl log} {
+proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray log} {
 	puts $::printchan "
 checking dependencies
 "
@@ -407,7 +398,7 @@ no support for high resolution PNG icons"
 	}
 }
 
-proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray dbustcl log} {
+proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray log} {
 	puts $::printchan "
 configuring TV-Viewer:
 prefix        $prefix
@@ -420,7 +411,6 @@ mandir        $mandir
 docdir        $docdir
 
 tktray        $tktray
-dbustcl       $dbustcl
 architecture  ${arch}bit
 "
 	puts $log "
@@ -438,7 +428,6 @@ mandir        $mandir
 docdir        $docdir
 
 tktray        $tktray
-dbustcl       $dbustcl
 architecture  ${arch}bit"
 	after 250
 	if {[file exists $where_is/installer.tcl]} {
@@ -469,7 +458,7 @@ $result_out"
 		exit 1
 	}
 	
-	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray dbustcl}
+	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray}
 		while {[gets $inst_in line]!=-1} {
 		foreach var $conf_vars {
 			set line [string map [list "$var FOO" "$var \{[set $var]\}"] "$line"]
@@ -478,10 +467,10 @@ $result_out"
 			}
 		}
 		if {[string match *##@@install_steps* "$line"]} {
-			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$dbustcl" 
+			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray" 
 		}
 		if {[string match *##@@install_uninstall* "$line"]} {
-			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$dbustcl"
+			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray"
 		}
 		if {[string match "*#install.tcl.in @@*" "$line"]} {
 			set line "#!/usr/bin/env tclsh" 
@@ -552,10 +541,10 @@ configure_welcomeMsg
 after 500
 
 if {$start_options(--nodepcheck) == 0} {
-	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$dbustcl" "$log"
+	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$log"
 	after 1250
 }
 
-configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$dbustcl" "$log"
+configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$log"
 
 exit 0

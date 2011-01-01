@@ -76,7 +76,7 @@ source $option(root)/process_config.tcl
 source $option(root)/stream.tcl
 source $option(root)/difftime.tcl
 source $option(root)/command_socket.tcl
-source $option(root)/dbus_interface.tcl
+#source $option(root)/dbus_interface.tcl
 
 set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
@@ -539,11 +539,11 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			set status [monitor_partRunning 1]
 			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
-				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
+				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
 			} else {
 				#FIXME Not working if dbus action reader died
 				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" {tvviewerStart {Start TV-Viewer}} "" 7000
-				dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
+				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
 			}
 			scheduler_delete $jobid
 		} else {

@@ -94,7 +94,6 @@ proc process_config_wizardRead {} {
 		systrayClose 0
 		systrayResize 0
 		systrayIcSize 22
-		dbusInt 1
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -187,7 +186,6 @@ proc process_config_wizardRead {} {
 		systrayClose 0
 		systrayResize 0
 		systrayIcSize 22
-		dbusInt 1
 		osd_station_w {0 {Sans} {Regular} 32 0 #000000}
 		osd_station_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_group_w {1 {Sans} {Regular} 32 1 #000000}
@@ -280,7 +278,6 @@ proc process_config_wizardRead {} {
 		cb_systrayClose systrayClose
 		cb_systrayResize systrayResize
 		mb_systrayIcSize systrayIcSize
-		cb_dbus dbusInt
 		cb_remAdio volRem
 	}
 	array set ::opt_choiceOsd {
