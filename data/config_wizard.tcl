@@ -23,7 +23,7 @@ proc config_wizardMainUi {} {
 		if {[winfo ismapped .] == 0} {
 			log_writeOutTv 1 "User attempted to start preferences while main is docked."
 			log_writeOutTv 1 "Will undock main."
-			 system_trayToggle 0
+			system_trayToggle 0
 		}
 	}
 	
@@ -136,6 +136,13 @@ proc config_wizardMainUi {} {
 	tkwait visibility $w
 	vid_wmCursor 0
 	grab $w
+	
+	if {[info exists ::config(errorMsg)]} {
+		foreach msg $::config(errorMsg) {
+			status_feedbWarn 1 "$msg"
+		}
+		unset -nocomplain ::config(errorMsg)
+	}
 }
 
 proc config_wizardListbox {} {

@@ -366,7 +366,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					}
 				} else {
 					if {$::option(log_warnDialogue)} {
-						status_feedbWarn 1 [mc "No video device nodes"]
+						lappend ::config(errorMsg) [mc "No video device nodes"]
 					}
 					log_writeOutTv 2 "Couldn't detect any video device nodes."
 					log_writeOutTv 2 "Is your tv-card set up correctly?"

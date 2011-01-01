@@ -97,7 +97,7 @@ proc system_trayActivate {handler} {
 }
 
 proc system_trayResizer {delay} {
-	#This proc is a hack because the virtual even <<IconConfigure>> does not work on XFCE 4.6.2 and maybe other WM.
+	#This proc is a hack because the virtual event <<IconConfigure>> does not work on XFCE 4.6.2 and maybe other WM.
 	if {"$delay" == "cancel"} {
 		if {[info exists ::system(systrayResizerID)]} {
 			foreach id $::system(systrayResizerID) {

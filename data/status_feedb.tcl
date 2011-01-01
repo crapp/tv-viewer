@@ -20,29 +20,38 @@ proc status_feedbWarn {handler msg} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: status_feedbWarn \033\[0m \{$handler\} \{$msg\}"
 	#handler 1 - tvviewer log; 2 - mplayer log; 3 - scheduler log
 	if {[winfo exists .topWarn] == 0} {
+		if {[wm attributes . -fullscreen] == 1} {
+			event generate . <<wmFull>>
+		}
+		if {[winfo ismapped .] == 0} {
+			system_trayToggle 0
+		}
 		set top [toplevel .topWarn]
 		place [ttk::frame $top.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 		set fMain [ttk::frame $top.f_warnMain]
 		set fBut [ttk::frame $top.f_warnBut]
-		ttk::label $fMain.l_warn -text "$msg" -compound left -image $::icon_b(dialog-warning)
+		ttk::label $fMain.l_warnImg -image $::icon_b(dialog-warning)
+		ttk::label $fMain.l_warn -text "$msg"
 		ttk::button $fBut.b_warnLog -text [mc "Show log"]
-		ttk::button $fBut.b_warnOk -text [mc "OK"] -command "destroy $top; vid_wmCursor 1; ::tk::RestoreFocusGrab $top destroy"
+		ttk::button $fBut.b_warnOk -text [mc "OK"] -command "::tk::RestoreFocusGrab $top $top destroy; vid_wmCursor 1"
 		
 		grid $fMain -in $top -row 0 -column 0 -sticky nesw
 		grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady "0 3"
 		
-		grid $fMain.l_warn -in $fMain -row 0 -column 0 -sticky w -padx 8 -pady 8
+		grid $fMain.l_warnImg -in $fMain -row 0 -column 0 -sticky nw -padx 8 -pady 8
+		grid $fMain.l_warn -in $fMain -row 0 -column 1 -sticky w -padx "0 8" -pady 8
 		
 		grid $fBut.b_warnLog -in $fBut -row 0 -column 0
 		grid $fBut.b_warnOk -in $fBut -row 0 -column 1 -sticky e
 		
 		grid columnconfigure $top 0 -minsize 350
 		grid columnconfigure $fBut 1 -weight 1
+		grid rowconfigure $top 0 -weight 1
 		
 		wm iconphoto $top $::icon_b(dialog-warning)
 		wm resizable $top 0 0
 		wm transient $top .
-		wm protocol $top WM_DELETE_WINDOW "destroy $top; vid_wmCursor 1; ::tk::RestoreFocusGrab $top destroy"
+		wm protocol $top WM_DELETE_WINDOW "::tk::RestoreFocusGrab $top $top destroy; vid_wmCursor 1"
 		wm title $top [mc "TV-Viewer Error"]
 		
 		array set btnCommand {
@@ -51,18 +60,41 @@ proc status_feedbWarn {handler msg} {
 			3 "log_viewerUi 3"
 		}
 		
-		$fBut.b_warnLog configure -command "$btnCommand($handler); destroy $top; vid_wmCursor 1; ::tk::RestoreFocusGrab $top destroy"
+		$fBut.b_warnLog configure -command "::tk::RestoreFocusGrab $top $top destroy; vid_wmCursor 1; $btnCommand($handler)"
 		
 		vid_wmCursor 0
-		::tk::SetFocusGrab $top
+		
+		::tk::SetFocusGrab $top $top
 		
 		tkwait visibility $top
 		raise .
 		raise $top
-		focus $fBut.b_warnOk
+		focus -force $fBut.b_warnOk
+		if {[winfo ismapped .]} {
+			set mainX [winfo x .]
+			set mainY [winfo y .]
+			set centreX [expr $mainX + ([winfo width .] / 2.0)]
+			set centreY [expr $mainY + ([winfo height .] / 2.0)]
+			set posX [expr int($centreX - ([winfo reqwidth $top] / 2.0))]
+			set posY [expr int($centreY - ([winfo reqheight $top] / 2.0))]
+			wm geometry $top [winfo reqwidth $top]\x[winfo reqheight $top]\+$posX\+$posY
+		} else {
+			::tk::PlaceWindow $top
+		}
+		
 		log_writeOutTv 0 "Creating error dialogue"
 	} else {
-		log_writeOutTv 1 "Can not open warning dialogue, because it already exists"
+		wm resizable .topWarn 1 1
+		set oldMsg [.topWarn.f_warnMain.l_warn cget -text]
+		.topWarn.f_warnMain.l_warn configure -text "$oldMsg
+
+$msg"
+		raise .
+		raise .topWarn
+		focus -force .topWarn.f_warnBut.b_warnOk
+		set calcHeight [expr [winfo reqheight .topWarn.f_warnMain] + [winfo reqheight .topWarn.f_warnBut] +10]
+		wm geometry .topWarn [winfo reqwidth .topWarn]\x$calcHeight
+		wm resizable .topWarn 0 0
 	}
 }
 
