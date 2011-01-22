@@ -23,23 +23,35 @@ proc command_socket {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: command_socket \033\[0m"}	
 	catch {exec mkfifo "$::option(home)/tmp/ComSocketSched"}
 	catch {exec mkfifo "$::option(home)/tmp/ComSocketMain"}
+	catch {exec mkfifo "$::option(home)/tmp/ComSocketNotify"}
 	if {"$::option(appname)" == "tv-viewer_main"} {
 		set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketMain" r+]
 		set ::data(comsocketWrite) [open "$::option(home)/tmp/ComSocketSched" r+]
+		set ::data(comsocketWrite2) [open "$::option(home)/tmp/ComSocketNotify" r+]
 		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
 		fileevent $::data(comsocketRead) readable [list command_getData log_writeOutTv]
 	}
 	if {"$::option(appname)" == "tv-viewer_scheduler"} {
 		set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
 		set ::data(comsocketWrite) [open "$::option(home)/tmp/ComSocketMain" r+]
+		set ::data(comsocketWrite2) [open "$::option(home)/tmp/ComSocketNotify" r+]
 		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
 		fileevent $::data(comsocketRead) readable [list command_getData scheduler_logWriteOut]
 	}
 	if {"$::option(appname)" == "tv-viewer_lirc" || "$::option(appname)" == "tv-viewer_diag"} {
 		#~ set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
 		set ::data(comsocketWrite) [open "$::option(home)/tmp/ComSocketMain" r+]
+		#~ fconfigure $::data(comsocketRead) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		#~ fileevent $::data(comsocketRead) readable [list command_getData]
+	}
+	if {"$::option(appname)" == "tv-viewer_recorder"} {
+		#~ set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
+		set ::data(comsocketWrite) [open "$::option(home)/tmp/ComSocketNotify" r+]
 		#~ fconfigure $::data(comsocketRead) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
 		#~ fileevent $::data(comsocketRead) readable [list command_getData]
@@ -53,10 +65,23 @@ proc command_socket {} {
 		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
 		#~ fileevent $::data(comsocketRead) readable [list command_getData log_writeOutTv]
 	}
+	if {"$::option(appname)" == "tv-viewer_notifyd"} {
+		#~ set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
+		set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketNotify" r+]
+		set ::data(comsocketWrite) [open "$::option(home)/tmp/ComSocketMain" r+]
+		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
+		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
+		fileevent $::data(comsocketRead) readable [list command_getData 0]
+	}
 }
 
 proc command_getData {logw} {
 	#Analyze data send through the named pipes.
+	if {$logw != 0} {
+		set logw "$logw 2"
+	} else {
+		set logw puts
+	}
 	if {[info exists ::data(comsocketRead)]} {
 		set status [catch { gets $::data(comsocketRead) line } result]
 		if {[eof $::data(comsocketRead)]} {
@@ -96,10 +121,13 @@ proc command_WritePipe {handler com} {
 		} else {
 			if {"$::option(appname)" == "tv-viewer_main"} {
 				log_writeOutTv 2 "Can't access application command pipe."
+				return 1
 			}
 			if {"$::option(appname)" == "tv-viewer_scheduler"} {
 				scheduler_logWriteOut 2 "Can't access application command pipe."
+				return 1
 			}
+			puts "can't access application command pipe"
 			return 1
 		}
 	} else {
@@ -108,6 +136,8 @@ proc command_WritePipe {handler com} {
 			puts -nonewline $::data(comsocketWrite2) "$com \n"
 			flush $::data(comsocketWrite2)
 			return 0
+		} else {
+			puts "can't access application command pipe"
 		}
 	}
 }

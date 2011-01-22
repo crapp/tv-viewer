@@ -47,28 +47,6 @@ EXIT 1"
 	exit 1
 }
 
-set insertLocal 1
-set insertGlob 1
-foreach pa $auto_path {
-	if {[string match /usr/local/lib $pa]} {
-		set insertLocal 0
-	}
-	if {[string match /usr/lib $pa]} {
-		set insertGlob 0
-	}
-}
-if {$insertLocal} {
-	if {[file isdirectory /usr/local/lib]} {
-		set auto_path [linsert $auto_path 0 "/usr/local/lib"]
-	}
-}
-if {$insertGlob} {
-	if {[file isdirectory /usr/lib]} {
-		set auto_path [linsert $auto_path 0 "/usr/lib"]
-	}
-}
-unset -nocomplain insertLocal insertGlob pa
-
 source $option(root)/release_version.tcl
 source $option(root)/agrep.tcl
 source $option(root)/monitor.tcl
@@ -76,7 +54,6 @@ source $option(root)/process_config.tcl
 source $option(root)/stream.tcl
 source $option(root)/difftime.tcl
 source $option(root)/command_socket.tcl
-#source $option(root)/dbus_interface.tcl
 
 set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
 if { $status_lock != 0 } {
@@ -223,18 +200,23 @@ proc scheduler_stations {} {
 
 proc scheduler_exit {} {
 	catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
+	set status_main [monitor_partRunning 1]
+	if {[lindex $status_main 0]} {
+		command_WritePipe 0 "tv-viewer_main record_wizardExecSchedulerCback 1"
+	}
+	set status_record [monitor_partRunning 3]
+	if {[lindex $status_main 0] == 0 && [lindex $status_record 0] == 0} {
+		command_WritePipe 1 "tv-viewer_notifyd notifydExit"
+	}
 	puts $::logf_sched_open_append "#
 #
 # Stop session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 ########################################################################
 "
 	close $::logf_sched_open_append
-	set status [monitor_partRunning 1]
-	if {[lindex $status 0]} {
-		command_WritePipe 0 "tv-viewer_main record_wizardExecSchedulerCback 1"
-	}
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
+	catch {close $::data(comsocketWrite2)}
 	set status [monitor_partRunning 1]
 	if {[lindex $status 0] == 0} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
@@ -539,11 +521,11 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			set status [monitor_partRunning 1]
 			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
-				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
+				command_WritePipe 1 "tv-viewer_notifyd notifydId"
+				command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 0 {Recording started} {Recording of job [lindex $::recjob($jobid) 0] started successfully}"
 			} else {
-				#FIXME Not working if dbus action reader died
-				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" {tvviewerStart {Start TV-Viewer}} "" 7000
-				#~ dbus_interfaceNotification "tv-viewer" "" "Recording of job [lindex $::recjob($jobid) 0] started successfully" "" "" 7000
+				command_WritePipe 1 "tv-viewer_notifyd notifydId"
+				command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 1 {Recording started} {Recording of job [lindex $::recjob($jobid) 0] started successfully}"
 			}
 			scheduler_delete $jobid
 		} else {
@@ -597,6 +579,11 @@ proc scheduler_Init {handler} {
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_wizardExecSchedulerCback 0"
+		}
+		set status_notify [monitor_partRunning 5]
+		if {[lindex $status_notify 0] == 0} {
+			set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+			scheduler_logWriteOut 0 "notification daemon started, PID $ntfy_pid"
 		}
 		scheduler_stations
 		scheduler_main_loop

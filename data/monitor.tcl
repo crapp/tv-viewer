@@ -17,7 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc monitor_partRunning {handler} {
-	# handler: 1 main - 2 scheduler - 3 recording - 4 timeshift
+	# handler: 1 main - 2 scheduler - 3 recording - 4 timeshift - 5 notifyd
 	# check if main is running
 	if {$handler == 1} {
 		set status_mainlinkread [catch {file readlink "$::option(home)/tmp/lockfile.tmp"} resultat_mainlinkread]
@@ -101,6 +101,29 @@ proc monitor_partRunning {handler} {
 				if {$status_greparg == 0} {
 					# running
 					return [list 1 $resultat_timeslinkread]
+				} else {
+					return 0
+				}
+			} else {
+				return 0
+			}
+		} else {
+			return 0
+		}
+	}
+	
+	# check if notification daemon is running
+	if {$handler == 5} {
+		set status_notifylinkread [catch {file readlink "$::option(home)/tmp/notifyd_lockfile.tmp"} resultat_notifylinkread]
+		if { $status_notifylinkread == 0 } {
+			catch {exec ps -eo "%p"} read_ps
+			set status_greppid_notify [catch {agrep -w "$read_ps" $resultat_notifylinkread} resultat_greppid_notify]
+			if { $status_greppid_notify == 0 } {
+				catch {exec ps -p $resultat_notifylinkread -o args=} readarg
+				set status_greparg [catch {agrep -m "$readarg" "notifyd.tcl"} resultat_greparg]
+				if {$status_greparg == 0} {
+					# running
+					return [list 1 $resultat_notifylinkread]
 				} else {
 					return 0
 				}

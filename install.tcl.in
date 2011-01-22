@@ -247,7 +247,7 @@ $resultat_dfile
 			set percentage [format %.2f [expr $percentage + $pincr]]
 			puts -nonewline "\rprocessing data \[${percentage}%\]\033\[K"
 			flush stdout
-			if {[string match *diag_runtime* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *scheduler* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_external* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"]} {
+			if {[string match *diag_runtime* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *lirc_emitter* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *scheduler* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *recorder* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *record_external* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *tv-viewer_main* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"] || [string match *notifyd* "$datadir/tv-viewer/data/[lindex [file split $dfile] end]"]} {
 				set status_permissions_dfile [catch {file attributes "$datadir/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rwxr-xr-x} resultat_permissions_dfile]
 			} else {
 				set status_permissions_dfile [catch {file attributes "$datadir/tv-viewer/data/[lindex [file split $dfile] end]" -permissions rw-r--r--} resultat_permissions_dfile]

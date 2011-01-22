@@ -84,15 +84,17 @@ proc error_interpUi {msg options} {
 		wm title $w [mc "TV-Viewer crashed"]
 		wm iconphoto $w $::icon_b(dialog-error)
 		wm protocol $w WM_DELETE_WINDOW "::tk::RestoreFocusGrab $w $w destroy; vid_wmCursor 1"
+		wm withdraw $w
 		
 		vid_wmCursor 0
 		
 		::tk::SetFocusGrab $w $w
-	
-		tkwait visibility $w
+		
+		update idletasks
 		::tk::PlaceWindow $w
 		raise $w
 		$mf.l_info configure -wraplength [winfo reqwidth $mf.t_info]
+		wm deiconify $w
 	} else {
 		log_writeOutTv 1 "Tried to create crash info window, but it already exists"
 	}

@@ -48,6 +48,7 @@ proc status_feedbWarn {handler msg} {
 		grid columnconfigure $fBut 1 -weight 1
 		grid rowconfigure $top 0 -weight 1
 		
+		wm withdraw $top
 		wm iconphoto $top $::icon_b(dialog-warning)
 		wm resizable $top 0 0
 		wm transient $top .
@@ -66,7 +67,7 @@ proc status_feedbWarn {handler msg} {
 		
 		::tk::SetFocusGrab $top $top
 		
-		tkwait visibility $top
+		update idletasks
 		raise .
 		raise $top
 		focus -force $fBut.b_warnOk
@@ -78,8 +79,10 @@ proc status_feedbWarn {handler msg} {
 			set posX [expr int($centreX - ([winfo reqwidth $top] / 2.0))]
 			set posY [expr int($centreY - ([winfo reqheight $top] / 2.0))]
 			wm geometry $top [winfo reqwidth $top]\x[winfo reqheight $top]\+$posX\+$posY
+			wm deiconify $top
 		} else {
 			::tk::PlaceWindow $top
+			wm deiconify $top
 		}
 		
 		log_writeOutTv 0 "Creating error dialogue"

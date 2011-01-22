@@ -344,7 +344,7 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		}
 	}
 	if {$::vid(stayontop) == 2} {
-		wm attributes . -topmost 1
+		vid_wmStayonTop $::vid(stayontop)
 	}
 }
 

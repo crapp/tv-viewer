@@ -36,6 +36,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			vid_wmCursorHide .fvidBg 0
 			vid_wmCursorToolbar %X %Y
 		}
+		vid_wmStayonTop 0
 		wm attributes $mw -fullscreen 1
 		if {[string trim [focus -displayof .]] == {}} {
 			log_writeOutTv 1 "Trying to request focus for main window"
@@ -82,6 +83,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		
 		log_writeOutTv 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
+		vid_wmStayonTop $::vid(stayontop)
 		if {$::data(panscanAuto) == 1} {
 			set ::vid(id_panscanAuto) [after 500 {
 				catch {after cancel $::vid(id_panscanAuto)}

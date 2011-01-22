@@ -64,7 +64,7 @@ proc main_frontendExitViewer {} {
 				}
 			}
 		}
-		# This is needed when there is no integer value in mem_conf and tv-viewer is exited in fullscreen mode. otherwise a program code will be written into mem_conf because it is not substituted.
+		# This is needed when there is no integer value in mem_conf and tv-viewer is exited in fullscreen mode. Otherwise a program code will be written into mem_conf because it is not substituted.
 		if {"$okey" == "mainX" || "$okey" == "mainY" && [string is integer $oelem] == 0} {
 			puts $wconfig_mem "$okey [subst $::mem($okey)]"
 			set ::mem($okey) [subst $::mem($okey)]
@@ -111,6 +111,18 @@ proc main_frontendExitViewer {} {
 			}
 		}
 	}
+	set status_scheduler [monitor_partRunning 2]
+	if {[lindex $status_scheduler 0] == 0} {
+		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
+		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
+	}
+	set status_recorder [monitor_partRunning 3]
+	if {[lindex $status_scheduler 0] == 0 && [lindex $status_recorder 0] == 0} {
+		command_WritePipe 1 "tv-viewer_notifyd notifydExit"
+	}
+	catch {close $::data(comsocketRead)}
+	catch {close $::data(comsocketWrite)}
+	catch {close $::data(comsocketWrite2)}
 	puts $::logf_tv_open_append "#
 #
 # Stop session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
@@ -123,13 +135,6 @@ proc main_frontendExitViewer {} {
 "
 	close $::logf_tv_open_append
 	close $::logf_mpl_open_append
-	catch {close $::data(comsocketRead)}
-	catch {close $::data(comsocketWrite)}
-	set status [monitor_partRunning 2]
-	if {[lindex $status 0] == 0} {
-		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}
-		catch {file delete -force "$::option(home)/tmp/ComSocketSched"}
-	}
 	exit 0
 }
 
@@ -492,10 +497,18 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {after 2000 {status_feedbWarn 1 "Test message"}}
-	bind . <Key-y> {sdf}
+	bind . <Key-x> {puts [monitor_partRunning 5]}
+	bind . <Key-y> {command_WritePipe 1 "tv-viewer_notifyd notifydId"
+	command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 5000 0 HEADER ihasdkjhgasdf"}
+	
 	
 	command_socket
+	
+	set status_notify [monitor_partRunning 5]
+	if {[lindex $status_notify 0] == 0} {
+		set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
+		log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
+	}
 	
 	if {$::option(show_splash) == 1} {
 		if {$::option(starttv_startup) == 1} {

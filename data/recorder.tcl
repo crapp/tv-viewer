@@ -49,7 +49,7 @@ unset -nocomplain insertLocal insertGlob pa
 
 source "$option(root)/agrep.tcl"
 source "$option(root)/monitor.tcl"
-#~ source "$option(root)/dbus_interface.tcl"
+source "$option(root)/command_socket.tcl"
 
 proc recorderCheckMain {com fdin fdout} {
 	if {"$com" == "cancel"} {
@@ -104,6 +104,15 @@ if {$status == 0} {
 	}
 }
 
+command_socket
+if {"$lifespan" != "infinite"} {
+	set status_notify [monitor_partRunning 5]
+	if {[lindex $status_notify 0] == 0} {
+		set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+		puts "notification daemon started, PID $ntfy_pid"
+	}
+}
+
 foreach chan [list $fdin $fdout] {
 		chan configure $chan -encoding binary \
 		-translation binary -buffersize $bufsize
@@ -117,11 +126,11 @@ if {"$lifespan" != "infinite"} {
 		catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
 		set status_main [monitor_partRunning 1]
 		if {[lindex $status_main 0]} {
-			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
+			command_WritePipe 0 "tv-viewer_notifyd notifydId"
+			command_WritePipe 0 "tv-viewer_notifyd notifydUi 1 1 7000 0 {Recording finished} {Recording of job $jobid has been finished}"
 		} else {
-			#FIXME Not working if dbus action reader died
-			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" "" "" 7000
-			#~ dbus_interfaceNotification "tv-viewer" "" "Recording $jobid finished" {tvviewerStart {Start TV-Viewer}} "" 7000
+			command_WritePipe 0 "tv-viewer_notifyd notifydId"
+			command_WritePipe 0 "tv-viewer_notifyd notifydUi 1 1 7000 1 {Recording finished} {Recording of job $jobid has been finished}"
 		}
 		exit 0
 	}

@@ -84,7 +84,7 @@ proc vid_callbackVidData {} {
 				status_feedbMsgs 4 [mc "idle"]
 			}
 			if {$::vid(stayontop) == 2} {
-				wm attributes . -topmost 0
+				vid_wmStayonTop $::vid(stayontop)
 			}
 			set ::vid(pbStatus) 0
 		} else {

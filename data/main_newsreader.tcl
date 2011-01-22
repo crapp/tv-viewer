@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc main_newsreaderUi {update_news word_tags hyperlinks} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderUi \033\[0m \{$update_news\} \{$word_tags\} \{$hyperlinks\}"}
 	if {[winfo exists .top_newsreader] == 0} {
 		set w [toplevel .top_newsreader]
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -54,8 +55,6 @@ proc main_newsreaderUi {update_news word_tags hyperlinks} {
 		main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 0
 		main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
 		$mf.t_top_newsr configure -state disabled
-		tkwait visibility $w
-		
 	} else {
 		log_writeOutTv 1 "Newsreader already opened."
 		raise .top_newsreader
@@ -63,8 +62,18 @@ proc main_newsreaderUi {update_news word_tags hyperlinks} {
 	}
 }
 
+proc main_newsreaderUiPre {} {
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderUiPre \033\[0m"}
+	if {[info exists ::newsreader]} {
+		set update_news [dict get $::newsreader news content]
+		set word_tags [dict get $::newsreader news tags]
+		set hyperlinks [dict get $::newsreader news hyperlinks]
+		main_newsreaderUi $update_news $word_tags $hyperlinks
+	}
+}
+
 proc main_newsreaderCheckUpdate {handler} {
-	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m"}
+	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m \{$handler\}"}
 	#handler 0 == check for updates; 1 == autocheck for updates.
 	log_writeOutTv 0 "Checking for news..."
 	if {$::option(language_value) == 0} {
@@ -155,14 +164,16 @@ proc main_newsreaderCheckUpdate {handler} {
 					set open_last_write [open "$::option(home)/config/last_read.conf" w]
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
-					#~ dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
+					command_WritePipe 1 "tv-viewer_notifyd notifydId"
+					command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
 				}
 			} else {
 				log_writeOutTv 0 "There are news about TV-Viewer"
 				set open_last_write [open "$::option(home)/config/last_read.conf" w]
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write
-				#~ dbus_interfaceNotification "tv-viewer" "" "There are news about TV-Viewer" {tvviewerNewsreader {Start Newsreader}} "" 7000
+				command_WritePipe 1 "tv-viewer_notifyd notifydId"
+				command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
 			}
 		} else {
 			file delete "$::option(home)/config/last_read.conf"
