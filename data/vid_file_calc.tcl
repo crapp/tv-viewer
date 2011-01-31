@@ -19,7 +19,11 @@
 proc vid_fileComputeSize {seconds} {
 	if {"$seconds" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_fileComputeSize \033\[0;1;31m::cancel:: \033\[0m"
-		catch {after cancel $::data(file_sizeid)}
+		if {[info exists ::data(file_sizeid)]} {
+			foreach id $::data(file_sizeid) {
+				catch {after cancel $id}
+			}
+		}
 		unset -nocomplain ::data(file_size)
 		return
 	}
@@ -29,13 +33,18 @@ proc vid_fileComputeSize {seconds} {
 		return
 	}
 	set ::data(file_size) [expr [clock seconds] - $seconds]
-	set ::data(file_sizeid) [after 50 [list vid_fileComputeSize $seconds]]
+	set ::data(file_sizeid) [after 100 [list vid_fileComputeSize $seconds]]
 }
 
 proc vid_fileComputePos {stop} {
 	if {"$stop" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_fileComputePos \033\[0;1;31m::cancel:: \033\[0m"
-		catch {after cancel $::data(file_posid)}
+		if {[info exists ::data(file_posid)]} {
+			foreach id $::data(file_posid) {
+				catch {after cancel $id}
+			}
+		}
+		unset -nocomplain ::data(file_posid)
 		return
 	}
 	if {[.ftoolb_Play.bPause instate disabled] == 0} {
@@ -73,7 +82,13 @@ proc vid_fileComputePos {stop} {
 				set ::main(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
 			}
 		}
-		set ::data(file_posid) [after 10 [list vid_fileComputePos 0]]
+		if {[info exists ::data(file_posid)]} {
+			foreach id $::data(file_posid) {
+				catch {after cancel $id}
+			}
+		}
+		unset -nocomplain ::data(file_posid)
+		lappend ::data(file_posid) [after 50 [list vid_fileComputePos 0]]
 	} else {
 		set lhours [expr ($::data(file_pos)%86400)/3600]
 		if {[string length $lhours] < 2} {
@@ -108,6 +123,12 @@ proc vid_fileComputePos {stop} {
 				set ::main(label_file_time) "$lhours:$lmins:$lsecs / 00:00:00"
 			}
 		}
-		set ::data(file_posid) [after 50 [list vid_fileComputePos 0]]
+		if {[info exists ::data(file_posid)]} {
+			foreach id $::data(file_posid) {
+				catch {after cancel $id}
+			}
+		}
+		unset -nocomplain ::data(file_posid)
+		lappend ::data(file_posid) [after 50 [list vid_fileComputePos 0]]
 	}
 }

@@ -177,7 +177,7 @@ proc vid_callbackVidData {} {
 					}
 				}
 				set ::data(file_pos_calc) [clock seconds]
-				after 10 [list vid_fileComputePos $::data(file_pos_calc)]
+				lappend ::data(file_posid) [after 10 [list vid_fileComputePos $::data(file_pos_calc)]]
 			}
 			if {[string match -nocase "ANS_TIME_POSITION*" $line]} {
 				if {$::vid(getvid_seek) == 0} {
@@ -185,21 +185,21 @@ proc vid_callbackVidData {} {
 					set pos [lindex [split $line \=] end]
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
-					after 10 [list vid_fileComputePos 0]
-					bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
-					bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
-					bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
-					bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
-					bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
-					bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
-					bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
-					bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
+					lappend ::data(file_posid) [after 10 [list vid_fileComputePos 0]]
+					#~ bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
+					#~ bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
+					#~ bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
+					#~ bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
+					#~ bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
+					#~ bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
+					#~ bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
+					#~ bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
 				} else {
 					vid_fileComputePos cancel
 					set pos [lindex [split $line \=] end]
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
-					after 10 [list vid_fileComputePos 0]
+					lappend ::data(file_posid) [after 10 [list vid_fileComputePos 0]]
 					vid_seek $::vid(seek_secs) $::vid(seek_dir)
 				}
 			}
