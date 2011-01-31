@@ -141,7 +141,7 @@ proc notifydUi {ic pos timeout actId header msg} {
 	set ::afterId($::notifyId) [after $timeout [list destroy .topNotify_$::notifyId]]
 }
 
-proc notifydAction {btn id} {
+proc notifydAction {btn actId} {
 	array set actionCmd {
 		1 {exec $::option(root)/data/tv-viewer_main.tcl &}
 		2 {command_WritePipe 0 "tv-viewer_main main_newsreaderUiPre"}
