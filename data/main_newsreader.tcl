@@ -146,21 +146,29 @@ proc main_newsreaderCheckUpdate {handler} {
 		set date_file [open "$::option(home)/config/last_update.date" w]
 		close $date_file
 		
-		dict set ::newsreader news content "$update_news"
-		dict set ::newsreader news tags "$word_tags"
-		dict set ::newsreader news hyperlinks "$hyperlinks"
-		
-		if {$handler == 1} {
-			if {[file exists "$::option(home)/config/last_read.conf"]} {
-				set open_last_read [open "$::option(home)/config/last_read.conf" r]
-				set open_last_read_content [read $open_last_read]
-				close $open_last_read
-				if {"$open_last_read_content" == "$update_news"} {
-					log_writeOutTv 0 "There are no news about TV-Viewer"
-					return
+		if {[info exists update_news] && [info exists word_tags] && [info exists hyperlinks]} {
+			dict set ::newsreader news content "$update_news"
+			dict set ::newsreader news tags "$word_tags"
+			dict set ::newsreader news hyperlinks "$hyperlinks"
+			if {$handler == 1} {
+				if {[file exists "$::option(home)/config/last_read.conf"]} {
+					set open_last_read [open "$::option(home)/config/last_read.conf" r]
+					set open_last_read_content [read $open_last_read]
+					close $open_last_read
+					if {"$open_last_read_content" == "$update_news"} {
+						log_writeOutTv 0 "There are no news about TV-Viewer"
+						return
+					} else {
+						log_writeOutTv 0 "There are news about TV-Viewer"
+						file delete "$::option(home)/config/last_read.conf"
+						set open_last_write [open "$::option(home)/config/last_read.conf" w]
+						puts -nonewline $open_last_write "$update_news"
+						close $open_last_write
+						command_WritePipe 1 "tv-viewer_notifyd notifydId"
+						command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
+					}
 				} else {
 					log_writeOutTv 0 "There are news about TV-Viewer"
-					file delete "$::option(home)/config/last_read.conf"
 					set open_last_write [open "$::option(home)/config/last_read.conf" w]
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
@@ -168,19 +176,15 @@ proc main_newsreaderCheckUpdate {handler} {
 					command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
 				}
 			} else {
-				log_writeOutTv 0 "There are news about TV-Viewer"
+				file delete "$::option(home)/config/last_read.conf"
 				set open_last_write [open "$::option(home)/config/last_read.conf" w]
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write
-				command_WritePipe 1 "tv-viewer_notifyd notifydId"
-				command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
+				main_newsreaderUi "$update_news" "$word_tags" "$hyperlinks"
 			}
 		} else {
-			file delete "$::option(home)/config/last_read.conf"
-			set open_last_write [open "$::option(home)/config/last_read.conf" w]
-			puts -nonewline $open_last_write "$update_news"
-			close $open_last_write
-			main_newsreaderUi "$update_news" "$word_tags" "$hyperlinks"
+			log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
+			return
 		}
 	} else {
 		log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
