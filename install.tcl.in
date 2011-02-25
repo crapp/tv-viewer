@@ -644,7 +644,7 @@ $resultat_file_doc
 }
 
 proc install_copyMsgs {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch} {
-	set filelist_msg [lsort [glob -directory "$where_is/msgs" *.msg]]
+	set filelist_msg [lsort [glob -directory "$where_is/msgs" *.msg *.txt]]
 	set elements [llength $filelist_msg]
 	set pincr [format %.2f [expr 100.0 / $elements.0]]
 	set percentage 0

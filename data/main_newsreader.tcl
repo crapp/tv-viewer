@@ -76,13 +76,10 @@ proc main_newsreaderCheckUpdate {handler} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m \{$handler\}"}
 	#handler 0 == check for updates; 1 == autocheck for updates.
 	log_writeOutTv 0 "Checking for news..."
+	set newsTrans [list en de]
 	if {$::option(language_value) == 0} {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
-		array set locales {
-			en english
-			de german
-		}
-		if {[string trim [array get locales $locale_split]] != {}} {
+		if {[lsearch $helpTrans $locale_split] != -1} {
 			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_[string trim $locale_split].html"} get_news]
 			set lang $locale_split
 		} else {
@@ -90,8 +87,13 @@ proc main_newsreaderCheckUpdate {handler} {
 			set lang en
 		}
 	} else {
-		set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_$::option(language_value).html"} get_news]
-		set lang $::option(language_value)
+		if {[lsearch $newsTrans $::option(language_value)] != -1} {
+			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_$::option(language_value).html"} get_news]
+			set lang $::option(language_value)
+		} else {
+			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_en.html"} get_news]
+			set lang en
+		}
 	}
 	if {$status_http == 0} {
 		if {[::http::ncode $get_news] != 404} {

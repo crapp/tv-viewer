@@ -276,7 +276,7 @@ log_writeOutTv 0 "TV-Viewer process PID [pid]"
 source $::option(root)/data/launch_splash.tcl
 #Launching splash screen if wanted.
 if {$::option(show_splash) == 1} {
-	launch_splash_screen
+	after 10 {launch_splash_screen}
 }
 #Source additional ttk themes, plastik and keramik
 source "$option(root)/themes/plastik/plastik.tcl"

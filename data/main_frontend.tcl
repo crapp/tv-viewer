@@ -510,85 +510,73 @@ proc main_frontendUi {} {
 		log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
 	}
 	
+	array set startAvailCommand {
+		0 2500
+		1 1500
+		2 {wm deiconify .}
+		3 {launch_splashPlay cancel 0 0 0}
+		4 {destroy .splash}
+		5 {record_linkerPrestart record}
+		6 {record_linkerRec record}
+		7 {event generate . <<teleview>>}
+	}
+	#FIXME The following if else conditions are strongly nested. Find a way to improve this!
 	if {$::option(show_splash) == 1} {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; record_linkerPrestart record ; record_linkerRec record}
+					set startCommand [list 2500 "$startAvailCommand(2)" "$startAvailCommand(3)" "$startAvailCommand(4)" "$startAvailCommand(5)" "$startAvailCommand(6)"]
 				} else {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; event generate . <<teleview>>}
+					set startCommand [list 2500 "$startAvailCommand(2)" "$startAvailCommand(3)" "$startAvailCommand(4)" "$startAvailCommand(7)"]
 				}
 			} else {
-				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
-				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 [mc "Could not detect MPlayer"]
-				}
-				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ;  destroy .splash}
-				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
-				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_delete nomplay
+				set startCommand [list 2500 "$startAvailCommand(2)" "$startAvailCommand(3)" "$startAvailCommand(4)"]
 			}
 		} else {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; record_linkerPrestart record ; record_linkerRec record}
+					set startCommand [list 2500 "$startAvailCommand(2)" "$startAvailCommand(3)" "$startAvailCommand(4)" "$startAvailCommand(5)" "$startAvailCommand(6)"]
 				} else {
-					after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash}
+					set startCommand [list 2500 "$startAvailCommand(2)" "$startAvailCommand(3)" "$startAvailCommand(4)"]
 				}
 			} else {
-				after 2500 {wm deiconify . ; launch_splashPlay cancel 0 0 0 ; destroy .splash ; tv_playerUi}
-				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
-				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 [mc "Could not detect MPlayer"]
-				}
-				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
-				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_delete nomplay
+				set startCommand [list 2500 "$startAvailCommand(2)" "$startAvailCommand(3)" "$startAvailCommand(4)"]
 			}
 		}
 	} else {
 		if {$::option(starttv_startup) == 1} {
 			if {[string trim [auto_execok mplayer]] != {}} {
 				if {$::main(running_recording) == 1} {
-					after 1500 {wm deiconify . ; record_linkerPrestart record ; record_linkerRec record}
+					set startCommand [list 1500 "$startAvailCommand(2)" "$startAvailCommand(5)" "$startAvailCommand(6)"]
 				} else {
-					after 1500 {wm deiconify . ; event generate . <<teleview>>}
+					set startCommand [list 1500 "$startAvailCommand(2)" "$startAvailCommand(7)"]
 				}
 			} else {
-				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
-				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 [mc "Could not detect MPlayer"]
-				}
-				after 1500 {wm deiconify .}
-				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
-				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_delete nomplay
+				set startCommand [list 1500 "$startAvailCommand(2)"]
 			}
 		} else {
 			if {[string trim [auto_execok mplayer]] == {}} {
-				after 1500 {wm deiconify .}
-				log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
-				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 [mc "Could not detect MPlayer"]
-				}
-				after 1500 {wm deiconify .}
-				vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
-				vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
-				vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
-				event_delete nomplay
+				set startCommand [list 1500 "$startAvailCommand(2)"]
 			} else {
 				if {$::main(running_recording) == 1} {
-					after 1500 {wm deiconify . ; record_linkerPrestart record ; record_linkerRec record}
+					set startCommand [list 1500 "$startAvailCommand(2)" "$startAvailCommand(5)" "$startAvailCommand(6)"]
 				} else {
-					after 1500 {wm deiconify .}
+					set startCommand [list 1500 "$startAvailCommand(2)"]
 				}
 			}
 		}
 	}
-	
+	if {[string trim [auto_execok mplayer]] == {}} {
+		log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Could not detect MPlayer"]
+		}
+		vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
+		vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
+		vid_pmhandlerMenuTray {{4 disabled} {5 disabled} {6 disabled} {8 disabled} {9 disabled}}
+		event_delete nomplay
+	}
+	after [lindex $startCommand 0] [list main_frontendStartCommand $startCommand]
 	vid_wmCursor 1
 	
 	if {$::option(systray) == 1} {
@@ -604,7 +592,7 @@ proc main_frontendUi {} {
 		}
 	}
 	
-	#Do everything that needs to be done after . is visible
+	#Do everything that needs to be done after root is visible
 	tkwait visibility .
 	log_writeOutTv 0 "Main is visible, processing things that need to be done now."
 	autoscroll $stations.scrbSlist
@@ -630,6 +618,16 @@ proc main_frontendUi {} {
 	vid_wmStayonTop $::vid(stayontop)
 	if {$::option(window_full)} {
 		after 500 {event generate . <<wmFull>>}
+	}
+}
+
+proc main_frontendStartCommand {startCommand} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendStartCommand \033\[0m \{$startCommand\}"
+	for {set i 1} {$i <= [llength $startCommand]} {incr i} {
+		{*}[lindex $startCommand $i]
+	}
+	if {[winfo exists .topWarn]} {
+		wm deiconify .topWarn
 	}
 }
 

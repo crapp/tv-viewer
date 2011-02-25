@@ -95,6 +95,8 @@ proc error_interpUi {msg options} {
 		raise $w
 		$mf.l_info configure -wraplength [winfo reqwidth $mf.t_info]
 		wm deiconify $w
+		wm attributes $w -topmost 1
+		after 1000 [list wm attributes $w -topmost 0]
 	} else {
 		log_writeOutTv 1 "Tried to create crash info window, but it already exists"
 	}

@@ -47,7 +47,7 @@ proc launch_splash_screen {} {
 	update idletasks
 	::tk::PlaceWindow $w
 	set img_list_length [llength $img_list]
-	after 0 [list launch_splashPlay $img_list $img_list_length 1 $f_pb.l]
+	after 10 [list launch_splashPlay $img_list $img_list_length 1 $f_pb.l]
 	wm deiconify $w
 }
 

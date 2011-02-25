@@ -22,19 +22,24 @@ proc info_helpHelp {} {
 		event generate . <<wmFull>>
 	}
 	if {$::option(language_value) != 0} {
+		set done 0
 		if {[string match *en* $::option(language_value)]} {
 			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-		} else {
-			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$::option(language_value)" &}
+			set done 1
 		}
-		log_writeOutTv 0 "Trying to open userguide..."
+		if {[string match *de* $::option(language_value)]} {
+			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$::option(language_value)" &}
+			set done 1
+		}
+		if {$done == 0} {
+			log_writeOutTv 1 "There is no translation of the userguide for $::env(LANG)"
+			log_writeOutTv 1 "Will open english userguide."
+			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
+		}
 	} else {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
-		array set locales {
-			en english
-			de german
-		}
-		if {[string trim [array get locales $locale_split]] == {}} {
+		set helpTrans [list en de]
+		if {[lsearch $helpTrans $locale_split] == -1} {
 			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
 			log_writeOutTv 1 "There is no translation of the userguide for $::env(LANG)"
 			log_writeOutTv 1 "Will open english userguide."
@@ -44,9 +49,9 @@ proc info_helpHelp {} {
 			} else {
 				catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$locale_split" &}
 			}
-			log_writeOutTv 0 "Trying to open userguide..."
 		}
 	}
+	log_writeOutTv 0 "Trying to open userguide with favorite browser using xdg-open..."
 }
 
 proc info_helpMplayerRev {first strg} {

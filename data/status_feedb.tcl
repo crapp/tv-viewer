@@ -79,12 +79,14 @@ proc status_feedbWarn {handler msg} {
 			set posX [expr int($centreX - ([winfo reqwidth $top] / 2.0))]
 			set posY [expr int($centreY - ([winfo reqheight $top] / 2.0))]
 			wm geometry $top [winfo reqwidth $top]\x[winfo reqheight $top]\+$posX\+$posY
-			wm deiconify $top
+			if {[winfo exists .splash] == 0} {
+				wm deiconify $top
+			}
 		} else {
-			::tk::PlaceWindow $top
-			wm deiconify $top
+			if {[winfo exists .tray]} {
+				::tk::PlaceWindow $top
+			}
 		}
-		
 		log_writeOutTv 0 "Creating error dialogue"
 	} else {
 		wm resizable .topWarn 1 1
@@ -96,9 +98,17 @@ $msg"
 		raise .topWarn
 		focus -force .topWarn.f_warnBut.b_warnOk
 		set calcHeight [expr [winfo reqheight .topWarn.f_warnMain] + [winfo reqheight .topWarn.f_warnBut] +10]
-		wm geometry .topWarn [winfo reqwidth .topWarn]\x$calcHeight
+		set mainX [winfo x .]
+		set mainY [winfo y .]
+		set centreX [expr $mainX + ([winfo width .] / 2.0)]
+		set centreY [expr $mainY + ([winfo height .] / 2.0)]
+		set posX [expr int($centreX - ([winfo reqwidth .topWarn] / 2.0))]
+		set posY [expr int($centreY - ([winfo reqheight .topWarn] / 2.0))]
+		wm geometry .topWarn [winfo reqwidth .topWarn]\x$calcHeight\+$posX\+$posY
 		wm resizable .topWarn 0 0
 	}
+	wm attributes .topWarn -topmost 1
+	after 1000 [list wm attributes .topWarn -topmost 0]
 }
 
 proc status_feedbMsgs {handler msg} {

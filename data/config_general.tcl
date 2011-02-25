@@ -35,10 +35,6 @@ proc option_screen_0 {} {
 		$w add $::window(general_nb1) -text [mc "General Settings"] -padding 2
 		ttk::labelframe $::window(general_nb1).lf_language -text [mc "Language"]
 		ttk::menubutton $::window(general_nb1).mb_lf_language -menu $::window(general_nb1).mbLanguage -textvariable choice(mbLanguage)
-		menu $::window(general_nb1).mbLanguage -tearoff 0
-		$::window(general_nb1).mbLanguage add radiobutton -variable choice(mbLanguage) -command {set ::choice(mbLanguage_value) 0; msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::option(root)/msgs}} -label [mc "Autodetect"]
-		$::window(general_nb1).mbLanguage add radiobutton -variable choice(mbLanguage) -command {set ::choice(mbLanguage_value) en; msgcat::mclocale en; catch {msgcat::mcload $::option(root)/msgs}} -label [mc "English (en)"]
-		$::window(general_nb1).mbLanguage add radiobutton -variable choice(mbLanguage) -command {set ::choice(mbLanguage_value) de; msgcat::mclocale de; catch {msgcat::mcload $::option(root)/msgs}} -label [mc "German (de)"]
 		ttk::labelframe $::window(general_nb1).lf_starttv -text [mc "Start TV on startup"]
 		ttk::checkbutton $::window(general_nb1).cb_lf_starttv -text [mc "Enable"] -variable choice(checkbutton_starttv)
 		ttk::checkbutton $::window(general_nb1).cb_lf_newsreader -text [mc "Newsreader"] -variable choice(checkbutton_newsreader) -command [list config_generalNewsreaderChange $::window(general_nb1)]
@@ -70,6 +66,48 @@ proc option_screen_0 {} {
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt0 $::window(general_nb1)]
 		
 		# Subprocs
+		proc config_generalLangs {men} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalLangs \033\[0m \{$men\}"
+			$men add radiobutton -variable choice(mbLanguage) -command {set ::choice(mbLanguage_value) 0; msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::option(root)/msgs}} -label [mc "Autodetect"]
+			#Open ISO file with language codes
+			if {[file exists "$::option(root)/msgs/ISO-639-2_utf-8.txt"]} {
+				set openLC [open "$::option(root)/msgs/ISO-639-2_utf-8.txt" r]
+				while {[gets $openLC line]!=-1} {
+					if {[string match #* $line] || [string trim $line] == {}} {
+						continue
+					}
+					array set lCodes [split $line "|"]
+				}
+				if {[array exists lCodes]} {
+					set filelist_msg [lsort [glob -directory "$::option(root)/msgs" *.msg]]
+					foreach msgFile $filelist_msg {
+						set fName [lindex [file split [file rootname $msgFile]] end]
+						if {[string trim [array get lCodes $fName]] != {}} {
+							$men add radiobutton -variable choice(mbLanguage) -command "set ::choice(mbLanguage_value) $fName; msgcat::mclocale $fName; catch {msgcat::mcload $::option(root)/msgs}" -label "$lCodes($fName) ($fName)"
+						}
+					}
+				}
+			} else {
+				log_writeOutTv 2 "Ca not read file containing language codes. Only autodetect will be available"
+			}
+		}
+		
+		proc config_generalLangsVars {handler} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalLangs \033\[0m \{$handler\}"
+			#handler: 0 default; 1 standard
+			if {$handler == 0} {
+				set opt option
+			} else {
+				set opt stnd_opt
+			}
+			set ::choice(mbLanguage_value) [set ::[set opt](language_value)]
+			if {$::option(language_value) == 0} {
+				set ::choice(mbLanguage) [mc "Autodetect"]
+			} else {
+				set ::choice(mbLanguage) [set ::[set opt](language)]
+			}
+		}
+		
 		proc config_generalNewsreaderChange {w} {
 			#Change state of all widgets in labelframe
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_generalNewsreaderChange \033\[0m \{$w\}"
@@ -95,8 +133,9 @@ proc option_screen_0 {} {
 		proc default_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt0 \033\[0m \{$w\}"
 			log_writeOutTv 0 "Starting to collect data for general section."
-			set ::choice(mbLanguage) $::option(language)
-			set ::choice(mbLanguage_value) $::option(language_value)
+			menu $::window(general_nb1).mbLanguage -tearoff 0
+			config_generalLangs $::window(general_nb1).mbLanguage
+			config_generalLangsVars 0
 			set ::choice(checkbutton_starttv) $::option(starttv_startup)
 			set ::choice(checkbutton_newsreader) $::option(newsreader)
 			set ::choice(sb_newsreader) $::option(newsreader_interval)
@@ -125,8 +164,7 @@ The Newsreader will check for news about TV-Viewer."]
 		proc stnd_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt0 \033\[0m \{$w\}"
 			log_writeOutTv 1 "Setting general options to default."
-			set ::choice(mbLanguage) $::stnd_opt(language)
-			set ::choice(mbLanguage_value) $::stnd_opt(language_value)
+			config_generalLangsVars 1
 			msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::option(root)/msgs}
 			set ::choice(checkbutton_starttv) $::stnd_opt(starttv_startup)
 			set ::choice(checkbutton_newsreader) $::stnd_opt(newsreader)
