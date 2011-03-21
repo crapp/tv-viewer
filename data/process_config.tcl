@@ -1,5 +1,5 @@
 #       process_config.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -106,6 +106,9 @@ proc process_configRead {} {
 		osd_key_w {1 {Sans} {Regular} 32 0 #000000}
 		osd_key_f {1 {Sans} {Regular} 72 0 #000000}
 		osd_lirc {1 {Sans} {Regular} 32 4 #000000}
+		notify 1
+		notifyPos 0
+		notifyTime 7
 		rec_default_path $::env(HOME)
 		rec_allow_sta_change 0
 		rec_duration_hour 2

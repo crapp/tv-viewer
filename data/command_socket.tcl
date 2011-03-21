@@ -1,5 +1,5 @@
 #       command_socket.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ proc command_getData {logw} {
 				}
 			}
 		} elseif { [fblocked $::data(comsocketRead)] } {
-			# Read blocked.  Just return
+			# Read blocked. Just return
 		} else {
 			# Something else
 			{*}$logw 2 "Error in CommandSocket $::data(comsocketRead), unknown."

@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       translate.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -26,12 +26,18 @@
 package require msgcat
 
 proc translate {files} {
-	if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
-		catch {source "$::msgsDir/$::start_value(--lang).msg"};# use existing translations
+	if {$::start_option(--langEn)} {
+		if {[file exists "$::msgsDir/en.msg"]} {
+			catch {source "$::msgsDir/en.msg"};# use existing translations
+		}
 	} else {
-		#~ set file($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
-		#~ close $file($::start_value(--lang))
-		#~ source "$::msgsDir/$::start_value(--lang).msg"
+		if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
+			catch {source "$::msgsDir/$::start_value(--lang).msg"} ;# use existing translations
+		} else {
+			#~ set file($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
+			#~ close $file($::start_value(--lang))
+			#~ source "$::msgsDir/$::start_value(--lang).msg"
+		}
 	}
 	set amountFile 0
 	set amountString 0
@@ -59,6 +65,7 @@ proc translate {files} {
 		if {$myNs eq {}} {set myNs {namespace eval ::}}
 		# find existing translations and add them to the list
 		foreach myMc [regexp -inline -all -- {(\[mc\s.*\]){1,1}?} $myC] {
+			if {[string match *"\$actTxt"* $myMc] || [string match *"\$header"* $myMc] || [string match *"\$msg"* $myMc]} continue
 			lappend ::myList [lindex [string trim $myMc {[]}] 1]
 		}
 		puts -nonewline "*"
@@ -128,102 +135,103 @@ namespace import -force msgcat::mcset\n";# original texts are in english
 		append transEn "\nsource \"\$::option(root)/extensions/fsdialog/en.msg\"";# need to source msg files from fsdialog
 		puts $msgFileEn $transEn
 		close $msgFileEn
-	}
-	if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
-		set msgFileTmp($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).tmp" w]
-		set transLc "# $::start_value(--lang).msg
+	} else {
+		if {[file exists "$::msgsDir/$::start_value(--lang).msg"]} {
+			set msgFileTmp($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).tmp" w]
+			set transLc "# $::start_value(--lang).msg
 namespace import -force msgcat::mcset\n";# translation into choosen language
-		append transLc $myLc
-		append transLc "\n"
-		if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
-			append transLc "# Need to source msg files from fsdialog because this is an external project"
-			append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
-		} else {
-			puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
+			append transLc $myLc
+			append transLc "\n"
+			if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
+				append transLc "# Need to source msg files from fsdialog because this is an external project"
+				append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
+			} else {
+				puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
 consider creating one and place it into extensions/fsdialog."
-		}
-		puts $msgFileTmp($::start_value(--lang)) $transLc
-		close $msgFileTmp($::start_value(--lang))
-		unset -nocomplain transLc
-		
-		set newLine 0
-		catch {exec diff -u "$::msgsDir/$::start_value(--lang).msg" "$::msgsDir/$::start_value(--lang).tmp" | grep +mcset} fileDiff
-		if {[string trim $fileDiff] != {}} {
-			foreach line [split $fileDiff \n] {
-				set line [string trimleft $line "+"]
-				lappend fileDiffList $line
 			}
-			set tmpOpen [open "$::msgsDir/$::start_value(--lang).tmp" r]
-			set i 0
-			set doCurly 0
-			while {[gets $tmpOpen line] != -1} {
-				if {$doCurly} {
-					if {"[string range $line end end]" == "\}"} {
-						incr countCurly
-						if {$countCurly == 1} {
-							append transLc "\n$line ;#Newline"; # mark newlines to find them easier
-							set doCurly 0
-							set countCurly 0
-							incr i
-							continue
-						} else {
-							append transLc "\n$line"
-							incr i
-							continue
+			puts $msgFileTmp($::start_value(--lang)) $transLc
+			close $msgFileTmp($::start_value(--lang))
+			unset -nocomplain transLc
+			
+			set newLine 0
+			catch {exec diff -u "$::msgsDir/$::start_value(--lang).msg" "$::msgsDir/$::start_value(--lang).tmp" | grep +mcset} fileDiff
+			if {[string trim $fileDiff] != {}} {
+				foreach line [split $fileDiff \n] {
+					set line [string trimleft $line "+"]
+					lappend fileDiffList $line
+				}
+				set tmpOpen [open "$::msgsDir/$::start_value(--lang).tmp" r]
+				set i 0
+				set doCurly 0
+				while {[gets $tmpOpen line] != -1} {
+					if {$doCurly} {
+						if {"[string range $line end end]" == "\}"} {
+							incr countCurly
+							if {$countCurly == 1} {
+								append transLc "\n$line ;#Newline"; # mark newlines to find them easier
+								set doCurly 0
+								set countCurly 0
+								incr i
+								continue
+							} else {
+								append transLc "\n$line"
+								incr i
+								continue
+							}
 						}
 					}
-				}
-				if {[lsearch $fileDiffList $line] != -1} {
-					if {$i == 0} {
-						if {"[string range $line end end]" == "\}"} {
-							append transLc "$line ;#Newline"; # mark newlines to find them easier
-							set doCurly 0
+					if {[lsearch $fileDiffList $line] != -1} {
+						if {$i == 0} {
+							if {"[string range $line end end]" == "\}"} {
+								append transLc "$line ;#Newline"; # mark newlines to find them easier
+								set doCurly 0
+							} else {
+								append transLc "$line"
+								set doCurly 1
+								set countCurly 0
+							}
 						} else {
+							if {"[string range $line end end]" == "\}"} {
+								append transLc "\n$line ;#Newline"; # mark newlines to find them easier
+								set doCurly 0
+							} else {
+								append transLc "\n$line"
+								set doCurly 1
+								set countCurly 0
+							}
+						}
+						incr newLine
+					} else {
+						if {$i == 0} {
 							append transLc "$line"
-							set doCurly 1
-							set countCurly 0
-						}
-					} else {
-						if {"[string range $line end end]" == "\}"} {
-							append transLc "\n$line ;#Newline"; # mark newlines to find them easier
-							set doCurly 0
 						} else {
 							append transLc "\n$line"
-							set doCurly 1
-							set countCurly 0
 						}
 					}
-					incr newLine
-				} else {
-					if {$i == 0} {
-						append transLc "$line"
-					} else {
-						append transLc "\n$line"
-					}
+					incr i
 				}
-				incr i
+				close $tmpOpen
+				set msgFile($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
+				puts $msgFile($::start_value(--lang)) $transLc
+				close $msgFile($::start_value(--lang))
+				catch {file delete "$::msgsDir/$::start_value(--lang).tmp"}
 			}
-			close $tmpOpen
+		} else {
 			set msgFile($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
+			set transLc "# $::start_value(--lang).msg
+namespace import -force msgcat::mcset\n";# translation into choosen language
+			append transLc $myLc
+			append transLc "\n"
+			if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
+				append transLc "# Need to source msg files from fsdialog because this is an external project"
+				append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
+			} else {
+				puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
+consider creating one and place it into extensions/fsdialog."
+			}
 			puts $msgFile($::start_value(--lang)) $transLc
 			close $msgFile($::start_value(--lang))
-			catch {file delete "$::msgsDir/$::start_value(--lang).tmp"}
 		}
-	} else {
-		set msgFile($::start_value(--lang)) [open "$::msgsDir/$::start_value(--lang).msg" w]
-		set transLc "# $::start_value(--lang).msg
-namespace import -force msgcat::mcset\n";# translation into choosen language
-		append transLc $myLc
-		append transLc "\n"
-		if {[file exists "$::root/extensions/fsdialog/$::start_value(--lang).msg"]} {
-			append transLc "# Need to source msg files from fsdialog because this is an external project"
-			append transLc "\nsource \"\$::option(root)/extensions/fsdialog/$::start_value(--lang).msg\""
-		} else {
-			puts "\nthere is no \"$::start_value(--lang)\" translation file available for fsdialog
-consider creating one and place it into extensions/fsdialog."
-		}
-		puts $msgFile($::start_value(--lang)) $transLc
-		close $msgFile($::start_value(--lang))
 	}
 	puts "\nfinished"
 	if {[info exists newLine] && $newLine > 0} {
@@ -231,8 +239,13 @@ consider creating one and place it into extensions/fsdialog."
 	} else {
 		puts "processed $amountFile files with $amountString text strings"
 	}
-	puts "please edit \"$::start_value(--lang).msg\" manually and provide translations,
+	if {$::start_option(--langEn)} {
+		puts "please update other translation files as original text
+strings may have been changed!"
+	} else {
+		puts "please edit \"$::start_value(--lang).msg\" manually and provide translations,
 when finished send this file to the developers"
+	}
 	exit 0
 }
 
@@ -291,10 +304,10 @@ Do you want to continue \[Y/n\]? "
 		exit 0
 	} else {
 		puts "creating translation file for language code \"en\""
+		set start_value(--lang) "en"
 	}
-}
-
-if {$start_option(--lang) == 0} {
+} else {
+	if {$start_option(--lang) == 0} {
 	puts "TV-Viewer translation engine version 0.2
 
 No language code provided
@@ -308,9 +321,10 @@ Usage: translate.tcl \[OPTION...\]
   --langEn              create english translation file. only needed if code has been changed
 "
 	exit 1
-} else {
-	set start_value(--lang) [string map {{ } {}} $start_value(--lang)]
-	puts "creating translation file for language code \"$start_value(--lang)\""
+	} else {
+		set start_value(--lang) [string map {{ } {}} $start_value(--lang)]
+		puts "creating translation file for language code \"$start_value(--lang)\""
+	}
 }
 
 if {[file isdirectory "$root/data"] == 0} {
@@ -322,5 +336,7 @@ if {[file isdirectory "$root/data"] == 0} {
 set files [glob -directory "$root/data" *.tcl]
 lappend files "$root/extensions/callib/callib.tcl"
 set files [lsort $files]
+
+msgcat::mclocale $::start_value(--lang)
 
 translate $files

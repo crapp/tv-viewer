@@ -1,7 +1,7 @@
 #!/usr/bin/env wish
 
 #       recorder.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -52,6 +52,9 @@ An instance of the TV-Viewer notification daemon is already running."
 }
 unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
 
+package require msgcat
+namespace import msgcat::mc
+
 source $option(root)/data/process_config.tcl
 source $option(root)/themes/plastik/plastik.tcl
 source $option(root)/themes/keramik/keramik.tcl
@@ -64,13 +67,32 @@ ttk::style theme use $::option(use_theme)
 if {"$::option(use_theme)" == "clam"} {
 	ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
 }
+#Setting up language support.
+if {$::option(language_value) != 0} {
+	msgcat::mclocale $::option(language_value)
+} else {
+	msgcat::mclocale $::env(LANG)
+}
+if {[msgcat::mcload $::option(root)/msgs] != 1} {
+	msgcat::mclocale en
+	msgcat::mcload $::option(root)/msgs
+}
 command_socket
 
 set icon(tv-viewer) [image create photo -file "$option(root)/icons/extras/systray_icon48.gif"]
 
 set notifyId 0
 
-proc notifydUi {ic pos timeout actId header msg} {
+proc notifydUi {ic pos timeout actId actTxt header msg args} {
+	#ic = image id -- pos = position of notification window -- timeout = timeout for notification window -- actId = action id -- actTxt = action text -- header = news header -- msg = news body -- args = remaining arguments
+	set actTxt [mc "$actTxt"]
+	set header [mc "$header"]
+	if {[llength $args] > 0} {
+		set msg [mc "$msg" {*}$args]
+	} else {
+		set msg [mc "$msg"]
+	}
+	
 	if {[winfo exists .topNotify_[expr $::notifyId - 2]]} {
 		set id [expr $::notifyId - 2]
 		after cancel ::afterId($id)
@@ -93,9 +115,12 @@ proc notifydUi {ic pos timeout actId header msg} {
 	grid $fMain.l_notifyHeader -in $fMain -row 0 -column 1 -sticky w -padx "0 8" -pady 8
 	grid $fMain.l_notifyMsg -in $fMain -row 1 -column 1 -sticky w -padx "0 8" -pady "0 8"
 	
-	grid $fBut.b_notifyOk -in $fBut -row 0 -column 0 -padx 2
+	
 	if {$actId != 0} {
-		grid $fBut.b_notifyAction -in $fBut -row 0 -column 1 -padx "0 2"
+		grid $fBut.b_notifyAction -in $fBut -row 0 -column 0 -padx 2
+		grid $fBut.b_notifyOk -in $fBut -row 0 -column 1 -padx 2
+	} else {
+		grid $fBut.b_notifyOk -in $fBut -row 0 -column 0 -padx 2
 	}
 	
 	grid columnconfigure $top 0 -minsize 350
@@ -110,25 +135,31 @@ proc notifydUi {ic pos timeout actId header msg} {
 	#1 - topright
 	array set location {
 		1 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+[expr [winfo screenwidth .topNotify_$::notifyId] - ([winfo reqwidth .topNotify_$::notifyId] + 15)]\+50"
+		2 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+[expr [winfo screenwidth .topNotify_$::notifyId] - ([winfo reqwidth .topNotify_$::notifyId] + 15)]\+[expr [winfo screenheight .topNotify_$::notifyId] - ([winfo reqheight .topNotify_$::notifyId] - 15) - 50]"
+		3 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+15\+[expr [winfo screenheight .topNotify_$::notifyId] - ([winfo reqheight .topNotify_$::notifyId] - 15) - 50]"
+		4 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+15\+50"
 	}
 	#1 - topright
 	array set movelocation {
-		1 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr 52 + [winfo reqheight .topNotify_[expr $::notifyId - 1]]]"
+		1 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] + [winfo reqheight .topNotify_[expr $::notifyId - 1]] + 2]"
+		2 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] - [winfo reqheight .topNotify_[expr $::notifyId - 1]] - 2]"
+		3 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+15\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] - [winfo reqheight .topNotify_[expr $::notifyId - 1]] - 2]"
+		4 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+15\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] + [winfo reqheight .topNotify_[expr $::notifyId - 1]] + 2]"
 	}
 	
 	array set image {
 		1 tv-viewer
 	}
 	
-	array set actionTxt {
-		1 "Start TV-Viewer"
-		2 "Start Newsreader"
-	}
+	#~ array set actionTxt {
+		#~ 1 "Start TV-Viewer"
+		#~ 2 "Start Newsreader"
+	#~ }
 	
 	$fMain.l_notifyIc configure -image $::icon($image($ic))
 	if {$actId != 0} {
-		$fBut.b_notifyAction configure -text $actionTxt($actId)
-		$fBut.b_notifyAction configure -command "notifydAction $fBut.b_notifyAction $actId"
+		$fBut.b_notifyAction configure -text $actTxt
+		$fBut.b_notifyAction configure -command [list notifydAction $fBut.b_notifyAction $actId]
 	}
 	
 	update idletasks
@@ -138,16 +169,20 @@ proc notifydUi {ic pos timeout actId header msg} {
 	}
 	wm deiconify $top
 	wm attributes $top -topmost 1
-	set ::afterId($::notifyId) [after $timeout [list destroy .topNotify_$::notifyId]]
+	set ::afterId($::notifyId) [after [expr $timeout * 1000] [list destroy .topNotify_$::notifyId]]
 }
 
 proc notifydAction {btn actId} {
 	array set actionCmd {
-		1 {exec $::option(root)/data/tv-viewer_main.tcl &}
+		1 {exec "$::option(root)/data/tv-viewer_main.tcl" &}
 		2 {command_WritePipe 0 "tv-viewer_main main_newsreaderUiPre"}
 	}
-	{*}$actionCmd($actId)
-	after cancel ::afterId($::notifyId)
+	if {$actId == 1} {
+		{*}[subst $actionCmd($actId)]
+	} else {
+		{*}$actionCmd($actId)
+	}
+	catch {after cancel ::afterId($::notifyId)}
 	destroy .topNotify_$::notifyId
 	after 5000 {
 		set status_main [monitor_partRunning 1]
@@ -158,6 +193,18 @@ proc notifydAction {btn actId} {
 			notifydExit
 		}
 	}
+}
+
+proc notifydMsgs {} {
+	# Do not start this proc. It is just for the translation engine so the strings get into the translation files.
+	[mc "Start Newsreader"]
+	[mc "News"]
+	[mc "There are News about TV-Viewer"]
+	[mc "Start TV-Viewer"]
+	[mc "Recording started"]
+	[mc "Recording of job % started successfully" $foo]
+	[mc "Recording finished"]
+	[mc "Recording of job % has been finished" $foo]
 }
 
 proc notifydId {} {
@@ -171,10 +218,3 @@ proc notifydExit {} {
 	catch {file delete "$::option(home)/tmp/ComSocketNotify"}
 	exit 0
 }
-
-#notifydId ; notifydUi 1 1 5000 2 HEADER ihasdkjhgasdf
-
-#after 1000 {notifydId ; notifydUi 1 1 5000 0 Überschrift ihasdkjhgasdf}
-
-#after 2000 {notifydId ; notifydUi 1 1 5000 0 Überschrift2222 ihasdkjhgasdf}
-

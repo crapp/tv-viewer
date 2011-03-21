@@ -80,7 +80,8 @@ E.g. resample=44100:0:0,volnorm
 See the MPlayer man pages for more informations.} {Ekstra Audiofilter skal adskilles med kommaer.
 fx. resample=44100:0:0,volnorm
 Se manual ('man mplayer') for flere oplysninger.}
-mcset da {Check this to enable logging of TV-Viewer, Scheduler and MPlayer events.  You can find the three logfiles in %/log/
+mcset da {Check this to enable logging of TV-Viewer, Scheduler and MPlayer events.
+You can find the three logfiles in %/log/
 Refer to the 'Help' section of the main interface for the log viewers.} {Aktiver denne for at starte logging af TV-Viewer, Scheduler og MPlayer.
 De tre Logfiles kan man finde i %s/log/.
 Se „Hjælp“-sectionen i hovedomtalen af log-viewers.}
@@ -194,16 +195,13 @@ mcset da {Expect more soon} {Vent mere snart}
 
 mcset da {General Settings} {Generelle Indstillinger}
 mcset da {Language} {Sprog}
-mcset da {Autodetect} {Find automatisk}
-mcset da {English (en)} {English (en)}
-mcset da {German (de)} {German (de)}
-mcset da {Danish (da)} {Dansk (da)}
 mcset da {Start TV on startup} {Start TV ved programstart}
 mcset da {Enable} {Aktiver}
 mcset da {Newsreader} {Nyhedslæser}
 mcset da {Time interval in days} {Tidsinterval i dage}
 mcset da {Electronic Program Guide} {Elektronisk Program Guide}
 mcset da {Choose a program} {Vælg program}
+mcset da {Autodetect} {Find automatisk}
 mcset da {Choose an EPG application} {Vælg EPG Program}
 mcset da {Choose your language.
 You'll need to restart TV-Viewer for changes to take effect.} {Vælg sprog.
@@ -217,7 +215,7 @@ mcset da {Specify a program to retrieve the television program} {Specificer et p
 
 ### ../data/config_interface.tcl ###
 
-mcset da {Interface Settings} {Interface Indstillinger}
+mcset da {Interface} {Interface}
 mcset da {Theme} {Tema}
 mcset da {Enable Tooltips} {Aktiver Tooltips}
 mcset da {Main Gui} {Hovedvindue}
@@ -247,6 +245,14 @@ mcset da {Full-screen mode} {Fuldskærm modus}
 mcset da {Volume | Video input | Pan&Scan} {Volumen | Video input | Pan&Scan}
 mcset da {Key Input} {Tastatur Input}
 mcset da {OSD Station list lirc} {OSD Stationliste lirc}
+mcset da {Notifications} {Notifications} ;#Newline
+mcset da {Notification Daemon} {Notification Daemon} ;#Newline
+mcset da {Display:} {Display:} ;#Newline
+mcset da {Display time:} {Display time:} ;#Newline
+mcset da {top right} {top højre}
+mcset da {bottom right} {bund højre}
+mcset da {bottom left} {bund venstre}
+mcset da {top left} {top venstre}
 mcset da {Choose your preferred theme} {Vælg dit foretrukne Tema}
 mcset da {Check this if you want to see tooltips} {Check for Vis Tooltips}
 mcset da {Tooltips for the main Interface} {Tooltips for hovedvinduet}
@@ -262,7 +268,7 @@ mouse pointer is moved to the "top", of the screen.} {Den flydende kontrol viser
 mcset da {The floating control appears in fullscreen mode when the
 mouse pointer is moved to the "left side", of the screen.} {Den flydende kontrol viser sig i fuldskærm modus når musen flyttes til "venstre side" af skærmen}
 mcset da {The floating control appears in fullscreen mode when the
-mouse pointer is moved to the "bottom", of the screen.} {Den flydende kontrol viser sig i fuldskærm modus når musen flyttes til "bunden" af skærmen} 
+mouse pointer is moved to the "bottom", of the screen.} {Den flydende kontrol viser sig i fuldskærm modus når musen flyttes til "bunden" af skærmen}
 mcset da {Activate integration to system tray} {Aktiver integration til systembakken}
 mcset da {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.} {Ændrer automatisk størrelse på systembakkes ikoner hvis bakken selv ændres. Vær forsigtig med dette valg.}
@@ -272,7 +278,7 @@ mcset da {OSD for station name in full-screen mode} {OSD for stationsnavn i fuld
 mcset da {Change font, color and alignment} {Vælg font, farve og justering}
 mcset da {OSD for Volume; Pan&Scan; Video input in windowed mode} {OSD for Volumen; Pan&Scan; Video input i vindue modus}
 mcset da {OSD for Volume; Pan&Scan; Video input in full-screen mode} {OSD for Volumen; Pan&Scan; Video input i fuldskærm modus}
-mcset da {OSD for change stations via numbers input in windowed mode} {OSD for at skifte station med tal i vindue modus} 
+mcset da {OSD for change stations via numbers input in windowed mode} {OSD for at skifte station med tal i vindue modus}
 mcset da {OSD for change stations via numbers input in full-screen mode} {OSD for at skifte station med tal i fuldskærm modus}
 
 ### ../data/config_radio.tcl ###
@@ -363,7 +369,6 @@ mcset da {Analog} {Analog}
 mcset da {DVB} {DVB}
 mcset da {Audio} {Audio}
 mcset da {Radio} {Radio}
-mcset da {Interface} {Interface}
 mcset da {Record} {Optage}
 mcset da {Apply your changes and exit preferences dialog} {Anvend ændringer og afslut Indstillinger}
 mcset da {Load default values, for the corresponding section} {Indlæs Standard værdierne for det tilsvarende afsnit}
@@ -416,17 +421,12 @@ mcset da {Family:} {Familie:}
 mcset da {Style:} {Stil:}
 mcset da {Size:} {Størrelse:}
 mcset da {Font color:} {Skriftfarve:}
-mcset da {Display:} {Display:}
 mcset da {Preview:} {Forhåndsvisning:}
-mcset da {top left} {top venstre}
 mcset da {top} {top}
-mcset da {top right} {top højre}
 mcset da {left} {venstre}
 mcset da {center} {center}
 mcset da {right} {højre}
-mcset da {bottom left} {bund venstre}
 mcset da {bottom} {bund}
-mcset da {bottom right} {bund højre}
 mcset da {Font chooser Ui has finished unexpectedly} {Fontvælger er stoppet uventet}
 mcset da {Choose a font} {Vælg en font}
 mcset da {Choose font style} {Vælg font stil}
@@ -463,8 +463,10 @@ mcset da {Key Sequence} {Tastekombinationer}
 mcset da {Television} {Fjernsyn}
 mcset da {Window management} {Vindueshåndtering}
 mcset da {Recording / File playback} {Optage / Fil playback}
-mcset da {Do you really want to load default values for all key sequences?  
-This will happen instantly and can not be undone!} {Ønsker du virkelig at indlæse standardværdier for alle genvejstaster?  
+mcset da {Do you really want to load default values for all key sequences?
+
+This will happen instantly and can not be undone!} {Ønsker du virkelig at indlæse standardværdier for alle genvejstaster?
+
 Det vil ske straks og kan ikke fortrydes!}
 mcset da {Set shortcuts to default values} {Sæt genveje til standardværdier}
 mcset da {Press the key combination you want to assign} {Tryk tastekombinationen du ønsker at tildele}
@@ -565,6 +567,14 @@ mcset da {TV-Viewer Log} {TV-Viewer Log}
 
 ### ../data/notifyd.tcl ###
 
+mcset da {Start Newsreader} {Start Newsreader} ;#Newline
+mcset da {News} {News} ;#Newline
+mcset da {There are News about TV-Viewer} {There are News about TV-Viewer} ;#Newline
+mcset da {Start TV-Viewer} {Start TV-Viewer} ;#Newline
+mcset da {Recording started} {Recording started} ;#Newline
+mcset da {Recording of job % started successfully} {Recording of job %s started successfully} ;#Newline
+mcset da {Recording finished} {Recording finished} ;#Newline
+mcset da {Recording of job % has been finished} {Recording of job %s has been finished} ;#Newline
 
 ### ../data/process_config.tcl ###
 

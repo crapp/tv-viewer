@@ -168,15 +168,13 @@ mcset en {Expect more soon}
 
 mcset en {General Settings}
 mcset en {Language}
-mcset en {Autodetect}
-mcset en {English (en)}
-mcset en {German (de)}
 mcset en {Start TV on startup}
 mcset en {Enable}
 mcset en {Newsreader}
 mcset en {Time interval in days}
 mcset en {Electronic Program Guide}
 mcset en {Choose a program}
+mcset en {Autodetect}
 mcset en {Choose an EPG application}
 mcset en {Choose your language.
 You'll need to restart TV-Viewer for changes to take effect.}
@@ -188,7 +186,7 @@ mcset en {Specify a program to retrieve the television program}
 
 ### ../data/config_interface.tcl ###
 
-mcset en {Interface Settings}
+mcset en {Interface}
 mcset en {Theme}
 mcset en {Enable Tooltips}
 mcset en {Main Gui}
@@ -211,8 +209,6 @@ mcset en {Minimize to tray}
 mcset en {Close to tray}
 mcset en {Resize system tray icon}
 mcset en {System tray icon size}
-mcset en {D-Bus Interface}
-mcset en {Enable D-Bus Interface}
 mcset en {On screen Display}
 mcset en {Station}
 mcset en {Windowed mode}
@@ -220,6 +216,14 @@ mcset en {Full-screen mode}
 mcset en {Volume | Video input | Pan&Scan}
 mcset en {Key Input}
 mcset en {OSD Station list lirc}
+mcset en {Notifications}
+mcset en {Notification Daemon}
+mcset en {Display:}
+mcset en {Display time:}
+mcset en {top right}
+mcset en {bottom right}
+mcset en {bottom left}
+mcset en {top left}
 mcset en {Choose your preferred theme}
 mcset en {Check this if you want to see tooltips}
 mcset en {Tooltips for the main Interface}
@@ -239,9 +243,6 @@ mouse pointer is moved to the "bottom", of the screen.}
 mcset en {Activate integration to system tray}
 mcset en {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.}
-mcset en {Activates D-Bus interface. This is used by
-TV-Viewer to display notifications about recordings
-and news about the project.}
 mcset en {Choose the size for the system tray icon}
 mcset en {OSD for station name in windowed mode}
 mcset en {OSD for station name in full-screen mode}
@@ -329,7 +330,6 @@ mcset en {Analog}
 mcset en {DVB}
 mcset en {Audio}
 mcset en {Radio}
-mcset en {Interface}
 mcset en {Record}
 mcset en {Apply your changes and exit preferences dialog}
 mcset en {Load default values, for the corresponding section}
@@ -381,17 +381,12 @@ mcset en {Family:}
 mcset en {Style:}
 mcset en {Size:}
 mcset en {Font color:}
-mcset en {Display:}
 mcset en {Preview:}
-mcset en {top left}
 mcset en {top}
-mcset en {top right}
 mcset en {left}
 mcset en {center}
 mcset en {right}
-mcset en {bottom left}
 mcset en {bottom}
-mcset en {bottom right}
 mcset en {Font chooser Ui has finished unexpectedly}
 mcset en {Choose a font}
 mcset en {Choose font style}
@@ -410,7 +405,7 @@ mcset en {A small and simple frontend to watch and record television}
 mcset en {Homepage}
 mcset en {Forum}
 mcset en {IRC channel}
-mcset en {© Copyright 2007 - 2010
+mcset en {© Copyright 2007 - 2011
 Christian Rapp}
 mcset en {Credits}
 mcset en {License}
@@ -524,11 +519,19 @@ mcset en {TV-Viewer Log}
 ### ../data/main_newsreader.tcl ###
 
 
-### ../data/main_picqual_stream.tcl ###
-
-
 ### ../data/monitor.tcl ###
 
+
+### ../data/notifyd.tcl ###
+
+mcset en {Start Newsreader}
+mcset en {News}
+mcset en {There are News about TV-Viewer}
+mcset en {Start TV-Viewer}
+mcset en {Recording started}
+mcset en {Recording of job % started successfully} {Recording of job %s started successfully}
+mcset en {Recording finished}
+mcset en {Recording of job % has been finished} {Recording of job %s has been finished}
 
 ### ../data/process_config.tcl ###
 
@@ -792,6 +795,10 @@ mcset en {Frequency: %} {Frequency: %s}
 
 mcset en {Show log}
 mcset en {TV-Viewer Error}
+
+### ../data/stream.tcl ###
+
+mcset en {Can not change video standard}
 
 ### ../data/system_tray.tcl ###
 

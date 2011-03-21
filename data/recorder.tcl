@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       recorder.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ unset -nocomplain insertLocal insertGlob pa
 source "$option(root)/agrep.tcl"
 source "$option(root)/monitor.tcl"
 source "$option(root)/command_socket.tcl"
+source "$option(root)/process_config.tcl"
+process_configRead
 
 proc recorderCheckMain {com fdin fdout} {
 	if {"$com" == "cancel"} {
@@ -106,10 +108,12 @@ if {$status == 0} {
 
 command_socket
 if {"$lifespan" != "infinite"} {
-	set status_notify [monitor_partRunning 5]
-	if {[lindex $status_notify 0] == 0} {
-		set ntfy_pid [exec $::option(root)/notifyd.tcl &]
-		puts "notification daemon started, PID $ntfy_pid"
+	if {$::option(notify)} {
+		set status_notify [monitor_partRunning 5]
+		if {[lindex $status_notify 0] == 0} {
+			set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+			puts "notification daemon started, PID $ntfy_pid"
+		}
 	}
 }
 
@@ -127,10 +131,10 @@ if {"$lifespan" != "infinite"} {
 		set status_main [monitor_partRunning 1]
 		if {[lindex $status_main 0]} {
 			command_WritePipe 0 "tv-viewer_notifyd notifydId"
-			command_WritePipe 0 "tv-viewer_notifyd notifydUi 1 1 7000 0 {Recording finished} {Recording of job $jobid has been finished}"
+			command_WritePipe 0 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 0 " " "Recording finished" "Recording of job % has been finished" $jobid]
 		} else {
 			command_WritePipe 0 "tv-viewer_notifyd notifydId"
-			command_WritePipe 0 "tv-viewer_notifyd notifydUi 1 1 7000 1 {Recording finished} {Recording of job $jobid has been finished}"
+			command_WritePipe 0 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 1 "Start TV-Viewer" "Recording finished" "Recording of job % has been finished" $jobid]
 		}
 		exit 0
 	}

@@ -1,5 +1,5 @@
 #       main_newsreader.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ proc main_newsreaderCheckUpdate {handler} {
 						puts -nonewline $open_last_write "$update_news"
 						close $open_last_write
 						command_WritePipe 1 "tv-viewer_notifyd notifydId"
-						command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
+						command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 "Start Newsreader" "News" "There are News about TV-Viewer"]
 					}
 				} else {
 					log_writeOutTv 0 "There are news about TV-Viewer"
@@ -175,7 +175,7 @@ proc main_newsreaderCheckUpdate {handler} {
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
 					command_WritePipe 1 "tv-viewer_notifyd notifydId"
-					command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 2 {News} {There are News about TV-Viewer}"
+					command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 "Start Newsreader" "News" "There are News about TV-Viewer"]
 				}
 			} else {
 				file delete "$::option(home)/config/last_read.conf"

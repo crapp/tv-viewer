@@ -1,5 +1,5 @@
 #       vid_wm.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -283,9 +283,9 @@ proc vid_wmPanscan {w direct value} {
 		1 0.01
 		2 0.05
 	}
+	if {[string trim [place info $w]] == {}} return
 	if {$direct == 1} {
 		if {$::data(panscan) == 100} return
-		if {[string trim [place info $w]] == {}} return
 		if {[expr $::data(panscan) + $zoom($value)] > 100} {
 			set zoom($value) [expr (100 - $::data(panscan))]
 			set zoomPlace($value) [expr $zoom($value) / 100]
@@ -303,7 +303,6 @@ proc vid_wmPanscan {w direct value} {
 	}
 	if {$direct == -1} {
 		if {$::data(panscan) == -50} return
-		if {[string trim [place info $w]] == {}} return
 		if {[expr $::data(panscan) - $zoom($value)] < -50} {
 			set zoom($value) [expr (-50 - $::data(panscan)) * -1]
 			set zoomPlace($value) [expr $zoom($value) / 100]
@@ -320,7 +319,6 @@ proc vid_wmPanscan {w direct value} {
 		}
 	}
 	if {$direct == 0} {
-		if {[string trim [place info $w]] == {}} return
 		place $w -relheight 1
 		log_writeOutTv 0 "Setting zoom to 100%"
 		set ::data(panscan) 0
@@ -333,7 +331,6 @@ proc vid_wmPanscan {w direct value} {
 		}
 	}
 	if {$direct == 2} {
-		if {[string trim [place info $w]] == {}} return
 		place $w -relheight 1
 		log_writeOutTv 0 "Setting zoom to 100%"
 		set ::data(panscan) 0
@@ -356,108 +353,112 @@ proc vid_wmPanscanAuto {} {
 		return
 	}
 	if {[wm attributes . -fullscreen] == 0} {
-		if {$::data(panscanAuto) == 0} {
-			set relativeX [dict get [place info .fvidBg.cont] -relx]
-			set relativeY [dict get [place info .fvidBg.cont] -rely]
-			set relheight [dict get [place info .fvidBg.cont] -relheight]
-			place .fvidBg.cont -relheight 1 -relx $relativeX -rely $relativeY
-			if {$::main(compactMode)} {
-				set width [winfo width .]
-				set height [expr int(ceil($width.0 / 1.777777778))]
-				wm geometry . [winfo width .]x$height
-			} else {
-				if {$::menu(cbViewStationl)} {
-					set width [expr [winfo width .] - [winfo width .fstations]]
-				} else {
-					set width [winfo width .]
-				}
-				set height [expr int(ceil($width.0 / 1.777777778))]
-				if {$::menu(cbViewMainToolbar)} {
-					set mainHeight [winfo height .ftoolb_Top]
-				} else {
-					set mainHeight 0
-				}
-				if {$::menu(cbViewControlbar)} {
-					set controlbHeight [winfo height .ftoolb_Play]
-				} else {
-					set controlbHeight 0
-				}
-				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
-				wm geometry . [winfo width .]x$heightwp
-			}
-			set relheight [lindex [split [expr ([winfo reqwidth .fvidBg].0 / [winfo reqheight .fvidBg].0)] .] end]
-			set relheight 3333333333333333
-			set panscan_multi [expr int(ceil(0.$relheight / 0.05))]
-			set ::data(panscan) [expr ($panscan_multi * 5)]
-			log_writeOutTv 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
-			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
-				after 0 [vid_osd osd_group_w 1000 "Pan&Scan 16:9"]
-			}
-			set ::data(panscanAuto) 1
-			place .fvidBg.cont -relheight 1.3333333333333333
-		} else {
-			if {$::main(compactMode)} {
-				set width [winfo width .]
-				set height [expr int(ceil($width.0 / 1.3333333333333333))]
-				wm geometry . [winfo width .]x$height
-			} else {
-				if {$::menu(cbViewStationl)} {
-					set width [expr [winfo width .] - [winfo width .fstations]]
-				} else {
-					set width [winfo width .]
-				}
-				set height [expr int(ceil($width.0 / 1.3333333333333333))]
-				if {$::menu(cbViewMainToolbar)} {
-					set mainHeight [winfo height .ftoolb_Top]
-				} else {
-					set mainHeight 0
-				}
-				if {$::menu(cbViewControlbar)} {
-					set controlbHeight [winfo height .ftoolb_Play]
-				} else {
-					set controlbHeight 0
-				}
-				set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
-				wm geometry . [winfo width .]x$heightwp
-			}
-			vid_wmPanscan .fvidBg.cont 0 1
-		}
-	} else {
-		if {$::data(panscanAuto) == 0} {
-			if {[dict get [place info .fvidBg.cont] -relheight] != 1} {
-				set width_diff [expr [winfo width .fvidBg] - [winfo width .fvidBg.cont]]
-				set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
-				if {$relheight == [dict get [place info .fvidBg.cont] -relheight]} return
+		if {[string trim [place info .fvidBg.cont]] != {}} {
+			if {$::data(panscanAuto) == 0} {
 				set relativeX [dict get [place info .fvidBg.cont] -relx]
 				set relativeY [dict get [place info .fvidBg.cont] -rely]
+				set relheight [dict get [place info .fvidBg.cont] -relheight]
 				place .fvidBg.cont -relheight 1 -relx $relativeX -rely $relativeY
-				catch {after cancel $::data(panscanAuto_id)}
-				set ::data(panscanAuto_id) [after 1000 {
-				set width_diff [expr [winfo width .fvidBg] - [winfo width .fvidBg.cont]]
-				set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
-				set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
-				set ::data(panscan) [expr ($panscan_multi * 5)]
-				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
-				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-					after 0 [vid_osd osd_group_f 1000 "Pan&Scan 16:9"]
+				if {$::main(compactMode)} {
+					set width [winfo width .]
+					set height [expr int(ceil($width.0 / 1.777777778))]
+					wm geometry . [winfo width .]x$height
+				} else {
+					if {$::menu(cbViewStationl)} {
+						set width [expr [winfo width .] - [winfo width .fstations]]
+					} else {
+						set width [winfo width .]
+					}
+					set height [expr int(ceil($width.0 / 1.777777778))]
+					if {$::menu(cbViewMainToolbar)} {
+						set mainHeight [winfo height .ftoolb_Top]
+					} else {
+						set mainHeight 0
+					}
+					if {$::menu(cbViewControlbar)} {
+						set controlbHeight [winfo height .ftoolb_Play]
+					} else {
+						set controlbHeight 0
+					}
+					set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
+					wm geometry . [winfo width .]x$heightwp
 				}
-				set ::data(panscanAuto) 1
-				place .fvidBg.cont -relheight $relheight
-				}]
-			} else {
-				set width_diff [expr [winfo width .fvidBg] - [winfo width .fvidBg.cont]]
-				set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
-				set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
+				set relheight [lindex [split [expr ([winfo reqwidth .fvidBg].0 / [winfo reqheight .fvidBg].0)] .] end]
+				set relheight 3333333333333333
+				set panscan_multi [expr int(ceil(0.$relheight / 0.05))]
 				set ::data(panscan) [expr ($panscan_multi * 5)]
-				log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
+				log_writeOutTv 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
 				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [vid_osd osd_group_w 1000 "Pan&Scan 16:9"]
 				}
-				if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
-					after 0 [vid_osd osd_group_f 1000 "Pan&Scan 16:9"]
-				}
 				set ::data(panscanAuto) 1
-				place .fvidBg.cont -relheight $relheight
+				place .fvidBg.cont -relheight 1.3333333333333333
+			} else {
+				if {$::main(compactMode)} {
+					set width [winfo width .]
+					set height [expr int(ceil($width.0 / 1.3333333333333333))]
+					wm geometry . [winfo width .]x$height
+				} else {
+					if {$::menu(cbViewStationl)} {
+						set width [expr [winfo width .] - [winfo width .fstations]]
+					} else {
+						set width [winfo width .]
+					}
+					set height [expr int(ceil($width.0 / 1.3333333333333333))]
+					if {$::menu(cbViewMainToolbar)} {
+						set mainHeight [winfo height .ftoolb_Top]
+					} else {
+						set mainHeight 0
+					}
+					if {$::menu(cbViewControlbar)} {
+						set controlbHeight [winfo height .ftoolb_Play]
+					} else {
+						set controlbHeight 0
+					}
+					set heightwp [expr $height + [winfo height .foptions_bar] + [winfo height .seperatMenu] + $mainHeight + $controlbHeight + [winfo height .ftoolb_Disp]]
+					wm geometry . [winfo width .]x$heightwp
+				}
+				vid_wmPanscan .fvidBg.cont 0 1
+			}
+		}
+	} else {
+		if {$::data(panscanAuto) == 0} {
+			if {[string trim [place info .fvidBg.cont]] != {}} {
+				if {[dict get [place info .fvidBg.cont] -relheight] != 1} {
+					set width_diff [expr [winfo width .fvidBg] - [winfo width .fvidBg.cont]]
+					set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
+					if {$relheight == [dict get [place info .fvidBg.cont] -relheight]} return
+					set relativeX [dict get [place info .fvidBg.cont] -relx]
+					set relativeY [dict get [place info .fvidBg.cont] -rely]
+					place .fvidBg.cont -relheight 1 -relx $relativeX -rely $relativeY
+					catch {after cancel $::data(panscanAuto_id)}
+					set ::data(panscanAuto_id) [after 1000 {
+					set width_diff [expr [winfo width .fvidBg] - [winfo width .fvidBg.cont]]
+					set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
+					set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
+					set ::data(panscan) [expr ($panscan_multi * 5)]
+					log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
+					if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+						after 0 [vid_osd osd_group_f 1000 "Pan&Scan 16:9"]
+					}
+					set ::data(panscanAuto) 1
+					place .fvidBg.cont -relheight $relheight
+					}]
+				} else {
+					set width_diff [expr [winfo width .fvidBg] - [winfo width .fvidBg.cont]]
+					set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
+					set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
+					set ::data(panscan) [expr ($panscan_multi * 5)]
+					log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
+					if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
+						after 0 [vid_osd osd_group_w 1000 "Pan&Scan 16:9"]
+					}
+					if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
+						after 0 [vid_osd osd_group_f 1000 "Pan&Scan 16:9"]
+					}
+					set ::data(panscanAuto) 1
+					place .fvidBg.cont -relheight $relheight
+				}
 			}
 		} else {
 			vid_wmPanscan .fvidBg.cont 0 1
@@ -473,7 +474,7 @@ proc vid_wmMoveVideo {dir} {
 	}
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
-	if {[winfo ismapped .fvidBg.cont] == 0} {
+	if {[string trim [place info .fvidBg.cont]] == {}} {
 		log_writeOutTv 1 "Video frame is not mapped."
 		log_writeOutTv 1 "Auto Pan&Scan not possible."
 		return

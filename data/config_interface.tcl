@@ -1,5 +1,5 @@
 #       config_interface.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -29,8 +29,9 @@ proc option_screen_6 {} {
 		.config_wizard.frame_configoptions.nb add $::window(interface_nb1)
 		.config_wizard.frame_configoptions.nb add $::window(interface_nb2)
 		.config_wizard.frame_configoptions.nb add $::window(interface_nb3)
+		.config_wizard.frame_configoptions.nb add $::window(interface_nb4)
 		.config_wizard.frame_configoptions.nb select $::window(interface_nb1)
-		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)]
+		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3) $::window(interface_nb4)]
 		bind $::window(interface_nb2_cont) <Map> {
 			$::window(interface_nb2_cont) itemconfigure cont_int_nb2 -width [winfo width $::window(interface_nb2_cont)] -height [winfo reqheight $::window(interface_nb2_cont).f_windowprop2]
 			$::window(interface_nb2_cont) configure -scrollregion [$::window(interface_nb2_cont) bbox all]
@@ -45,7 +46,7 @@ proc option_screen_6 {} {
 		log_writeOutTv 0 "Setting up interface section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(interface_nb1) [ttk::frame $w.f_interface]
-		$w add $::window(interface_nb1) -text [mc "Interface Settings"] -padding 2
+		$w add $::window(interface_nb1) -text [mc "Interface"] -padding 2
 		ttk::labelframe $::window(interface_nb1).lf_theme -text [mc "Theme"]
 		ttk::menubutton $::window(interface_nb1).mb_lf_theme -menu $::window(interface_nb1).mbTheme -textvariable choice(mbTheme)
 		menu $::window(interface_nb1).mbTheme -tearoff 0
@@ -119,6 +120,17 @@ proc option_screen_6 {} {
 		ttk::label $frame_nb3.l_osd_lirc_fnt -text [mc "Full-screen mode"]
 		ttk::button $frame_nb3.b_osd_lirc_fnt -command [list font_chooserUi $frame_nb3.b_osd_lirc_fnt osd_lirc]
 		
+		set ::window(interface_nb4) [ttk::frame $w.f_notify]
+		$w add $::window(interface_nb4) -text [mc "Notifications"] -padding 2
+		set lf_notification $::window(interface_nb4).lf_notification
+		ttk::checkbutton $::window(interface_nb4).cb_notification -text [mc "Notification Daemon"] -variable choice(cb_notification) -command [list config_interfaceNotification $lf_notification 1]
+		ttk::labelframe $::window(interface_nb4).lf_notification -labelwidget $::window(interface_nb4).cb_notification
+		ttk::label $lf_notification.l_pos -text [mc "Display:"]
+		ttk::menubutton $lf_notification.mb_pos -menu $lf_notification.mb_pos.mbPos -textvariable ::config_int(mb_notificationPos)
+		menu $lf_notification.mb_pos.mbPos -tearoff 0
+		ttk::label $lf_notification.l_time -text [mc "Display time:"]
+		spinbox $lf_notification.sb_time -from 1 -to 30 -width 3 -repeatinterval 50 -state readonly -textvariable choice(sb_notificationTime)
+		
 		grid columnconfigure $::window(interface_nb1) 0 -weight 1
 		grid columnconfigure $::window(interface_nb1).lf_theme 0 -minsize 120
 		grid columnconfigure $::window(interface_nb2) 0 -weight 1
@@ -128,6 +140,8 @@ proc option_screen_6 {} {
 		grid columnconfigure $::window(interface_nb3) 0 -weight 1
 		grid columnconfigure $::window(interface_nb3_cont).f_osd2 0 -weight 1
 		grid rowconfigure $::window(interface_nb3) 0 -weight 1
+		grid columnconfigure $::window(interface_nb4) 0 -weight 1
+		grid columnconfigure $lf_notification 1 -minsize 120
 		
 		grid $::window(interface_nb1).lf_theme -in $::window(interface_nb1) -row 0 -column 0 -sticky ew -padx 5 -pady "5 0"
 		grid $::window(interface_nb1).mb_lf_theme -in $::window(interface_nb1).lf_theme -row 0 -column 0 -sticky ew -padx 7 -pady 3
@@ -183,6 +197,12 @@ proc option_screen_6 {} {
 		grid $frame_nb3.l_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 0 -padx "23 7" -pady "3"
 		grid $frame_nb3.b_osd_lirc_fnt -in $frame_nb3.lf_osd_lirc -row 0 -column 1 -sticky ew -pady "3"
 		
+		grid $lf_notification -in $::window(interface_nb4) -row 0 -column 0 -sticky ew -padx 5 -pady 5
+		grid $lf_notification.l_pos -in $lf_notification -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_notification.mb_pos -in $lf_notification -row 0 -column 1 -sticky ew -pady 3
+		grid $lf_notification.l_time -in $lf_notification -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_notification.sb_time -in $lf_notification -row 1 -column 1 -sticky ew -pady "0 3"
+		
 		#Additional Code
 		
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)]
@@ -207,6 +227,11 @@ proc option_screen_6 {} {
 		}
 		bind $::window(interface_nb3_cont).f_osd2  <Button-4> {config_interfaceMousew $::window(interface_nb3_cont) 120}
 		bind $::window(interface_nb3_cont).f_osd2  <Button-5> {config_interfaceMousew $::window(interface_nb3_cont) -120}
+		
+		set avail_pos [dict create [mc "top right"] 0 [mc "bottom right"] 1 [mc "bottom left"] 2 [mc "top left"] 3]
+		foreach {key elem} [dict get $avail_pos] {
+			$lf_notification.mb_pos.mbPos add radiobutton -label "$key" -value "$elem" -variable choice(rb_notificationPos) -command [list config_interfaceNotificationPos $lf_notification.mb_pos.mbPos]
+		}
 		# Subprocs
 		
 		proc config_interfaceTheme {theme} {
@@ -249,6 +274,37 @@ proc option_screen_6 {} {
 			set ::choice($cvar) [lreplace $::choice($cvar) 1 1 [lindex $value 1]]
 			set ::config_int($cvar) [lindex $value 0]
 		}
+		proc config_interfaceNotification {lf handler} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceNotificationPos \033\[0m \{$lf\}"
+			#lf == labelframe -- handler == invoked by routine or button
+			if {$::choice(cb_notification) == 0} {
+				foreach w [winfo children $lf] {
+					$w configure -state disabled
+				}
+				if {$handler} {
+					set status_notifyLinkread [catch {file readlink "$::option(home)/tmp/notifyd_lockfile.tmp"} result_notifyLinkread]
+					if {$status_notifyLinkread == 0} {
+						catch {exec kill $result_notifyLinkread}
+						after 1000 {catch {exec ""}}
+					}
+				}
+			}
+			if {$::choice(cb_notification) == 1} {
+				foreach w [winfo children $lf] {
+					$w configure -state normal
+				}
+				if {$handler} {
+					catch {exec ""}
+					set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
+					log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
+				}
+			}
+		}
+		proc config_interfaceNotificationPos {m} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceNotificationPos \033\[0m \{$m\}"
+			# m = corresponding menu for menubutton notification
+			set ::config_int(mb_notificationPos) [$m entrycget $::choice(rb_notificationPos) -label]
+		}
 		proc config_interfaceMousew {window delta} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceMousew \033\[0m \{$window\} \{$delta\}"
 			$window yview scroll [expr {-$delta/120}] units
@@ -261,6 +317,7 @@ proc option_screen_6 {} {
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
+			set lf_notification $::window(interface_nb4).lf_notification
 			
 			set ::choice(mbTheme) $::option(use_theme)
 			set ::choice(cb_tooltip) $::option(tooltips)
@@ -329,6 +386,11 @@ proc option_screen_6 {} {
 			} else {
 				$::window(interface_nb3_cont).f_osd2.b_osd_lirc_fnt configure -text "[lindex $::choice(osd_lirc) 1] - [lindex $::choice(osd_lirc) 2] | [lindex $::choice(osd_lirc) 3]"
 			}
+			set ::choice(cb_notification) $::option(notify)
+			config_interfaceNotification $lf_notification 0
+			set ::choice(rb_notificationPos) $::option(notifyPos)
+			config_interfaceNotificationPos $lf_notification.mb_pos.mbPos
+			set ::choice(sb_notificationTime) $::option(notifyTime)
 			config_interfaceChangeTooltips $w1
 			if {$::option(tooltips) == 1} {
 				if {$::option(tooltips_wizard) == 1} {
@@ -411,6 +473,7 @@ itself is changed. Be careful with this option."]
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
 			set lf_osdStation $::window(interface_nb3_cont).f_osd2.lf_osd_station
+			set lf_notification $::window(interface_nb4).lf_notification
 			
 			set ::choice(mbTheme) $::stnd_opt(use_theme)
 			config_interfaceTheme $::stnd_opt(use_theme)
@@ -480,6 +543,11 @@ itself is changed. Be careful with this option."]
 			} else {
 				$::window(interface_nb3_cont).f_osd2.b_osd_lirc_fnt configure -text "[lindex $::choice(osd_lirc) 1] - [lindex $::choice(osd_lirc) 2] | [lindex $::choice(osd_lirc) 3]"
 			}
+			set ::choice(cb_notification) $::stnd_opt(notify)
+			config_interfaceNotification $lf_notification 0
+			set ::choice(rb_notificationPos) $::stnd_optnotifyPos)
+			config_interfaceNotificationPos $lf_notification.mb_pos.mbPos
+			set ::choice(sb_notificationTime) $::stnd_opt(notifyTime)
 			config_interfaceChangeTooltips $w1
 		}
 		default_opt6 $::window(interface_nb1) $::window(interface_nb2) $frame_nb3

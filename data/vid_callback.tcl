@@ -1,5 +1,5 @@
 #       vid_callback.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -107,11 +107,15 @@ proc vid_callbackVidData {} {
 						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
 						bind .fvidBg.cont <Configure> {}
 					}
-					if {$::data(movevidX) != 0} {
-						place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
-					}
-					if {$::data(movevidY) != 0} {
-						place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
+					if {[string trim [place info .fvidBg.cont]] != {}} {
+						if {$::data(movevidX) != 0} {
+							place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
+						}
+						if {$::data(movevidY) != 0} {
+							place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
+						}
+					} else {
+						log_writeOutTv 1 "Warning container frame not managed with place. Report this incident."
 					}
 					if {$::data(panscanAuto) == 1} {
 						set ::vid(id_panscanAuto) [after 500 {
@@ -121,7 +125,11 @@ proc vid_callbackVidData {} {
 						}]
 					} else {
 						if {$::data(panscan) != 0} {
-							place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
+							if {[string trim [place info .fvidBg.cont]] != {}} {
+								place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
+							} else {
+								log_writeOutTv 1 "Warning container frame not managed with place. Report this incident."
+							}
 						}
 					}
 					vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)

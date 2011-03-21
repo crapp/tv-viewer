@@ -1,5 +1,5 @@
 #       info_help.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ proc info_helpAbout {} {
 		ttk::label $linkf.l_irc -text [mc "IRC channel"]
 		ttk::button $linkf.b_irc -text "http://webchat.freenode.net/" -command [list info_helpWebpage 2] -style Toolbutton
 		ttk::label $nb1.l_version
-		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2010
+		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2011
 Christian Rapp"] -justify center
 		
 		set nb2 [ttk::frame $mf.nb.f_credits]
@@ -221,10 +221,12 @@ Christian Rapp - Main developer"
 		$nb2.t_credits insert end "\n\n"
 		$nb2.t_credits insert end "Translators:" big
 		$nb2.t_credits insert end "\n
-de_DE Christian Rapp <christianrapp@users.sourceforge.net>"
+da  Jes Nissen <jesdnissen@gmail.com>"
 		$nb2.t_credits insert end "\n
-en_GB Christian Rapp <christianrapp@users.sourceforge.net>
-      Matthias Klostermair"
+de  Christian Rapp <christianrapp@users.sourceforge.net>"
+		$nb2.t_credits insert end "\n
+en  Christian Rapp <christianrapp@users.sourceforge.net>
+    Matthias Klostermair"
 		$nb2.t_credits insert end "\n\n"
 		$nb2.t_credits insert end "Participants:" big
 		$nb2.t_credits insert end "\n

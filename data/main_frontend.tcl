@@ -1,5 +1,5 @@
 #       main_frontend.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ proc main_frontendEpg {} {
 }
 
 proc msgcat::mcunknown {locale src args} {
-	log_writeOutTv 1 "-=Unknown string for locale $locale"
+	log_writeOutTv 1 "Unknown string for locale $locale"
 	log_writeOutTv 1 "$src $args"
 	return $src
 }
@@ -323,7 +323,7 @@ proc main_frontendUi {} {
 	ttk::button $toolbTop.bTimeshift -image $::icon_m(timeshift) -style Toolbutton -command {event generate . <<timeshift>>}
 	ttk::button $toolbTop.bRecord -image $::icon_m(record) -style Toolbutton -command {event generate . <<record>>}
 	ttk::button $toolbTop.bEpg -text EPG -style Toolbutton -command main_frontendEpg
-	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton
+	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton -command {log_writeOutTv 1 "Radio support will be included in version 0.8.3"}
 	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command {event generate . <<teleview>>}
 	
 	ttk::treeview $stations.treeSlist -yscrollcommand [list $stations.scrbSlist set] -columns {name number} -show headings -selectmode browse -takefocus 0
@@ -388,8 +388,9 @@ proc main_frontendUi {} {
 	grid $toolbTop.bTimeshift -in $toolbTop -row 0 -column 0 -pady 1 -padx "2 0"
 	grid $toolbTop.bRecord -in $toolbTop -row 0 -column 1 -pady 1 -padx "2 0"
 	grid $toolbTop.bEpg -in $toolbTop -row 0 -column 2 -pady 1 -padx "2 0"
-	grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 -pady 1 -padx "2 0"
-	grid $toolbTop.bTv -in $toolbTop -row 0 -column 4 -pady 1 -padx "2 0"
+	#FIXME Deactivated Radio Button
+	#~ grid $toolbTop.bRadio -in $toolbTop -row 0 -column 3 -pady 1 -padx "2 0"
+	grid $toolbTop.bTv -in $toolbTop -row 0 -column 3 -pady 1 -padx "2 0"
 	
 	grid $toolbChanCtrl -in $stations -row 1 -column 0 -columnspan 2 -sticky ew
 	grid $stations.treeSlist -in $stations -row 0 -column 0 -sticky nesw
@@ -497,17 +498,20 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {puts [monitor_partRunning 5]}
+	bind . <Key-x> {command_WritePipe 1 "tv-viewer_notifyd notifydId"
+	command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 StartNewsreader HEADER2 atomkraftneindanke]}
 	bind . <Key-y> {command_WritePipe 1 "tv-viewer_notifyd notifydId"
-	command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 5000 0 HEADER ihasdkjhgasdf"}
+	command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 StartNewsreader HEADER ihasdkjhgasdf]}
 	
 	
 	command_socket
 	
-	set status_notify [monitor_partRunning 5]
-	if {[lindex $status_notify 0] == 0} {
-		set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
-		log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
+	if {$::option(notify)} {
+		set status_notify [monitor_partRunning 5]
+		if {[lindex $status_notify 0] == 0} {
+			set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
+			log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
+		}
 	}
 	
 	array set startAvailCommand {

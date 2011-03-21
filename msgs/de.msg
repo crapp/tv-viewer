@@ -207,15 +207,13 @@ mcset de {Expect more soon} {Bald mehr}
 
 mcset de {General Settings} {Allgemeines}
 mcset de {Language} {Sprache}
-mcset de {Autodetect} {Automatisch}
-mcset de {English (en)} {Englisch (en)}
-mcset de {German (de)} {Deutsch (de)}
 mcset de {Start TV on startup} {Fernsehwiedergabe beim Programmstart}
 mcset de {Enable} {Aktivieren}
 mcset de {Newsreader} {Newsreader}
 mcset de {Time interval in days} {Zeitintervall in Tagen}
 mcset de {Electronic Program Guide} {Electronic Program Guide}
 mcset de {Choose a program} {Programm auswählen}
+mcset de {Autodetect} {Automatisch}
 mcset de {Choose an EPG application} {EPG Programm auswählen}
 mcset de {Choose your language.
 You'll need to restart TV-Viewer for changes to take effect.} {Sprache auswählen.
@@ -229,7 +227,7 @@ mcset de {Specify a program to retrieve the television program} {Gebe ein Progra
 
 ### ../data/config_interface.tcl ###
 
-mcset de {Interface Settings} {Interface Einstellungen}
+mcset de {Interface} {Interface}
 mcset de {Theme} {Thema}
 mcset de {Enable Tooltips} {Tooltips aktivieren}
 mcset de {Main Gui} {Hauptfenster}
@@ -252,8 +250,6 @@ mcset de {Minimize to tray} {In den Tray minimieren}
 mcset de {Close to tray} {In den Tray schließen}
 mcset de {Resize system tray icon} {Größe des Tray Icons ändern}
 mcset de {System tray icon size} {System Tray Icon Größe}
-mcset de {D-Bus Interface} {D-Bus Interface}
-mcset de {Enable D-Bus Interface} {D-Bus Interface aktivieren}
 mcset de {On screen Display} {On screen Display}
 mcset de {Station} {Sender}
 mcset de {Windowed mode} {Fenstermodus}
@@ -261,6 +257,14 @@ mcset de {Full-screen mode} {Vollbildmodus}
 mcset de {Volume | Video input | Pan&Scan} {Volume | Video input | Pan&Scan}
 mcset de {Key Input} {Tasteneingabe}
 mcset de {OSD Station list lirc} {OSD Senderliste lirc}
+mcset de {Notifications} {Benachrichtigungen}
+mcset de {Notification Daemon} {Benachrichtigungs-Daemon}
+mcset de {Display:} {Anzeigen:}
+mcset de {Display time:} {Anzeigedauer:}
+mcset de {top right} {Oben rechts}
+mcset de {bottom right} {Unten rechts}
+mcset de {bottom left} {Unten links}
+mcset de {top left} {Oben links}
 mcset de {Choose your preferred theme} {Bevorzugtes Thema auswählen}
 mcset de {Check this if you want to see tooltips} {Tooltips anzeigen}
 mcset de {Tooltips for the main Interface} {Tooltips für das Hauptfenster}
@@ -287,11 +291,6 @@ mcset de {Activate integration to system tray} {Integration in den System Tray a
 mcset de {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.} {Größe des System Tray icons automatisch anpassen wenn sich
 das Tray ändert. Diese Option ist mit Vorsicht zu genießen}
-mcset de {Activates D-Bus interface. This is used by
-TV-Viewer to display notifications about recordings
-and news about the project.} {Aktiviert das D-Bus Interface. Dieses wird von 
-TV-Viewer verwendet um Benachrichtigungen über Neuigkeiten
-oder Aufnahmen anzuzeigen.}
 mcset de {Choose the size for the system tray icon} {Größe des Icons wählen}
 mcset de {OSD for station name in windowed mode} {OSD Sendername im Fenstermodus}
 mcset de {OSD for station name in full-screen mode} {OSD Sendername im Vollbildmodus}
@@ -398,7 +397,6 @@ mcset de {Analog} {Analog}
 mcset de {DVB} {DVB}
 mcset de {Audio} {Audio}
 mcset de {Radio} {Radio}
-mcset de {Interface} {Interface}
 mcset de {Record} {Aufnahme}
 mcset de {Apply your changes and exit preferences dialog} {Änderungen übernehmen und Einstellungen verlassen}
 mcset de {Load default values, for the corresponding section} {Standardwerte laden für den entsprechenden Abschnitt}
@@ -451,17 +449,12 @@ mcset de {Family:} {Familie:}
 mcset de {Style:} {Stil:}
 mcset de {Size:} {Größe:}
 mcset de {Font color:} {Schriftfarbe:}
-mcset de {Display:} {Anzeigen:}
 mcset de {Preview:} {Vorschau:}
-mcset de {top left} {Oben links}
 mcset de {top} {Oben}
-mcset de {top right} {Oben rechts}
 mcset de {left} {Links}
 mcset de {center} {Mitte}
 mcset de {right} {Rechts}
-mcset de {bottom left} {Unten links}
 mcset de {bottom} {Unten}
-mcset de {bottom right} {Unten rechts}
 mcset de {Font chooser Ui has finished unexpectedly} {Dialog zur Schriftauswahl wurde unerwartet beendet}
 mcset de {Choose a font} {Wähle eine Schrift}
 mcset de {Choose font style} {Schriftstil auswählen}
@@ -481,8 +474,8 @@ mcset de {A small and simple frontend to watch and record television} {Ein klein
 mcset de {Homepage} {Homepage}
 mcset de {Forum} {Forum}
 mcset de {IRC channel} {IRC Kanal}
-mcset de {© Copyright 2007 - 2010
-Christian Rapp} {© Copyright 2007 - 2010
+mcset de {© Copyright 2007 - 2011
+Christian Rapp} {© Copyright 2007 - 2011
 Christian Rapp}
 mcset de {Credits} {Credits}
 mcset de {License} {Lizenz}
@@ -598,11 +591,19 @@ mcset de {TV-Viewer Log} {TV-Viewer Log}
 ### ../data/main_newsreader.tcl ###
 
 
-### ../data/main_picqual_stream.tcl ###
-
-
 ### ../data/monitor.tcl ###
 
+
+### ../data/notifyd.tcl ###
+
+mcset de {Start Newsreader} {Newsreader starten}
+mcset de {News} {Nachrichten}
+mcset de {There are News about TV-Viewer} {Es gibt Neuigkeiten über TV-Viewer}
+mcset de {Start TV-Viewer} {TV-Viewer starten}
+mcset de {Recording started} {Aufnahme gestartet}
+mcset de {Recording of job % started successfully} {Aufnahme des Jobs %s wurde erfolgreich gestartet}
+mcset de {Recording finished} {Aufnahme beendet}
+mcset de {Recording of job % has been finished} {Aufnahme des Jobs %s wurde beendet}
 
 ### ../data/process_config.tcl ###
 
@@ -903,6 +904,10 @@ mcset de {Frequency: %} {Frequenz: %s}
 
 mcset de {Show log} {Log anzeigen}
 mcset de {TV-Viewer Error} {TV-Viewer Fehler}
+
+### ../data/stream.tcl ###
+
+mcset de {Can not change video standard} {Kann Video Standard nicht ändern}
 
 ### ../data/system_tray.tcl ###
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       scheduler.tcl
-#       © Copyright 2007-2010 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -522,10 +522,10 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 			if {[lindex $status 0]} {
 				command_WritePipe 0 "tv-viewer_main record_linkerRec record"
 				command_WritePipe 1 "tv-viewer_notifyd notifydId"
-				command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 0 {Recording started} {Recording of job [lindex $::recjob($jobid) 0] started successfully}"
+				command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 0 " " "Recording started" "Recording of job % started successfully" [lindex $::recjob($jobid) 0]]
 			} else {
 				command_WritePipe 1 "tv-viewer_notifyd notifydId"
-				command_WritePipe 1 "tv-viewer_notifyd notifydUi 1 1 7000 1 {Recording started} {Recording of job [lindex $::recjob($jobid) 0] started successfully}"
+				command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 1 "Start TV-Viewer" "Recording started" "Recording of job % started successfully" [lindex $::recjob($jobid) 0]]
 			}
 			scheduler_delete $jobid
 		} else {
@@ -580,10 +580,12 @@ proc scheduler_Init {handler} {
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_wizardExecSchedulerCback 0"
 		}
-		set status_notify [monitor_partRunning 5]
-		if {[lindex $status_notify 0] == 0} {
-			set ntfy_pid [exec $::option(root)/notifyd.tcl &]
-			scheduler_logWriteOut 0 "notification daemon started, PID $ntfy_pid"
+		if {$::option(notify)} {
+			set status_notify [monitor_partRunning 5]
+			if {[lindex $status_notify 0] == 0} {
+				set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+				scheduler_logWriteOut 0 "notification daemon started, PID $ntfy_pid"
+			}
 		}
 		scheduler_stations
 		scheduler_main_loop
