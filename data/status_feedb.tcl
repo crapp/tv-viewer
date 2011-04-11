@@ -16,6 +16,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+# Provides Warning window, feedback messages in main window and changing Trayicon
+
 proc status_feedbWarn {handler msg} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: status_feedbWarn \033\[0m \{$handler\} \{$msg\}"
 	#handler 1 - tvviewer log; 2 - mplayer log; 3 - scheduler log
@@ -141,5 +143,17 @@ proc status_feedbMsgs {handler msg} {
 	.ftoolb_Disp.fIcTxt.lDispText configure -text $msg
 	if {$::main(compactMode)} {
 		wm title . "TV-Viewer - $msg"
+	}
+	set doTray 1
+	if {$handler == 4} {
+		system_trayChangeIc 0
+		set doTray 0
+	}
+	if {$handler == 0} {
+		system_trayChangeIc 4
+		set doTray 0
+	}
+	if {$doTray} {
+		system_trayChangeIc $handler ;# call proc if doTray = 1
 	}
 }

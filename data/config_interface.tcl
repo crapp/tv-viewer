@@ -83,7 +83,6 @@ proc option_screen_6 {} {
 		
 		ttk::labelframe $::window(interface_nb2_cont).f_windowprop2.lf_systray -text [mc "System Tray"]
 		set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
-		ttk::checkbutton $lf_systray.cb_systray -text [mc "Show icon in system tray"] -variable choice(cb_systray) -command {system_trayActivate 0}
 		ttk::checkbutton $lf_systray.cb_systray_mini -text [mc "Minimize to tray"] -variable choice(cb_systrayMini)
 		ttk::checkbutton $lf_systray.cb_systrayClose -text [mc "Close to tray"] -variable choice(cb_systrayClose)
 		ttk::checkbutton $lf_systray.cb_systrayResize -text [mc "Resize system tray icon"] -variable choice(cb_systrayResize) -state disabled
@@ -165,12 +164,11 @@ proc option_screen_6 {} {
 		grid $lf_floatingCtrl.cb_floatStation -in $lf_floatingCtrl -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $lf_floatingCtrl.cb_floatPlay -in $lf_floatingCtrl -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
 		grid $lf_systray -in $::window(interface_nb2_cont).f_windowprop2 -row 2 -column 0 -sticky ew -padx 5 -pady "5 0"
-		grid $lf_systray.cb_systray -in $lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
-		grid $lf_systray.cb_systray_mini -in $lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $lf_systray.cb_systrayClose -in $lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $lf_systray.cb_systrayResize -in $lf_systray -row 3 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $lf_systray.l_systrayIcSize -in $lf_systray -row 4 -column 0 -sticky w -padx 7 -pady "0 3"
-		grid $lf_systray.mb_systrayIcSize -in $lf_systray -row 4 -column 1 -sticky w -pady "0 3"
+		grid $lf_systray.cb_systray_mini -in $lf_systray -row 0 -column 0 -sticky w -padx 7 -pady 3
+		grid $lf_systray.cb_systrayClose -in $lf_systray -row 1 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.cb_systrayResize -in $lf_systray -row 2 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.l_systrayIcSize -in $lf_systray -row 3 -column 0 -sticky w -padx 7 -pady "0 3"
+		grid $lf_systray.mb_systrayIcSize -in $lf_systray -row 3  -column 1 -sticky w -pady "0 3"
 		
 		grid $::window(interface_nb3_cont) -in $::window(interface_nb3) -row 0 -column 0 -sticky nesw
 		grid $::window(interface_nb3).scrollb_cont -in $::window(interface_nb3) -row 0 -column 1 -sticky ns
@@ -332,7 +330,6 @@ proc option_screen_6 {} {
 			set ::choice(cb_floatMain) $::option(floatMain)
 			set ::choice(cb_floatStation) $::option(floatStation)
 			set ::choice(cb_floatPlay) $::option(floatPlay)
-			set ::choice(cb_systray) $::option(systray)
 			set ::choice(cb_systrayMini) $::option(systrayMini)
 			set ::choice(cb_systrayClose) $::option(systrayClose)
 			set ::choice(cb_systrayResize) $::option(systrayResize)
@@ -410,7 +407,6 @@ mouse pointer is moved to the \"top\", of the screen."]
 mouse pointer is moved to the \"left side\", of the screen."]
 					settooltip $lf_floatingCtrl.cb_floatPlay [mc "The floating control appears in fullscreen mode when the
 mouse pointer is moved to the \"bottom\", of the screen."]
-					settooltip $lf_systray.cb_systray [mc "Activate integration to system tray"]
 					settooltip $lf_systray.cb_systray_mini [mc "Minimize to tray"]
 					settooltip $lf_systray.cb_systrayClose [mc "Close to tray"]
 					settooltip $lf_systray.cb_systrayResize [mc "Automatically resize system tray icon if the size of the tray 
@@ -429,6 +425,11 @@ itself is changed. Be careful with this option."]
 					settooltip $w3.b_osd_key_fnt_w [mc "Change font, color and alignment"]
 					settooltip $w3.b_osd_key_fnt_f [mc "Change font, color and alignment"]
 					settooltip $w3.b_osd_lirc_fnt [mc "Change font, color and alignment"]
+					settooltip $::window(interface_nb4).cb_notification [mc "(De)Activate the notification daemon.
+This daemon provides you with a notification system
+for important TV-Viewer messages."]
+					settooltip $lf_notification.mb_pos [mc "Choose the postion where the notification window should appear."]
+					settooltip $lf_notification.sb_time [mc "Timeout for the notification window."]
 				} else {
 					settooltip $::window(interface_nb1).mb_lf_theme {}
 					settooltip $::window(interface_nb1).cb_lf_tooltip {}
@@ -444,7 +445,6 @@ itself is changed. Be careful with this option."]
 					settooltip $lf_floatingCtrl.cb_floatMain {}
 					settooltip $lf_floatingCtrl.cb_floatStation {}
 					settooltip $lf_floatingCtrl.cb_floatPlay {}
-					settooltip $lf_systray.cb_systray {}
 					settooltip $lf_systray.cb_systray_mini {}
 					settooltip $lf_systray.cb_systrayClose {}
 					settooltip $lf_systray.cb_systrayResize {}
@@ -462,6 +462,9 @@ itself is changed. Be careful with this option."]
 					settooltip $w3.b_osd_key_fnt_w {}
 					settooltip $w3.b_osd_key_fnt_f {}
 					settooltip $w3.b_osd_lirc_fnt {}
+					settooltip $::window(interface_nb4).cb_notification {}
+					settooltip $lf_notification.mb_pos {}
+					settooltip $lf_notification.sb_time {}
 				}
 			}
 		}
@@ -489,7 +492,6 @@ itself is changed. Be careful with this option."]
 			set ::choice(cb_floatMain) $::stnd_opt(floatMain)
 			set ::choice(cb_floatStation) $::stnd_opt(floatStation)
 			set ::choice(cb_floatPlay) $::stnd_opt(floatPlay)
-			set ::choice(cb_systray) $::stnd_opt(systray)
 			set ::choice(cb_systrayMini) $::stnd_opt(systrayMini)
 			set ::choice(cb_systrayClose) $::stnd_opt(systrayClose)
 			set ::choice(cb_systrayResize) $::stnd_opt(systrayResize)

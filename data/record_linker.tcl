@@ -153,8 +153,9 @@ proc record_linkerRec {handler} {
 	}
 	if {[winfo exists .tray]} {
 		if {"$handler" != "timeshift"} {
-			settooltip .tray [mc "Currently recording %
-Started at %" $station $stime]
+			settooltip .tray [mc "Recording %
+Started at % %
+Ends at    % %" $station $sdate $stime $edate $etime]
 		} else {
 			settooltip .tray [mc "Timeshift %" [lindex $::station(last) 0]]
 		}

@@ -498,10 +498,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {command_WritePipe 1 "tv-viewer_notifyd notifydId"
-	command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 StartNewsreader HEADER2 atomkraftneindanke]}
-	bind . <Key-y> {command_WritePipe 1 "tv-viewer_notifyd notifydId"
-	command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 StartNewsreader HEADER ihasdkjhgasdf]}
+	bind . <Key-x> {system_trayChangeIc 2}
+	bind . <Key-y> {system_trayChangeIc 3}
 	
 	
 	command_socket
@@ -583,12 +581,8 @@ proc main_frontendUi {} {
 	after [lindex $startCommand 0] [list main_frontendStartCommand $startCommand]
 	vid_wmCursor 1
 	
-	if {$::option(systray) == 1} {
-		set ::menu(cbSystray) 1
+	if {$::mem(systray) == 1} {
 		system_trayActivate 1
-		if {[winfo exists .tray]} {
-			settooltip .tray [mc "TV-Viewer idle"]
-		}
 	}
 	if {$::option(window_remGeom)} {
 		if {$::mem(compact) == 0} {

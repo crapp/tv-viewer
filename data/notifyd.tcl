@@ -134,27 +134,22 @@ proc notifydUi {ic pos timeout actId actTxt header msg args} {
 	
 	#1 - topright
 	array set location {
-		1 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+[expr [winfo screenwidth .topNotify_$::notifyId] - ([winfo reqwidth .topNotify_$::notifyId] + 15)]\+50"
-		2 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+[expr [winfo screenwidth .topNotify_$::notifyId] - ([winfo reqwidth .topNotify_$::notifyId] + 15)]\+[expr [winfo screenheight .topNotify_$::notifyId] - ([winfo reqheight .topNotify_$::notifyId] - 15) - 50]"
-		3 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+15\+[expr [winfo screenheight .topNotify_$::notifyId] - ([winfo reqheight .topNotify_$::notifyId] - 15) - 50]"
-		4 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+15\+50"
+		0 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+[expr [winfo screenwidth .topNotify_$::notifyId] - ([winfo reqwidth .topNotify_$::notifyId] + 15)]\+50"
+		1 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+[expr [winfo screenwidth .topNotify_$::notifyId] - ([winfo reqwidth .topNotify_$::notifyId] + 15)]\+[expr [winfo screenheight .topNotify_$::notifyId] - ([winfo reqheight .topNotify_$::notifyId] - 15) - 50]"
+		2 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+15\+[expr [winfo screenheight .topNotify_$::notifyId] - ([winfo reqheight .topNotify_$::notifyId] - 15) - 50]"
+		3 "wm geometry .topNotify_$::notifyId [winfo reqwidth .topNotify_$::notifyId]\x[winfo reqheight .topNotify_$::notifyId]\+15\+50"
 	}
 	#1 - topright
 	array set movelocation {
-		1 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] + [winfo reqheight .topNotify_[expr $::notifyId - 1]] + 2]"
-		2 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] - [winfo reqheight .topNotify_[expr $::notifyId - 1]] - 2]"
-		3 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+15\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] - [winfo reqheight .topNotify_[expr $::notifyId - 1]] - 2]"
-		4 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+15\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] + [winfo reqheight .topNotify_[expr $::notifyId - 1]] + 2]"
+		0 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] + [winfo reqheight .topNotify_[expr $::notifyId - 1]] + 2]"
+		1 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+[expr [winfo screenwidth .topNotify_[expr $::notifyId - 1]] - ([winfo reqwidth .topNotify_[expr $::notifyId - 1]] + 15)]\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] - [winfo reqheight .topNotify_[expr $::notifyId - 1]] - 2]"
+		2 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+15\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] - [winfo reqheight .topNotify_[expr $::notifyId - 1]] - 2]"
+		3 "wm geometry .topNotify_[expr $::notifyId - 1] [winfo reqwidth .topNotify_[expr $::notifyId - 1]]\x[winfo reqheight .topNotify_[expr $::notifyId - 1]]\+15\+[expr [lindex [split [winfo geometry .topNotify_[expr $::notifyId - 1]] +] end] + [winfo reqheight .topNotify_[expr $::notifyId - 1]] + 2]"
 	}
 	
 	array set image {
 		1 tv-viewer
 	}
-	
-	#~ array set actionTxt {
-		#~ 1 "Start TV-Viewer"
-		#~ 2 "Start Newsreader"
-	#~ }
 	
 	$fMain.l_notifyIc configure -image $::icon($image($ic))
 	if {$actId != 0} {

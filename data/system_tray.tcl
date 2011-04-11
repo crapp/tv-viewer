@@ -46,7 +46,6 @@ proc system_trayActivate {handler} {
 			after $after_tray {
 				if {[winfo exists .tray]} {
 					.tray configure -image $::icon_e(systray_icon$::option(systrayIcSize)) -visible 1
-					set ::system(iconSize) $::option(systrayIcSize)
 					if {$::menu(cbSystray) == 0} {
 						set ::menu(cbSystray) 1
 					}
@@ -67,11 +66,13 @@ proc system_trayActivate {handler} {
 					if {$::option(systrayClose)} {
 						wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
 					}
-					settooltip .tray [mc "TV-Viewer idle"]
+					system_trayCheckEnvironment
+					set ::system(iconSize) $::option(systrayIcSize)
 					if {$::option(systrayResize)} {
 						system_trayResizer cancel
 						after 2000 {system_trayResizer 2000}
 					}
+					set ::mem(systray) $::menu(cbSystray)
 					log_writeOutTv 0 "Succesfully added Icon to system tray."
 				}
 			}
@@ -92,7 +93,79 @@ proc system_trayActivate {handler} {
 		if {$::menu(cbSystray)} {
 			set ::menu(cbSystray) 0
 		}
+		set ::mem(systray) $::menu(cbSystray)
+		log_writeOutTv 0 "Removing Icon from system tray."
 		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
+	}
+}
+
+proc system_trayCheckEnvironment {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayCheckEnvironment \033\[0m"
+	# proc checks in what state TV-Viewer is. Uses appropriate icon and tooltip for tray icon
+	set switchIcTooltip a ;#TV-Viewer is idle
+	set status_rec [monitor_partRunning 3]
+	if {[lindex $status_rec 0] == 1} {
+		set switchIcTooltip b
+	}
+	set status_time [monitor_partRunning 4]
+	if {[lindex $status_time 0] == 1} {
+		set switchIcTooltip c
+	}
+	if {"$switchIcTooltip" == "a" } {
+		set status_tv [vid_callbackMplayerRemote alive]
+		if {$status_tv != 1} {
+			#MPlayer is running
+			if {$::vid(pbMode) != 1} {
+				#TV playback
+				set switchIcTooltip e
+			} else {
+				#File Playback
+				set switchIcTooltip d
+			}
+		}
+	}
+	
+	switch $switchIcTooltip {
+		a {
+			# TV-Viewer is idle
+			system_trayChangeIc 0
+			settooltip .tray [mc "TV-Viewer idle"]
+		}
+		b {
+			# Recording
+			system_trayChangeIc 1
+			if {[file exists "$::option(home)/config/current_rec.conf"]} {
+				set open_f [open "$::option(home)/config/current_rec.conf" r]
+				while {[gets $open_f line]!=-1} {
+					if {[string trim $line] == {}} continue
+					lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
+				}
+				settooltip .tray [mc "Recording %
+Started at % %
+Ends at    % %" $station $sdate $stime $edate $etime]
+			} else {
+				log_writeOutTv 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
+				if {$::option(log_warnDialogue)} {
+					status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+				}
+				settooltip .tray [mc "TV-Viewer idle"]
+			}
+		}
+		c {
+			# Timeshift
+			system_trayChangeIc 2
+			settooltip .tray [mc "Timeshift %" [lindex $::station(last) 0]]
+		}
+		d {
+			# File playback
+			system_trayChangeIc 3
+			settooltip .tray [mc "Playing file: %" $::vid(current_rec_file)]
+		}
+		e {
+			# TV playback
+			system_trayChangeIc 4
+			settooltip .tray [mc "Now playing %" [lindex $::station(last) 0]]
+		}
 	}
 }
 
@@ -154,7 +227,7 @@ proc system_trayMenu {x y} {
 	} else {
 		#Create menu .tray.mTray and fill with content
 		menu .tray.mTray -tearoff 0
-		.tray.mTray add command -label [mc "Hide"] -compound left -image $::icon_men(placeholder) -command system_trayToggle
+		.tray.mTray add command -label [mc "Hide"] -compound left -image $::icon_men(placeholder) -command [list system_trayToggle 0]
 		.tray.mTray add separator
 		if {"[.foptions_bar.mbTvviewer.mTvviewer entrycget 0 -state]" == "disabled"} {
 			.tray.mTray add command -label [mc "Color Management"] -compound left -image $::icon_men(color-management) -command colorm_mainUi -accelerator [dict get $::keyseq colorm name] -state disabled
@@ -230,7 +303,35 @@ proc system_trayMenu {x y} {
 
 proc system_trayToggle {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayToggle \033\[0m \{$handler\}"
+	#handler 0 == -- 1 == 
 	if {[winfo exists .tray] == 1} {
+		set doIt 0
+		set w {.station .station.delete .station.top_AddEdit .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .record_wizard.delete .error_w .topWarn .key.default .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
+		foreach window $w {
+			if {[winfo exists $window]} {
+				set doIt 1
+				break
+			}
+		}
+		if {$doIt} {
+			log_writeOutTv 1 "Can not minimize/close to tray when $window exists."
+			if {$::option(systrayMini)} {
+				bind .fvidBg <Map> {
+					bind .fvidBg <Map> {}
+					bind .fvidBg <Unmap> {}
+					after idle [list after 0 system_trayToggle 1]
+				}
+				bind .fvidBg <Unmap> {
+					bind .fvidBg <Map> {}
+					bind .fvidBg <Unmap> {}
+					after idle [list after 0 system_trayToggle 1]
+				}
+			}
+			if {$::option(systrayClose)} {
+				wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
+			}
+			return
+		}
 		if {$handler == 0} {
 			if {[winfo ismapped .] == 1} {
 				array unset ::system_tray
@@ -274,33 +375,6 @@ proc system_trayToggle {handler} {
 				}
 			}
 		} else {
-			set doIt 0
-			set w {.station .station.delete .station.top_AddEdit .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .record_wizard.delete .error_w .topWarn .key.default .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
-			foreach window $w {
-				if {[winfo exists $window]} {
-					set doIt 1
-					break
-				}
-			}
-			if {$doIt} {
-				log_writeOutTv 1 "Can not minimize/close to tray when $window exists."
-				if {$::option(systrayMini)} {
-					bind .fvidBg <Map> {
-						bind .fvidBg <Map> {}
-						bind .fvidBg <Unmap> {}
-						after idle [list after 0 system_trayToggle 1]
-					}
-					bind .fvidBg <Unmap> {
-						bind .fvidBg <Map> {}
-						bind .fvidBg <Unmap> {}
-						after idle [list after 0 system_trayToggle 1]
-					}
-				}
-				if {$::option(systrayClose)} {
-					wm protocol . WM_DELETE_WINDOW {bind .fvidBg <Map> {}; bind .fvidBg <Unmap> {}; after idle [list after 0 system_trayToggle 0]}
-				}
-				return
-			}
 			if {[winfo ismapped .] == 0} {
 				array unset ::system_tray
 				foreach w [winfo children .] {
@@ -334,4 +408,20 @@ proc system_trayToggle {handler} {
 	} else {
 		log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 	}
+}
+
+proc system_trayChangeIc {icId} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayChangeIc \033\[0m \{$icId\}"
+	if {[winfo exists .tray] == 0} {
+		return
+	}
+	#icId which icon to choose, see array icons
+	array set icons {
+		0 systray_icon
+		1 systray_icon_rec
+		2 systray_icon_time
+		3 systray_icon_video
+		4 systray_icon_tv
+	}
+	.tray configure -image $::icon_e($icons($icId)$::option(systrayIcSize))
 }

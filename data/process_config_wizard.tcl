@@ -89,7 +89,6 @@ proc process_config_wizardRead {} {
 		floatMain 0
 		floatStation 1
 		floatPlay 0
-		systray 0
 		systrayMini 0
 		systrayClose 0
 		systrayResize 0
@@ -184,7 +183,6 @@ proc process_config_wizardRead {} {
 		floatMain 0
 		floatStation 1
 		floatPlay 0
-		systray 0
 		systrayMini 0
 		systrayClose 0
 		systrayResize 0
@@ -279,7 +277,6 @@ proc process_config_wizardRead {} {
 		cb_floatMain floatMain
 		cb_floatStation floatStation
 		cb_floatPlay floatPlay
-		cb_systray systray
 		cb_systrayMini systrayMini
 		cb_systrayClose systrayClose
 		cb_systrayResize systrayResize

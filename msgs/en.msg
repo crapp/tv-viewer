@@ -251,6 +251,11 @@ mcset en {OSD for Volume; Pan&Scan; Video input in windowed mode}
 mcset en {OSD for Volume; Pan&Scan; Video input in full-screen mode}
 mcset en {OSD for change stations via numbers input in windowed mode}
 mcset en {OSD for change stations via numbers input in full-screen mode}
+mcset en {(De)Activate the notification daemon.
+This daemon provides you with a notification system
+for important TV-Viewer messages.}
+mcset en {Choose the postion where the notification window should appear.}
+mcset en {Timeout for the notification window.}
 
 ### ../data/config_radio.tcl ###
 

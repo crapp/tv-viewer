@@ -280,6 +280,13 @@ mcset da {OSD for Volume; Pan&Scan; Video input in windowed mode} {OSD for Volum
 mcset da {OSD for Volume; Pan&Scan; Video input in full-screen mode} {OSD for Volumen; Pan&Scan; Video input i fuldskærm modus}
 mcset da {OSD for change stations via numbers input in windowed mode} {OSD for at skifte station med tal i vindue modus}
 mcset da {OSD for change stations via numbers input in full-screen mode} {OSD for at skifte station med tal i fuldskærm modus}
+mcset da {(De)Activate the notification daemon.
+This daemon provides you with a notification system
+for important TV-Viewer messages.} {(De)Activate the notification daemon.
+This daemon provides you with a notification system
+for important TV-Viewer messages.} ;#Newline
+mcset da {Choose the postion where the notification window should appear.} {Choose the postion where the notification window should appear.} ;#Newline
+mcset da {Timeout for the notification window.} {Timeout for the notification window.} ;#Newline
 
 ### ../data/config_radio.tcl ###
 

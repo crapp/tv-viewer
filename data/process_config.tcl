@@ -88,7 +88,6 @@ proc process_configRead {} {
 		floatMain 0
 		floatStation 1
 		floatPlay 0
-		systray 0
 		systrayMini 0
 		systrayClose 0
 		systrayResize 0
@@ -162,6 +161,7 @@ proc process_configMem {} {
 		toolbControl 1
 		sbarStatus 1
 		sbarTime 1
+		systray 0
 		volume 100
 		wizardSec 0
 		wizardTab .config_wizard.frame_configoptions.nb.f_general
