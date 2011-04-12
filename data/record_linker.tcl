@@ -153,9 +153,10 @@ proc record_linkerRec {handler} {
 	}
 	if {[winfo exists .tray]} {
 		if {"$handler" != "timeshift"} {
-			settooltip .tray [mc "Recording %
-Started at % %
-Ends at    % %" $station $sdate $stime $edate $etime]
+			settooltip .tray [mc "Recording \"%\"
+
+Started: % %
+Ends:    % %" $station $sdate $stime $edate $etime]
 		} else {
 			settooltip .tray [mc "Timeshift %" [lindex $::station(last) 0]]
 		}
@@ -251,7 +252,9 @@ proc record_linkerPreStop {handler} {
 		.fvidBg.slist_lirc.lb_station configure -state normal
 	}
 	event_recordStop
-	status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
+	set fileSplit [file split [file normalize $::vid(current_rec_file)]]
+	set fileSplitReformatted "[lindex $fileSplit 0][lindex $fileSplit 1]/../[lindex $fileSplit end]"
+	status_feedbMsgs 3 [mc "Playing file: %" $fileSplitReformatted]
 	if {"$handler" != "timeshift"} {
 		if {[winfo exists .record_wizard] == 1} {
 			.record_wizard.status_frame.l_rec_current_station configure -text [mc "Idle"]

@@ -204,7 +204,6 @@ mcset en {Main toolbar}
 mcset en {Station list}
 mcset en {Control toolbar}
 mcset en {System Tray}
-mcset en {Show icon in system tray}
 mcset en {Minimize to tray}
 mcset en {Close to tray}
 mcset en {Resize system tray icon}
@@ -240,7 +239,6 @@ mcset en {The floating control appears in fullscreen mode when the
 mouse pointer is moved to the "left side", of the screen.}
 mcset en {The floating control appears in fullscreen mode when the
 mouse pointer is moved to the "bottom", of the screen.}
-mcset en {Activate integration to system tray}
 mcset en {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.}
 mcset en {Choose the size for the system tray icon}
@@ -466,7 +464,6 @@ mcset en {View}
 mcset en {Help}
 mcset en {Welcome to TV-Viewer %} {Welcome to TV-Viewer %s}
 mcset en {Could not detect MPlayer}
-mcset en {TV-Viewer idle}
 
 ### ../data/main_menu.tcl ###
 
@@ -653,9 +650,13 @@ mcset en {Resolution format incorrect!}
 
 mcset en {Station search running while a recording fired}
 mcset en {Missing file ../.tv-viewer/config/current_rec.conf}
-mcset en {Currently recording %
-Started at %} {Currently recording %s
-Started at %s}
+mcset en {Recording "%"
+
+Started: % %
+Ends:    % %} {Recording "%s"
+
+Started: %s %s
+Ends:    %s %s}
 mcset en {Timeshift %} {Timeshift %s}
 mcset en {Recording % - Ends at % %} {Recording %s - Ends at %s %s}
 mcset en {Station
@@ -809,6 +810,7 @@ mcset en {Can not change video standard}
 
 mcset en {Can not load shared library tktray}
 mcset en {Can not create system tray icon}
+mcset en {TV-Viewer idle}
 mcset en {Hide}
 mcset en {Restore}
 
@@ -837,8 +839,6 @@ mcset en {Choose amount of seek back}
 mcset en {Seek forward}
 mcset en {Choose amount of seek forward}
 mcset en {Jump to the end}
-mcset en {Toggle fullscreen}
-mcset en {Current position / File length}
 
 ### ../data/tv-viewer_main.tcl ###
 

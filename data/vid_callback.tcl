@@ -141,7 +141,9 @@ proc vid_callbackVidData {} {
 						bind . <<input_prior>> "chan_zapperInput 1 -1"
 						bind . <<teleview>> {vid_playbackRendering}
 						if {$::vid(pbMode)} {
-							status_feedbMsgs 3 [mc "Playing file: %" $::vid(current_rec_file)]
+							set fileSplit [file split [file normalize $::vid(current_rec_file)]]
+							set fileSplitReformatted "[lindex $fileSplit 0][lindex $fileSplit 1]/../[lindex $fileSplit end]"
+							status_feedbMsgs 3 [mc "Playing file: %" $fileSplitReformatted]
 						} else {
 							status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
 						}
@@ -194,14 +196,6 @@ proc vid_callbackVidData {} {
 					set ::data(file_pos_calc) [expr [clock seconds] - [expr round($pos)]]
 					set ::data(file_pos) [expr round($pos)]
 					lappend ::data(file_posid) [after 10 [list vid_fileComputePos 0]]
-					#~ bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
-					#~ bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
-					#~ bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
-					#~ bind . <<forward_10m>> {vid_seekInitiate "vid_seek 600 1"}
-					#~ bind . <<rewind_10s>> {vid_seekInitiate "vid_seek 10 -1"}
-					#~ bind . <<rewind_1m>> {vid_seekInitiate "vid_seek 60 -1"}
-					#~ bind . <<rewind_10m>> {vid_seekInitiate "vid_seek 600 -1"}
-					#~ bind . <<rewind_start>> {vid_seekInitiate "vid_seek 0 -2"}
 				} else {
 					vid_fileComputePos cancel
 					set pos [lindex [split $line \=] end]

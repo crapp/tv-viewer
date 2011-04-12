@@ -233,7 +233,6 @@ mcset da {Main toolbar} {Hoved værktøjslinie}
 mcset da {Station list} {Stationliste}
 mcset da {Control toolbar} {Kontrol værktøjslinie}
 mcset da {System Tray} {Systembakke}
-mcset da {Show icon in system tray} {Vis ikon i systembakken}
 mcset da {Minimize to tray} {Minimer til bakke}
 mcset da {Close to tray} {Luk til bakke}
 mcset da {Resize system tray icon} {Ændre størrelse på ikon}
@@ -269,7 +268,6 @@ mcset da {The floating control appears in fullscreen mode when the
 mouse pointer is moved to the "left side", of the screen.} {Den flydende kontrol viser sig i fuldskærm modus når musen flyttes til "venstre side" af skærmen}
 mcset da {The floating control appears in fullscreen mode when the
 mouse pointer is moved to the "bottom", of the screen.} {Den flydende kontrol viser sig i fuldskærm modus når musen flyttes til "bunden" af skærmen}
-mcset da {Activate integration to system tray} {Aktiver integration til systembakken}
 mcset da {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.} {Ændrer automatisk størrelse på systembakkes ikoner hvis bakken selv ændres. Vær forsigtig med dette valg.}
 mcset da {Choose the size for the system tray icon} {Vælg størrelse for systemsbakke ikoner}
@@ -284,7 +282,7 @@ mcset da {(De)Activate the notification daemon.
 This daemon provides you with a notification system
 for important TV-Viewer messages.} {(De)Activate the notification daemon.
 This daemon provides you with a notification system
-for important TV-Viewer messages.} ;#Newline
+for important TV-Viewer messages.}
 mcset da {Choose the postion where the notification window should appear.} {Choose the postion where the notification window should appear.} ;#Newline
 mcset da {Timeout for the notification window.} {Timeout for the notification window.} ;#Newline
 
@@ -511,7 +509,6 @@ mcset da {View} {View}
 mcset da {Help} {Hjælp}
 mcset da {Welcome to TV-Viewer %} {Velkommen til TV-Viewer %s}
 mcset da {Could not detect MPlayer} {Kunne ikke finde MPlayer}
-mcset da {TV-Viewer idle} {TV-Viewer ledig}
 
 ### ../data/main_menu.tcl ###
 
@@ -701,9 +698,13 @@ mcset da {Resolution format incorrect!} {Forkert format for opløsning!}
 
 mcset da {Station search running while a recording fired} {Stationssøging igang da en optagelse startede}
 mcset da {Missing file ../.tv-viewer/config/current_rec.conf} {Manglende fil ../.tv-viewer/config/current_rec.conf}
-mcset da {Currently recording %
-Started at %} {Optager nu %s
-Startede kl. %s}
+mcset da {Recording "%"
+
+Started: % %
+Ends:    % %} {Recording "%s"
+
+Started: %s %s
+Ends:    %s %s} ;#Newline
 mcset da {Timeshift %} {Timeshift %s}
 mcset da {Recording % - Ends at % %} {Optager %s - Stopper %s %s}
 mcset da {Station
@@ -872,6 +873,7 @@ mcset da {Can not change video standard} {Kan ikke ændre videostandarden}
 
 mcset da {Can not load shared library tktray} {Kan ikke indlæse delt bibliotek tktray}
 mcset da {Can not create system tray icon} {Kan ikke danne ikon i systembakken}
+mcset da {TV-Viewer idle} {TV-Viewer ledig}
 mcset da {Hide} {Skjul}
 mcset da {Restore} {Gendan}
 
@@ -901,8 +903,6 @@ mcset da {Choose amount of seek back} {Vælg længde af tid der skal søges bagl
 mcset da {Seek forward} {Fremad}
 mcset da {Choose amount of seek forward} {Vælg længde af tid der skal søges frem}
 mcset da {Jump to the end} {Hop til slutning}
-mcset da {Toggle fullscreen} {On/off fuldskærm}
-mcset da {Current position / File length} {Nuværende position / Fil længde}
 
 ### ../data/tv-viewer_main.tcl ###
 

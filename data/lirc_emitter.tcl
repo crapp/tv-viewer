@@ -48,7 +48,7 @@ if {[file exists "$::option(home)/log/tvviewer.log"]} {
 
 command_socket
 
-array set start_options {teleview 0 station_up 0 station_down 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 station_nr 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 compact 0 quit 0 zoom_incr 0 zoom_decr 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 radio 0 volume_incr 0 volume_decr 0 mute 0 adelay_incr 0 adelay_decr 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
+array set start_options {teleview 0 station_prior 0 station_next 0 station_jump 0 key_0 0 key_1 0 key_2 0 key_3 0 key_4 0 key_5 0 key_6 0 key_7 0 key_8 0 key_9 0 station_nr 0 slist_osd 0 slist_osd_up 0 slist_osd_down 0 fullscreen 0 compact 0 quit 0 zoom_incr_small 0 zoom_incr_big 0 zoom_decr_small 0 zoom_decr_big 0 zoom_reset 0 zoom_auto 0 size_stnd 0 size_double 0 move_up 0 move_down 0 move_left 0 move_right 0 move_center 0 record 0 timeshift 0 radio 0 volume_incr 0 volume_decr 0 mute 0 adelay_incr 0 adelay_decr 0 forward_10s 0 forward_1m 0 forward_10m 0 forward_end 0 rewind_10s 0 rewind_1m 0 rewind_10m 0 rewind_start 0 pause 0 stop 0 start 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -63,7 +63,7 @@ foreach command_argument $argv {
 	}
 }
 
-if {[array size ::start_options] != 50} {
+if {[array size ::start_options] != 53} {
 	log_writeOutTv 2 "Lirc emitter received unknown command $argv"
 	log_writeOutTv 2 "See the userguide for possible actions."
 	exit 1
@@ -78,14 +78,14 @@ if {$start_options(teleview)} {
 	log_writeOutTv 0 "Lirc emitter received Signal teleview"
 	exit 0
 }
-if {$start_options(station_up)} {
+if {$start_options(station_prior)} {
 	command_WritePipe 0 "tv-viewer_main event generate . <<stationPrior>>"
-	log_writeOutTv 0 "Lirc emitter received Signal station_up"
+	log_writeOutTv 0 "Lirc emitter received Signal station_prior"
 	exit 0
 }
-if {$start_options(station_down)} {
+if {$start_options(station_next)} {
 	command_WritePipe 0 "tv-viewer_main event generate . <<stationNext>>"
-	log_writeOutTv 0 "Lirc emitter received Signal station_down"
+	log_writeOutTv 0 "Lirc emitter received Signal station_next"
 	exit 0
 }
 if {$start_options(station_jump)} {
@@ -144,6 +144,10 @@ if {$start_options(key_9)} {
 	exit 0
 }
 if {$start_options(station_nr)} {
+	if {[info exists start_values(station_nr)] == 0} {
+		log_writeOutTv 0 "Lirc emitter received Signal station_nr. Please provide a digit as value!"
+		exit 1
+	}
 	command_WritePipe 0 "tv-viewer_main event generate . <<station_key_ext>> -data $start_values(station_nr)"
 	log_writeOutTv 0 "Lirc emitter received Signal station_nr $start_values(station_nr)"
 	exit 0
@@ -179,14 +183,29 @@ if {$start_options(quit)} {
 	log_writeOutTv 0 "Lirc emitter received Signal quit"
 	exit 0
 }
-if {$start_options(zoom_incr)} {
-	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomInc>>"
-	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr"
+if {$start_options(zoom_incr_small)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomIncSmall>>"
+	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr_small"
 	exit 0
 }
-if {$start_options(zoom_decr)} {
-	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomDec>>"
-	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr"
+if {$start_options(zoom_incr_big)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomIncBig>>"
+	log_writeOutTv 0 "Lirc emitter received Signal zoom_incr_big"
+	exit 0
+}
+if {$start_options(zoom_decr_small)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomDecSmall>>"
+	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr_small"
+	exit 0
+}
+if {$start_options(zoom_decr_big)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomDecBig>>"
+	log_writeOutTv 0 "Lirc emitter received Signal zoom_decr_big"
+	exit 0
+}
+if {$start_options(zoom_reset)} {
+	command_WritePipe 0 "tv-viewer_main event generate . <<wmZoomReset>>"
+	log_writeOutTv 0 "Lirc emitter received Signal zoom_reset"
 	exit 0
 }
 if {$start_options(zoom_auto)} {

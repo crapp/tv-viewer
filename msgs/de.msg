@@ -245,7 +245,6 @@ mcset de {Main toolbar} {Hauptwerkzeugleiste}
 mcset de {Station list} {Senderliste}
 mcset de {Control toolbar} {Steuerungsleiste}
 mcset de {System Tray} {System Tray}
-mcset de {Show icon in system tray} {Icon im System Tray anzeigen}
 mcset de {Minimize to tray} {In den Tray minimieren}
 mcset de {Close to tray} {In den Tray schließen}
 mcset de {Resize system tray icon} {Größe des Tray Icons ändern}
@@ -287,7 +286,6 @@ mcset de {The floating control appears in fullscreen mode when the
 mouse pointer is moved to the "bottom", of the screen.} {Das schwebende Kontrollelement erscheint im Vollbildmodus
 und wird aktiviert, wenn der Mauszeiger am unteren Ende des
 Bildschirms ist.}
-mcset de {Activate integration to system tray} {Integration in den System Tray aktivieren}
 mcset de {Automatically resize system tray icon if the size of the tray 
 itself is changed. Be careful with this option.} {Größe des System Tray icons automatisch anpassen wenn sich
 das Tray ändert. Diese Option ist mit Vorsicht zu genießen}
@@ -305,7 +303,7 @@ for important TV-Viewer messages.} {Den Notification-Daemon an- oder ausschalten
 Dieser Daemon stellt ein Benachrichtigungssystem
 für wichtige Meldungen zur Verfügung.}
 mcset de {Choose the postion where the notification window should appear.} {Position wählen an der das Benachrichtigungsfenster erscheinen soll.}
-mcset de {Timeout for the notification window.} {Timeout für das Benachrichtigungsfenster} ;#Newline
+mcset de {Timeout for the notification window.} {Timeout für das Benachrichtigungsfenster}
 
 ### ../data/config_radio.tcl ###
 
@@ -540,7 +538,6 @@ mcset de {View} {Ansicht}
 mcset de {Help} {Hilfe}
 mcset de {Welcome to TV-Viewer %} {Willkommen bei TV-Viewer %s}
 mcset de {Could not detect MPlayer} {Konnte MPlayer nicht finden}
-mcset de {TV-Viewer idle} {TV-Viewer inaktiv}
 
 ### ../data/main_menu.tcl ###
 
@@ -739,9 +736,13 @@ mcset de {Resolution format incorrect!} {Format der Auflösung falsch!}
 
 mcset de {Station search running while a recording fired} {Sendersuche lief während eine Aufnahme gestartet wurde}
 mcset de {Missing file ../.tv-viewer/config/current_rec.conf} {Datei ../.tv-viewer/config/current_rec.conf fehlt}
-mcset de {Currently recording %
-Started at %} {Aufnahme von %s läuft.
-Gestarted um %s}
+mcset de {Recording "%"
+
+Started: % %
+Ends:    % %} {Aufnahme "%s"
+
+Gestartet: %s %s
+Endet:     %s %s}
 mcset de {Timeshift %} {Timeshift %s}
 mcset de {Recording % - Ends at % %} {Aufnahme %s - Endet am %s um %s}
 mcset de {Station
@@ -920,6 +921,7 @@ mcset de {Can not change video standard} {Kann Video Standard nicht ändern}
 
 mcset de {Can not load shared library tktray} {Kann das Shared Library tktray nicht laden}
 mcset de {Can not create system tray icon} {Kann Icon nicht in den System Tray stellen}
+mcset de {TV-Viewer idle} {TV-Viewer inaktiv}
 mcset de {Hide} {Verstecken}
 mcset de {Restore} {Wiederherstellen}
 
@@ -949,8 +951,6 @@ mcset de {Choose amount of seek back} {Wählen wie weit zurückgesprungen werden
 mcset de {Seek forward} {Vorwärts}
 mcset de {Choose amount of seek forward} {Wählen wie weit vorgesprungen werden soll}
 mcset de {Jump to the end} {Zum Ende springen}
-mcset de {Toggle fullscreen} {Vollbild-, Fenstermodus}
-mcset de {Current position / File length} {Aktuelle Position / Länge der Aufnahme}
 
 ### ../data/tv-viewer_main.tcl ###
 

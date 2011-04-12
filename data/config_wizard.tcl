@@ -90,7 +90,6 @@ proc config_wizardMainUi {} {
 	foreach config_option [split $conf_opts] {
 		$wfbox.listbox_clist insert end " $config_option"
 	}
-	#~ bindtags $wfbox.listbox_clist {.config_wizard .config_wizard.frame_configbox.listbox_clist Listbox all}
 	bind $wfbox.listbox_clist <<ListboxSelect>> {config_wizardListbox}
 	bind $w <Control-Key-x> [list config_wizardExit $wfbox.listbox_clist $wfcopt.nb]
 	bind $w <Key-F1> [list info_helpHelp]

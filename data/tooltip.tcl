@@ -55,8 +55,6 @@ proc tooltips {toolbTop toolbChanCtrl toolbPlay section} {
 				settooltip $toolbPlay.bForwSmall [mc "Seek forward"]
 				settooltip $toolbPlay.mbForwChoose [mc "Choose amount of seek forward"]
 				settooltip $toolbPlay.bForwEnd [mc "Jump to the end"]
-				#~ settooltip $toolbPlay.b_fullscreen [mc "Toggle fullscreen"]
-				#~ settooltip $toolbPlay.l_time [mc "Current position / File length"]
 			} else {
 				settooltip $toolbChanCtrl.bChanUp {}
 				settooltip $toolbChanCtrl.bChanDown {}
@@ -77,8 +75,6 @@ proc tooltips {toolbTop toolbChanCtrl toolbPlay section} {
 				settooltip $toolbPlay.bForwSmall {}
 				settooltip $toolbPlay.mbForwChoose {}
 				settooltip $toolbPlay.bForwEnd {}
-				#~ settooltip $toolbPlay.b_fullscreen {}
-				#~ settooltip $toolbPlay.l_time {}
 			}
 		} else {
 			settooltip $toolbChanCtrl.bChanUp {}
@@ -100,8 +96,6 @@ proc tooltips {toolbTop toolbChanCtrl toolbPlay section} {
 			settooltip $toolbPlay.bForwSmall {}
 			settooltip $toolbPlay.mbForwChoose {}
 			settooltip $toolbPlay.bForwEnd {}
-			#~ settooltip $toolbPlay.b_fullscreen {}
-			#~ settooltip $toolbPlay.l_time {}
 		}
 		return
 	}

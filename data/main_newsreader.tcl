@@ -152,6 +152,8 @@ proc main_newsreaderCheckUpdate {handler} {
 			dict set ::newsreader news content "$update_news"
 			dict set ::newsreader news tags "$word_tags"
 			dict set ::newsreader news hyperlinks "$hyperlinks"
+			set showNotifyNews 0
+			set showNews 0
 			if {$handler == 1} {
 				if {[file exists "$::option(home)/config/last_read.conf"]} {
 					set open_last_read [open "$::option(home)/config/last_read.conf" r]
@@ -161,14 +163,18 @@ proc main_newsreaderCheckUpdate {handler} {
 						log_writeOutTv 0 "There are no news about TV-Viewer"
 						return
 					} else {
-						log_writeOutTv 0 "There are news about TV-Viewer"
-						file delete "$::option(home)/config/last_read.conf"
-						set open_last_write [open "$::option(home)/config/last_read.conf" w]
-						puts -nonewline $open_last_write "$update_news"
-						close $open_last_write
-						command_WritePipe 1 "tv-viewer_notifyd notifydId"
-						command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 "Start Newsreader" "News" "There are News about TV-Viewer"]
+						set showNotifyNews 1
 					}
+				} else {
+					set showNotifyNews 1
+				}
+			} else {
+				set showNews 1
+			}
+			if {$showNotifyNews} {
+				set status_notify [monitor_partRunning 5]
+				if {[lindex $status_notify 0] == 0} {
+					set showNews 1 ; #show Newsreader if Notification Daemon is not running
 				} else {
 					log_writeOutTv 0 "There are news about TV-Viewer"
 					set open_last_write [open "$::option(home)/config/last_read.conf" w]
@@ -177,8 +183,8 @@ proc main_newsreaderCheckUpdate {handler} {
 					command_WritePipe 1 "tv-viewer_notifyd notifydId"
 					command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 "Start Newsreader" "News" "There are News about TV-Viewer"]
 				}
-			} else {
-				file delete "$::option(home)/config/last_read.conf"
+			}
+			if {$showNews} {
 				set open_last_write [open "$::option(home)/config/last_read.conf" w]
 				puts -nonewline $open_last_write "$update_news"
 				close $open_last_write

@@ -140,9 +140,10 @@ proc system_trayCheckEnvironment {} {
 					if {[string trim $line] == {}} continue
 					lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
 				}
-				settooltip .tray [mc "Recording %
-Started at % %
-Ends at    % %" $station $sdate $stime $edate $etime]
+				settooltip .tray [mc "Recording \"%\"
+
+Started: % %
+Ends:    % %" $station $sdate $stime $edate $etime]
 			} else {
 				log_writeOutTv 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
 				if {$::option(log_warnDialogue)} {
@@ -159,7 +160,9 @@ Ends at    % %" $station $sdate $stime $edate $etime]
 		d {
 			# File playback
 			system_trayChangeIc 3
-			settooltip .tray [mc "Playing file: %" $::vid(current_rec_file)]
+			set fileSplit [file split [file normalize $::vid(current_rec_file)]]
+			set fileSplitReformatted "[lindex $fileSplit 0][lindex $fileSplit 1]/../[lindex $fileSplit end]"
+			settooltip .tray [mc "Playing file: %" $fileSplitReformatted]
 		}
 		e {
 			# TV playback
