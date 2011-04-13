@@ -79,7 +79,7 @@ proc main_newsreaderCheckUpdate {handler} {
 	set newsTrans [list en de]
 	if {$::option(language_value) == 0} {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
-		if {[lsearch $helpTrans $locale_split] != -1} {
+		if {[lsearch $newsTrans $locale_split] != -1} {
 			set status_http [catch {http::geturl "http://tv-viewer.sourceforge.net/newsreader/newsreader_[string trim $locale_split].html"} get_news]
 			set lang $locale_split
 		} else {

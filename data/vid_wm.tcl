@@ -180,6 +180,7 @@ proc vid_wmCompact {} {
 }
 
 proc vid_wmViewToolb {bar} {
+	#Show/hide toolbars
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmViewToolb \033\[0m \{$bar\}"
 	array set bargrid {
 		main {.ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew}
@@ -249,6 +250,7 @@ proc vid_wmViewToolb {bar} {
 }
 
 proc vid_wmViewStatus {lbl} {
+	#Show/hide elements of status bar (Icon + messages and playback time)
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmViewStatus \033\[0m \{$lbl\}"
 	array set lblgrid {
 		ltxt {.ftoolb_Disp.fIcTxt.lDispText -in .ftoolb_Disp.fIcTxt -row 0 -column 1 -sticky nsw -padx "0 2"}
@@ -590,7 +592,7 @@ proc vid_wmGivenSize {w size} {
 
 proc vid_wmCursor {com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursor \033\[0m \{$com\}"
-	#com 0 stop hiding cursor - 1 hide cursor
+	#Start/Stop hiding mouse cursor. com 0 stop hiding cursor - 1 hide cursor
 	if {$com == 0} {
 		bind .fvidBg.cont <Motion> {}
 		bind .fvidBg <Motion> {}
@@ -648,6 +650,7 @@ proc vid_wmCursorHide {w com} {
 }
 
 proc vid_wmCursorToolbar {xpos ypos} {
+	#Show/hide toolbars (Top, Play) and Station List depending on cursor position.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCursorToolbar \033\[0m \{$xpos\} \{$ypos\}"
 	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 0} {
 		if {$::option(floatMain)} {
@@ -696,6 +699,20 @@ proc vid_wmCursorToolbar {xpos ypos} {
 		}
 	}
 	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
+		if {$::option(floatMain)} {
+			if {[string trim [grid info .ftoolb_Top]] == {}} {
+				if {$ypos < 20} {
+					grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
+					log_writeOutTv 0 "Adding main toolbar with grid window manager."
+				}
+			}
+			if {[string trim [grid info .ftoolb_Top]] != {}} {
+				if {$ypos > 80} {
+					grid remove .ftoolb_Top
+					log_writeOutTv 0 "Removing main toolbar with grid window manager."
+				}
+			}
+		}
 		if {[string trim [grid info .ftoolb_Play]] == {}} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
 				grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
