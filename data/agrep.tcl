@@ -19,6 +19,9 @@
 proc agrep {switch input modifier} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: agrep \033\[0m \{$switch\} \{$modifier\}"}
 	# This a simple implementation of the unix grep command.
+	# switch -m find any match || -w find word 
+	# input --> content to search for
+	# modifier --> expression to search for
 	foreach line [split "$input" \n] {
 		if {"$switch" == "-m"} {
 			if {[string match -nocase *$modifier "$line"] || [string match -nocase *$modifier* "$line"] || [string match -nocase $modifier* "$line"]} {

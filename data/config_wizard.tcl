@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc config_wizardMainUi {} {
+	# building main window of the preferences dialogue
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardMainUi \033\[0m"
 	if {[winfo exists .config_wizard]} return
 	if {[winfo exists .tray] == 1} {
@@ -145,6 +146,7 @@ proc config_wizardMainUi {} {
 }
 
 proc config_wizardListbox {} {
+	#go to the selected (by listbox) option screen.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardListbox \033\[0m"
 	set wfopt .config_wizard.frame_optionsbar
 	set wfbox .config_wizard.frame_configbox
@@ -242,6 +244,7 @@ proc config_wizardExit {lbox nbook} {
 }
 
 proc config_wizardSaveopts {} {
+	# save options
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardSaveopts \033\[0m"
 	log_writeOutTv 0 "Saving configuration values to $::option(home)/config/tv-viewer.conf"
 	if {[file exists "$::option(home)/config/tv-viewer.conf"]} {

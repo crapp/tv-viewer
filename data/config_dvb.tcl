@@ -20,6 +20,7 @@ proc option_screen_2 {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_2 \033\[0m"
 	
 	# Setting up the interface
+	# dvb section of the preferences
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
 		.config_wizard.frame_configoptions.nb hide $tab

@@ -20,6 +20,7 @@ proc option_screen_1 {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_1 \033\[0m"
 	
 	# Setting up the interface
+	# analog section of the preferences
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
 		.config_wizard.frame_configoptions.nb hide $tab
@@ -208,24 +209,29 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 			# Subprocs
 			
 			proc config_analog_VideobitrateValue {w value} {
+				# set videobitratevalue 
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogVideobitrateValue \033\[0m \{$w\} \{$value\}"
 				set ::choice(entry_vbitrate_value) [expr int(ceil($value))]
 			}
 			proc config_analogVideopeakbitrateValue {w value} {
+				# set VideopeakbitrateValue 
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analogVideopeakbitrateValue \033\[0m \{$w\} \{$value\}"
 				set ::choice(entry_pbitrate_value) [expr int(ceil($value))]
 			}
 			proc config_analog_setScaleVideobitrate {w} {
+				# set ScaleVideobitrate
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_setScaleVideobitrate \033\[0m \{$w\}"
 				if {[string trim $::choice(entry_vbitrate_value)] == {}} return
 				set ::choice(scale_videobitrate) $::choice(entry_vbitrate_value)
 			}
 			proc config_analog_setScaleVideopeakbitrate {w} {
+				# set ScaleVideopeakbitrate
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_setScaleVideopeakbitrate \033\0m \{$w\}"
 				if {[string trim $::choice(entry_pbitrate_value)] == {}} return
 				set ::choice(scale_videopeakbitrate) $::choice(entry_pbitrate_value)
 			}
 			proc config_analog_optScrInput {value} {
+				# set video input
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_optScrInput \033\0m \{$value\}"
 				set ::choice(mbVideo_input_value) $value
 				catch {exec v4l2-ctl --device=$::choice(mbVideo) --set-input=$::choice(mbVideo_input_value)}
@@ -280,6 +286,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 				}
 			}
 			proc config_analog_audioV4l2 {} {
+				#Change states for all widgets in labelframe
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_audioV4l2 \033\[0m"
 				if {$::choice(cb_audio_v4l2) == 1} {
 					$::window(analog_nb2).l_audio_v4l2 state !disabled
@@ -292,6 +299,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 				}
 			}
 			proc config_analog_audioScale {value} {
+				# set audio level
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: config_analog_audioScale \033\[0m \{$value\}"
 				set displayed_value [expr $value / $::choice(scale_recordvolume_mult)]
 				set ::choice(scale_recordvolume) $displayed_value

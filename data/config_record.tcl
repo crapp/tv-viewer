@@ -20,6 +20,7 @@ proc option_screen_7 {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_7 \033\[0m"
 	
 	# Setting up the interface
+	# record section of the preferences
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
 		.config_wizard.frame_configoptions.nb hide $tab
@@ -126,6 +127,7 @@ proc option_screen_7 {} {
 		# Subprocs
 		
 		proc config_recordGetRecDir {} {
+			# change default record directory
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordGetRecDir \033\[0m"
 			set old_dir "$::choice(entry_rec_path)"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "
@@ -141,12 +143,14 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordDurHour {} {
+			#standard record duration (hours)
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurHour \033\[0m"
 			if {$::choice(sb_duration_hour) < 0} {
 				set ::choice(sb_duration_hour) 0
 			}
 		}
 		proc config_recordDurMin {} {
+			#standard record duration (minutes)
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurMin \033\[0m"
 			if {$::choice(sb_duration_min) >= 60} {
 				set ::choice(sb_duration_min) 0
@@ -162,6 +166,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordDurSec {} {
+			#standard record duration (minutes)
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordDurSec \033\[0m"
 			if {$::choice(sb_duration_sec) >= 60} {
 				set ::choice(sb_duration_sec) 0
@@ -179,6 +184,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordScheduler {} {
+			#(de)activate autostart of scheduler
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordScheduler \033\[0m"
 			if {$::choice(cb_sched_auto) == 1} {
 				if {[file isdirectory "$::env(HOME)/.config"]} {
@@ -197,6 +203,7 @@ proc option_screen_7 {} {
 			}
 		}
 		proc config_recordTimesDir {} {
+			#timeshift directory
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_recordTimesDir \033\[0m"
 			set old_dir "$::choice(ent_times_folder)"
 			wm protocol .config_wizard WM_DELETE_WINDOW " "

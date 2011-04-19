@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc diag_Ui {} {
+	#building diagnostic routine frontend
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_Ui \033\[0m"
 	if {[winfo exists .top_diagnostic] == 0} {
 		
@@ -63,6 +64,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 }
 
 proc diag_RunFinished {handler} {
+	# if diagnostic routine finished this procis called
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_RunFinished \033\[0m \{$handler\}"
 	if {$handler == 0} {
 		diag_checkRunning 0 cancel
@@ -130,6 +132,7 @@ proc diag_UiExit {} {
 }
 
 proc diag_checkRunning {diag_pid counter} {
+	#check if diagnostic routine is still running or if it died unexpectedly  
 	if {"$counter" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: diag_checkRunning \033\[0;1;31m::cancel:: \033\[0m"
 		catch {after cancel $::diag(wait_id)}

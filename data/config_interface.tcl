@@ -20,6 +20,7 @@ proc option_screen_6 {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_6 \033\[0m"
 	
 	# Setting up the interface
+	#interface section of the preferences
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
 		.config_wizard.frame_configoptions.nb hide $tab
@@ -233,6 +234,7 @@ proc option_screen_6 {} {
 		# Subprocs
 		
 		proc config_interfaceTheme {theme} {
+			# change theme
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceTheme \033\[0m \{$theme\}"
 			ttk::style theme use $theme
 			if {"$theme" == "clam"} {
@@ -241,6 +243,7 @@ proc option_screen_6 {} {
 		}
 		
 		proc config_interfaceSystray {size} {
+			#change and set systray icon size
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceSystray \033\[0m \{$size\}"
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
 			set lf_manWindow $::window(interface_nb2_cont).f_windowprop2.lf_mainWindow
@@ -252,6 +255,7 @@ proc option_screen_6 {} {
 		}
 		
 		proc config_interfaceChangeTooltips {w} {
+			#enable/disable tooltips
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceChangeTooltips \033\[0m \{$w\}"
 			if {$::choice(cb_tooltip) == 1} {
 				$w.cb_lf_tooltip_main state !disabled
@@ -273,6 +277,7 @@ proc option_screen_6 {} {
 			set ::config_int($cvar) [lindex $value 0]
 		}
 		proc config_interfaceNotification {lf handler} {
+			#enable/disable notification daemon
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceNotificationPos \033\[0m \{$lf\}"
 			#lf == labelframe -- handler == invoked by routine or button
 			if {$::choice(cb_notification) == 0} {

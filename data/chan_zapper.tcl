@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc chan_zapperNext {tree} {
+	# Zap to next station, tree is widget path of station list treeview
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperNext \033\[0m \{$tree\}"
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {[string match $::kanalid($i) [lindex $::station(last) 0]]} {
@@ -35,6 +36,7 @@ proc chan_zapperNext {tree} {
 }
 
 proc chan_zapperPrior {tree} {
+	# Zap to prior station, tree is widget path of station list treeview
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperPrior \033\[0m \{$tree\}"
 	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {[string match $::kanalid($i) [lindex $::station(last) 0]]} {
@@ -53,10 +55,12 @@ proc chan_zapperPrior {tree} {
 }
 
 proc chan_zapperEventLoop {tree lasts} {
+	#FIXME Why is the proc chan_zapperEventLoopneeded?
 	bind $tree <<TreeviewSelect>> [list chan_zapperTree $tree]
 }
 
 proc chan_zapperTree {tree} {
+	# Zap to station selected in treeview, tree is widget path of station list treeview
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperTree \033\[0m \{$tree\}"
 	if {"[$tree state]" != "disabled"} {
 		set get_tree_item [$tree item [$tree selection] -values]
@@ -68,6 +72,7 @@ proc chan_zapperTree {tree} {
 }
 
 proc chan_zapperJump {tree} {
+	# Jump between the last two stations, tree is widget path of station list treeview
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperJump \033\[0m \{$tree\}"
 	if {$::chan(old_channel) == 0} {
 		set ::chan(old_channel) 1
@@ -89,6 +94,7 @@ proc chan_zapperJump {tree} {
 }
 
 proc chan_zapperStationNrKeys {key} {
+	# Use keys to select station, key is the pressed key. Shows the result in OSD
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperStationNrKeys \033\[0m \{$key\}"
 	catch {after cancel $::chan(change_keyid)}
 	if {[info exists ::chan(change_key)]} {
@@ -114,6 +120,7 @@ proc chan_zapperStationNrKeys {key} {
 }
 
 proc chan_zapperStationNr {tree number} {
+	#Doing the actual station change invoked by pressing numbers. tree --> treeview widget station list, number to work with
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperStationNr \033\[0m \{$tree\} \{$number\}"
 	set number [scan $number %d]
 	if {[info exists ::chan(change_key)]} {
@@ -134,6 +141,7 @@ proc chan_zapperStationNr {tree number} {
 }
 
 proc chan_zapperInput {com direct} {
+	#Change Video Input through key-sequence (com 1) or at startup.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInput \033\[0m \{$com\} \{$direct\}"
 	if {$com == 1} {
 		chan_zapperInputQuery cancel 0 0
@@ -188,6 +196,9 @@ proc chan_zapperInput {com direct} {
 }
 
 proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
+	#A loop function that tries for 3 seconds to change video input. This necessary because sometimes after stoping Playback the device is still blocked. 
+	#Additionally this function handels the frequency changing.
+	#secs - Time that has passed since the function was called; input - Video Input, freq - Frequency, snumber - Station Number; restart - Restart playback; aftmsg - Message to write to log and display in osd
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInputLoop \033\[0m \{$secs\} \{$input\} \{$freq\} \{$snumber\} \{$restart\} \{$aftmsg\}"
 	if {"$secs" == "cancel"} {
 		if {[info exists ::chan(change_inputLoop_id)]} {
@@ -275,6 +286,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 }
 
 proc chan_zapperInputQuery {secs input restart} {
+	# Loop that tries to change the video input every 100 ms until 3 seconds
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInputQuery \033\[0m \{$secs\} \{$input\} \{$restart\}"
 	if {"$secs" == "cancel"} {
 		if {[info exists ::data(after_id_input)]} {
@@ -326,6 +338,7 @@ proc chan_zapperInputQuery {secs input restart} {
 }
 
 proc chan_zapperInputStart {tree lasts} {
+	#Invoked by all channel changer procs. Changing video input if necessary then frequency.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInputStart \033\[0m \{$tree\} \{$lasts\}"
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]

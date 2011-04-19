@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc create_icons {} {
+	# loads all icons and makes them accessible. either png or gif format
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: create_icons \033\[0m"
 	log_writeOutTv 0 "Creating icons for TV-Viewer."
 	if {[package vcompare [info patchlevel] 8.6] == -1} {

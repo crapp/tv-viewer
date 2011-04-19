@@ -21,6 +21,7 @@ proc colorm_readValues {wfscale} {
 	#Read all standard values for hue, bridhtness, saturation and
 	#contrast from the video device using v4l2-ctl.
 	#The values will be stored in different arrays.
+	#FIXME Divide this up in several procs for readability. 
 	tkwait visibility .cm
 	catch {exec v4l2-ctl --device=$::option(video_device) -l} read_v4l2ctl
 	set status_v4l2ctl [catch {agrep -w "$read_v4l2ctl" hue} hue_default_read]

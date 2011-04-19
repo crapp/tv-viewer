@@ -20,6 +20,7 @@ proc option_screen_4 {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: option_screen_4 \033\[0m"
 	
 	# Setting up the interface
+	# audio section for the preferences
 	
 	foreach tab [split [.config_wizard.frame_configoptions.nb tabs]] {
 		.config_wizard.frame_configoptions.nb hide $tab
