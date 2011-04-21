@@ -83,7 +83,10 @@ proc station_searchUi {tree} {
 			incr i
 		}
 	} else {
-		log_writeOutTv 2 "Can't find any video inputs, please check the preferences (analog section)."
+		log_writeOutTv 2 "Can't find any video inputs on device node $::option(video_device), please check the preferences (analog section)."
+		if {$::option(log_warnDialogue)} {
+			status_feedbWarn 1 [mc "Can't find any video inputs"]
+		}
 		foreach window [winfo children .station.top_searchUi] {
 			destroy $window
 		}

@@ -23,7 +23,7 @@
 # record_external.tcl is part of TV-Viewer.
 # This script can be used to schedule recordings and/or delete them.
 # Options:
-# --start_time = Provide a start time in 12-hour or 24-hour format*
+# --start_time = Provide a start time in 12-hour or 24-hour format (HH:MM 24-hour clock, "HH:MM am/pm" 12-hour clock)*
 # --start_date = Start date YYYY-MM-DD*
 # --duration = Specify the duration of the recording in seconds*
 # --repeat = repeat the recording (0 - never; 1 - daily; 2 - weekday; 3 - weekly)
@@ -99,7 +99,7 @@ Usage: tv-viewer_recext \[OPTION...\]
   --help               show this help
  
  Schedule recording:
-  --start_time=TIME    specify start time (HH:MM 24-hour clock, HH:MM am/pm 12-hour clock)
+  --start_time=TIME    specify start time (HH:MM 24-hour clock, \"HH:MM am/pm\" 12-hour clock)
   --start_date=DATE    provide start date (YYYY-MM-DD)
   --duration=DURATION  duration of the recording in SECONDS
   --repeat=NUMBER      repeat the recording (0 - never; 1 - daily; 2 - weekday; 3 - weekly)
@@ -121,7 +121,7 @@ if {$::start_options(--help)} {
   --help               show this help
  
  Schedule recording:
-  --start_time=TIME    specify start time (HH:MM 24-hour clock, HH:MM am/pm 12-hour clock)
+  --start_time=TIME    specify start time (HH:MM 24-hour clock, \"HH:MM am/pm\" 12-hour clock)
   --start_date=DATE    provide start date (YYYY-MM-DD)
   --duration=DURATION  duration of the recording in SECONDS
   --repeat=NUMBER      repeat the recording (0 - never; 1 - daily; 2 - weekday; 3 - weekly)

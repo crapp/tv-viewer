@@ -65,7 +65,7 @@ proc process_configRead {} {
 		player_mconfig 0
 		player_additional_commands {}
 		player_add_vf_commands {}
-		player_add_af_commands {scaletempo}
+		player_add_af_commands {}
 		streambitrate 0
 		#videobitrate ""
 		#videopeakbitrate ""

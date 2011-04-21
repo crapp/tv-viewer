@@ -25,6 +25,7 @@ proc system_trayActivate {handler} {
 		log_writeOutTv 0 "Loading shared library tktray"
 		set status_tray [catch {package require tktray 1.3.9} result_tktray]
 		if {$status_tray == 1} {
+			set ::menu(cbSystray) 0
 			log_writeOutTv 2 "Can not load shared library tktray"
 			log_writeOutTv 2 "$result_tktray"
 			status_feedbWarn 1 [mc "Can not load shared library tktray"]
@@ -74,9 +75,17 @@ proc system_trayActivate {handler} {
 					}
 					set ::mem(systray) $::menu(cbSystray)
 					log_writeOutTv 0 "Succesfully added Icon to system tray."
+				} else {
+					set ::menu(cbSystray) 0
+					if {$::option(log_warnDialogue)} {
+						status_feedbWarn 1 [mc "Can not create system tray icon"]
+					}
+					log_writeOutTv 2 "Can not create an icon in the system tray"
+					log_writeOutTv 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
 				}
 			}
 		} else {
+			set ::menu(cbSystray) 0
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Can not create system tray icon"]
 			}
@@ -409,6 +418,7 @@ proc system_trayToggle {handler} {
 			}
 		}
 	} else {
+		set ::menu(cbSystray) 0
 		log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 	}
 }

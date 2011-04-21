@@ -110,7 +110,7 @@ $msg"
 		wm resizable .topWarn 0 0
 	}
 	wm attributes .topWarn -topmost 1
-	after 1000 [list wm attributes .topWarn -topmost 0]
+	catch {after 1000 [list wm attributes .topWarn -topmost 0]}
 }
 
 proc status_feedbMsgs {handler msg} {
