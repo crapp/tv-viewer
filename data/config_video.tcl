@@ -133,7 +133,7 @@ proc option_screen_3 {} {
 			.config_wizard.frame_buttons.b_default configure -command {}
 			.config_wizard.frame_buttons.button_save state disabled
 		} else {
-			catch {exec mplayer} mplayer_ver
+			catch {exec [auto_execok mplayer] -noconfig all} mplayer_ver
 			set agrep_mpl_ver [catch {agrep -m "$mplayer_ver" "MPlayer"} resultat_mpl_ver]
 			if {$agrep_mpl_ver == 0} {
 				set first [string first $resultat_mpl_ver r]

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc key_sequences {} {
+	#Building key sequences frontend
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0m"
 	if {[winfo exists .key] == 0} {
 		log_writeOutTv 0 "Launching key sequences screen..."
@@ -74,6 +75,7 @@ proc key_sequences {} {
 }
 
 proc key_sequencesRead {handler tree} {
+	#Read key sequences, default or not. Add some describing rows and noedit tags to some entries
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesRead \033\[0m \{$handler\} \{$tree\}"
 	#handler 0 == read default; 1 == read standard
 	foreach child [$tree children {}] {
@@ -184,6 +186,7 @@ proc key_sequencesRead {handler tree} {
 }
 
 proc key_sequencesDefault {tree} {
+	#Load default values for all key sequences
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesDefault \033\[0m \{$tree\}"
 	set top [toplevel .key.default]
 	place [ttk::frame $top.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -219,6 +222,7 @@ This will happen instantly and can not be undone!"] -image $::icon_b(dialog-warn
 }
 
 proc key_sequencesApply {top tree} {
+	#Apply changes, write them to file and recreate all virtual events so new key sequences take effect.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApply \033\[0m \{$top\} \{$tree\}"
 	catch {file delete $::option(home)/config/key-sequences.conf}
 	set keyf [open $::option(home)/config/key-sequences.conf w+]
@@ -286,6 +290,7 @@ proc key_sequencesApply {top tree} {
 }
 
 proc key_sequencesApplyManString {children i} {
+	#Test key - strings for special occurences like Control 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesApplyManString \033\[0m \{$children\}"
 	foreach elem [split $children "+"] {
 		if {[string match "Ctrl" [string trim $elem]]} {
@@ -396,6 +401,7 @@ proc key_sequencesApplyManString {children i} {
 }
 
 proc key_sequencesEdit {tree} {
+	#Edit dialog to change key sequence
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesEdit \033\[0m"
 	if {[winfo exists $tree.w_keyEdit]} {
 		log_writeOutTv 0 "Edit dialog for shortcuts already open"
@@ -458,6 +464,7 @@ proc key_sequencesEdit {tree} {
 }
 
 proc key_sequencesProcess {key} {
+	#Substitute key identifiers for all numpad keys, super, control... and put the key sequence together.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$key\}"
 	set noKey {Num_Lock Print Scroll_Lock Pause Menu ISO_Level3_Shift Tab Caps_Lock ?? Meta_L Meta_R}
 	foreach k $noKey {
@@ -517,9 +524,6 @@ proc key_sequencesProcess {key} {
 		set key [string toupper $key]
 	}
 	if {"[lindex $::key(sequenceList) end]" == "$key" && [llength $::key(sequenceList)] == 1} {
-		puts "lindex $::key(sequenceList) end [lindex $::key(sequenceList) end]"
-		puts "key $key"
-		puts "llength $::key(sequenceList) [llength $::key(sequenceList)]"
 		return
 	}
 	set goOn 1
@@ -533,10 +537,6 @@ proc key_sequencesProcess {key} {
 			}
 		}
 	}
-	puts "goOn $goOn"
-	puts "key $key"
-	puts "::key(sequenceDone) $::key(sequenceDone)"
-	puts "llength ::key(sequenceList) [llength $::key(sequenceList)]"
 	if {$goOn == 0} {
 		log_writeOutTv 1 "It is only allowed to use several modifier keys"
 		if {$::key(sequenceDone)} {
@@ -567,6 +567,7 @@ proc key_sequencesProcess {key} {
 }
 
 proc key_sequencesEditApply {tree lbl} {
+	#Apply key sequence and close key sequence edit dialog
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesProcess \033\[0m \{$tree\} \{$lbl\}"
 	set end 0
 	foreach child [$tree children {}] {

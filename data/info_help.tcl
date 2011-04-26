@@ -17,44 +17,17 @@
 #       MA 02110-1301, USA.
 
 proc info_helpHelp {} {
+	#Open documentation using standard web browser
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHelp \033\[0m"
 	if {[wm attributes . -fullscreen] == 1} {
 		event generate . <<wmFull>>
 	}
-	if {$::option(language_value) != 0} {
-		set done 0
-		if {[string match *en* $::option(language_value)]} {
-			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-			set done 1
-		}
-		if {[string match *de* $::option(language_value)]} {
-			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$::option(language_value)" &}
-			set done 1
-		}
-		if {$done == 0} {
-			log_writeOutTv 1 "There is no translation of the userguide for $::env(LANG)"
-			log_writeOutTv 1 "Will open english userguide."
-			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-		}
-	} else {
-		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
-		set helpTrans [list en de]
-		if {[lsearch $helpTrans $locale_split] == -1} {
-			catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-			log_writeOutTv 1 "There is no translation of the userguide for $::env(LANG)"
-			log_writeOutTv 1 "Will open english userguide."
-		} else {
-			if {[string match *en* $locale_split]} {
-				catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-			} else {
-				catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation/$locale_split" &}
-			}
-		}
-	}
+	catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
 	log_writeOutTv 0 "Trying to open userguide with favorite browser using xdg-open..."
 }
 
 proc info_helpMplayerRev {first strg} {
+	#Extract Mplayer revision and return 
 	set rev [string range "$strg" [expr $first + 1] [expr $first + 5]]
 	if {[string is integer $rev] == 0} {
 		set first [string first r $strg [expr $first + 1]]
@@ -68,6 +41,7 @@ proc info_helpMplayerRev {first strg} {
 }
 
 proc info_helpExitAbout {w} {
+	#Close Info Interface
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpExitAbout \033\[0m \{$w\}"
 	vid_wmCursor 1
 	grab release $w
@@ -76,6 +50,7 @@ proc info_helpExitAbout {w} {
 
 proc info_helpWebpage {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpHomepage \033\[0m \{$handler\}"
+	#Open a URL in standard browser depending on handler 
 	#handler 0 = homepage; 1 = forum; 2 = IRC
 	array set webs {
 		0 http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page
@@ -92,6 +67,7 @@ proc info_helpWebpage {handler} {
 }
 
 proc info_helpAbout {} {
+	#Creates an Info Frontend 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpAbout \033\[0m"
 	if {[winfo exists .top_about] == 0} {
 		
@@ -188,7 +164,7 @@ Christian Rapp"] -justify center
 		wm transient $w .
 		
 		if {[string trim [auto_execok mplayer]] != {}} {
-			catch {exec mplayer} mplayer_ver
+			catch {exec [auto_execok mplayer] -noconfig all} mplayer_ver
 			set agrep_mpl_ver [catch {agrep -m "$mplayer_ver" "MPlayer"} resultat_mpl_ver]
 			if {$agrep_mpl_ver == 0} {
 				set first [string first $resultat_mpl_ver r]

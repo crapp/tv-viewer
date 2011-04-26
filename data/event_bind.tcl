@@ -139,6 +139,7 @@ proc event_constr {handler} {
 
 proc event_delete {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_delete \033\[0m \{$handler\}"
+	#Delete virtual events that are responsible for changing stations or timeshift/recording/tv
 	#handler all = delete all virtual events; nomplay = no mplayer installed; nokanal = no station config file
 	if {"$handler" == "all"} {
 		set baseEvents {<<Undo>> <<PasteSelection>> <<Copy>> <<Cut>> <<PrevWindow>> <<Redo>> <<Paste>>}
@@ -187,6 +188,7 @@ proc event_delete {handler} {
 }
 
 proc event_recordStart {handler} {
+	# If recording/timeshift starts reorganize virtual events
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStart \033\[0m \{$handler\}"
 	if {$::option(rec_allow_sta_change) == 0} {
 		bind . <<stationPrior>> {}
@@ -219,6 +221,7 @@ proc event_recordStart {handler} {
 }
 
 proc event_recordStop {} {
+	# If recording/timeshift stops reorganize virtual events
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: event_recordStop \033\[0m"
 	bind . <<teleview>> {vid_playbackRendering}
 	bind . <<stationPrior>> [list chan_zapperPrior .fstations.treeSlist]

@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc font_chooserUi {returnw cvar} {
+	# A frontend to choose font and alignment for osd
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUi \033\[0m \{$returnw\} \{$cvar\}"
 	if {[winfo exists .config_wizard.fontchooser]} {
 		return
@@ -174,6 +175,7 @@ displayed in the video frame"]
 }
 
 proc font_chooserUiCfont {lb1 lb2 lb3 pre_entry} {
+	#Change font in canvas when <<ListboxSelect>> has been triggered.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiCfont \033\[0m \{$lb1\} \{$lb2\} \{$lb3\} \{$pre_entry\}"
 	set font "[string trim [$lb1 get [$lb1 curselection]]]"
 	set style "[string trim [string tolower [$lb2 get [$lb2 curselection]]]]"
@@ -189,6 +191,7 @@ proc font_chooserUiCfont {lb1 lb2 lb3 pre_entry} {
 }
 
 proc font_chooserUiCol {pre_entry} {
+	#Change color of text in canvas triggered through button
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiCol \033\[0m \{$pre_entry\}"
 	wm protocol .config_wizard.fontchooser WM_DELETE_WINDOW " "
 	set color [tk_chooseColor -parent .config_wizard.fontchooser -initialcolor [$::icon_e(pick-color3) cget -foreground] -title [mc "Choose color"]]
@@ -201,12 +204,14 @@ proc font_chooserUiCol {pre_entry} {
 }
 
 proc font_chooserUiAlign {value cvar} {
+	#Write alignment in global variable 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiAlign \033\[0m \{$value\} \{$cvar\}"
 	set ::font_chooser(mb_align) [lindex $value 0]
 	set ::font_chooser(mb_align_value) [lindex $value 1]
 }
 
 proc font_chooserUiApply {lb1 lb2 lb3 returnw cvar} {
+	#Apply changes
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: font_chooserUiApply \033\0m \{$lb1\} \{$lb2\} \{$lb3\} \{$returnw\} \{$cvar\}"
 	set font "[string trim [$lb1 get [$lb1 curselection]]]"
 	set style "[string trim [$lb2 get [$lb2 curselection]]]"

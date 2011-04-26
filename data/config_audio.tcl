@@ -80,11 +80,12 @@ proc option_screen_4 {} {
 			log_writeOutTv 0 "Starting to collect data for audio section."
 			set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
 			set lf_audioSync $::window(audio_nb1).lf_audio_sync
-			catch {exec [auto_execok mplayer] -ao help} audio_out
+			catch {exec [auto_execok mplayer] -noconfig all -ao help} audio_out
 			if {[string trim $audio_out] != {}} {
 				foreach line [split $audio_out \n] {
 					if {[string is lower [lindex $line 0]]} {
 						if {[string match *child* [string trim [lindex $line 0]]] || [string trim $line] == {}} continue
+						log_writeOutTv 0 "Found audio ouput driver [string trim [lindex $line 0]]"
 						$w.mbAudio add radiobutton \
 						-label [string trim [lindex $line 0]] \
 						-variable choice(mbAudio)
@@ -133,9 +134,11 @@ proc option_screen_4 {} {
 				}
 				set max_mbentries [$w.mbAudio index end]
 				set alsa_found 0
-				for {set i 0} {$i <= $max_mbentries} {incr i} {
-					if {[string trim [$w.mbAudio entrycget $i -label]] == "alsa"} {
-						set alsa_found 1
+				if {$max_mbentries < 1} {
+					for {set i 0} {$i <= $max_mbentries} {incr i} {
+						if {[string trim [$w.mbAudio entrycget $i -label]] == "alsa"} {
+							set alsa_found 1
+						}
 					}
 				}
 				if {$alsa_found == 0} {

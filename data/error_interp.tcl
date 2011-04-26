@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc error_interpUi {msg options} {
+	# An alternate error interpreter Interface. 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpUi \033\[0m \{$msg\} \{$options\}"
 	log_writeOutTv 2 "TV-Viewer crashed..."
 	log_writeOutTv 2 "$msg"
@@ -103,12 +104,14 @@ proc error_interpUi {msg options} {
 }
 
 proc error_interpFbug {} {
+	#File a bug report on sf.net
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpFbug \033\[0m"
 	log_writeOutTv 0 "Executing your favorite internet browser."
 	catch {exec xdg-open http://sourceforge.net/tracker/?func=add&group_id=238442&atid=1106486 &}
 }
 
 proc error_interpSdisk {msg options} {
+	#Save error message to disk
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpSdisk \033\[0m \{$msg\} \{$options\}"
 	set types {
 	{{Log Files}      {.log}       }
@@ -137,9 +140,4 @@ proc error_interpSdisk {msg options} {
 			log_writeOutTv 2 "Not a directory."
 		}
 	}
-}
-
-proc error_interpWarn {} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpWarn \033\[0m"
-	
 }

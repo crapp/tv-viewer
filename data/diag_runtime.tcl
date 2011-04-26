@@ -525,12 +525,37 @@ xdg-utils:
 MPlayer:
 [auto_execok mplayer]"
 	if {[string trim [auto_execok mplayer]] != {}} {
-		catch {exec mplayer --version} mplayer_ver
+		catch {exec [auto_execok mplayer] -noconfig all} mplayer_ver
 		diag_writeOut $diag_file_append "Mplayer_ver:
 $mplayer_ver"
-		catch {exec mplayer -vo help} mplayer_vo
+		catch {exec [auto_execok mplayer] -noconfig all -vo help} mplayer_vo
 		diag_writeOut $diag_file_append "Mplayer_vo:
 $mplayer_vo"
+		diag_writeOut $diag_file_append "
+Mplayer_config:"
+		if {[string trim [auto_execok find]] != {}} {
+			catch {exec [auto_execok find] /etc /home -name mplayer.conf 2>/dev/null} mplayer_conf
+			if {[string trim $mplayer_conf] != {}} {
+				set no_conf 1
+				foreach f [split $mplayer_conf \n] {
+					if {[string match *child* [string trim [lindex $f 0]]] || [string trim $f] == {}} continue
+					set fh [open $f r]
+					set fh_content [read $fh]
+					diag_writeOut $diag_file_append "
+$f"
+					diag_writeOut $diag_file_append "$fh_content"
+					set no_conf 0
+					close $fh
+				}
+				if {$no_conf} {
+					diag_writeOut $diag_file_append "
+No mplayer configuration files found."
+				}
+			} else {
+				diag_writeOut $diag_file_append "
+No mplayer configuration files found."
+			}
+		}
 	}
 }
 

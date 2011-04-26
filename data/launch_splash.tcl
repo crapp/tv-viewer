@@ -17,6 +17,7 @@
 #       MA 02110-1301, USA.
 
 proc launch_splash_screen {} {
+	#launch splash screen during start 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splash_screen \033\[0m"
 	log_writeOutTv 0 "Launching splash screen..."
 	set img_list [launch_splashAnigif "$::option(root)/icons/extras/animated_loading.gif"]
@@ -52,6 +53,7 @@ proc launch_splash_screen {} {
 }
 
 proc launch_splashAnigif {gif} {
+	#create gif image sequence 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splashAnigif \033\[0m \{$gif\}"
 	set index 0
 	set results {}
@@ -67,6 +69,7 @@ proc launch_splashAnigif {gif} {
 }
 
 proc launch_splashPlay {img_list img_list_length index container} {
+	#start/stop the animated gif
 	if {"$img_list" == "cancel"} {
 		puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splashPlay \033\[0;1;31m::cancel:: \033\[0m"
 		if {[info exists ::splash(after_id)]} {

@@ -18,6 +18,10 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+#This file is a executable script which is connected to the symlink tv-viewer_lirc.
+#Call this file with the appropriate options to trigger events. Use it together with a 
+#daemon like irexec and lircrc configuration file.
+
 package require Tcl 8.5
 
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
