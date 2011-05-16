@@ -106,7 +106,7 @@ proc notifydUi {ic pos timeout actId actTxt header msg args} {
 	ttk::label $fMain.l_notifyHeader -text "$header" -font "TkTextFont [font actual TkTextFont -displayof $top -size] bold"
 	ttk::label $fMain.l_notifyMsg -text "$msg"
 	ttk::button $fBut.b_notifyAction -text Action
-	ttk::button $fBut.b_notifyOk -text Ok -command "after cancel $::afterId($::notifyId) ; destroy .topNotify_$::notifyId"
+	ttk::button $fBut.b_notifyOk -text Ok
 	
 	grid $fMain -in $top -row 0 -column 0 -sticky nesw
 	grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady "0 3"
@@ -165,6 +165,7 @@ proc notifydUi {ic pos timeout actId actTxt header msg args} {
 	wm deiconify $top
 	wm attributes $top -topmost 1
 	set ::afterId($::notifyId) [after [expr $timeout * 1000] [list destroy .topNotify_$::notifyId]]
+	$fBut.b_notifyOk configure -command "after cancel $::afterId($::notifyId) ; destroy .topNotify_$::notifyId"
 }
 
 proc notifydAction {btn actId} {
