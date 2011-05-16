@@ -95,7 +95,7 @@ proc notifydUi {ic pos timeout actId actTxt header msg args} {
 	
 	if {[winfo exists .topNotify_[expr $::notifyId - 2]]} {
 		set id [expr $::notifyId - 2]
-		after cancel ::afterId($id)
+		after cancel $::afterId($id)
 		destroy .topNotify_$id
 	}
 	set top [toplevel .topNotify_$::notifyId -bd 1 -relief raised]
@@ -106,7 +106,7 @@ proc notifydUi {ic pos timeout actId actTxt header msg args} {
 	ttk::label $fMain.l_notifyHeader -text "$header" -font "TkTextFont [font actual TkTextFont -displayof $top -size] bold"
 	ttk::label $fMain.l_notifyMsg -text "$msg"
 	ttk::button $fBut.b_notifyAction -text Action
-	ttk::button $fBut.b_notifyOk -text Ok -command "after cancel ::afterId($::notifyId) ; destroy .topNotify_$::notifyId"
+	ttk::button $fBut.b_notifyOk -text Ok -command "after cancel $::afterId($::notifyId) ; destroy .topNotify_$::notifyId"
 	
 	grid $fMain -in $top -row 0 -column 0 -sticky nesw
 	grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady "0 3"
@@ -177,7 +177,7 @@ proc notifydAction {btn actId} {
 	} else {
 		{*}$actionCmd($actId)
 	}
-	catch {after cancel ::afterId($::notifyId)}
+	catch {after cancel $::afterId($::notifyId)}
 	destroy .topNotify_$::notifyId
 	after 5000 {
 		set status_main [monitor_partRunning 1]

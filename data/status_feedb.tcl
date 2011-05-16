@@ -21,96 +21,80 @@
 proc status_feedbWarn {handler msg} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: status_feedbWarn \033\[0m \{$handler\} \{$msg\}"
 	#handler 1 - tvviewer log; 2 - mplayer log; 3 - scheduler log
-	if {[winfo exists .topWarn] == 0} {
-		if {[wm attributes . -fullscreen] == 1} {
-			event generate . <<wmFull>>
-		}
+	if {[winfo exists .fvidBg.f_feedbwarn] == 0} {
 		if {[winfo ismapped .] == 0} {
 			system_trayToggle 0
 		}
-		set top [toplevel .topWarn]
-		place [ttk::frame $top.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
+		set top [frame .fvidBg.f_feedbwarn -bg #696969 -padx 3 -pady 3]
 		set fMain [ttk::frame $top.f_warnMain]
 		set fBut [ttk::frame $top.f_warnBut]
 		ttk::label $fMain.l_warnImg -image $::icon_b(dialog-warning)
-		ttk::label $fMain.l_warn -text "$msg"
+		ttk::label $fMain.l_warn -text "$msg" -wraplength 350
 		ttk::button $fBut.b_warnLog -text [mc "Show log"]
-		ttk::button $fBut.b_warnOk -text [mc "OK"] -command "::tk::RestoreFocusGrab $top $top destroy; vid_wmCursor 1"
+		ttk::button $fBut.b_warnOk -text [mc "OK"] -command "status_feedbWarnDel cancel; unset -nocomplain ::status_feedbWarnMessages; destroy $top; vid_wmCursor 1"
 		
 		grid $fMain -in $top -row 0 -column 0 -sticky nesw
-		grid $fBut -in $top -row 1 -column 0 -sticky ew -padx 3 -pady "0 3"
+		grid $fBut -in $top -row 1 -column 0 -sticky ew
 		
 		grid $fMain.l_warnImg -in $fMain -row 0 -column 0 -sticky nw -padx 8 -pady 8
 		grid $fMain.l_warn -in $fMain -row 0 -column 1 -sticky w -padx "0 8" -pady 8
 		
-		grid $fBut.b_warnLog -in $fBut -row 0 -column 0
-		grid $fBut.b_warnOk -in $fBut -row 0 -column 1 -sticky e
+		grid $fBut.b_warnLog -in $fBut -row 0 -column 0 -padx 3 -pady 3
+		grid $fBut.b_warnOk -in $fBut -row 0 -column 1 -sticky e -padx 3 -pady 3
 		
 		grid columnconfigure $top 0 -minsize 350
 		grid columnconfigure $fBut 1 -weight 1
 		grid rowconfigure $top 0 -weight 1
 		
-		wm withdraw $top
-		wm iconphoto $top $::icon_b(dialog-warning)
-		wm resizable $top 0 0
-		wm transient $top .
-		wm protocol $top WM_DELETE_WINDOW "::tk::RestoreFocusGrab $top $top destroy; vid_wmCursor 1"
-		wm title $top [mc "TV-Viewer Error"]
+		place .fvidBg.f_feedbwarn -anchor s -relx 0.5 -rely 1.0 -y -2
 		
 		array set btnCommand {
-			1 "log_viewerUi 1"
-			2 "log_viewerUi 2"
-			3 "log_viewerUi 3"
+			1 "log_viewerUi 1 1"
+			2 "log_viewerUi 2 1"
+			3 "log_viewerUi 3 1"
 		}
 		
-		$fBut.b_warnLog configure -command "::tk::RestoreFocusGrab $top $top destroy; vid_wmCursor 1; $btnCommand($handler)"
+		$fBut.b_warnLog configure -command "status_feedbWarnDel cancel; unset -nocomplain ::status_feedbWarnMessages; destroy $top; vid_wmCursor 1; $btnCommand($handler)"
 		
 		vid_wmCursor 0
 		
-		::tk::SetFocusGrab $top $top
-		
-		update idletasks
-		raise .
-		raise $top
-		focus -force $fBut.b_warnOk
-		if {[winfo ismapped .]} {
-			set mainX [winfo x .]
-			set mainY [winfo y .]
-			set centreX [expr $mainX + ([winfo width .] / 2.0)]
-			set centreY [expr $mainY + ([winfo height .] / 2.0)]
-			set posX [expr int($centreX - ([winfo reqwidth $top] / 2.0))]
-			set posY [expr int($centreY - ([winfo reqheight $top] / 2.0))]
-			wm geometry $top [winfo reqwidth $top]\x[winfo reqheight $top]\+$posX\+$posY
-			if {[winfo exists .splash] == 0} {
-				wm deiconify $top
-			}
-		} else {
-			if {[winfo exists .tray]} {
-				::tk::PlaceWindow $top
-			}
-		}
+		set ::status_feedbWarnMessages [dict create msg1 "$msg"]
 		log_writeOutTv 0 "Creating error dialogue"
 	} else {
-		wm resizable .topWarn 1 1
-		set oldMsg [.topWarn.f_warnMain.l_warn cget -text]
-		.topWarn.f_warnMain.l_warn configure -text "$oldMsg
+		if {[dict size $::status_feedbWarnMessages] == 1} {
+			dict set ::status_feedbWarnMessages msg2 "$msg"
+		} else {
+			dict set ::status_feedbWarnMessages msg1 "[dict get $::status_feedbWarnMessages msg2]"
+			dict set ::status_feedbWarnMessages msg2 "$msg"
+		}
+		.fvidBg.f_feedbwarn.f_warnMain.l_warn configure -text "[dict get $::status_feedbWarnMessages msg1]
 
-$msg"
-		raise .
-		raise .topWarn
-		focus -force .topWarn.f_warnBut.b_warnOk
-		set calcHeight [expr [winfo reqheight .topWarn.f_warnMain] + [winfo reqheight .topWarn.f_warnBut] +10]
-		set mainX [winfo x .]
-		set mainY [winfo y .]
-		set centreX [expr $mainX + ([winfo width .] / 2.0)]
-		set centreY [expr $mainY + ([winfo height .] / 2.0)]
-		set posX [expr int($centreX - ([winfo reqwidth .topWarn] / 2.0))]
-		set posY [expr int($centreY - ([winfo reqheight .topWarn] / 2.0))]
-		wm geometry .topWarn [winfo reqwidth .topWarn]\x$calcHeight\+$posX\+$posY
-		wm resizable .topWarn 0 0
+[dict get $::status_feedbWarnMessages msg2]"
 	}
-	wm attributes .topWarn -topmost 1
-	catch {after 1000 [list wm attributes .topWarn -topmost 0]}
+	status_feedbWarnDel "cancel"
+	set ::status_feedbAfterID [after 10000 {status_feedbWarnDel .fvidBg.f_feedbwarn.f_warnMain.l_warn}]
+	focus -force .fvidBg.f_feedbwarn.f_warnBut.b_warnOk
+}
+
+proc status_feedbWarnDel {labelw} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: status_feedbMsgs \033\[0m \{$labelw\}"
+	# Removes messages after x secs from Warning Window. labelw = window path for label widget, if labelw == cancel stop after execution.
+	if {"$labelw" == "cancel"} {
+		catch {after cancel $::status_feedbAfterID}
+		unset -nocomplain ::status_feedbAfterID
+		return
+	}
+	if {[dict size $::status_feedbWarnMessages] == 1} {
+		destroy .fvidBg.f_feedbwarn
+		unset -nocomplain ::status_feedbAfterID ::status_feedbWarnMessages
+		log_writeOutTv 1 "A message has been removed from error dialogue without user interaction"
+	} else {
+		dict set ::status_feedbWarnMessages msg1 "[dict get $::status_feedbWarnMessages msg2]"
+		set ::status_feedbWarnMessages [dict remove $::status_feedbWarnMessages msg2]
+		$labelw configure -text "[dict get $::status_feedbWarnMessages msg1]"
+		log_writeOutTv 1 "A message has been removed from error dialogue without user interaction"
+		focus -force .fvidBg.f_feedbwarn.f_warnBut.b_warnOk
+	}
 }
 
 proc status_feedbMsgs {handler msg} {

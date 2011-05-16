@@ -115,9 +115,9 @@ proc log_viewerSaveLog {handler parent} {
 	file copy -force "$::option(home)/log/$sofile(type\($handler\)).log" "$ofile"
 }
 
-proc log_viewerUi {handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerUi \033\[0m \{$handler\}"
-	#handler 1 = TV-Viewer 2 =  MPlayer 3 = Scheduler
+proc log_viewerUi {logfile logPosition} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: log_viewerUi \033\[0m \{$logfile\} \{$logfile\}"
+	#logfile 1 = TV-Viewer 2 =  MPlayer 3 = Scheduler
 	
 	array set ident {
 		1 tv
@@ -139,29 +139,29 @@ proc log_viewerUi {handler} {
 		tailc(3) log_viewerSchedTail
 	}
 	
-	if {[winfo exists .log_viewer_$ident(op\($handler\))] == 0} {
-		log_writeOutTv 0 "Launching log viewer for $ident(name\($handler\))."
+	if {[winfo exists .log_viewer_$ident(op\($logfile\))] == 0} {
+		log_writeOutTv 0 "Launching log viewer for $ident(name\($logfile\))."
 		
-		set w [toplevel .log_viewer_$ident(op\($handler\))]
+		set w [toplevel .log_viewer_$ident(op\($logfile\))]
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
-		set mf [ttk::frame $w.f_log_$ident(op\($handler\))]
-		set wfbottom [ttk::frame $w.f_log_$ident(op\($handler\))_buttons -style TLabelframe]
-		set ftop [ttk::frame $w.f_log_$ident(op\($handler\))_top]
+		set mf [ttk::frame $w.f_log_$ident(op\($logfile\))]
+		set wfbottom [ttk::frame $w.f_log_$ident(op\($logfile\))_buttons -style TLabelframe]
+		set ftop [ttk::frame $w.f_log_$ident(op\($logfile\))_top]
 		
 		ttk::separator $w.sep_main -orient horizontal
-		ttk::button $ftop.b_save -style Toolbutton -image $::icon_m(floppy) -command [list log_viewerSaveLog $ident(op\($handler\)) $w]
-		ttk::button $ftop.b_email -style Toolbutton -image $::icon_m(e-mail) -command [list log_viewerEmail $handler]
+		ttk::button $ftop.b_save -style Toolbutton -image $::icon_m(floppy) -command [list log_viewerSaveLog $ident(op\($logfile\)) $w]
+		ttk::button $ftop.b_email -style Toolbutton -image $::icon_m(e-mail) -command [list log_viewerEmail $logfile]
 		
 		ttk::separator $ftop.sep_sep1 -orient vertical
 		
-		ttk::checkbutton $ftop.cb_verb_debug -text Debug -variable log(verbose_$ident(op\($handler\))_debug) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
-		ttk::checkbutton $ftop.cb_verb_warn -text Warning -variable log(verbose_$ident(op\($handler\))_warn) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
-		ttk::checkbutton $ftop.cb_verb_err -text Error -variable log(verbose_$ident(op\($handler\))_err) -command [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
-		listbox $mf.lb_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_lb_log_$ident(op\($handler\)) set] -width 0
-		ttk::scrollbar $mf.scrollb_lb_log_$ident(op\($handler\)) -command [list $mf.lb_log_$ident(op\($handler\)) yview]
-		text $mf.t_log_$ident(op\($handler\)) -yscrollcommand [list $mf.scrollb_log_$ident(op\($handler\)) set] -wrap word -insertwidth 0
-		ttk::scrollbar $mf.scrollb_log_$ident(op\($handler\)) -command [list $mf.t_log_$ident(op\($handler\)) yview]
-		ttk::button $wfbottom.b_exit_log_$ident(op\($handler\)) -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
+		ttk::checkbutton $ftop.cb_verb_debug -text Debug -variable log(verbose_$ident(op\($logfile\))_debug) -command [list log_viewerReadFile $logfile $mf.t_log_$ident(op\($logfile\)) $mf.lb_log_$ident(op\($logfile\))]
+		ttk::checkbutton $ftop.cb_verb_warn -text Warning -variable log(verbose_$ident(op\($logfile\))_warn) -command [list log_viewerReadFile $logfile $mf.t_log_$ident(op\($logfile\)) $mf.lb_log_$ident(op\($logfile\))]
+		ttk::checkbutton $ftop.cb_verb_err -text Error -variable log(verbose_$ident(op\($logfile\))_err) -command [list log_viewerReadFile $logfile $mf.t_log_$ident(op\($logfile\)) $mf.lb_log_$ident(op\($logfile\))]
+		listbox $mf.lb_log_$ident(op\($logfile\)) -yscrollcommand [list $mf.scrollb_lb_log_$ident(op\($logfile\)) set] -width 0
+		ttk::scrollbar $mf.scrollb_lb_log_$ident(op\($logfile\)) -command [list $mf.lb_log_$ident(op\($logfile\)) yview]
+		text $mf.t_log_$ident(op\($logfile\)) -yscrollcommand [list $mf.scrollb_log_$ident(op\($logfile\)) set] -wrap word -insertwidth 0
+		ttk::scrollbar $mf.scrollb_log_$ident(op\($logfile\)) -command [list $mf.t_log_$ident(op\($logfile\)) yview]
+		ttk::button $wfbottom.b_exit_log_$ident(op\($logfile\)) -text [mc "Exit"] -compound left -image $::icon_s(dialog-close) -command "destroy $w; set ::choice(cb_log_$ident(op\($logfile\))_main) 0; $ident(tailc\($logfile\)) 0 cancel 0"
 		
 		grid $ftop -in $w -row 0 -column 0 -sticky ew
 		grid $w.sep_main -in $w -row 1 -column 0 -sticky ew -padx 4
@@ -177,35 +177,35 @@ proc log_viewerUi {handler} {
 		grid $ftop.cb_verb_warn -in $ftop -row 0 -column 4 -padx 2
 		grid $ftop.cb_verb_err -in $ftop -row 0 -column 5
 		
-		grid $mf.lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 0 -sticky nesw -pady 3 -padx 3
-		grid $mf.scrollb_lb_log_$ident(op\($handler\)) -in $mf -row 0 -column 1 -sticky ns -pady 5
-		grid $mf.t_log_$ident(op\($handler\)) -in $mf -row 0 -column 2 -sticky nesw -pady 3 -padx 3
-		grid $mf.scrollb_log_$ident(op\($handler\)) -in $mf -row 0 -column 3 -sticky ns -pady 5
-		grid $wfbottom.b_exit_log_$ident(op\($handler\)) -in $wfbottom -row 0 -column 0 -pady 7 -padx 3
+		grid $mf.lb_log_$ident(op\($logfile\)) -in $mf -row 0 -column 0 -sticky nesw -pady 3 -padx 3
+		grid $mf.scrollb_lb_log_$ident(op\($logfile\)) -in $mf -row 0 -column 1 -sticky ns -pady 5
+		grid $mf.t_log_$ident(op\($logfile\)) -in $mf -row 0 -column 2 -sticky nesw -pady 3 -padx 3
+		grid $mf.scrollb_log_$ident(op\($logfile\)) -in $mf -row 0 -column 3 -sticky ns -pady 5
+		grid $wfbottom.b_exit_log_$ident(op\($logfile\)) -in $wfbottom -row 0 -column 0 -pady 7 -padx 3
 		
 		grid rowconfigure $mf 0 -weight 1 -minsize 350
 		grid columnconfigure $mf 2 -weight 1 -minsize 515
 		grid rowconfigure $w {2} -weight 1
 		grid columnconfigure $w {0} -weight 1
 		
-		autoscroll $mf.scrollb_lb_log_$ident(op\($handler\))
-		autoscroll $mf.scrollb_log_$ident(op\($handler\))
-		wm title $w [mc "$ident(name\($handler\)) Log"]
-		wm protocol $w WM_DELETE_WINDOW "destroy $w; set ::choice(cb_log_$ident(op\($handler\))_main) 0; $ident(tailc\($handler\)) 0 cancel 0"
+		autoscroll $mf.scrollb_lb_log_$ident(op\($logfile\))
+		autoscroll $mf.scrollb_log_$ident(op\($logfile\))
+		wm title $w [mc "$ident(name\($logfile\)) Log"]
+		wm protocol $w WM_DELETE_WINDOW "destroy $w; set ::choice(cb_log_$ident(op\($logfile\))_main) 0; $ident(tailc\($logfile\)) 0 cancel 0"
 		wm iconphoto $w $::icon_e(tv-viewer_icon)
 		
 		foreach event {<KeyPress> <<PasteSelection>>} {
-			bind $mf.t_log_$ident(op\($handler\)) $event break
+			bind $mf.t_log_$ident(op\($logfile\)) $event break
 		}
-		bind $mf.t_log_$ident(op\($handler\)) <Control-c> {event generate %W <<Copy>>}
-		bind $mf.t_log_$ident(op\($handler\)) <Control-Key-a> {%W tag add sel 0.0 end; break}
-		bind $mf.t_log_$ident(op\($handler\)) <ButtonPress-3> [list tk_popup $mf.t_log_$ident(op\($handler\)).mContext %X %Y]
+		bind $mf.t_log_$ident(op\($logfile\)) <Control-c> {event generate %W <<Copy>>}
+		bind $mf.t_log_$ident(op\($logfile\)) <Control-Key-a> {%W tag add sel 0.0 end; break}
+		bind $mf.t_log_$ident(op\($logfile\)) <ButtonPress-3> [list tk_popup $mf.t_log_$ident(op\($logfile\)).mContext %X %Y]
 		
-		menu $mf.t_log_$ident(op\($handler\)).mContext -tearoff 0
+		menu $mf.t_log_$ident(op\($logfile\)).mContext -tearoff 0
 		
-		$mf.t_log_$ident(op\($handler\)).mContext add command -label [mc "Select everything"] -compound left -image $::icon_men(placeholder) -command [list $mf.t_log_$ident(op\($handler\)) tag add sel 0.0 end] -accelerator Ctrl+A
-		$mf.t_log_$ident(op\($handler\)).mContext add separator
-		$mf.t_log_$ident(op\($handler\)).mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_men(clipboard) -command [list event generate $mf.t_log_$ident(op\($handler\)) <<Copy>>] -accelerator Ctrl+C
+		$mf.t_log_$ident(op\($logfile\)).mContext add command -label [mc "Select everything"] -compound left -image $::icon_men(placeholder) -command [list $mf.t_log_$ident(op\($logfile\)) tag add sel 0.0 end] -accelerator Ctrl+A
+		$mf.t_log_$ident(op\($logfile\)).mContext add separator
+		$mf.t_log_$ident(op\($logfile\)).mContext add command -label [mc "Copy to clipboard"] -compound left -image $::icon_men(clipboard) -command [list event generate $mf.t_log_$ident(op\($logfile\)) <<Copy>>] -accelerator Ctrl+C
 		
 		if {$::option(tooltips) == 1 && $::option(tooltips_main) == 1} {
 			settooltip $ftop.b_save [mc "Save logfile to disk"]
@@ -215,17 +215,21 @@ proc log_viewerUi {handler} {
 			settooltip $ftop.cb_verb_err [mc "Show/hide Error messages"]
 		}
 		
-		set ::log(verbose_$ident(op\($handler\))_debug) 1
-		set ::log(verbose_$ident(op\($handler\))_warn) 1
-		set ::log(verbose_$ident(op\($handler\))_err) 1
-		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for $ident(name\($handler\))."
-		after 0 [list log_viewerReadFile $handler $mf.t_log_$ident(op\($handler\)) $mf.lb_log_$ident(op\($handler\))]
-		tkwait visibility .log_viewer_$ident(op\($handler\))
-		log_viewerLb $mf.lb_log_$ident(op\($handler\)) $mf.t_log_$ident(op\($handler\)) $handler
-		wm minsize .log_viewer_$ident(op\($handler\)) [winfo reqwidth .log_viewer_$ident(op\($handler\))] [winfo reqheight .log_viewer_$ident(op\($handler\))]
+		set ::log(verbose_$ident(op\($logfile\))_debug) 1
+		set ::log(verbose_$ident(op\($logfile\))_warn) 1
+		set ::log(verbose_$ident(op\($logfile\))_err) 1
+		log_writeOutTv 0 "Read existing logfile, insert into log viewer and start monitoring logfile for $ident(name\($logfile\))."
+		after 0 [list log_viewerReadFile $logfile $mf.t_log_$ident(op\($logfile\)) $mf.lb_log_$ident(op\($logfile\))]
+		tkwait visibility .log_viewer_$ident(op\($logfile\))
+		if {$logPosition == 0} {
+			log_viewerLb $mf.lb_log_$ident(op\($logfile\)) $mf.t_log_$ident(op\($logfile\)) $logfile
+		} else {
+			$mf.t_log_$ident(op\($logfile\)) see end
+		}
+		wm minsize .log_viewer_$ident(op\($logfile\)) [winfo reqwidth .log_viewer_$ident(op\($logfile\))] [winfo reqheight .log_viewer_$ident(op\($logfile\))]
 	} else {
-		log_writeOutTv 0 "Closing log viewer for $ident(name\($handler\))."
-		$ident(tailc\($handler\)) 0 cancel 0; destroy .log_viewer_$ident(op\($handler\))
+		log_writeOutTv 0 "Closing log viewer for $ident(name\($logfile\))."
+		$ident(tailc\($logfile\)) 0 cancel 0; destroy .log_viewer_$ident(op\($logfile\))
 	}
 }
 

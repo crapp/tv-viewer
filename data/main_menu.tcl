@@ -314,9 +314,9 @@ proc main_menuHelp {menubar toolbChanCtrl toolbPlay vidBg handler} {
 		$mHelp add command -command info_helpHelp -compound left -image $::icon_men(help) -label [mc "User Guide"] -accelerator [dict get $::keyseq help name]
 		$mHelp add command -command key_sequences -compound left -image $::icon_men(key-bindings) -label [mc "Key Sequences"]
 		$mHelp add separator
-		$mHelp add checkbutton -command [list log_viewerUi 2] -label [mc "MPlayer Log"] -variable choice(cb_log_mpl_main)
-		$mHelp add checkbutton -command [list log_viewerUi 3] -label [mc "Scheduler Log"] -variable choice(cb_log_sched_main)
-		$mHelp add checkbutton -command [list log_viewerUi 1] -label [mc "TV-Viewer Log"] -variable choice(cb_log_tv_main)
+		$mHelp add checkbutton -command [list log_viewerUi 2 0] -label [mc "MPlayer Log"] -variable choice(cb_log_mpl_main)
+		$mHelp add checkbutton -command [list log_viewerUi 3 0] -label [mc "Scheduler Log"] -variable choice(cb_log_sched_main)
+		$mHelp add checkbutton -command [list log_viewerUi 1 0] -label [mc "TV-Viewer Log"] -variable choice(cb_log_tv_main)
 		$mHelp add separator
 		$mHelp add command -label [mc "Diagnostic Routine"] -compound left -image $::icon_men(diag) -command diag_Ui
 		$mHelp add separator

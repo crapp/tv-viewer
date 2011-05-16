@@ -498,8 +498,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {system_trayChangeIc 2}
-	bind . <Key-y> {system_trayChangeIc 3}
+	bind . <Key-x> {status_feedbWarn 2 "Test message 2 can be very long, so we need to check what happens with the stats_feedbWarn"}
+	bind . <Key-y> {status_feedbWarn 1 "Test Message 1 can be very long, so we need to check what happens with the stats_feedbWarn"}
 	
 	
 	command_socket
