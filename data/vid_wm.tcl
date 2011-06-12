@@ -63,6 +63,10 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		bind $vid_bg <Motion> {
 			vid_wmCursorHide .fvidBg 0
 		}
+		#Make sure all Toolbars are removed in case they were popped up with the mouse button.
+		grid remove .ftoolb_Top
+		grid remove .fstations
+		grid remove .ftoolb_Play
 		if {$::main(compactMode) == 0} {
 			grid .foptions_bar -in . -row 0 -column 0 -sticky new -columnspan 2
 			grid .seperatMenu -in . -row 1 -column 0 -sticky ew -padx 2 -columnspan 2

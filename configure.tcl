@@ -76,7 +76,7 @@ if {[array size start_options] != 14} {
 	
 Unkown option(s): $argv
 
-Usage: ./configure \[OPTION\]... \[VAR=VALUE\]...
+Usage: ./configure.tcl \[OPTION\]... \[VAR=VALUE\]...
 
 To assign environment variables (e.g., CC, CFLAGS...), specify them as
 VAR=VALUE.  See below for descriptions of some of the useful variables.
@@ -124,7 +124,7 @@ if {$start_options(--help)} {
 	puts "
 `configure' configures TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] to adapt to many kinds of systems.
 
-Usage: ./configure \[OPTION\]... \[VAR=VALUE\]...
+Usage: ./configure.tcl \[OPTION\]... \[VAR=VALUE\]...
 
 To assign environment variables (e.g., CC, CFLAGS...), specify them as
 VAR=VALUE.  See below for descriptions of some of the useful variables.
