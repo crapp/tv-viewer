@@ -20,7 +20,7 @@ proc radio_ui {} {
 	# The main ui for the radio interface
 	if {[winfo exists .radio]} {
 		#FIXME - Only "return" here or destroy radio interface
-		log_writeOutTv 1 "Radio interface already running"
+		log_writeOut ::log(tvAppend) 1 "Radio interface already running"
 		return
 	}
 	#FIXME Fill with content, integrate with new interface. Make it a mode of the new interface.

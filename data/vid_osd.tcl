@@ -76,12 +76,12 @@ proc vid_osd {ident atime osd_text} {
 	
 	place $osd -in .fvidBg {*}$alignment($bias)
 	if {[string match -nocase "#ffffff" [$osd.label cget -fg]]} {
-		log_writeOutTv 1 "OSD with white foreground not possible"
-		log_writeOutTv 1 "Changing font color to black"
+		log_writeOut ::log(tvAppend) 1 "OSD with white foreground not possible"
+		log_writeOut ::log(tvAppend) 1 "Changing font color to black"
 		$osd.label configure -foreground #000000
 	}
 	
 	set ::osd(id_old) $ident
 	set ::osd(after_id_osd) [after $atime "destroy .fvidBg.osd"]
-	log_writeOutTv 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
+	log_writeOut ::log(tvAppend) 0 "OSD invoked, ident: $ident, time: $atime, text: $osd_text"
 }

@@ -22,19 +22,19 @@ proc dbus_interfaceStart {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: dbus_interfaceStart \033\[0m"}
 	set status_present [catch {package present dbus-tcl 1.0} result_present]
 	if {$status_present == 1} {
-		catch {log_writeOutTv 0 "Loading shared library dbus-tcl"}
+		catch {log_writeOut ::log(tvAppend) 0 "Loading shared library dbus-tcl"}
 		set status_dbus [catch {package require dbus-tcl 1.0} result_dbustcl]
 		if {$status_dbus == 1} {
 			if {"$::option(appname)" == "tv-viewer_main"} {
-				log_writeOutTv 2 "Can not load shared library dbus-tcl"
-				log_writeOutTv 2 "$result_dbustcl"
-				log_writeOutTv 2 "Deactivate D-Bus in the interface section of the preferences"
+				log_writeOut ::log(tvAppend) 2 "Can not load shared library dbus-tcl"
+				log_writeOut ::log(tvAppend) 2 "$result_dbustcl"
+				log_writeOut ::log(tvAppend) 2 "Deactivate D-Bus in the interface section of the preferences"
 				status_feedbWarn 1 [mc "Can not load shared library dbus-tcl"]
 			}
 			if {"$::option(appname)" == "tv-viewer_scheduler"} {
-				scheduler_logWriteOut 2 "Can not load shared library dbus-tcl"
-				scheduler_logWriteOut 2 "$result_dbustcl"
-				scheduler_logWriteOut 2 "Deactivate D-Bus in the interface section of the preferences"
+				log_writeOut ::log(schedAppend) 2 "Can not load shared library dbus-tcl"
+				log_writeOut ::log(schedAppend) 2 "$result_dbustcl"
+				log_writeOut ::log(schedAppend) 2 "Deactivate D-Bus in the interface section of the preferences"
 			}
 			return 1
 		}
@@ -71,21 +71,21 @@ proc dbus_interfaceNotification {icon summary body action hints timeout} {
 				}
 			} else {
 				if {"$::option(appname)" == "tv-viewer_main"} {
-					log_writeOutTv 2 "Can not access D-Bus notification interface"
-					log_writeOutTv 2 "$names"
+					log_writeOut ::log(tvAppend) 2 "Can not access D-Bus notification interface"
+					log_writeOut ::log(tvAppend) 2 "$names"
 				}
 				if {"$::option(appname)" == "tv-viewer_scheduler"} {
-					scheduler_logWriteOut 2 "Can not access D-Bus notification interface"
-					scheduler_logWriteOut 2 "$names"
+					log_writeOut ::log(schedAppend) 2 "Can not access D-Bus notification interface"
+					log_writeOut ::log(schedAppend) 2 "$names"
 				}
 			}
 		}
 	} else {
 		if {"$::option(appname)" == "tv-viewer_main"} {
-			log_writeOutTv 1 "D-Bus Interface is deactivated"
+			log_writeOut ::log(tvAppend) 1 "D-Bus Interface is deactivated"
 		}
 		if {"$::option(appname)" == "tv-viewer_scheduler"} {
-			scheduler_logWriteOut 1 "D-Bus Interface is deactivated"
+			log_writeOut ::log(schedAppend) 1 "D-Bus Interface is deactivated"
 		}
 	}
 }

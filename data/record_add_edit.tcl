@@ -21,15 +21,15 @@ proc record_add_edit {tree com} {
 	#com 0 add new station - 1 edit selected station
 	if {$com == 1} {
 		if {[string trim [$tree selection]] == {}} {
-			log_writeOutTv 1 "No recording selected to edit."
+			log_writeOut ::log(tvAppend) 1 "No recording selected to edit."
 			return
 		}
 		if {[llength [$tree selection]] > 1} {
-			log_writeOutTv 1 "Can not edit more than one recording at a time."
+			log_writeOut ::log(tvAppend) 1 "Can not edit more than one recording at a time."
 			return
 		}
 	}
-	log_writeOutTv 0 "Building record add/edit dialogue."
+	log_writeOut ::log(tvAppend) 0 "Building record add/edit dialogue."
 	set w [toplevel .record_wizard.add_edit] ; place [ttk::label .record_wizard.add_edit.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set lbf [ttk::frame $w.listbox_frame]
 	set recf [ttk::frame $w.record_frame]
@@ -513,7 +513,7 @@ proc record_add_editResolHeight {} {
 
 proc record_add_editExit {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editExit \033\[0m \{$w\}"
-	log_writeOutTv 0 "Exiting 'add/edit recording'."
+	log_writeOut ::log(tvAppend) 0 "Exiting 'add/edit recording'."
 	unset -nocomplain ::record(time_hour) ::record(time_HourOld) ::record(time_min) set ::record(rbAddEditHour) ::record(mbHourFormat) ::record(date) ::record(duration) ::record(mbRepeat) ::record(rbRepeat) ::record(sbRepeat) ::record(resolution) ::record(file)
 	vid_wmCursor 1
 	grab release $w
@@ -543,8 +543,8 @@ proc record_add_editOfile {w} {
 			set ofile "[file rootname $ofile].mpeg"
 		}
 	}
-	log_writeOutTv 0 "Chosen output file:"
-	log_writeOutTv 0 "$ofile"
+	log_writeOut ::log(tvAppend) 0 "Chosen output file:"
+	log_writeOut ::log(tvAppend) 0 "$ofile"
 	set ::record(file) "$ofile"
 }
 
@@ -596,7 +596,7 @@ proc record_add_editDeleteRun {tree top} {
 	} else {
 		set start 1
 	}
-	log_writeOutTv 0 "Deleting recording [$tree selection]."
+	log_writeOut ::log(tvAppend) 0 "Deleting recording [$tree selection]."
 	if {[llength [$tree selection]] > 1} {
 		foreach element [$tree selection] {
 			$tree delete $element
@@ -611,12 +611,16 @@ proc record_add_editDeleteRun {tree top} {
 	}
 	close $f_open
 	if {$start} {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/scheduler.tcl" &}
+		if {$::option(tclkit) == 1} {
+			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+		} else {
+			catch {exec "$::option(root)/data/scheduler.tcl" &}
+		}
 	} else {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
-		log_writeOutTv 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
+		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
@@ -629,7 +633,7 @@ proc record_add_editDeleteRun {tree top} {
 
 proc record_add_editDate {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDate \033\[0m"
-	log_writeOutTv 0 "Building record add/edit (choose date) dialogue."
+	log_writeOut ::log(tvAppend) 0 "Building record add/edit (choose date) dialogue."
 	set w [toplevel .record_wizard.add_edit.date] ; place [ttk::label .record_wizard.add_edit.date.bg -style Toolbutton] -relwidth 1 -relheight 1
 	set fnavi [ttk::frame $w.navi_frame]
 	set fcho [ttk::frame $w.choose_frame]
@@ -774,6 +778,6 @@ proc record_add_editDateYearMonth {cal label com} {
 proc record_add_editDateApply {w label} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_editDateApply \033\[0m \{$w\} \{$label\}"
 	set ::record(date) [$label cget -text]
-	log_writeOutTv 0 "Chosen date [$label cget -text]."
+	log_writeOut ::log(tvAppend) 0 "Chosen date [$label cget -text]."
 	grab release $w; grab .record_wizard.add_edit; destroy $w; wm protocol .record_wizard.add_edit WM_DELETE_WINDOW {record_add_editExit .record_wizard.add_edit}
 }

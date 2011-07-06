@@ -20,14 +20,14 @@ proc system_trayActivate {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: system_trayActivate \033\[0m"
 	set status_present [catch {package present tktray 1.3.9} result_present]
 	if {$status_present == 0} {
-		log_writeOutTv 0 "Package tktray already loaded"
+		log_writeOut ::log(tvAppend) 0 "Package tktray already loaded"
 	} else {
-		log_writeOutTv 0 "Loading shared library tktray"
+		log_writeOut ::log(tvAppend) 0 "Loading shared library tktray"
 		set status_tray [catch {package require tktray 1.3.9} result_tktray]
 		if {$status_tray == 1} {
 			set ::menu(cbSystray) 0
-			log_writeOutTv 2 "Can not load shared library tktray"
-			log_writeOutTv 2 "$result_tktray"
+			log_writeOut ::log(tvAppend) 2 "Can not load shared library tktray"
+			log_writeOut ::log(tvAppend) 2 "$result_tktray"
 			status_feedbWarn 1 [mc "Can not load shared library tktray"]
 		}
 	}
@@ -74,14 +74,14 @@ proc system_trayActivate {handler} {
 						after 2000 {system_trayResizer 2000}
 					}
 					set ::mem(systray) $::menu(cbSystray)
-					log_writeOutTv 0 "Succesfully added Icon to system tray."
+					log_writeOut ::log(tvAppend) 0 "Succesfully added Icon to system tray."
 				} else {
 					set ::menu(cbSystray) 0
 					if {$::option(log_warnDialogue)} {
 						status_feedbWarn 1 [mc "Can not create system tray icon"]
 					}
-					log_writeOutTv 2 "Can not create an icon in the system tray"
-					log_writeOutTv 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
+					log_writeOut ::log(tvAppend) 2 "Can not create an icon in the system tray"
+					log_writeOut ::log(tvAppend) 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
 				}
 			}
 		} else {
@@ -89,8 +89,8 @@ proc system_trayActivate {handler} {
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Can not create system tray icon"]
 			}
-			log_writeOutTv 2 "Can not create an icon in the system tray"
-			log_writeOutTv 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
+			log_writeOut ::log(tvAppend) 2 "Can not create an icon in the system tray"
+			log_writeOut ::log(tvAppend) 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
 		}
 	} else {
 		system_trayResizer cancel
@@ -103,7 +103,7 @@ proc system_trayActivate {handler} {
 			set ::menu(cbSystray) 0
 		}
 		set ::mem(systray) $::menu(cbSystray)
-		log_writeOutTv 0 "Removing Icon from system tray."
+		log_writeOut ::log(tvAppend) 0 "Removing Icon from system tray."
 		wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	}
 }
@@ -154,7 +154,7 @@ proc system_trayCheckEnvironment {} {
 Started: % %
 Ends:    % %" $station $sdate $stime $edate $etime]
 			} else {
-				log_writeOutTv 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
+				log_writeOut ::log(tvAppend) 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
 				if {$::option(log_warnDialogue)} {
 					status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 				}
@@ -201,7 +201,7 @@ proc system_trayResizer {delay} {
 					.tray configure -image $::icon_e(systray_icon$isize)
 					set ::system(iconSize) $isize
 					set grow 1
-					log_writeOutTv 0 "Resized systray icon to $::icon_e(systray_icon$isize)"
+					log_writeOut ::log(tvAppend) 0 "Resized systray icon to $::icon_e(systray_icon$isize)"
 					break
 				}
 			}
@@ -215,14 +215,14 @@ proc system_trayResizer {delay} {
 				if {$isize < $::system(iconSize)} {
 					.tray configure -image $::icon_e(systray_icon$isize)
 					set ::system(iconSize) $isize
-					log_writeOutTv 0 "Resized systray icon to $::icon_e(systray_icon$isize)"
+					log_writeOut ::log(tvAppend) 0 "Resized systray icon to $::icon_e(systray_icon$isize)"
 					break
 				}
 			}
 		}
 		set ::system(systrayResizerID) [after $delay [list system_trayResizer $delay]]
 	} else {
-		log_writeOutTv 2 "system_trayResizer triggered but tray icon does not exist"
+		log_writeOut ::log(tvAppend) 2 "system_trayResizer triggered but tray icon does not exist"
 		system_trayResizer cancel
 	}
 }
@@ -310,7 +310,7 @@ proc system_trayMenu {x y} {
 			tk_popup .tray.mTray $x [expr $y - 15]
 		}
 	}
-	log_writeOutTv 0 "Popup context menu for system tray icon"
+	log_writeOut ::log(tvAppend) 0 "Popup context menu for system tray icon"
 }
 
 proc system_trayToggle {handler} {
@@ -326,7 +326,7 @@ proc system_trayToggle {handler} {
 			}
 		}
 		if {$doIt} {
-			log_writeOutTv 1 "Can not minimize/close to tray when $window exists."
+			log_writeOut ::log(tvAppend) 1 "Can not minimize/close to tray when $window exists."
 			if {$::option(systrayMini)} {
 				bind .fvidBg <Map> {
 					bind .fvidBg <Map> {}
@@ -351,20 +351,20 @@ proc system_trayToggle {handler} {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
-					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
+					log_writeOut ::log(tvAppend) 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
-				log_writeOutTv 0 "Docking \".\" to system tray."
+				log_writeOut ::log(tvAppend) 0 "Docking \".\" to system tray."
 				wm withdraw .
 				if {[winfo exists .tray.mTray]} {
 					.tray.mTray entryconfigure 0 -label [mc "Restore"]
 				}
 			} else {
 				wm deiconify .
-				log_writeOutTv 0 "Undocking \".\" from system tray."
+				log_writeOut ::log(tvAppend) 0 "Undocking \".\" from system tray."
 				foreach {key elem} [array get ::system_tray] {
 					if {[winfo exists $elem]} {
 						wm deiconify $elem
-						log_writeOutTv 0 "Undocking \"$elem\" from system tray."
+						log_writeOut ::log(tvAppend) 0 "Undocking \"$elem\" from system tray."
 					}
 				}
 				if {[winfo exists .tray.mTray]} {
@@ -393,9 +393,9 @@ proc system_trayToggle {handler} {
 					if {[string match . [winfo toplevel $w]] == 1 || [string match .tray [winfo toplevel $w]] == 1} continue
 					set ::system_tray([winfo toplevel $w]) [winfo toplevel $w]
 					wm withdraw $::system_tray($w)
-					log_writeOutTv 0 "Docking \"$::system_tray($w)\" to system tray."
+					log_writeOut ::log(tvAppend) 0 "Docking \"$::system_tray($w)\" to system tray."
 				}
-				log_writeOutTv 0 "Docking \".\" to system tray."
+				log_writeOut ::log(tvAppend) 0 "Docking \".\" to system tray."
 				wm withdraw .
 				if {[winfo exists .tray.mTray]} {
 					.tray.mTray entryconfigure 0 -label [mc "Restore"]
@@ -419,7 +419,7 @@ proc system_trayToggle {handler} {
 		}
 	} else {
 		set ::menu(cbSystray) 0
-		log_writeOutTv 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
+		log_writeOut ::log(tvAppend) 2 "Coroutine attempted to dock TV-Viewer, but tray icon does not exist."
 	}
 }
 

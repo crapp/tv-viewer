@@ -31,7 +31,7 @@ proc option_screen_4 {} {
 		.config_wizard.frame_configoptions.nb select $::window(audio_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt4 $::window(audio_nb1)]
 	} else {
-		log_writeOutTv 0 "Setting up audio section in preferences"
+		log_writeOut ::log(tvAppend) 0 "Setting up audio section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(audio_nb1) [ttk::frame $w.f_audio]
 		$w add $::window(audio_nb1) -text [mc "Audio Settings"] -padding 2
@@ -77,7 +77,7 @@ proc option_screen_4 {} {
 		proc default_opt4 {w} {
 			#Find and set values for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt4 \033\[0m \{$w\}"
-			log_writeOutTv 0 "Starting to collect data for audio section."
+			log_writeOut ::log(tvAppend) 0 "Starting to collect data for audio section."
 			set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
 			set lf_audioSync $::window(audio_nb1).lf_audio_sync
 			catch {exec [auto_execok mplayer] -noconfig all -ao help} audio_out
@@ -85,7 +85,7 @@ proc option_screen_4 {} {
 				foreach line [split $audio_out \n] {
 					if {[string is lower [lindex $line 0]]} {
 						if {[string match *child* [string trim [lindex $line 0]]] || [string trim $line] == {}} continue
-						log_writeOutTv 0 "Found audio ouput driver [string trim [lindex $line 0]]"
+						log_writeOut ::log(tvAppend) 0 "Found audio ouput driver [string trim [lindex $line 0]]"
 						$w.mbAudio add radiobutton \
 						-label [string trim [lindex $line 0]] \
 						-variable choice(mbAudio)
@@ -115,7 +115,7 @@ proc option_screen_4 {} {
 												append alsa_hw $char
 											}
 										}
-										log_writeOutTv 0 "Found alsa hardware device $alsa_hw $device_name($i)"
+										log_writeOut ::log(tvAppend) 0 "Found alsa hardware device $alsa_hw $device_name($i)"
 										set device_ident($i) "$alsa_hw $device_name($i)"
 										$w.mbAudio add radiobutton \
 										-label "alsa $device_ident($i)" \
@@ -123,11 +123,11 @@ proc option_screen_4 {} {
 										unset -nocomplain alsa_hw
 									}
 								} else {
-									log_writeOutTv 2 "Can't detect alsa hardware devices"
-									log_writeOutTv 2 "Error message: $resultat_alsadev"
+									log_writeOut ::log(tvAppend) 2 "Can't detect alsa hardware devices"
+									log_writeOut ::log(tvAppend) 2 "Error message: $resultat_alsadev"
 								}
 							} else {
-								log_writeOutTv 2 "Can't detect alsa hardware devices. There is no file /proc/asound/pcm"
+								log_writeOut ::log(tvAppend) 2 "Can't detect alsa hardware devices. There is no file /proc/asound/pcm"
 							}
 						}
 					}
@@ -142,11 +142,11 @@ proc option_screen_4 {} {
 					}
 				}
 				if {$alsa_found == 0} {
-					log_writeOutTv 1 "MPlayer did not report back alsa as audio output driver."
+					log_writeOut ::log(tvAppend) 1 "MPlayer did not report back alsa as audio output driver."
 				}
 			} else {
 				$::window(audio_nb1).mb_lf_audio state disabled
-				log_writeOutTv 2 "MPlayer did not report audio ouput drivers. Deactivating menubutton."
+				log_writeOut ::log(tvAppend) 2 "MPlayer did not report audio ouput drivers. Deactivating menubutton."
 			}
 			
 			if {[info exists ::option(player_audio)]} {
@@ -210,7 +210,7 @@ audio to the chosen value"]
 		proc stnd_opt4 {w} {
 			#Setting defaults for audio section 
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt4 \033\[0m \{$w\}"
-			log_writeOutTv 1 "Setting audio options to default."
+			log_writeOut ::log(tvAppend) 1 "Setting audio options to default."
 			set lf_audioStnd $::window(audio_nb1).lf_audio_stnd
 			set lf_audioSync $::window(audio_nb1).lf_audio_sync
 			set ::choice(mbAudio) $::stnd_opt(player_audio)

@@ -31,7 +31,7 @@ proc command_socket {} {
 		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
-		fileevent $::data(comsocketRead) readable [list command_getData log_writeOutTv]
+		fileevent $::data(comsocketRead) readable [list command_getData "log_writeOut ::log(tvAppend)"]
 	}
 	if {"$::option(appname)" == "tv-viewer_scheduler"} {
 		set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
@@ -40,7 +40,7 @@ proc command_socket {} {
 		fconfigure $::data(comsocketRead) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
-		fileevent $::data(comsocketRead) readable [list command_getData scheduler_logWriteOut]
+		fileevent $::data(comsocketRead) readable [list command_getData "log_writeOut ::log(schedAppend))"]
 	}
 	if {"$::option(appname)" == "tv-viewer_lirc" || "$::option(appname)" == "tv-viewer_diag"} {
 		#~ set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
@@ -63,7 +63,7 @@ proc command_socket {} {
 		#~ fconfigure $::data(comsocketRead) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite) -blocking 0 -buffering line
 		fconfigure $::data(comsocketWrite2) -blocking 0 -buffering line
-		#~ fileevent $::data(comsocketRead) readable [list command_getData log_writeOutTv]
+		#~ fileevent $::data(comsocketRead) readable [list command_getData "log_writeOut ::log(tvAppend)"]
 	}
 	if {"$::option(appname)" == "tv-viewer_notifyd"} {
 		#~ set ::data(comsocketRead) [open "$::option(home)/tmp/ComSocketSched" r+]
@@ -120,11 +120,11 @@ proc command_WritePipe {handler com} {
 			return 0
 		} else {
 			if {"$::option(appname)" == "tv-viewer_main"} {
-				log_writeOutTv 2 "Can't access application command pipe."
+				log_writeOut ::log(tvAppend) 2 "Can't access application command pipe."
 				return 1
 			}
 			if {"$::option(appname)" == "tv-viewer_scheduler"} {
-				scheduler_logWriteOut 2 "Can't access application command pipe."
+				log_writeOut ::log(schedAppend) 2 "Can't access application command pipe."
 				return 1
 			}
 			puts "can't access application command pipe"

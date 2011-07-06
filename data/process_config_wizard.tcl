@@ -18,7 +18,7 @@
 
 proc process_config_wizardRead {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: process_config_wizardRead \033\[0m"
-	log_writeOutTv 0 "Reading configuration values for preferences dialog."
+	log_writeOut ::log(tvAppend) 0 "Reading configuration values for preferences dialog."
 	array set ::option {
 		language Autodetect
 		language_value 0
@@ -319,15 +319,15 @@ proc process_config_wizardRead {} {
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {
-				log_writeOutTv 2 "Config file line incorrect: $line"
+				log_writeOut ::log(tvAppend) 2 "Config file line incorrect: $line"
 			}
 		}
 		close $open_config_file
 	} else {
-		log_writeOutTv 1 "Could not locate a configuration file!"
-		log_writeOutTv 1 "Will use standard values."
+		log_writeOut ::log(tvAppend) 1 "Could not locate a configuration file!"
+		log_writeOut ::log(tvAppend) 1 "Will use standard values."
 		foreach {key elem} [array get ::options] {
-			log_writeOutTv 1 "$key $elem"
+			log_writeOut ::log(tvAppend) 1 "$key $elem"
 		}
 	}
 }

@@ -44,34 +44,30 @@ set option(appname) "tv-viewer_recext"
 
 set main(debug_msg) [open /dev/null a]
 
-source $option(root)/data/release_version.tcl
-source $option(root)/data/agrep.tcl
-source $option(root)/data/process_config.tcl
-source $option(root)/data/process_station_file.tcl
-source $option(root)/data/log_viewer.tcl
-source $option(root)/data/command_socket.tcl
-source $option(root)/data/monitor.tcl
+source $option(root)/data/init.tcl
+
+init_source "$option(root)/data" "release_version.tcl agrep.tcl process_config.tcl process_station_file.tcl log_viewer.tcl command_socket.tcl monitor.tcl"
 
 process_configRead
 
 if {[file exists "$::option(home)/log/tvviewer.log"]} {
 	if {$::option(log_files) == 1} {
-		set logf_tv_open_append [open $::option(home)/log/tvviewer.log a]
-		fconfigure $logf_tv_open_append -blocking no -buffering line
+		set log(tvAppend) [open $::option(home)/log/tvviewer.log a]
+		fconfigure $log(tvAppend) -blocking no -buffering line
 	} else {
-		set logf_tv_open_append [open /dev/null a]
-		fconfigure $logf_tv_open_append -blocking no -buffering line
+		set log(tvAppend) [open /dev/null a]
+		fconfigure $log(tvAppend) -blocking no -buffering line
 	}
 } else {
-	set logf_tv_open_append [open /dev/null a]
-	fconfigure $logf_tv_open_append -blocking no -buffering line
+	set log(tvAppend) [open /dev/null a]
+	fconfigure $log(tvAppend) -blocking no -buffering line
 }
 
-process_StationFile
+process_StationFile ::log(tvAppend)
 command_socket
 
 proc record_externalExit {logw logc returnm returnc} {
-	log_writeOutTv $logc "$logw"
+	log_writeOut ::log(tvAppend) $logc "$logw"
 	puts "$returnm"
 	exit $returnc
 }
@@ -351,8 +347,8 @@ proc record_externalAdd {} {
 	} else {
 		set start 1
 	}
-	log_writeOutTv 0 "Adding new recording:"
-	log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+	log_writeOut ::log(tvAppend) 0 "Adding new recording:"
+	log_writeOut ::log(tvAppend) 0 "$jobid $::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
 		set fh [open "$::option(home)/config/scheduled_recordings.conf" r]
 		while {[gets $fh line]!=-1} {
@@ -376,12 +372,16 @@ proc record_externalAdd {} {
 	}
 	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(time) ::record(date) ::record(sbRepeat) ::record(rbRepeat) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
 	if {$start} {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/scheduler.tcl" &}
+		if {$::option(tclkit) == 1} {
+			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+		} else {
+			catch {exec "$::option(root)/data/scheduler.tcl" &}
+		}
 	} else {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
-		log_writeOutTv 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
+		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
@@ -402,7 +402,7 @@ proc record_externalDelete {} {
 		while {[gets $sched_rec line]!=-1} {
 			if {[string trim $line] == {} || [string match #* $line]} continue
 			if {"[lindex $line 1] [lindex $line 2] [lindex $line 3]" == "$::record(lbcontent) $::record(time) $::record(date)"} {
-				log_writeOutTv 0 "Deleting recording $::record(lbcontent) $::record(time) $::record(date)"
+				log_writeOut ::log(tvAppend) 0 "Deleting recording $::record(lbcontent) $::record(time) $::record(date)"
 				set recmatch 1
 				continue
 			}
@@ -420,13 +420,17 @@ proc record_externalDelete {} {
 		record_externalExit "Config file for scheduled recordings is missing" 2 "Config file for scheduled recordings is missing" 1
 	}
 	if {$start == 0} {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/scheduler.tcl" &}
+		if {$::option(tclkit) == 1} {
+			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+		} else {
+			catch {exec "$::option(root)/data/scheduler.tcl" &}
+		}
 		return $recmatch
 	} else {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
-		log_writeOutTv 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
+		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"

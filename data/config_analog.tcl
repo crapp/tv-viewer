@@ -49,7 +49,7 @@ proc option_screen_1 {} {
 			}
 		}
 	} else {
-		log_writeOutTv 0 "Setting up analog section in preferences"
+		log_writeOut ::log(tvAppend) 0 "Setting up analog section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(analog_nb1) [ttk::frame $w.f_analog]
 		$w add $::window(analog_nb1) -text [mc "Analog Settings"] -padding 2
@@ -125,8 +125,8 @@ proc option_screen_1 {} {
 		#Additional Code
 		
 		if {[string trim [auto_execok ivtv-tune]] == {} || [string trim [auto_execok v4l2-ctl]] == {}} {
-			log_writeOutTv 2 "Could not detect either ivtv-tune or v4l2-ctl."
-			log_writeOutTv 2 "Please check the system requirements!"
+			log_writeOut ::log(tvAppend) 2 "Could not detect either ivtv-tune or v4l2-ctl."
+			log_writeOut ::log(tvAppend) 2 "Please check the system requirements!"
 			$w tab $::window(analog_nb1) -state disabled
 			$w tab $::window(analog_nb2) -state disabled
 			set ::window(analog_nb3) [ttk::frame $w.f_analog_error]
@@ -183,7 +183,7 @@ proc option_screen_1 {} {
 			.config_wizard.frame_buttons.b_default configure -command {}
 			.config_wizard.frame_buttons.button_save state disabled
 		} else {
-			log_writeOutTv 0 "Found ivtv-tune and v4l2-ctl, GOOD"
+			log_writeOut ::log(tvAppend) 0 "Found ivtv-tune and v4l2-ctl, GOOD"
 			bind $::window(analog_nb2).e_lf_videobitrate_value <Return> [list config_analog_setScaleVideobitrate $::window(analog_nb2)]
 			bind $::window(analog_nb2).e_lf_videobitrate_value <KP_Enter> [list config_analog_setScaleVideobitrate $::window(analog_nb2)]
 			bind $::window(analog_nb2).e_lf_videopeakbitrate_value <Return> [list config_analog_setScaleVideopeakbitrate $::window(analog_nb2)]
@@ -308,7 +308,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 			proc default_opt1 {w1 w2} {
 				#Find and set values for analog section 
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt1 \033\[0m \{$w1\} \{$w2\}"
-				log_writeOutTv 0 "Starting to collect data for analog section..."
+				log_writeOut ::log(tvAppend) 0 "Starting to collect data for analog section..."
 				catch {
 					$w1.mbVideo_device delete 0 end
 					$w1.mbFreqtable delete 0 end
@@ -320,7 +320,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					foreach node [split $query_dev_node] {
 						$w1.mbVideo_device add radiobutton -variable choice(mbVideo) -label "$node" -command [list default_com1 $w1 $w2]
 						set devnode($i) $node
-						log_writeOutTv 0 "Found device node: $devnode($i)"
+						log_writeOut ::log(tvAppend) 0 "Found device node: $devnode($i)"
 						incr i
 					}
 					set query_dev_node [lsort [glob -nocomplain /dev/*]]
@@ -359,7 +359,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 								-label "[string trimleft [string range $vi [string first : $vi] end] ": "]" \
 								-command [list config_analog_optScrInput [expr $i - 1]]
 								set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
-								log_writeOutTv 0 "Found video input: $vinput($i)"
+								log_writeOut ::log(tvAppend) 0 "Found video input: $vinput($i)"
 								incr i
 							}
 						} else {
@@ -376,8 +376,8 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					if {$::option(log_warnDialogue)} {
 						lappend ::config(errorMsg) [mc "No video device nodes"]
 					}
-					log_writeOutTv 2 "Couldn't detect any video device nodes."
-					log_writeOutTv 2 "Is your tv-card set up correctly?"
+					log_writeOut ::log(tvAppend) 2 "Couldn't detect any video device nodes."
+					log_writeOut ::log(tvAppend) 2 "Is your tv-card set up correctly?"
 					$w1.lf_video_device state disabled
 					$w1.lf_mb_video_device state disabled
 					$w1.l_lf_video_standard state disabled
@@ -405,7 +405,7 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 				}
 				catch {exec ivtv-tune -L} resultat_get_freqt
 				foreach freqtable [split [lrange $resultat_get_freqt 0 end-2]] {
-					log_writeOutTv 0 "Found frequency table: $freqtable"
+					log_writeOut ::log(tvAppend) 0 "Found frequency table: $freqtable"
 					$w1.mbFreqtable add radiobutton -variable choice(mbFreqtable) -label $freqtable
 				}
 				set ::choice(mbFreqtable) $::option(frequency_table)
@@ -415,12 +415,12 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 					set status_videobitrate [catch {agrep -w "$read_v4l2ctl" video_bitrate} resultat_videobitrate]
 					if {$status_videobitrate == 0} {
-						log_writeOutTv 0 "Will be able to handle videobitrate."
+						log_writeOut ::log(tvAppend) 0 "Will be able to handle videobitrate."
 						array set videobitrate [split [string trim $resultat_videobitrate] { =}]
 						$w2.s_lf_videobitrate configure -from $videobitrate(min) -to [expr ($videobitrate(max) / 8) / 1024]
 						set ::analog(vbit) $videobitrate(max)
 					} else {
-						log_writeOutTv 2 "Videobitrate can't be set for $::choice(mbVideo)."
+						log_writeOut ::log(tvAppend) 2 "Videobitrate can't be set for $::choice(mbVideo)."
 						$w2.cb_lf_streambitrate state !disabled
 						$w2.l_lf_videobitrate state disabled
 						$w2.s_lf_videobitrate state disabled
@@ -441,12 +441,12 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 					set status_peakbitrate [catch {agrep -w "$read_v4l2ctl" video_peak_bitrate} resultat_peakbitrate]
 					if {$status_peakbitrate == 0} {
-						log_writeOutTv 0 "Will be able to handle videobitrate_peak."
+						log_writeOut ::log(tvAppend) 0 "Will be able to handle videobitrate_peak."
 						array set peakbitrate [split [string trim $resultat_peakbitrate] { =}]
 						$w2.s_lf_videopeakbitrate configure -from $peakbitrate(min) -to [expr ($peakbitrate(max) / 8) / 1024]
 						set ::analog(vbitp) $peakbitrate(max)
 					} else {
-						log_writeOutTv 2 "Videobitrate_peak can't be set for $::choice(mbVideo)."
+						log_writeOut ::log(tvAppend) 2 "Videobitrate_peak can't be set for $::choice(mbVideo)."
 						$w2.cb_lf_streambitrate state disabled
 						$w2.l_lf_videobitrate state disabled
 						$w2.s_lf_videobitrate state disabled
@@ -467,11 +467,11 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 					set status_temporal [catch {agrep -w "$read_v4l2ctl" temporal_filter} resultat_temporal]
 					if {$status_temporal == 0} {
-						log_writeOutTv 0 "Will be able to handle temporal filter."
+						log_writeOut ::log(tvAppend) 0 "Will be able to handle temporal filter."
 						array set temporal [split [string trim $resultat_temporal] { =}]
 						$w2.sb_lf_temporal configure -from $temporal(min) -to $temporal(max)
 					} else {
-						log_writeOutTv 2 "Temporal Filter can't be set for $::choice(mbVideo)."
+						log_writeOut ::log(tvAppend) 2 "Temporal Filter can't be set for $::choice(mbVideo)."
 						$w2.cb_lf_temporal state disabled
 						$w2.l_lf_temporal state disabled
 						$w2.sb_lf_temporal configure -state disabled
@@ -486,12 +486,12 @@ while running a recording or timeshift"] -compound left -image $::icon_m(dialog-
 					catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 					set status_volume [catch {agrep -w "$read_v4l2ctl" volume} resultat_volume]
 					if {$status_volume == 0} {
-						log_writeOutTv 0 "Will be able to handle volume."
+						log_writeOut ::log(tvAppend) 0 "Will be able to handle volume."
 						array set volume [split [string trim $resultat_volume] { =}]
 						$w2.s_audio_v4l2 configure -from $volume(min) -to $volume(max)
 						set ::choice(scale_recordvolume_mult) [expr $volume(max) / 100]
 					} else {
-						log_writeOutTv 2 "Can't change volume for $::choice(mbVideo)."
+						log_writeOut ::log(tvAppend) 2 "Can't change volume for $::choice(mbVideo)."
 						$w2.cb_audio_v4l2 state disabled
 						$w2.l_audio_v4l2 state disabled
 						$w2.s_audio_v4l2 state disabled
@@ -562,7 +562,7 @@ to change this value."]
 			proc default_com1 {w1 w2} {
 				#Find and set values for analog section after changing device node.
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_com1 \033\[0m \{$w1\} \{$w2\}"
-				log_writeOutTv 1 "Changing video device node, need to reread some options."
+				log_writeOut ::log(tvAppend) 1 "Changing video device node, need to reread some options."
 				catch {
 					$w1.mbVideo_input delete 0 end
 				}
@@ -576,7 +576,7 @@ to change this value."]
 						-label "[string trimleft [string range $vi [string first : $vi] end] {: }]" \
 						-command [list config_analog_optScrInput [expr $i - 1]]
 						set vinput($i) "[string trimleft [string range $vi [string first : $vi] end] {: }]"
-						log_writeOutTv 0 "Found video input: $vinput($i)"
+						log_writeOut ::log(tvAppend) 0 "Found video input: $vinput($i)"
 						incr i
 					}
 					$w1.lf_video_input state !disabled
@@ -589,7 +589,7 @@ to change this value."]
 				catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 				set status_videobitrate [catch {agrep -w "$read_v4l2ctl" video_bitrate} resultat_videobitrate]
 				if {$status_videobitrate == 0} {
-					log_writeOutTv 0 "Will be able to handle videobitrate."
+					log_writeOut ::log(tvAppend) 0 "Will be able to handle videobitrate."
 					array set videobitrate [split [string trim $resultat_videobitrate] { =}]
 					$w2.s_lf_videobitrate configure -from $videobitrate(min) -to [expr ($videobitrate(max) / 8) / 1024]
 					set ::analog(vbit) $videobitrate(max)
@@ -603,7 +603,7 @@ to change this value."]
 						$w2.e_lf_videopeakbitrate_value state !disabled
 					}
 				} else {
-					log_writeOutTv 0 "Videobitrate can't be set for $::choice(mbVideo)."
+					log_writeOut ::log(tvAppend) 0 "Videobitrate can't be set for $::choice(mbVideo)."
 					$w2.cb_lf_streambitrate state disabled
 					$w2.l_lf_videobitrate state disabled
 					$w2.s_lf_videobitrate state disabled
@@ -617,7 +617,7 @@ to change this value."]
 				catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 				set status_peakbitrate [catch {agrep -w "$read_v4l2ctl" video_peak_bitrate} resultat_peakbitrate]
 				if {$status_peakbitrate == 0} {
-					log_writeOutTv 0 "Will be able to handle videobitrate_peak."
+					log_writeOut ::log(tvAppend) 0 "Will be able to handle videobitrate_peak."
 					array set peakbitrate [split [string trim $resultat_peakbitrate] { =}]
 					$w2.s_lf_videopeakbitrate configure -from $peakbitrate(min) -to [expr ($peakbitrate(max) / 8) / 1024]
 					set ::analog(vbitp) $peakbitrate(max)
@@ -631,7 +631,7 @@ to change this value."]
 						$w2.e_lf_videopeakbitrate_value state !disabled
 					}
 				} else {
-					log_writeOutTv 2 "Videobitrate_peak can't be set for $::choice(mbVideo)."
+					log_writeOut ::log(tvAppend) 2 "Videobitrate_peak can't be set for $::choice(mbVideo)."
 					$w2.cb_lf_streambitrate state disabled
 					$w2.l_lf_videobitrate state disabled
 					$w2.s_lf_videobitrate state disabled
@@ -645,7 +645,7 @@ to change this value."]
 				catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 				set status_temporal [catch {agrep -w "$read_v4l2ctl" temporal_filter} resultat_temporal]
 				if {$status_temporal == 0} {
-					log_writeOutTv 0 "Will be able to handle temporal filter."
+					log_writeOut ::log(tvAppend) 0 "Will be able to handle temporal filter."
 					array set temporal [split [string trim $resultat_temporal] { =}]
 					$w2.sb_lf_temporal configure -from $temporal(min) -to $temporal(max)
 					$w2.cb_lf_temporal state !disabled
@@ -654,7 +654,7 @@ to change this value."]
 						$w2.sb_lf_temporal configure -state normal
 					}
 				} else {
-					log_writeOutTv 2 "Temporal Filter can't be set for $::choice(mbVideo)."
+					log_writeOut ::log(tvAppend) 2 "Temporal Filter can't be set for $::choice(mbVideo)."
 					$w2.cb_lf_temporal state disabled
 					$w2.l_lf_temporal state disabled
 					$w2.sb_lf_temporal configure -state disabled
@@ -664,7 +664,7 @@ to change this value."]
 					catch {exec v4l2-ctl --device=$::choice(mbVideo) -l} read_v4l2ctl
 					set status_volume [catch {agrep -w "$read_v4l2ctl" volume} resultat_volume]
 					if {$status_volume == 0} {
-						log_writeOutTv 0 "Will be able to handle volume."
+						log_writeOut ::log(tvAppend) 0 "Will be able to handle volume."
 						array set volume [split [string trim $resultat_volume] { =}]
 						$w2.s_audio_v4l2 configure -from $volume(min) -to $volume(max)
 						set ::choice(scale_recordvolume_mult) [expr $volume(max) / 100]
@@ -675,7 +675,7 @@ to change this value."]
 							$w2.l_audio_v4l2_val state !disabled
 						}
 					} else {
-						log_writeOutTv 0 "Can't change volume for $::choice(mbVideo)."
+						log_writeOut ::log(tvAppend) 0 "Can't change volume for $::choice(mbVideo)."
 						$w2.cb_audio_v4l2 state disabled
 						$w2.l_audio_v4l2 state disabled
 						$w2.s_audio_v4l2 state disabled
@@ -692,7 +692,7 @@ to change this value."]
 				catch {
 					$w1.mbVideo_input delete 0 end
 				}
-				log_writeOutTv 0 "Setting analog options to default."
+				log_writeOut ::log(tvAppend) 0 "Setting analog options to default."
 				catch {set ::choice(mbVideo) [$w1.mbVideo_device entrycget 0 -label]}
 				set ::choice(mbFreqtable) $::stnd_opt(frequency_table)
 				set ::choice(mbVideo_standard) $::stnd_opt(video_standard)

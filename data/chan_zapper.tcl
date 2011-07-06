@@ -24,7 +24,7 @@ proc chan_zapperNext {tree} {
 			set calculation [expr {($i == $::station(max)) ? 1 : ($i + 1)}]
 			set ::station(last) "\{$::kanalid($calculation)\} $::kanalcall($calculation) $calculation"
 			set ::station(old) "\{$::kanalid($i)\} $::kanalcall($i) $i"
-			log_writeOutTv 0 "Station next $::kanalid($calculation)."
+			log_writeOut ::log(tvAppend) 0 "Station next $::kanalid($calculation)."
 			bind $tree <<TreeviewSelect>> {}
 			$tree selection set $::kanalitemID([lindex $::station(last) 2])
 			$tree see [$tree selection]
@@ -43,7 +43,7 @@ proc chan_zapperPrior {tree} {
 			set calculation [expr {($i == 1) ? $::station(max) : ($i - 1)}]
 			set ::station(last) "\{$::kanalid($calculation)\} $::kanalcall($calculation) $calculation"
 			set ::station(old) "\{$::kanalid($i)\} $::kanalcall($i) $i"
-			log_writeOutTv 0 "Station prior $::kanalid($calculation)."
+			log_writeOut ::log(tvAppend) 0 "Station prior $::kanalid($calculation)."
 			bind $tree <<TreeviewSelect>> {}
 			$tree selection set $::kanalitemID([lindex $::station(last) 2])
 			$tree see [$tree selection]
@@ -66,7 +66,7 @@ proc chan_zapperTree {tree} {
 		set get_tree_item [$tree item [$tree selection] -values]
 		set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 		set ::station(last) "\{[lindex $get_tree_item 0]\} $::kanalcall([lindex $get_tree_item 1]) [lindex $get_tree_item 1]"
-		log_writeOutTv 0 "Station treeview has been used to tune $::kanalid([lindex $::station(last) 2])."
+		log_writeOut ::log(tvAppend) 0 "Station treeview has been used to tune $::kanalid([lindex $::station(last) 2])."
 		chan_zapperInputStart $tree last
 	}
 }
@@ -76,7 +76,7 @@ proc chan_zapperJump {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperJump \033\[0m \{$tree\}"
 	if {$::chan(old_channel) == 0} {
 		set ::chan(old_channel) 1
-		log_writeOutTv 0 "Jumping to station $::kanalid([lindex $::station(old) 2])."
+		log_writeOut ::log(tvAppend) 0 "Jumping to station $::kanalid([lindex $::station(old) 2])."
 		bind $tree <<TreeviewSelect>> {}
 		$tree selection set $::kanalitemID([lindex $::station(old) 2])
 		$tree see [$tree selection]
@@ -84,7 +84,7 @@ proc chan_zapperJump {tree} {
 		chan_zapperInputStart $tree old
 	} else {
 		set ::chan(old_channel) 0
-		log_writeOutTv 0 "Jumping to station $::kanalid([lindex $::station(last) 2])."
+		log_writeOut ::log(tvAppend) 0 "Jumping to station $::kanalid([lindex $::station(last) 2])."
 		bind $tree <<TreeviewSelect>> {}
 		$tree selection set $::kanalitemID([lindex $::station(last) 2])
 		$tree see [$tree selection]
@@ -127,12 +127,12 @@ proc chan_zapperStationNr {tree number} {
 		unset -nocomplain ::chan(change_key)
 	}
 	if {$number < 1 || $number > $::station(max)} {
-		log_writeOutTv 1 "Selected station $number out of range."
+		log_writeOut ::log(tvAppend) 1 "Selected station $number out of range."
 		return
 	}
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 	set ::station(last) "\{$::kanalid($number)\} $::kanalcall($number) $number"
-	log_writeOutTv 0 "Keycode, tuning station $::kanalid($number)."
+	log_writeOut ::log(tvAppend) 0 "Keycode, tuning station $::kanalid($number)."
 	bind $tree <<TreeviewSelect>> {}
 	$tree selection set $::kanalitemID([lindex $::station(last) 2])
 	$tree see [$tree selection]
@@ -177,8 +177,8 @@ proc chan_zapperInput {com direct} {
 				return
 			}
 		} else {
-			log_writeOutTv 2 "Can not retrieve video inputs."
-			log_writeOutTv 2 "Error message: $resultat_list_input"
+			log_writeOut ::log(tvAppend) 2 "Can not retrieve video inputs."
+			log_writeOut ::log(tvAppend) 2 "Error message: $resultat_list_input"
 		}
 	} else {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -186,11 +186,11 @@ proc chan_zapperInput {com direct} {
 		if {$status_grep_input == 0} {
 			if {[lindex $resultat_grep_input 3] != $::option(video_input)} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$::option(video_input)} resultat
-				log_writeOutTv 0 "Change video input to $::option(video_input)"
+				log_writeOut ::log(tvAppend) 0 "Change video input to $::option(video_input)"
 			}
 		} else {
-			log_writeOutTv 2 "Can not change video input."
-			log_writeOutTv 2 "Error message: $resultat_grep_input"
+			log_writeOut ::log(tvAppend) 2 "Can not change video input."
+			log_writeOut ::log(tvAppend) 2 "Error message: $resultat_grep_input"
 		}
 	}
 }
@@ -210,16 +210,16 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 		return
 	}
 	if {$secs == 3000} {
-		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
-		log_writeOutTv 2 "This didn't work, BAD."
+		log_writeOut ::log(tvAppend) 2 "Waited 3 seconds to change video input to $input."
+		log_writeOut ::log(tvAppend) 2 "This didn't work, BAD."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Timeout for changing video input"]
 		}
 		return
 	}
 	if {[file exists $::option(video_device)] == 0} {
-		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
-		log_writeOutTv 2 "Have a look into the preferences and change it."
+		log_writeOut ::log(tvAppend) 2 "The Video Device $::option(video_device) does not exist."
+		log_writeOut ::log(tvAppend) 2 "Have a look into the preferences and change it."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
 		}
@@ -235,7 +235,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 		set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
 		if {$status_grep_input == 0} {
 			if {$input == [lindex $resultat_grep_input 3]} {
-				log_writeOutTv 0 "Changed video input to $input."
+				log_writeOut ::log(tvAppend) 0 "Changed video input to $input."
 				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [list vid_osd osd_group_w 1000 [string trim [string range $resultat_grep_input [string first \( $resultat_grep_input] end] ()]]
 				}
@@ -278,8 +278,8 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 				set ::chan(change_inputLoop_id) [after 100 [list chan_zapperInputLoop [expr $secs + 100] $input $freq $snumber $restart $aftmsg]]
 			}
 		} else {
-			log_writeOutTv 2 "Can not change video input to $input."
-			log_writeOutTv 2 "$resultat_grep_input."
+			log_writeOut ::log(tvAppend) 2 "Can not change video input to $input."
+			log_writeOut ::log(tvAppend) 2 "$resultat_grep_input."
 			return
 		}
 	}
@@ -298,16 +298,16 @@ proc chan_zapperInputQuery {secs input restart} {
 		return
 	}
 	if {$secs == 3000} {
-		log_writeOutTv 2 "Waited 3 seconds to change video input to $input."
-		log_writeOutTv 2 "This didn't work, BAD."
+		log_writeOut ::log(tvAppend) 2 "Waited 3 seconds to change video input to $input."
+		log_writeOut ::log(tvAppend) 2 "This didn't work, BAD."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Timeout for changing video input"]
 		}
 		return
 	}
 	if {[file exists $::option(video_device)] == 0} {
-		log_writeOutTv 2 "The Video Device $::option(video_device) does not exist."
-		log_writeOutTv 2 "Have a look into the preferences and change it."
+		log_writeOut ::log(tvAppend) 2 "The Video Device $::option(video_device) does not exist."
+		log_writeOut ::log(tvAppend) 2 "Have a look into the preferences and change it."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
 		}
@@ -319,7 +319,7 @@ proc chan_zapperInputQuery {secs input restart} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$input}
 			set ::data(after_id_input) [after 100 "chan_zapperInputQuery [expr $secs + 100] $input $restart"]
 		} else {
-			log_writeOutTv 0 "Changed video input to $input"
+			log_writeOut ::log(tvAppend) 0 "Changed video input to $input"
 			if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 				after 0 [list vid_osd osd_group_w 1000 [string trim [string range $check_back_input [string first \( $check_back_input] end] ()]]
 			}
@@ -370,6 +370,6 @@ proc chan_zapperInputStart {tree lasts} {
 		puts -nonewline $last_channel_write "\{[lindex $::station($lasts) 0]\} [lindex $::station($lasts) 1] [lindex $::station($lasts) 2]"
 		close $last_channel_write
 	} else {
-		log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
+		log_writeOut ::log(tvAppend) 2 "Can not read video inputs. Changing stations not possible."
 	}
 }

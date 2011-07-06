@@ -58,7 +58,11 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 		
 		vid_playbackStop 0 pic
 		
-		catch {exec "$::option(root)/data/diag_runtime.tcl" &} diag_pid
+		if {$::option(tclkit) == 1} {
+			catch {exec $::option(tclkit_path) $::option(root)/data/diag_runtime.tcl &} diag_pid
+		} else {
+			catch {exec "$::option(root)/data/diag_runtime.tcl" &} diag_pid
+		}
 		set ::diag(wait_id) [after 500 [list diag_checkRunning $diag_pid 0]]
 	}
 }
@@ -95,7 +99,7 @@ proc diag_RunFinished {handler} {
 		.top_diagnostic.f_main.pgb_diagnostic configure -mode determinate
 		.top_diagnostic.f_main.pgb_diagnostic configure -value 100
 		if {$handler == 0} {
-			log_writeOutTv 0 "Diagnostic routine finished"
+			log_writeOut ::log(tvAppend) 0 "Diagnostic routine finished"
 			.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine finished"]
 			
 			.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
@@ -108,7 +112,7 @@ $::env(HOME)/tv-viewer_diag.out" hyper_file
 			.top_diagnostic.f_main.t_diagtext insert end [mc "and attach the generated file."]
 			.top_diagnostic.f_main.t_diagtext configure -state disabled
 		} else {
-			log_writeOutTv 2 "Diagnostic routine crashed"
+			log_writeOut ::log(tvAppend) 2 "Diagnostic routine crashed"
 			.top_diagnostic.f_main.l_diagnostic_msg configure -text [mc "Diagnostic Routine crashed"] -image $::icon_m(dialog-warning)
 			.top_diagnostic.f_main.t_diagtext insert end [mc "Generated file:"]
 			.top_diagnostic.f_main.t_diagtext insert end "\n

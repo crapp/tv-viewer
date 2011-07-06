@@ -21,7 +21,7 @@ proc vid_callbackVidData {} {
 		gets $::data(mplayer) line
 		if {[eof $::data(mplayer)]} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0;1;31mEnd of file\033\[0m"
-			log_writeOutTv 1 "MPlayer reported end of file. Playback has stopped."
+			log_writeOut ::log(tvAppend) 1 "MPlayer reported end of file. Playback has stopped."
 			fconfigure $::data(mplayer) -blocking 1
 			set mpid [pid $::data(mplayer)]
 			catch {close $::data(mplayer)}
@@ -36,11 +36,11 @@ proc vid_callbackVidData {} {
 				}
 			}
 			if {$mplmatch == 1 && $mplcode == 1} {
-				log_writeOutTv 2 "MPlayer crashed, see videoplayer logfile for details."
-				log_writeOutMpl 2 "MPlayer crashed"
+				log_writeOut ::log(tvAppend) 2 "MPlayer crashed, see videoplayer logfile for details."
+				log_writeOut ::log(mplAppend) 2 "MPlayer crashed"
 				foreach line [split $::errorInfo \n] {
 					if {[string match "*while executing*" $line]} break
-					log_writeOutMpl 2 "$line"
+					log_writeOut ::log(mplAppend) 2 "$line"
 				}
 				if {$::option(log_warnDialogue)} {
 					status_feedbWarn 2 [mc "MPlayer has finished unexpectedly"]
@@ -89,7 +89,7 @@ proc vid_callbackVidData {} {
 			set ::vid(pbStatus) 0
 		} else {
 			if {[string match "A:*V:*A-V:*" $line] != 1} {
-				log_writeOutMpl 0 "$line"
+				log_writeOut ::log(mplAppend) 0 "$line"
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_callbackVidData \033\[0m \{$line\}"
 			} else {
 				if {$::vid(pbStatus) == 0} {
@@ -115,7 +115,7 @@ proc vid_callbackVidData {} {
 							place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
 						}
 					} else {
-						log_writeOutTv 1 "Warning container frame not managed with place. Report this incident."
+						log_writeOut ::log(tvAppend) 1 "Warning container frame not managed with place. Report this incident."
 					}
 					if {$::data(panscanAuto) == 1} {
 						set ::vid(id_panscanAuto) [after 500 {
@@ -128,7 +128,7 @@ proc vid_callbackVidData {} {
 							if {[string trim [place info .fvidBg.cont]] != {}} {
 								place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
 							} else {
-								log_writeOutTv 1 "Warning container frame not managed with place. Report this incident."
+								log_writeOut ::log(tvAppend) 1 "Warning container frame not managed with place. Report this incident."
 							}
 						}
 					}
@@ -156,7 +156,7 @@ proc vid_callbackVidData {} {
 				}
 			}
 			if {[regexp {^VO:.*=> *([^ ]+)} $line => resolution] == 1} {
-				log_writeOutTv 0 "MPlayer reported video resolution $resolution."
+				log_writeOut ::log(tvAppend) 0 "MPlayer reported video resolution $resolution."
 				if {$::option(player_aspect) == 1} {
 					foreach {resolx resoly} [split $resolution x] {
 						set ::option(resolx) $resolx
@@ -165,11 +165,11 @@ proc vid_callbackVidData {} {
 					bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 				} else {
 					bind .fvidBg.cont <Configure> {}
-					log_writeOutTv 1 "Video aspect not managed by TV-Viewer."
+					log_writeOut ::log(tvAppend) 1 "Video aspect not managed by TV-Viewer."
 				}
 			}
 			if {[string match -nocase "ID_LENGTH=*" $line]} {
-				log_writeOutTv 0 "This is a recording, starting to calculate file size and position."
+				log_writeOut ::log(tvAppend) 0 "This is a recording, starting to calculate file size and position."
 				set status_time [monitor_partRunning 4]
 				set status_record [monitor_partRunning 3]
 				if {[lindex $status_record 0] == 1 || [lindex $status_time 0] == 1} {
@@ -208,8 +208,8 @@ proc vid_callbackVidData {} {
 			set ::data(report) $line
 		}
 	} else {
-		log_writeOutTv 2 "Tried to read channel ::data(mplayer)."
-		log_writeOutTv 2 "Socket seems to be broken, you should report this incident"
+		log_writeOut ::log(tvAppend) 2 "Tried to read channel ::data(mplayer)."
+		log_writeOut ::log(tvAppend) 2 "Socket seems to be broken, you should report this incident"
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Can not read callback channel"]
 		}
@@ -220,13 +220,13 @@ proc vid_callbackMplayerRemote {command} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_callbackMplayerRemote \033\[0m \{$command\}"
 	if {[info exists ::data(mplayer)] == 0} {return 1}
 	if {[string trim $::data(mplayer)] != {}} {
-		log_writeOutTv 0 "Sending command $command to MPlayer remote channel."
+		log_writeOut ::log(tvAppend) 0 "Sending command $command to MPlayer remote channel."
 		catch {puts -nonewline $::data(mplayer) "$command \n"}
 		flush $::data(mplayer)
 		# Mplayer is running
 		return 0
 	} else {
-		log_writeOutTv 2 "Can't access mplayer command pipe."
+		log_writeOut ::log(tvAppend) 2 "Can't access mplayer command pipe."
 		# Mplayer is not running
 		return 1
 	}

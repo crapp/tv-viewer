@@ -20,7 +20,7 @@ proc key_sequences {} {
 	#Building key sequences frontend
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequences \033\[0m"
 	if {[winfo exists .key] == 0} {
-		log_writeOutTv 0 "Launching key sequences screen..."
+		log_writeOut ::log(tvAppend) 0 "Launching key sequences screen..."
 		
 		set w [toplevel .key]
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -275,8 +275,8 @@ proc key_sequencesApply {top tree} {
 		}
 		unset -nocomplain childSeq childSeqKP
 	}
-	log_writeOutTv 0 "Writing new shortcuts to"
-	log_writeOutTv 0 "$::option(home)/config/key-sequences.conf"
+	log_writeOut ::log(tvAppend) 0 "Writing new shortcuts to"
+	log_writeOut ::log(tvAppend) 0 "$::option(home)/config/key-sequences.conf"
 	close $keyf
 	destroy .key
 	process_KeyFile 1
@@ -404,11 +404,11 @@ proc key_sequencesEdit {tree} {
 	#Edit dialog to change key sequence
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: key_sequencesEdit \033\[0m"
 	if {[winfo exists $tree.w_keyEdit]} {
-		log_writeOutTv 0 "Edit dialog for shortcuts already open"
+		log_writeOut ::log(tvAppend) 0 "Edit dialog for shortcuts already open"
 		return
 	}
 	if {[llength [$tree selection]] == 0} {
-		log_writeOutTv 0 "No item selected to edit the shortcut"
+		log_writeOut ::log(tvAppend) 0 "No item selected to edit the shortcut"
 		return
 	}
 	if {[llength [$tree item [$tree selection] -tags]] > 1} {
@@ -451,7 +451,7 @@ proc key_sequencesEdit {tree} {
 	set ::key(sequenceDone) 0
 	set ::key(entrySequence) [lindex [$tree item [$tree selection] -values] end]
 	if {"$tag" == "noedit"} {
-		log_writeOutTv 1 "Key sequence \"[lindex [$tree item [$tree selection] -values] 0]\" can not be edited"
+		log_writeOut ::log(tvAppend) 1 "Key sequence \"[lindex [$tree item [$tree selection] -values] 0]\" can not be edited"
 		$f.b_KeyApply state disabled
 		$f.b_KeyClear state disabled
 		$f.e_Key state disabled
@@ -469,7 +469,7 @@ proc key_sequencesProcess {key} {
 	set noKey {Num_Lock Print Scroll_Lock Pause Menu ISO_Level3_Shift Tab Caps_Lock ?? Meta_L Meta_R}
 	foreach k $noKey {
 		if {"$k" == "$key"} {
-			log_writeOutTv 1 "It is not possible to use $key for a shortcut"
+			log_writeOut ::log(tvAppend) 1 "It is not possible to use $key for a shortcut"
 			return
 		}
 	}
@@ -538,7 +538,7 @@ proc key_sequencesProcess {key} {
 		}
 	}
 	if {$goOn == 0} {
-		log_writeOutTv 1 "It is only allowed to use several modifier keys"
+		log_writeOut ::log(tvAppend) 1 "It is only allowed to use several modifier keys"
 		if {$::key(sequenceDone)} {
 			set ::key(sequenceList) ""
 			set ::key(sequenceDone) 0
@@ -573,21 +573,21 @@ proc key_sequencesEditApply {tree lbl} {
 	foreach child [$tree children {}] {
 		if {[string trim $::key(entrySequence)] != {} && [string is integer "$::key(entrySequence)"]} {
 			$lbl configure -text [mc "Conflict detected with station by number \"0-9\""] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 1 "Conflict detected with station by number \[0-9\]"
+			log_writeOut ::log(tvAppend) 1 "Conflict detected with station by number \[0-9\]"
 			set end 1
 			break
 		}
 		if {"[lindex [$tree item $child -values] 1]" == "$::key(entrySequence)" && "[$tree selection]" != "$child" && [string trim $::key(entrySequence)] != {}} {
 			set conflictKey "[lindex [$tree item $child -values] 0]"
 			$lbl configure -text [mc "Conflict detected with %" $conflictKey] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 1 "Conflict detected with $conflictKey"
+			log_writeOut ::log(tvAppend) 1 "Conflict detected with $conflictKey"
 			set end 1
 			break
 		}
 	}
 	if {$end} return
 	$tree item [$tree selection] -values "[lrange [$tree item [$tree selection] -values] 0 end-1] [string trim $::key(entrySequence)]"
-	log_writeOutTv 0 "Changing key sequence for \"[lindex [$tree item [$tree selection] -values] 0]\" to \"[string trim $::key(entrySequence)]\""
+	log_writeOut ::log(tvAppend) 0 "Changing key sequence for \"[lindex [$tree item [$tree selection] -values] 0]\" to \"[string trim $::key(entrySequence)]\""
 	vid_wmCursor 1
 	grab release $tree.w_keyEdit
 	destroy $tree.w_keyEdit

@@ -19,7 +19,7 @@
 proc station_searchUi {tree} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_searchUi \033\[0m \{$tree\}"
 	if {[winfo exists .station.top_searchUi]} return
-	log_writeOutTv 0 "Building station search gui."
+	log_writeOut ::log(tvAppend) 0 "Building station search gui."
 	set wtop [toplevel .station.top_searchUi]
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
 	set mf [ttk::frame $wtop.f_main]
@@ -83,7 +83,7 @@ proc station_searchUi {tree} {
 			incr i
 		}
 	} else {
-		log_writeOutTv 2 "Can't find any video inputs on device node $::option(video_device), please check the preferences (analog section)."
+		log_writeOut ::log(tvAppend) 2 "Can't find any video inputs on device node $::option(video_device), please check the preferences (analog section)."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Can't find any video inputs"]
 		}
@@ -160,7 +160,7 @@ proc station_searchRequires {tree} {
 	if {$status_vid_Playback != 1} {
 		vid_playbackStop 0 pic
 	}
-	log_writeOutTv 0 "Launching station search."
+	log_writeOut ::log(tvAppend) 0 "Launching station search."
 	set wtop [toplevel .station.top_search]
 	
 	place [ttk::frame $wtop.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -216,7 +216,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 					set pgb_incr [expr 100.0 / $max_channels]
 					catch {exec ivtv-tune --device=$::option(video_device) --freqtable=$::option(frequency_table) --channel=$::searchchannel(1)}
 					after 700 [list station_search $max_channels $counter 0 0 $pgb_incr $tree]
-					log_writeOutTv 0 "Now entering station search progress loop."
+					log_writeOut ::log(tvAppend) 0 "Now entering station search progress loop."
 					return
 				} else {
 					catch {exec v4l2-ctl --device=$::option(video_device) --all} resultat_get_freqrange
@@ -226,14 +226,14 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 							set search_range_max [expr int([lindex [string trim $line] 6])]
 							set pgb_incr [expr (100.0 / ($search_range_max - $search_range_min))]
 							if {[string is digit $search_range_min] == 0 || [string is digit $search_range_max] == 0} {
-								log_writeOutTv 2 "Fatal, could not read frequency range."
-								log_writeOutTv 2 "$line"
+								log_writeOut ::log(tvAppend) 2 "Fatal, could not read frequency range."
+								log_writeOut ::log(tvAppend) 2 "$line"
 								return
 							}
 							set search_range_min "$search_range_min.250"
 							catch {exec v4l2-ctl --device=$::option(video_device)  --set-freq=$search_range_min}
 							after 700 [list station_search 0 0 $search_range_min $search_range_max $pgb_incr $tree]
-							log_writeOutTv 0 "Now entering station search progress loop."
+							log_writeOut ::log(tvAppend) 0 "Now entering station search progress loop."
 							return
 						}
 					}
@@ -243,7 +243,7 @@ Please wait..."] -compound left -image $::icon_m(dialog-information)
 				after 1000 [list station_searchLoopInput $counter $tree $::search(mbVinput_nr)]
 			}
 		} else {
-			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
+			log_writeOut ::log(tvAppend) 2 "Can not read video inputs. Changing stations not possible."
 		}
 	}
 	
@@ -284,9 +284,9 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 					set trimmed_resultat_dict [string trim $resultat_dict]
 					$tree insert {} end -values [list Station($::searchchannel($counter)) $trimmed_resultat_dict $::search(mbVinput_nr) 0]
 					$tree see [lindex [$tree children {}] end]
-					log_writeOutTv 0 "Signal detected on $trimmed_resultat_dict MHz."
+					log_writeOut ::log(tvAppend) 0 "Signal detected on $trimmed_resultat_dict MHz."
 				} else {
-					log_writeOutTv 2 "Fatal, could not find Frequency for $::searchchannel($counter)."
+					log_writeOut ::log(tvAppend) 2 "Fatal, could not find Frequency for $::searchchannel($counter)."
 				}
 			}
 			incr counter
@@ -324,7 +324,7 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 				}
 				$tree insert {} end -values [list Station($freq) $freq $::search(mbVinput_nr) 0]
 				$tree see [lindex [$tree children {}] end]
-				log_writeOutTv 0 "Signal detected on $freq MHz."
+				log_writeOut ::log(tvAppend) 0 "Signal detected on $freq MHz."
 			}
 			set freq [expr $freq + $::search(mbFull_dist)]
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$freq}

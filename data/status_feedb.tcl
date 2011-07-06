@@ -59,7 +59,7 @@ proc status_feedbWarn {handler msg} {
 		vid_wmCursor 0
 		
 		set ::status_feedbWarnMessages [dict create msg1 "$msg"]
-		log_writeOutTv 0 "Creating error dialogue"
+		log_writeOut ::log(tvAppend) 0 "Creating error dialogue"
 	} else {
 		if {[dict size $::status_feedbWarnMessages] == 1} {
 			dict set ::status_feedbWarnMessages msg2 "$msg"
@@ -87,12 +87,12 @@ proc status_feedbWarnDel {labelw} {
 	if {[dict size $::status_feedbWarnMessages] == 1} {
 		destroy .fvidBg.f_feedbwarn
 		unset -nocomplain ::status_feedbAfterID ::status_feedbWarnMessages
-		log_writeOutTv 1 "A message has been removed from error dialogue without user interaction"
+		log_writeOut ::log(tvAppend) 1 "A message has been removed from error dialogue without user interaction"
 	} else {
 		dict set ::status_feedbWarnMessages msg1 "[dict get $::status_feedbWarnMessages msg2]"
 		set ::status_feedbWarnMessages [dict remove $::status_feedbWarnMessages msg2]
 		$labelw configure -text "[dict get $::status_feedbWarnMessages msg1]"
-		log_writeOutTv 1 "A message has been removed from error dialogue without user interaction"
+		log_writeOut ::log(tvAppend) 1 "A message has been removed from error dialogue without user interaction"
 		focus -force .fvidBg.f_feedbwarn.f_warnBut.b_warnOk
 	}
 }

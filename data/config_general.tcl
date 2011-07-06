@@ -30,7 +30,7 @@ proc option_screen_0 {} {
 		.config_wizard.frame_configoptions.nb select $::window(general_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt0 $::window(general_nb1)]
 	} else {
-		log_writeOutTv 0 "Setting up general section in preferences"
+		log_writeOut ::log(tvAppend) 0 "Setting up general section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(general_nb1) [ttk::frame $w.f_general]
 		$w add $::window(general_nb1) -text [mc "General Settings"] -padding 2
@@ -89,7 +89,7 @@ proc option_screen_0 {} {
 					}
 				}
 			} else {
-				log_writeOutTv 2 "Ca not read file containing language codes. Only autodetect will be available"
+				log_writeOut ::log(tvAppend) 2 "Ca not read file containing language codes. Only autodetect will be available"
 			}
 		}
 		
@@ -129,11 +129,11 @@ proc option_screen_0 {} {
 			if {[string trim $::choice(entry_epg)] == {}} {
 				set ::choice(entry_epg) [subst $::stnd_opt(epg_command)]
 			}
-			log_writeOutTv 0 "Chosen epg program $::choice(entry_epg)"
+			log_writeOut ::log(tvAppend) 0 "Chosen epg program $::choice(entry_epg)"
 		}
 		proc default_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt0 \033\[0m \{$w\}"
-			log_writeOutTv 0 "Starting to collect data for general section."
+			log_writeOut ::log(tvAppend) 0 "Starting to collect data for general section."
 			menu $::window(general_nb1).mbLanguage -tearoff 0
 			config_generalLangs $::window(general_nb1).mbLanguage
 			config_generalLangsVars 0
@@ -164,7 +164,7 @@ The Newsreader will check for news about TV-Viewer."]
 		}
 		proc stnd_opt0 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt0 \033\[0m \{$w\}"
-			log_writeOutTv 1 "Setting general options to default."
+			log_writeOut ::log(tvAppend) 1 "Setting general options to default."
 			config_generalLangsVars 1
 			msgcat::mclocale $::env(LANG); catch {msgcat::mcload $::option(root)/msgs}
 			set ::choice(checkbutton_starttv) $::stnd_opt(starttv_startup)

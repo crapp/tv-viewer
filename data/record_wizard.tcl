@@ -30,7 +30,7 @@ proc record_wizardExecScheduler {sbutton slable com} {
 		}
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
-			log_writeOutTv 1 "Scheduler is running, will stop it."
+			log_writeOut ::log(tvAppend) 1 "Scheduler is running, will stop it."
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_exit"
 		}
 		after 2000 {catch {exec ""}}
@@ -39,9 +39,13 @@ proc record_wizardExecScheduler {sbutton slable com} {
 		if {[winfo exists $sbutton]} {
 			$sbutton configure -command {}
 		}
-		log_writeOutTv 0 "Starting Scheduler..."
+		log_writeOut ::log(tvAppend) 0 "Starting Scheduler..."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/scheduler.tcl" &}
+		if {$::option(tclkit) == 1} {
+			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+		} else {
+			catch {exec "$::option(root)/data/scheduler.tcl" &}
+		}
 	}
 }
 
@@ -70,7 +74,7 @@ proc record_wizardUiMenu {tree x y} {
 		$tree.mCont add command -label [mc "Delete"] -command [list record_add_editDelete $tree] -image $::icon_men(item-remove) -compound left
 		$tree.mCont add command -label [mc "Edit"] -command [list record_add_edit $tree 1] -image $::icon_men(seditor) -compound left
 	}
-	log_writeOutTv 0 "Pop up context for record wizard"
+	log_writeOut ::log(tvAppend) 0 "Pop up context for record wizard"
 	if {[string trim [$tree selection]] == {}} {
 		$tree.mCont entryconfigure 1 -state disabled
 		$tree.mCont entryconfigure 2 -state disabled
@@ -84,7 +88,7 @@ proc record_wizardUiMenu {tree x y} {
 proc record_wizardUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_wizardUi \033\[0m"
 	if {[winfo exists .record_wizard] == 0} {
-		log_writeOutTv 0 "Starting Record Wizard."
+		log_writeOut ::log(tvAppend) 0 "Starting Record Wizard."
 		
 		if {[wm attributes . -fullscreen] == 1} {
 			event generate . <<wmFull>>
@@ -258,18 +262,18 @@ proc record_wizardUi {} {
 					$statf.l_rec_current_end configure -text [mc "Ends
 % at %" $edate $etime]
 					$statf.lf_status.f_btn.b_rec_current state !disabled
-					log_writeOutTv 0 "Found an active recording (PID [lindex $status_record 1])."
+					log_writeOut ::log(tvAppend) 0 "Found an active recording (PID [lindex $status_record 1])."
 				}
 				close $f_open
 			} else {
-				log_writeOutTv 2 "Although there is an active recording, no current_rec.conf in config path."
-				log_writeOutTv 2 "You may want to report this incident."
+				log_writeOut ::log(tvAppend) 2 "Although there is an active recording, no current_rec.conf in config path."
+				log_writeOut ::log(tvAppend) 2 "You may want to report this incident."
 				if {$::option(log_warnDialogue)} {
 					status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 				}
 			}
 		} else {
-			log_writeOutTv 0 "No active recording."
+			log_writeOut ::log(tvAppend) 0 "No active recording."
 			$statf.l_rec_current_station configure -text [mc "Idle"]
 			$statf.l_rec_current_start configure -text ""
 			$statf.l_rec_current_end configure -text ""
@@ -278,10 +282,10 @@ proc record_wizardUi {} {
 		catch {exec ""}
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
-			log_writeOutTv 0 "Scheduler is running (PID [lindex $status 1])."
+			log_writeOut ::log(tvAppend) 0 "Scheduler is running (PID [lindex $status 1])."
 			record_wizardExecSchedulerCback 0
 		} else {
-			log_writeOutTv 0 "Scheduler is not running."
+			log_writeOut ::log(tvAppend) 0 "Scheduler is not running."
 			record_wizardExecSchedulerCback 1
 		}
 		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {

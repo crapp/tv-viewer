@@ -37,20 +37,10 @@ after 200
 set dwhere_is "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set dwhere_is_home "$::env(HOME)"
 
-set droot_test "/usr/bin/tv-viewer.tst"
-set droot_test_open [catch {open $droot_test w}]
-catch {close $droot_test_open}
-if {[file exists "/usr/bin/tv-viewer.tst"]} {
-	file delete -force "/usr/bin/tv-viewer.tst"
-	if { "$::tcl_platform(user)" == "root" } {
-		puts "
-You are running tv-viewer as root.
-This is not recommended!"
-		exit 1
-	}
-}
+source $dwhere_is/init.tcl
 
-source $dwhere_is/release_version.tcl
+init_testRoot
+init_source "$dwhere_is" "release_version.tcl"
 
 # Start options for the program
 array set start_options {--version 0 --help 0 --debug 0}

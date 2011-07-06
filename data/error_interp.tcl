@@ -19,11 +19,11 @@
 proc error_interpUi {msg options} {
 	# An alternate error interpreter Interface. 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpUi \033\[0m \{$msg\} \{$options\}"
-	log_writeOutTv 2 "TV-Viewer crashed..."
-	log_writeOutTv 2 "$msg"
+	log_writeOut ::log(tvAppend) 2 "TV-Viewer crashed..."
+	log_writeOut ::log(tvAppend) 2 "$msg"
 	if {[info exists ::err(cb_stoperr)]} {
 		if {$::err(cb_stoperr) == 1} {
-			log_writeOutTv 1 "User does not want to see error dialog anymore."
+			log_writeOut ::log(tvAppend) 1 "User does not want to see error dialog anymore."
 			return
 		}
 	}
@@ -99,14 +99,14 @@ proc error_interpUi {msg options} {
 		wm attributes $w -topmost 1
 		after 1000 [list wm attributes $w -topmost 0]
 	} else {
-		log_writeOutTv 1 "Tried to create crash info window, but it already exists"
+		log_writeOut ::log(tvAppend) 1 "Tried to create crash info window, but it already exists"
 	}
 }
 
 proc error_interpFbug {} {
 	#File a bug report on sf.net
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: error_interpFbug \033\[0m"
-	log_writeOutTv 0 "Executing your favorite internet browser."
+	log_writeOut ::log(tvAppend) 0 "Executing your favorite internet browser."
 	catch {exec xdg-open http://sourceforge.net/tracker/?func=add&group_id=238442&atid=1106486 &}
 }
 
@@ -120,8 +120,8 @@ proc error_interpSdisk {msg options} {
 	set ofile [ttk::getSaveFile -filetypes $types -defaultextension ".log" -initialfile "$infile" -initialdir "$::env(HOME)" -hidden 0 -title [mc "Choose name and location"] -parent .error_w]
 	if {[string trim $ofile] != {}} {
 		if {[file isdirectory [file dirname "$ofile"]]} {
-			log_writeOutTv 0 "Saving error message to log file:"
-			log_writeOutTv 0 "$ofile"
+			log_writeOut ::log(tvAppend) 0 "Saving error message to log file:"
+			log_writeOut ::log(tvAppend) 0 "$ofile"
 			set ofilew [open "$ofile" w+]
 			puts $ofilew "TV-Viewer [lindex $::option(release_version) 0] r[lindex $::option(release_version) 1] error log
 "
@@ -135,9 +135,9 @@ proc error_interpSdisk {msg options} {
 			}
 			close $ofilew
 		} else {
-			log_writeOutTv 2 "Can not save crash log"
-			log_writeOutTv 2 "[file dirname $ofile]"
-			log_writeOutTv 2 "Not a directory."
+			log_writeOut ::log(tvAppend) 2 "Can not save crash log"
+			log_writeOut ::log(tvAppend) 2 "[file dirname $ofile]"
+			log_writeOut ::log(tvAppend) 2 "Not a directory."
 		}
 	}
 }

@@ -39,7 +39,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 		vid_wmStayonTop 0
 		wm attributes $mw -fullscreen 1
 		if {[string trim [focus -displayof .]] == {}} {
-			log_writeOutTv 1 "Trying to request focus for main window"
+			log_writeOut ::log(tvAppend) 1 "Trying to request focus for main window"
 			focus -force . ;#FIXME forcing focus may not work everytime, sometimes only the taskbar button is flashing
 		}
 		if {$::data(panscanAuto) == 1} {
@@ -49,10 +49,10 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 				event generate . <<wmZoomAuto>>
 			}]
 		}
-		log_writeOutTv 0 "Going to full-screen mode."
+		log_writeOut ::log(tvAppend) 0 "Going to full-screen mode."
 	} else {
 		if {[winfo exists .fvidBg.slist_lirc] && [string trim [place info .fvidBg.slist_lirc]] != {}} {
-			log_writeOutTv 0 "Closing OSD station list for remote controls."
+			log_writeOut ::log(tvAppend) 0 "Closing OSD station list for remote controls."
 			.fvidBg.slist_lirc.lb_station selection clear 0 end
 			focus .fvidBg
 			destroy .fvidBg.slist_lirc
@@ -85,7 +85,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 			.fvidBg configure -borderwidth 1
 		}
 		
-		log_writeOutTv 0 "Going to windowed mode."
+		log_writeOut ::log(tvAppend) 0 "Going to windowed mode."
 		wm attributes $mw -fullscreen 0
 		vid_wmStayonTop $::vid(stayontop)
 		if {$::data(panscanAuto) == 1} {
@@ -101,7 +101,7 @@ proc vid_wmFullscreen {mw vid_bg vid_cont} {
 proc vid_wmCompact {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmCompact \033\[0m"
 	if {[wm attributes . -fullscreen] == 1} {
-		log_writeOutTv 1 "Can not switch compact mode while in full-screen"
+		log_writeOut ::log(tvAppend) 1 "Can not switch compact mode while in full-screen"
 		return
 	}
 	if {$::main(compactMode)} {
@@ -152,7 +152,7 @@ proc vid_wmCompact {} {
 			wm geometry . $widthc\x$heightc
 		}
 		wm title . "TV-Viewer"
-		log_writeOutTv 0 "Normal window mode"
+		log_writeOut ::log(tvAppend) 0 "Normal window mode"
 		set ::main(compactMode) 0
 	} else {
 		wm geometry . {}
@@ -174,7 +174,7 @@ proc vid_wmCompact {} {
 			wm geometry . $width\x$height
 		}
 		wm title . "TV-Viewer - [.ftoolb_Disp.fIcTxt.lDispText cget -text]"
-		log_writeOutTv 0 "Compact mode"
+		log_writeOut ::log(tvAppend) 0 "Compact mode"
 		set ::main(compactMode) 1
 	}
 	if {$::data(panscanAuto) == 1} {
@@ -198,7 +198,7 @@ proc vid_wmViewToolb {bar} {
 	}
 	if {[wm attributes . -fullscreen]} {
 		#Do nothing in fullscreen mode
-		log_writeOutTv 1 "Can not show/hide toolbars in fullscreen mode"
+		log_writeOut ::log(tvAppend) 1 "Can not show/hide toolbars in fullscreen mode"
 		return
 	}
 	if {$::main(compactMode)} {
@@ -223,7 +223,7 @@ proc vid_wmViewToolb {bar} {
 			}
 		}
 		grid {*}$bargrid($bar)
-		log_writeOutTv 0 "Grid manager added $bar"
+		log_writeOut ::log(tvAppend) 0 "Grid manager added $bar"
 	} else {
 		grid remove $barrem($bar)
 		if {"$bar" == "main"} {
@@ -242,7 +242,7 @@ proc vid_wmViewToolb {bar} {
 				set ::menu(cbViewControlbar) 0
 			}
 		}
-		log_writeOutTv 0 "Grid manager removed $bar"
+		log_writeOut ::log(tvAppend) 0 "Grid manager removed $bar"
 	}
 	set ::mem(toolbMain) $::menu(cbViewMainToolbar)
 	set ::mem(toolbStation) $::menu(cbViewStationl)
@@ -267,10 +267,10 @@ proc vid_wmViewStatus {lbl} {
 	
 	if {[string trim [grid info $lblrem($lbl)]] == {}} {
 		grid {*}$lblgrid($lbl)
-		log_writeOutTv 0 "Grid manager added $lbl"
+		log_writeOut ::log(tvAppend) 0 "Grid manager added $lbl"
 	} else {
 		grid remove $lblrem($lbl)
-		log_writeOutTv 0 "Grid manager removed $lbl"
+		log_writeOut ::log(tvAppend) 0 "Grid manager removed $lbl"
 	}
 	set ::mem(sbarStatus) $::menu(cbViewStatusm)
 	set ::mem(sbarTime) $::menu(cbViewStatust)
@@ -297,7 +297,7 @@ proc vid_wmPanscan {w direct value} {
 			set zoomPlace($value) [expr $zoom($value) / 100]
 		}
 		place $w -relheight [expr {[dict get [place info $w] -relheight] + $zoomPlace($value)}]
-		log_writeOutTv 0 "Increasing zoom by $zoom($value)%."
+		log_writeOut ::log(tvAppend) 0 "Increasing zoom by $zoom($value)%."
 		set ::data(panscan) [expr $::data(panscan) + $zoom($value)]
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -314,7 +314,7 @@ proc vid_wmPanscan {w direct value} {
 			set zoomPlace($value) [expr $zoom($value) / 100]
 		}
 		place $w -relheight [expr {[dict get [place info $w] -relheight] - $zoomPlace($value)}]
-		log_writeOutTv 0 "Decreasing zoom by $zoom($value)%."
+		log_writeOut ::log(tvAppend) 0 "Decreasing zoom by $zoom($value)%."
 		set ::data(panscan) [expr $::data(panscan) - $zoom($value)]
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -326,7 +326,7 @@ proc vid_wmPanscan {w direct value} {
 	}
 	if {$direct == 0} {
 		place $w -relheight 1
-		log_writeOutTv 0 "Setting zoom to 100%"
+		log_writeOut ::log(tvAppend) 0 "Setting zoom to 100%"
 		set ::data(panscan) 0
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -338,7 +338,7 @@ proc vid_wmPanscan {w direct value} {
 	}
 	if {$direct == 2} {
 		place $w -relheight 1
-		log_writeOutTv 0 "Setting zoom to 100%"
+		log_writeOut ::log(tvAppend) 0 "Setting zoom to 100%"
 		set ::data(panscan) 0
 		set ::data(panscanAuto) 0
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
@@ -355,7 +355,7 @@ proc vid_wmPanscanAuto {} {
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	if {$::option(player_aspect) == 0} {
-		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, zoom disabled!"
+		log_writeOut ::log(tvAppend) 1 "Video aspect not managed bei TV-Viewer, zoom disabled!"
 		return
 	}
 	if {[wm attributes . -fullscreen] == 0} {
@@ -393,7 +393,7 @@ proc vid_wmPanscanAuto {} {
 				set relheight 3333333333333333
 				set panscan_multi [expr int(ceil(0.$relheight / 0.05))]
 				set ::data(panscan) [expr ($panscan_multi * 5)]
-				log_writeOutTv 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
+				log_writeOut ::log(tvAppend) 0 "Auto zoom 16:9, changing geometry of tv window and realtive height of container frame."
 				if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 					after 0 [vid_osd osd_group_w 1000 "Pan&Scan 16:9"]
 				}
@@ -443,7 +443,7 @@ proc vid_wmPanscanAuto {} {
 					set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
 					set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
 					set ::data(panscan) [expr ($panscan_multi * 5)]
-					log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
+					log_writeOut ::log(tvAppend) 0 "Auto zoom 16:9, changing realtive height of container frame."
 					if {[wm attributes . -fullscreen] == 1 && [lindex $::option(osd_group_f) 0] == 1} {
 						after 0 [vid_osd osd_group_f 1000 "Pan&Scan 16:9"]
 					}
@@ -455,7 +455,7 @@ proc vid_wmPanscanAuto {} {
 					set relheight [expr [dict get [place info .fvidBg.cont] -relheight] + ($width_diff.0 / [winfo width .fvidBg.cont].0)]
 					set panscan_multi [expr int(ceil(0.[lindex [split $relheight .] end] / 0.05))]
 					set ::data(panscan) [expr ($panscan_multi * 5)]
-					log_writeOutTv 0 "Auto zoom 16:9, changing realtive height of container frame."
+					log_writeOut ::log(tvAppend) 0 "Auto zoom 16:9, changing realtive height of container frame."
 					if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 						after 0 [vid_osd osd_group_w 1000 "Pan&Scan 16:9"]
 					}
@@ -475,20 +475,20 @@ proc vid_wmPanscanAuto {} {
 proc vid_wmMoveVideo {dir} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_wmMoveVideo \033\[0m \{$dir\}"
 	if {$::option(player_aspect) == 0} {
-		log_writeOutTv 1 "Video aspect not managed bei TV-Viewer, moving video disabled!"
+		log_writeOut ::log(tvAppend) 1 "Video aspect not managed bei TV-Viewer, moving video disabled!"
 		return
 	}
 	set status_tvplayback [vid_callbackMplayerRemote alive]
 	if {$status_tvplayback == 1} {return}
 	if {[string trim [place info .fvidBg.cont]] == {}} {
-		log_writeOutTv 1 "Video frame is not mapped."
-		log_writeOutTv 1 "Auto Pan&Scan not possible."
+		log_writeOut ::log(tvAppend) 1 "Video frame is not mapped."
+		log_writeOut ::log(tvAppend) 1 "Auto Pan&Scan not possible."
 		return
 	}
 	if {$dir == 0} {
 		if {$::data(movevidX) == 100} return
 		place .fvidBg.cont -relx [expr {[dict get [place info .fvidBg.cont] -relx] + 0.005}]
-		log_writeOutTv 0 "Moving video to the right by 0.5%."
+		log_writeOut ::log(tvAppend) 0 "Moving video to the right by 0.5%."
 		set ::data(movevidX) [expr $::data(movevidX) + 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
@@ -501,7 +501,7 @@ proc vid_wmMoveVideo {dir} {
 	if {$dir == 1} {
 		if {$::data(movevidY) == 100} return
 		place .fvidBg.cont -rely [expr {[dict get [place info .fvidBg.cont] -rely] + 0.005}]
-		log_writeOutTv 0 "Moving video down by 0.5%."
+		log_writeOut ::log(tvAppend) 0 "Moving video down by 0.5%."
 		set ::data(movevidY) [expr $::data(movevidY) + 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
@@ -514,7 +514,7 @@ proc vid_wmMoveVideo {dir} {
 	if {$dir == 2} {
 		if {$::data(movevidX) == -100} return
 		place .fvidBg.cont -relx [expr {[dict get [place info .fvidBg.cont] -relx] - 0.005}]
-		log_writeOutTv 0 "Moving video to the left by 0.5%."
+		log_writeOut ::log(tvAppend) 0 "Moving video to the left by 0.5%."
 		set ::data(movevidX) [expr $::data(movevidX) - 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 [mc "Move x=%" $::data(movevidX)]]
@@ -527,7 +527,7 @@ proc vid_wmMoveVideo {dir} {
 	if {$dir == 3} {
 		if {$::data(movevidY) == -100} return
 		place .fvidBg.cont -rely [expr {[dict get [place info .fvidBg.cont] -rely] - 0.005}]
-		log_writeOutTv 0 "Moving video up by 0.5%."
+		log_writeOut ::log(tvAppend) 0 "Moving video up by 0.5%."
 		set ::data(movevidY) [expr $::data(movevidY) - 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 [mc "Move y=%" $::data(movevidY)]]
@@ -541,7 +541,7 @@ proc vid_wmMoveVideo {dir} {
 		place .fvidBg.cont -relx 0.5 -rely 0.5
 		set ::data(movevidX) 0
 		set ::data(movevidY) 0
-		log_writeOutTv 0 "Centering video."
+		log_writeOut ::log(tvAppend) 0 "Centering video."
 		set ::data(movevidY) [expr $::data(movevidY) - 1]
 		if {[wm attributes . -fullscreen] == 0 && [lindex $::option(osd_group_w) 0] == 1} {
 			after 0 [list vid_osd osd_group_w 1000 [mc "Centering video"]]
@@ -580,7 +580,7 @@ proc vid_wmGivenSize {w size} {
 		wm geometry . {}
 		$w configure -width $::option(resolx) -height $::option(resoly)
 		place .fvidBg.cont -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
-		log_writeOutTv 0 "Setting video frame to standard size."
+		log_writeOut ::log(tvAppend) 0 "Setting video frame to standard size."
 		return
 	} else {
 		wm geometry . {}
@@ -589,7 +589,7 @@ proc vid_wmGivenSize {w size} {
 		if {$status != 1} {
 			place .fvidBg.cont -width [expr ($::option(resoly) * ($::option(resolx).0 / $::option(resoly).0))]
 		}
-		log_writeOutTv 0 "Setting size of application to [expr $size * 100]."
+		log_writeOut ::log(tvAppend) 0 "Setting size of application to [expr $size * 100]."
 		return
 	}
 }
@@ -661,13 +661,13 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {[string trim [grid info .ftoolb_Top]] == {}} {
 				if {$ypos < 20} {
 					grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
-					log_writeOutTv 0 "Adding main toolbar with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Adding main toolbar with grid window manager."
 				}
 			}
 			if {[string trim [grid info .ftoolb_Top]] != {}} {
 				if {$ypos > 80} {
 					grid remove .ftoolb_Top
-					log_writeOutTv 0 "Removing main toolbar with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Removing main toolbar with grid window manager."
 				}
 			}
 		}
@@ -675,13 +675,13 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {[string trim [grid info .fstations]] == {}} {
 				if {$xpos < 20} {
 					grid .fstations -in . -row 3 -column 0 -sticky nesw
-					log_writeOutTv 0 "Adding station list with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Adding station list with grid window manager."
 				}
 			}
 			if {[string trim [grid info .fstations]] != {}} {
 				if {$xpos > 80} {
 					grid remove .fstations
-					log_writeOutTv 0 "Removing station list with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Removing station list with grid window manager."
 				}
 			}
 		}
@@ -690,14 +690,14 @@ proc vid_wmCursorToolbar {xpos ypos} {
 				if {$ypos > [expr [winfo screenheight .] - 20]} {
 					grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
 					grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
-					log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Adding bottom toolbar with grid window manager."
 				}
 			}
 			if {[string trim [grid info .ftoolb_Play]] != {}} {
 				if {$ypos < [expr [winfo screenheight .] - 80]} {
 					grid remove .ftoolb_Play
 					grid remove .ftoolb_Disp
-					log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Removing bottom toolbar with grid window manager."
 				}
 			}
 		}
@@ -707,13 +707,13 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {[string trim [grid info .ftoolb_Top]] == {}} {
 				if {$ypos < 20} {
 					grid .ftoolb_Top -in . -row 2 -column 0 -columnspan 2 -sticky ew
-					log_writeOutTv 0 "Adding main toolbar with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Adding main toolbar with grid window manager."
 				}
 			}
 			if {[string trim [grid info .ftoolb_Top]] != {}} {
 				if {$ypos > 80} {
 					grid remove .ftoolb_Top
-					log_writeOutTv 0 "Removing main toolbar with grid window manager."
+					log_writeOut ::log(tvAppend) 0 "Removing main toolbar with grid window manager."
 				}
 			}
 		}
@@ -721,7 +721,7 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {$ypos > [expr [winfo screenheight .] - 20]} {
 				grid .ftoolb_Play -in . -row 4 -column 0 -columnspan 2 -sticky ew
 				grid .ftoolb_Disp -in . -row 5 -column 0 -columnspan 2 -sticky ew -pady "2 0"
-				log_writeOutTv 0 "Adding bottom toolbar with grid window manager."
+				log_writeOut ::log(tvAppend) 0 "Adding bottom toolbar with grid window manager."
 			}
 			return
 		}
@@ -729,7 +729,7 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {$ypos < [expr [winfo screenheight .] - 80]} {
 				grid remove .ftoolb_Play
 				grid remove .ftoolb_Disp
-				log_writeOutTv 0 "Removing bottom toolbar with grid window manager."
+				log_writeOut ::log(tvAppend) 0 "Removing bottom toolbar with grid window manager."
 			}
 			return
 		}

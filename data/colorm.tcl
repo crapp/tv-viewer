@@ -29,17 +29,17 @@ proc colorm_readValues {wfscale} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=hue} check_hue_available
 		if { "[string tolower [lindex $check_hue_available 0]]" == "hue:" } {
 			array set ::colorm_hue [split [string trim $hue_default_read] { =}]
-			log_writeOutTv 0 "Default value for hue: $::colorm_hue(default)"
+			log_writeOut ::log(tvAppend) 0 "Default value for hue: $::colorm_hue(default)"
 			$wfscale.s_hue configure -from $::colorm_hue(min) -to $::colorm_hue(max)
 		} else {
-			log_writeOutTv 2 "Can't read default value for hue."
-			log_writeOutTv 2 "Error message: $hue_default_read"
+			log_writeOut ::log(tvAppend) 2 "Can't read default value for hue."
+			log_writeOut ::log(tvAppend) 2 "Error message: $hue_default_read"
 			$wfscale.s_hue state disabled
 			$wfscale.l_hue state disabled
 		}
 	} else {
-		log_writeOutTv 2 "Can't read default value for hue."
-		log_writeOutTv 2 "Error message: $hue_default_read"
+		log_writeOut ::log(tvAppend) 2 "Can't read default value for hue."
+		log_writeOut ::log(tvAppend) 2 "Error message: $hue_default_read"
 		$wfscale.s_hue state disabled
 		$wfscale.l_hue state disabled
 	}
@@ -50,17 +50,17 @@ proc colorm_readValues {wfscale} {
 		if { "[string tolower [lindex $check_saturation_available 0]]" == "saturation:" } {
 			split [string trim $saturation_default_read] { =}
 			array set ::colorm_saturation [split [string trim $saturation_default_read] { =}]
-			log_writeOutTv 0 "Default value for saturation: $::colorm_saturation(default)"
+			log_writeOut ::log(tvAppend) 0 "Default value for saturation: $::colorm_saturation(default)"
 			$wfscale.s_saturation configure -from $::colorm_saturation(min) -to $::colorm_saturation(max)
 		} else {
-			log_writeOutTv 2 "Can't read default value for saturation."
-			log_writeOutTv 2 "Error message: $saturation_default_read"
+			log_writeOut ::log(tvAppend) 2 "Can't read default value for saturation."
+			log_writeOut ::log(tvAppend) 2 "Error message: $saturation_default_read"
 			$wfscale.s_saturation state disabled
 			$wfscale.l_saturation state disabled
 		}
 	} else {
-		log_writeOutTv 2 "Can't read default value for saturation."
-		log_writeOutTv 2 "Error message: $saturation_default_read"
+		log_writeOut ::log(tvAppend) 2 "Can't read default value for saturation."
+		log_writeOut ::log(tvAppend) 2 "Error message: $saturation_default_read"
 		$wfscale.s_saturation state disabled
 		$wfscale.l_saturation state disabled
 	}
@@ -71,17 +71,17 @@ proc colorm_readValues {wfscale} {
 		if { "[string tolower [lindex $check_contrast_available 0]]" == "contrast:" } {
 			split [string trim $contrast_default_read] { =}
 			array set ::colorm_contrast [split [string trim $contrast_default_read] { =}]
-			log_writeOutTv 0 "Default value for contrast: $::colorm_contrast(default)"
+			log_writeOut ::log(tvAppend) 0 "Default value for contrast: $::colorm_contrast(default)"
 			$wfscale.s_contrast configure -from $::colorm_contrast(min) -to $::colorm_contrast(max)
 		} else {
-			log_writeOutTv 2 "Can't read default value for contrast."
-			log_writeOutTv 2 "Error message: $contrast_default_read"
+			log_writeOut ::log(tvAppend) 2 "Can't read default value for contrast."
+			log_writeOut ::log(tvAppend) 2 "Error message: $contrast_default_read"
 			$wfscale.s_contrast state disabled
 			$wfscale.l_contrast state disabled
 		}
 	} else {
-		log_writeOutTv 2 "Can't read default value for contrast."
-		log_writeOutTv 2 "Error message: $contrast_default_read"
+		log_writeOut ::log(tvAppend) 2 "Can't read default value for contrast."
+		log_writeOut ::log(tvAppend) 2 "Error message: $contrast_default_read"
 		$wfscale.s_contrast state disabled
 		$wfscale.l_contrast state disabled
 	}
@@ -92,17 +92,17 @@ proc colorm_readValues {wfscale} {
 		if { "[string tolower [lindex $check_brightness_available 0]]" == "brightness:" } {
 			split [string trim $brightness_default_read] { =}
 			array set ::colorm_brightness [split [string trim $brightness_default_read] { =}]
-			log_writeOutTv 0 "Default value for brightness: $::colorm_brightness(default)"
+			log_writeOut ::log(tvAppend) 0 "Default value for brightness: $::colorm_brightness(default)"
 			$wfscale.s_brightness configure -from $::colorm_brightness(min) -to $::colorm_brightness(max)
 		} else {
-			log_writeOutTv 2 "Can't read default value for brightness."
-			log_writeOutTv 2 "Error message: $brightness_default_read"
+			log_writeOut ::log(tvAppend) 2 "Can't read default value for brightness."
+			log_writeOut ::log(tvAppend) 2 "Error message: $brightness_default_read"
 			$wfscale.s_brightness state disabled
 			$wfscale.l_brightness state disabled
 		}
 	} else {
-		log_writeOutTv 2 "Can't read default value for brightness."
-		log_writeOutTv 2 "Error message: $brightness_default_read"
+		log_writeOut ::log(tvAppend) 2 "Can't read default value for brightness."
+		log_writeOut ::log(tvAppend) 2 "Error message: $brightness_default_read"
 		$wfscale.s_brightness state disabled
 		$wfscale.l_brightness state disabled
 	}
@@ -184,7 +184,7 @@ proc colorm_saveValues {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: \033\[0m colorm_saveValues \{$w\}"
 	#On exit of the color management dialog the new values can be saved.
 	#They are stored in the standard tv-viewer config file.
-	log_writeOutTv 0 "Saving color management values to $::option(home)/config/tv-viewer.conf"
+	log_writeOut ::log(tvAppend) 0 "Saving color management values to $::option(home)/config/tv-viewer.conf"
 	set config_file "$::option(home)/config/tv-viewer.conf"
 	if {[file exists "$config_file"]} {
 		set open_config_file [open "$config_file" r]
@@ -251,14 +251,14 @@ proc colorm_saveValues {w} {
 		}
 		close $config_file_append
 	}
-	log_writeOutTv 0 "Closing Color Management."
+	log_writeOut ::log(tvAppend) 0 "Closing Color Management."
 	destroy .cm
 }
 
 proc colorm_exit {w} {
 	#Exit Color management without saving values and apply old ones.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: colom_exit \033\[0m \{$w\}"
-	log_writeOutTv 1 "Closing Color Management without saving values."
+	log_writeOut ::log(tvAppend) 1 "Closing Color Management without saving values."
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=hue=$::colorm(hue_old)}
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=saturation=$::colorm(saturation_old)}
 	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=brightness=$::colorm(brightness_old)}
@@ -273,7 +273,7 @@ proc colorm_mainUi {} {
 	}
 	
 	if {[winfo exists .cm] == 0} {
-		log_writeOutTv 0 "Setting up Color Management."
+		log_writeOut ::log(tvAppend) 0 "Setting up Color Management."
 		# Setting up main Interface
 		set cm_w [toplevel .cm ]
 		place [ttk::frame $cm_w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -352,7 +352,7 @@ proc colorm_mainUi {} {
 		proc colorm_setDefault {w} {
 			#Set all values back to defaults.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: colorm_setDefault \033\[0m \{$w\}"
-			log_writeOutTv 1 "Setting color management values to default."
+			log_writeOut ::log(tvAppend) 1 "Setting color management values to default."
 			if {[array exists ::colorm_hue]} {
 				$w.s_hue configure -value $::colorm_hue(default)
 				update

@@ -43,6 +43,7 @@ set mandir $prefix/share/man
 set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
+set tclkit 0
 set printchan stdout
 
 if {[file exists $where_is/data/release_version.tcl]} {
@@ -56,7 +57,7 @@ EXIT 1"
 	exit 1
 }
 
-array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0 --host 0}
+array set start_options {--help 0 --version 0 --quiet 0 --nodepcheck 0 --prefix 0 --exec-prefix 0 --bindir 0 --bintarget 0 --libdir 0 --datadir 0 --mandir 0 --docdir 0 --enable-tktray 0  --enable-tclkit 0 --host 0}
 foreach command_argument $argv {
 	if {[string first = $command_argument] == -1 } {
 		set i [string first - $command_argument]
@@ -70,7 +71,7 @@ foreach command_argument $argv {
 		set start_values($key) $value
 	}
 }
-if {[array size start_options] != 14} {
+if {[array size start_options] != 15} {
 	puts "
 `configure' configures TV-Viewer [lindex $option(release_version) 0] Build [lindex $option(release_version) 1] to adapt to many kinds of systems.
 	
@@ -167,6 +168,7 @@ Use these variables to override the choices made by `configure'.
  "
 exit 0
 }
+
 if {$start_options(--version)} {
 	puts "
 tv-viewer configure tcl script version [lindex $option(release_version) 0]"
@@ -231,6 +233,14 @@ if {$start_options(--enable-tktray)} {
 		set tktray 0
 	}
 }
+if {$start_options(--enable-tclkit)} {
+	if {"$start_values(--enable-tclkit)" == "yes"} {
+		set tclkit 1
+	}
+	if {"$start_values(--enable-tclkit)" == "no"} {
+		set tclkit 0
+	}
+}
 if {$start_options(--host)} {
 	if {"$start_values(--host)" == "i686"} {
 		set arch 32
@@ -278,7 +288,7 @@ Configuring build environment for TV-Viewer [lindex $::option(release_version) 0
 "
 }
 
-proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray log} {
+proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit log} {
 	puts $::printchan "
 checking dependencies
 "
@@ -398,7 +408,7 @@ no support for high resolution PNG icons"
 	}
 }
 
-proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray log} {
+proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit log} {
 	puts $::printchan "
 configuring TV-Viewer:
 prefix        $prefix
@@ -411,6 +421,7 @@ mandir        $mandir
 docdir        $docdir
 
 tktray        $tktray
+tclkit        $tclkit
 architecture  ${arch}bit
 "
 	puts $log "
@@ -428,8 +439,20 @@ mandir        $mandir
 docdir        $docdir
 
 tktray        $tktray
+tclkit        $tclkit
 architecture  ${arch}bit"
 	after 250
+	
+	if {$tclkit == 1} {
+		set status_link [catch {file link [info nameofexecutable]} result_link]
+		if {$status_link == 0} {
+			set nameofexec [lindex [file split [file link [info nameofexecutable]]] end]
+		} else {
+			set nameofexec [lindex [file split [info nameofexecutable]] end]
+		}
+		configure_writeTclkitStarter "$where_is" "$prefix" "$eprefix" "$bindir" "$datadir" "$tclkit" "$log" "$nameofexec"
+	}
+	
 	if {[file exists $where_is/installer.tcl]} {
 		puts $::printchan "
 deleting old installer"
@@ -458,7 +481,7 @@ $result_out"
 		exit 1
 	}
 	
-	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray}
+	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit}
 		while {[gets $inst_in line]!=-1} {
 		foreach var $conf_vars {
 			set line [string map [list "$var FOO" "$var \{[set $var]\}"] "$line"]
@@ -467,10 +490,10 @@ $result_out"
 			}
 		}
 		if {[string match *##@@install_steps* "$line"]} {
-			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray" 
+			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$tclkit" 
 		}
 		if {[string match *##@@install_uninstall* "$line"]} {
-			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray"
+			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$tclkit"
 		}
 		if {[string match "*#install.tcl.in @@*" "$line"]} {
 			set line "#!/usr/bin/env tclsh" 
@@ -478,13 +501,22 @@ $result_out"
 		puts $inst_out "$line"
 		flush $inst_out
 	}
+	close $inst_in
+	close $inst_out
 	file attributes "$where_is/install.tcl" -permissions a+x
 	puts $log "
 configure.tcl done
 exit 0"
-	puts $::printchan "
+	if {$tclkit == 1} {
+		puts $::printchan "
+configure: creating ./configure.log
+configure: creating ./tclkitstarter.sh
+configure: creating ./install.tcl"
+	} else {
+		puts $::printchan "
 configure: creating ./configure.log
 configure: creating ./install.tcl"
+	}
 
 if {$::start_options(--quiet) == 0} {
 	puts $::printchan "
@@ -494,6 +526,64 @@ as root to install TV-Viewer
 "
 	}
 	exit 0
+}
+
+proc configure_writeTclkitStarter {where_is prefix eprefix bindir datadir tclkit log nameofexec} {
+	array set opt {
+		"##@@tv-viewer_sym" {if \[ "\$0" == "$bindir/tv-viewer" \]}
+		"##@@tv-viewer" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/tv-viewer_main.tcl \$@ &}
+		"##@@tv-viewer_diag_sym" {if \[ "\$0" == "$bindir/tv-viewer_diag" \]}
+		"##@@tv-viewer_diag" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/diag_runtime.tcl \$@ &}
+		"##@@tv-viewer_lirc_sym" {if \[ "\$0" == "$bindir/tv-viewer_lirc" \]}
+		"##@@tv-viewer_lirc" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/lirc_emitter.tcl \$@ &}
+		"##@@tv-viewer_recext_sym" {if \[ "\$0" == "/usr/bin/tv-viewer_recext" \]}
+		"##@@tv-viewer_recext" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/record_external.tcl \$@ &}
+		"##@@tv-viewer_scheduler_sym" {if \[ "\$0" == "/usr/bin/tv-viewer_scheduler" \]}
+		"##@@tv-viewer_scheduler" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/scheduler.tcl \$@ &}
+		"#tclkitstarter.sh.in @@" "#!/bin/bash"
+	}
+	
+	if {[file exists $where_is/tclkitstarter.sh]} {
+		puts $::printchan "
+deleting old tclkitstarter"
+		file delete -force $where_is/tclkitstarter.sh
+	}
+	set stat_in [catch {set inst_in [open "$where_is/tclkitstarter.sh.in" r]} result_in]
+	if {$stat_in != 0} {
+		puts $log "
+fatal, can not open tclkitstarter.sh.in
+$result_in
+EXIT 1"
+		puts "
+fatal error, can not open tclkitstarter.sh.in
+$result_in"
+		exit 1
+	}
+	set stat_out [catch {set inst_out [open "$where_is/tclkitstarter.sh" w+]} result_out]
+	if {$stat_out != 0} {
+		puts $log "
+fatal, can not write tclkitstarter.sh
+$result_out
+EXIT 1"
+		puts "
+fatal error, can not write tclkitstarter.sh
+$result_out"
+		exit 1
+	}
+	
+	while {[gets $inst_in line]!=-1} {
+		foreach {key elem} [array get opt] {
+			if {[string match "*$key" "$line"]} {
+				set line [subst -nocommands $opt($key)]
+				break
+			}
+		}
+		puts $inst_out "$line"
+		flush $inst_out
+	}
+	close $inst_in
+	close $inst_out
+	file attributes "$where_is/tclkitstarter.sh" -permissions a+x
 }
 
 set status_log [catch {set log [open "$where_is/configure.log" w+]} result_log]
@@ -541,10 +631,10 @@ configure_welcomeMsg
 after 500
 
 if {$start_options(--nodepcheck) == 0} {
-	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$log"
+	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$tclkit" "$log"
 	after 1250
 }
 
-configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$log"
+configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$tclkit" "$log"
 
 exit 0

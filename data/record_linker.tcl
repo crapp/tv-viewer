@@ -21,9 +21,9 @@ proc record_linkerPrestart {handler} {
 	#Prestart means deactivate everything that could interfere with a starting recording or timeshift.
 	set ::record(handler) $handler
 	if {"$handler" == "record"} {
-		log_writeOutTv 0 "Scheduler initiated prestart sequence for recording."
+		log_writeOut ::log(tvAppend) 0 "Scheduler initiated prestart sequence for recording."
 	} else {
-		log_writeOutTv 0 "Initiated prestart sequence for timeshift."
+		log_writeOut ::log(tvAppend) 0 "Initiated prestart sequence for timeshift."
 	}
 	vid_fileComputePos cancel 
 	vid_fileComputeSize cancel
@@ -32,11 +32,11 @@ proc record_linkerPrestart {handler} {
 		place forget .fvidBg.l_bgImage
 	}
 	if {[winfo exists .station]} {
-		log_writeOutTv 1 "A recording or timeshift was started while the station editor is open."
-		log_writeOutTv 1 "Will close it now, you will loose all your changes."
+		log_writeOut ::log(tvAppend) 1 "A recording or timeshift was started while the station editor is open."
+		log_writeOut ::log(tvAppend) 1 "Will close it now, you will loose all your changes."
 		if {[winfo exists .station.top_search]} {
-			log_writeOutTv 2 "You are running a station search while a recording fired."
-			log_writeOutTv 2 "The recording might be screwed up."
+			log_writeOut ::log(tvAppend) 2 "You are running a station search while a recording fired."
+			log_writeOut ::log(tvAppend) 2 "The recording might be screwed up."
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Station search running while a recording fired"]
 			}
@@ -49,8 +49,8 @@ proc record_linkerPrestart {handler} {
 		destroy .station
 	}
 	if {[winfo exists .config_wizard]} {
-		log_writeOutTv 1 "A recording or timeshift was started while the configuration dialog is open."
-		log_writeOutTv 1 "Will close it now, you will loose all your changes."
+		log_writeOut ::log(tvAppend) 1 "A recording or timeshift was started while the configuration dialog is open."
+		log_writeOut ::log(tvAppend) 1 "Will close it now, you will loose all your changes."
 		vid_wmCursor 1
 		grab release .config_wizard
 		destroy .config_wizard
@@ -66,15 +66,15 @@ proc record_linkerPrestart {handler} {
 			set img_list_length [llength $img_list]
 			after 0 [list launch_splashPlay $img_list $img_list_length 1 .fvidBg.l_anigif]
 		} else {
-			log_writeOutTv 1 "Animated gif already exists in parent."
-			log_writeOutTv 1 "This should not happen!"
+			log_writeOut ::log(tvAppend) 1 "Animated gif already exists in parent."
+			log_writeOut ::log(tvAppend) 1 "This should not happen!"
 		}
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor watch
 	}
 	if {$::option(rec_allow_sta_change) == 0} {
-		log_writeOutTv 1 "Station change not allowed during recording."
+		log_writeOut ::log(tvAppend) 1 "Station change not allowed during recording."
 		vid_pmhandlerButton {100 0} {{1 disabled} {2 disabled} {3 disabled}} {100 0}
 		vid_pmhandlerMenuNav {{0 disabled} {1 disabled} {2 disabled}} {{0 disabled} {1 disabled} {2 disabled}} 
 		vid_pmhandlerMenuTray {{11 disabled} {12 disabled} {13 disabled}}
@@ -96,9 +96,9 @@ proc record_linkerPrestartCancel {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPrestartCancel \033\[0m \{$handler\}"
 	#Undo everything that was done by record_linkerPrestart in case starting of timeshift / recording failed.
 	if {"$handler" != "timeshift"} {
-		log_writeOutTv 1 "Prestart sequence for recording has been canceled."
+		log_writeOut ::log(tvAppend) 1 "Prestart sequence for recording has been canceled."
 	} else {
-		log_writeOutTv 1 "Prestart sequence for timeshift has been canceled."
+		log_writeOut ::log(tvAppend) 1 "Prestart sequence for timeshift has been canceled."
 	}
 	if {[winfo exists .record_wizard]} {
 		.record_wizard configure -cursor left_ptr
@@ -127,9 +127,9 @@ proc record_linkerRec {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerRec \033\[0m \{$handler\}"
 	#When starting of timeshift / recording was succesful, do the appropriate bindings, namings ...
 	if {"$handler" != "timeshift"} {
-		log_writeOutTv 0 "Scheduler initiated record sequence for main application."
+		log_writeOut ::log(tvAppend) 0 "Scheduler initiated record sequence for main application."
 	} else {
-		log_writeOutTv 0 "Initiated timeshift sequence for main application."
+		log_writeOut ::log(tvAppend) 0 "Initiated timeshift sequence for main application."
 	}
 	bind . <<pause>> {vid_seek 0 0}
 	if {"$handler" != "timeshift"} {
@@ -145,7 +145,7 @@ proc record_linkerRec {handler} {
 				lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
 			}
 		} else {
-			log_writeOutTv 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
+			log_writeOut ::log(tvAppend) 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 			}
@@ -216,7 +216,7 @@ proc record_linkerWizardReread {} {
 proc record_linkerStationMain {station number} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerStationMain \033\[0m \{$station\} \{$number\}"
 	#Main is running while scheduler started a recording. Now make sure to adapt the new station settings. Scheduler may have changed station. 
-	log_writeOutTv 0 "Scheduler initiated station sequence for main application."
+	log_writeOut ::log(tvAppend) 0 "Scheduler initiated station sequence for main application."
 	set ::station(old) "\{[lindex $::station(last) 0]\} [lindex $::station(last) 1] [lindex $::station(last) 2]"
 	set ::station(last) "\{$station\} $::kanalcall($number) $number"
 }
@@ -225,12 +225,12 @@ proc record_linkerPreStop {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerPreStop \033\[0m \{$handler\}"
 	#Recording / timeshift has been finished, set all widgets and functions to standard behaviour, so one can start tv playback again for example. 
 	if {"$handler" != "timeshift"} {
-		log_writeOutTv 0 "Prestop sequence for recording initiated."
+		log_writeOut ::log(tvAppend) 0 "Prestop sequence for recording initiated."
 		catch {after cancel $::record(after_prestop_id)}
 		unset -nocomplain ::record(after_prestop_id)
 		set status_record [monitor_partRunning 3]
 		if {[lindex $status_record 0] == 1} {
-			log_writeOutTv 0 "There is an active recording (PID [lindex $status_record 1])."
+			log_writeOut ::log(tvAppend) 0 "There is an active recording (PID [lindex $status_record 1])."
 			catch {exec kill [lindex $status_record 1]}
 			catch {file delete -force "$::option(home)/tmp/record_lockfile.tmp"}
 			after 3000 {
@@ -238,7 +238,7 @@ proc record_linkerPreStop {handler} {
 			}
 		}
 	} else {
-		log_writeOutTv 0 "Prestop sequence for timeshift initiated."
+		log_writeOut ::log(tvAppend) 0 "Prestop sequence for timeshift initiated."
 	}
 	vid_pmhandlerButton {{1 !disabled} {4 !disabled} {5 !disabled}} {{1 !disabled} {2 !disabled} {3 !disabled}} {100 0}
 	vid_pmhandlerMenuTv {{0 normal} {2 normal} {4 normal} {7 normal} {8 normal}} {{4 normal} {6 normal} {8 normal} {11 normal} {12 normal}}
@@ -277,8 +277,8 @@ proc record_linkerPreStop {handler} {
 File size %" $file_size]
 			}
 		} else {
-			log_writeOutTv 2 "Can not detect timeshift video file."
-			log_writeOutTv 2 "Saving timeshift video file not possible"
+			log_writeOut ::log(tvAppend) 2 "Can not detect timeshift video file."
+			log_writeOut ::log(tvAppend) 2 "Saving timeshift video file not possible"
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Missing file $::option(timeshift_path)/timeshift.mpeg"]
 			}

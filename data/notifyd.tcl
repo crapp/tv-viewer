@@ -1,4 +1,4 @@
-#!/usr/bin/env wish
+#!/usr/bin/env tclsh
 
 #       recorder.tcl
 #       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
@@ -18,6 +18,8 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+catch {package require Tk 8.5}
+
 #make sure main windows is invisible, we use a special toplevel
 wm geometry . 1x1+3000+3000
 wm overrideredirect . 1
@@ -27,56 +29,17 @@ set option(root) "[file dirname [file dirname [file dirname [file normalize [fil
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) tv-viewer_notifyd
 
-source $option(root)/data/agrep.tcl
-set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/notifyd_lockfile.tmp"} resultat_lock]
-if { $status_lock != 0 } {
-	set linkread [file readlink "$::option(home)/tmp/notifyd_lockfile.tmp"]
-	catch {exec ps -eo "%p"} read_ps
-	set status_greppid [catch {agrep -w "$read_ps" $linkread} resultat_greppid]
-	if { $status_greppid != 0 } {
-		catch {file delete "$::option(home)/tmp/notifyd_lockfile.tmp"}
-		catch {exec ln -s "[pid]" "$::option(home)/tmp/notifyd_lockfile.tmp"}
-	} else {
-		catch {exec ps -p $linkread -o args=} readarg
-		set status_grepargLink [catch {agrep -m "$readarg" "tv-viewer_notifyd"} resultat_greparg]
-		set status_grepargDirect [catch {agrep -m "$readarg" "notifyd.tcl"} resultat_greparg]
-		if {$status_grepargLink != 0 && $status_grepargDirect != 0} {
-			catch {file delete "$::option(home)/tmp/notifyd_lockfile.tmp"}
-			catch {exec ln -s "[pid]" "$::option(home)/tmp/notifyd_lockfile.tmp"}
-		} else {
-			puts "
-An instance of the TV-Viewer notification daemon is already running."
-			exit 1
-		}
-	}
-}
-unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
+source $option(root)/data/init.tcl
 
-package require msgcat
-namespace import msgcat::mc
-
-source $option(root)/data/process_config.tcl
-source $option(root)/themes/plastik/plastik.tcl
-source $option(root)/themes/keramik/keramik.tcl
-source $option(root)/data/monitor.tcl
-#~ source $option(root)/data/error_interp.tcl
-source $option(root)/data/command_socket.tcl
+init_pkgReq "3"
+init_source "$option(root)/data" "agrep.tcl process_config.tcl monitor.tcl command_socket.tcl"
+init_lock "notifyd_lockfile.tmp" "notifyd.tcl" "tv-viewer_notifyd"
 
 process_configRead
-ttk::style theme use $::option(use_theme)
-if {"$::option(use_theme)" == "clam"} {
-	ttk::style configure TLabelframe -labeloutside false -labelmargins {10 0 0 0}
-}
+
+init_themes
+init_langSupport
 #Setting up language support.
-if {$::option(language_value) != 0} {
-	msgcat::mclocale $::option(language_value)
-} else {
-	msgcat::mclocale $::env(LANG)
-}
-if {[msgcat::mcload $::option(root)/msgs] != 1} {
-	msgcat::mclocale en
-	msgcat::mcload $::option(root)/msgs
-}
 command_socket
 
 set icon(tv-viewer) [image create photo -file "$option(root)/icons/extras/systray_icon48.gif"]
@@ -171,10 +134,15 @@ proc notifydUi {ic pos timeout actId actTxt header msg args} {
 proc notifydAction {btn actId} {
 	array set actionCmd {
 		1 {exec "$::option(root)/data/tv-viewer_main.tcl" &}
-		2 {command_WritePipe 0 "tv-viewer_main main_newsreaderUiPre"}
+		2 {exec $::option(tclkit_path) $::option(root)/data/tv-viewer_main.tcl &}
+		3 {command_WritePipe 0 "tv-viewer_main main_newsreaderUiPre"}
 	}
 	if {$actId == 1} {
-		{*}[subst $actionCmd($actId)]
+		if {$::option(tclkit) == 1} {
+			{*}[subst $actionCmd(2)]
+		} else {
+			{*}[subst $actionCmd($actId)]
+		}
 	} else {
 		{*}$actionCmd($actId)
 	}

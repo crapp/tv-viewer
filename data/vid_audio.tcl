@@ -76,7 +76,7 @@ proc vid_playerAudioDelay {handler} {
 	if {$status_vid_Playback != 1} {
 		if {"$handler" == "incr"} {
 			if {$::option(player_audio_delay) == 2} {
-				log_writeOutTv 1 "Audio delay reached maximum of +2 seconds"
+				log_writeOut ::log(tvAppend) 1 "Audio delay reached maximum of +2 seconds"
 				return
 			}
 			set ::option(player_audio_delay) [format %.1f [expr $::option(player_audio_delay) + 0.1]]
@@ -90,7 +90,7 @@ proc vid_playerAudioDelay {handler} {
 		}
 		if {"$handler" == "decr"} {
 			if {$::option(player_audio_delay) == -2} {
-				log_writeOutTv 1 "Audio delay reached minimum of -2 seconds"
+				log_writeOut ::log(tvAppend) 1 "Audio delay reached minimum of -2 seconds"
 				return
 			}
 			set ::option(player_audio_delay) [format %.1f [expr $::option(player_audio_delay) - 0.1]]

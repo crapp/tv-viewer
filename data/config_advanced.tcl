@@ -32,7 +32,7 @@ proc option_screen_8 {} {
 		.config_wizard.frame_configoptions.nb select $::window(advanced_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt8 $::window(advanced_nb1) $::window(advanced_nb2) $::window(advanced_nb3)]
 	} else {
-		log_writeOutTv 0 "Setting up advanced section in preferences"
+		log_writeOut ::log(tvAppend) 0 "Setting up advanced section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(advanced_nb1) [ttk::frame $w.f_advanced]
 		$w add $::window(advanced_nb1) -text [mc "Advanced"] -padding 2
@@ -198,7 +198,7 @@ proc option_screen_8 {} {
 		proc default_opt8 {w w2 w3} {
 			#Collect and set data for advanced section.
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt8 \033\[0m \{$w\} \{$w2\}"
-			log_writeOutTv 0 "Starting to collect data for advanced section."
+			log_writeOut ::log(tvAppend) 0 "Starting to collect data for advanced section."
 			
 			set lf_aspect $::window(advanced_nb1).lf_advanced_aspect
 			set lf_shot $::window(advanced_nb1).lf_advanced_screenshot
@@ -356,7 +356,7 @@ Minimum: 10kb Maximum: 100kb"]
 			set lf_factory $::window(advanced_nb1).lf_advanced_factory
 			set lf_warn $::window(advanced_nb3).lf_warn
 			
-			log_writeOutTv 1 "Setting advanced options to default."
+			log_writeOut ::log(tvAppend) 1 "Setting advanced options to default."
 			set ::choice(cb_lf_aspect) $::stnd_opt(player_aspect)
 			set ::choice(cb_keepaspect) $::stnd_opt(player_keepaspect)
 			set ::choice(rb_aspect) $::stnd_opt(player_aspect_monpix)

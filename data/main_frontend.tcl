@@ -20,7 +20,7 @@ proc main_frontendExitViewer {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendExitViewer \033\[0m"
 	set status_time [monitor_partRunning 4]
 	if {[lindex $status_time 0] == 1} {
-		log_writeOutTv 0 "Timeshift (PID: [lindex $status_time 1]) is running, will stop it."
+		log_writeOut ::log(tvAppend) 0 "Timeshift (PID: [lindex $status_time 1]) is running, will stop it."
 		catch {exec kill [lindex $status_time 1]}
 		catch {file delete "$::option(home)/tmp/timeshift_lockfile.tmp"}
 	}
@@ -123,30 +123,30 @@ proc main_frontendExitViewer {} {
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
 	catch {close $::data(comsocketWrite2)}
-	puts $::logf_tv_open_append "#
+	puts $::log(tvAppend) "#
 #
 # Stop session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 ########################################################################
 "
-	puts $::logf_mpl_open_append "#
+	puts $::log(mplAppend) "#
 #
 # Stop session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 ########################################################################
 "
-	close $::logf_tv_open_append
-	close $::logf_mpl_open_append
+	close $::log(tvAppend)
+	close $::log(mplAppend)
 	exit 0
 }
 
 proc main_frontendEpg {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendEpg \033\[0m"
-	log_writeOutTv 0 "Launching EPG program..."
+	log_writeOut ::log(tvAppend) 0 "Launching EPG program..."
 	catch {exec sh -c "[subst $::option(epg_command)] >/dev/null 2>&1" &}
 }
 
 proc msgcat::mcunknown {locale src args} {
-	log_writeOutTv 1 "Unknown string for locale $locale"
-	log_writeOutTv 1 "$src $args"
+	log_writeOut ::log(tvAppend) 1 "Unknown string for locale $locale"
+	log_writeOut ::log(tvAppend) 1 "$src $args"
 	return $src
 }
 
@@ -177,7 +177,7 @@ proc main_frontendChannelHandler {handler} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendChannelHandler \033\[0m \{$handler\}"
 	#handler main; sedit
 	if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-		log_writeOutTv 2 "There are no stations to insert into station list."
+		log_writeOut ::log(tvAppend) 2 "There are no stations to insert into station list."
 		set status_vid_Playback [vid_callbackMplayerRemote alive]
 		if {$status_vid_Playback != 1} {
 			vid_playbackStop 0 pic
@@ -221,8 +221,8 @@ proc main_frontendChannelHandler {handler} {
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_grep_input [catch {agrep -m "$read_vinput" video} resultat_grep_input]
 		if {$status_grep_input == 1} {
-			log_writeOutTv 2 "Can not read video input."
-			log_writeOutTv 2 "$resultat_grep_input."
+			log_writeOut ::log(tvAppend) 2 "Can not read video input."
+			log_writeOut ::log(tvAppend) 2 "$resultat_grep_input."
 		}
 		event_constr 1
 		
@@ -273,7 +273,7 @@ proc main_frontendChannelHandler {handler} {
 		set status_record [monitor_partRunning 3]
 		if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
 			if {$::option(rec_allow_sta_change) == 0} {
-				log_writeOutTv 1 "Disabling station list due to an active recording."
+				log_writeOut ::log(tvAppend) 1 "Disabling station list due to an active recording."
 				main_frontendDisableTree .fstations.treeSlist 1
 			}
 		}
@@ -323,7 +323,7 @@ proc main_frontendUi {} {
 	ttk::button $toolbTop.bTimeshift -image $::icon_m(timeshift) -style Toolbutton -command {event generate . <<timeshift>>}
 	ttk::button $toolbTop.bRecord -image $::icon_m(record) -style Toolbutton -command {event generate . <<record>>}
 	ttk::button $toolbTop.bEpg -text EPG -style Toolbutton -command main_frontendEpg
-	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton -command {log_writeOutTv 1 "Radio support will be included in version 0.8.3"}
+	ttk::button $toolbTop.bRadio -image $::icon_m(radio) -style Toolbutton -command {log_writeOut ::log(tvAppend) 1 "Radio support will be included in version 0.8.3"}
 	ttk::button $toolbTop.bTv -image $::icon_m(starttv) -style Toolbutton -command {event generate . <<teleview>>}
 	
 	ttk::treeview $stations.treeSlist -yscrollcommand [list $stations.scrbSlist set] -columns {name number} -show headings -selectmode browse -takefocus 0
@@ -498,8 +498,8 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {status_feedbWarn 2 "Test message 2 can be very long, so we need to check what happens with the stats_feedbWarn"}
-	bind . <Key-y> {status_feedbWarn 1 "Test Message 1 can be very long, so we need to check what happens with the stats_feedbWarn"}
+	bind . <Key-x> {status_feedbWarn 2 "Error in X. Please check the logfiles"}
+	bind . <Key-y> {status_feedbWardn 1 "Test Message 1 can be very long, so we need to check what happens with the stats_feedbWarn"}
 	
 	
 	command_socket
@@ -507,8 +507,12 @@ proc main_frontendUi {} {
 	if {$::option(notify)} {
 		set status_notify [monitor_partRunning 5]
 		if {[lindex $status_notify 0] == 0} {
-			set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
-			log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
+			if {$::option(tclkit) == 1} {
+				set ntfy_pid [exec $::option(tclkit_path) $::option(root)/data/notifyd.tcl &]
+			} else {
+				set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
+			}
+			log_writeOut ::log(tvAppend) 0 "notification daemon started, PID $ntfy_pid"
 		}
 	}
 	
@@ -569,7 +573,7 @@ proc main_frontendUi {} {
 		}
 	}
 	if {[string trim [auto_execok mplayer]] == {}} {
-		log_writeOutTv 2 "Could not detect MPlayer, have a look at the system requirements"
+		log_writeOut ::log(tvAppend) 2 "Could not detect MPlayer, have a look at the system requirements"
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Could not detect MPlayer"]
 		}
@@ -592,7 +596,7 @@ proc main_frontendUi {} {
 	
 	#Do everything that needs to be done after root is visible
 	tkwait visibility .
-	log_writeOutTv 0 "Main is visible, processing things that need to be done now."
+	log_writeOut ::log(tvAppend) 0 "Main is visible, processing things that need to be done now."
 	autoscroll $stations.scrbSlist
 	if {$::menu(cbViewMainToolbar)} {
 		set mainHeight [winfo height .ftoolb_Top]

@@ -25,32 +25,12 @@ set ::option(appname) tv-viewer_recorder
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 
-set insertLocal 1
-set insertGlob 1
-foreach pa $auto_path {
-	if {[string match /usr/local/lib $pa]} {
-		set insertLocal 0
-	}
-	if {[string match /usr/lib $pa]} {
-		set insertGlob 0
-	}
-}
-if {$insertLocal} {
-	if {[file isdirectory /usr/local/lib]} {
-		set auto_path [linsert $auto_path 0 "/usr/local/lib"]
-	}
-}
-if {$insertGlob} {
-	if {[file isdirectory /usr/lib]} {
-		set auto_path [linsert $auto_path 0 "/usr/lib"]
-	}
-}
-unset -nocomplain insertLocal insertGlob pa
+source $option(root)/init.tcl
 
-source "$option(root)/agrep.tcl"
-source "$option(root)/monitor.tcl"
-source "$option(root)/command_socket.tcl"
-source "$option(root)/process_config.tcl"
+init_autoPath
+init_tclKit
+init_source "$option(root)" "agrep.tcl monitor.tcl command_socket.tcl process_config.tcl"
+
 process_configRead
 
 proc recorderCheckMain {com fdin fdout} {
@@ -111,7 +91,11 @@ if {"$lifespan" != "infinite"} {
 	if {$::option(notify)} {
 		set status_notify [monitor_partRunning 5]
 		if {[lindex $status_notify 0] == 0} {
-			set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+			if {$::option(tclkit) == 1} {
+				set ntfy_pid [exec $::option(tclkit_path) $::option(root)/notifyd.tcl &]
+			} else {
+				set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+			}
 			puts "notification daemon started, PID $ntfy_pid"
 		}
 	}
@@ -141,4 +125,5 @@ if {"$lifespan" != "infinite"} {
 } else {
 	after 1000 [list recorderCheckMain 0 $fdin $fdout]
 }
+
 vwait forever

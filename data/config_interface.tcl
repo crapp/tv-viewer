@@ -44,7 +44,7 @@ proc option_screen_6 {} {
 			$::window(interface_nb3_cont) yview moveto 0
 		}
 	} else {
-		log_writeOutTv 0 "Setting up interface section in preferences"
+		log_writeOut ::log(tvAppend) 0 "Setting up interface section in preferences"
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(interface_nb1) [ttk::frame $w.f_interface]
 		$w add $::window(interface_nb1) -text [mc "Interface"] -padding 2
@@ -207,7 +207,7 @@ proc option_screen_6 {} {
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)]
 		
 		foreach athemes [split [lsort [ttk::style theme names]]] {
-			log_writeOutTv 0 "Found theme: $athemes"
+			log_writeOut ::log(tvAppend) 0 "Found theme: $athemes"
 			$::window(interface_nb1).mbTheme add radiobutton -variable choice(mbTheme) -command [list config_interfaceTheme $athemes] -label $athemes
 		}
 		menu $lf_systray.mb_systrayIcSize.mIcSize -tearoff 0
@@ -250,7 +250,7 @@ proc option_screen_6 {} {
 			$lf_systray.mb_systrayIcSize configure -text "$size\px"
 			if {[winfo exists .tray]} {
 				.tray configure -image $::icon_e(systray_icon$size)
-				log_writeOutTv 0 "Changing systray icon size to $size"
+				log_writeOut ::log(tvAppend) 0 "Changing systray icon size to $size"
 			}
 		}
 		
@@ -298,8 +298,12 @@ proc option_screen_6 {} {
 				}
 				if {$handler} {
 					catch {exec ""}
-					set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
-					log_writeOutTv 0 "notification daemon started, PID $ntfy_pid"
+					if {$::option(tclkit) == 1} {
+						set ntfy_pid [exec $::option(tclkit_path) $::option(root)/data/notifyd.tcl &]
+					} else {
+						set ntfy_pid [exec $::option(root)/data/notifyd.tcl &]
+					}
+					log_writeOut ::log(tvAppend) 0 "notification daemon started, PID $ntfy_pid"
 				}
 			}
 		}
@@ -314,7 +318,7 @@ proc option_screen_6 {} {
 		}
 		proc default_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
-			log_writeOutTv 0 "Starting to collect data for interface section."
+			log_writeOut ::log(tvAppend) 0 "Starting to collect data for interface section."
 			
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl
@@ -475,7 +479,7 @@ for important TV-Viewer messages."]
 		}
 		proc stnd_opt6 {w1 w2 w3} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
-			log_writeOutTv 1 "Setting interface options to default."
+			log_writeOut ::log(tvAppend) 1 "Setting interface options to default."
 			
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
 			set lf_floatingCtrl $::window(interface_nb2_cont).f_windowprop2.lf_floatingCtrl

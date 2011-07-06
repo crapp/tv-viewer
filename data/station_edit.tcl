@@ -18,13 +18,13 @@
 
 proc station_editPreview {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editPreview \033\[0m \{$w\}"
-	log_writeOutTv 0 "Starting tv playback for preview stations."
+	log_writeOut ::log(tvAppend) 0 "Starting tv playback for preview stations."
 	set status_vid_Playback [vid_callbackMplayerRemote alive]
 	if {$status_vid_Playback != 1} {
 		vid_playbackStop 0 pic
 	} else {
 		if {"[string trim [$w selection]]" == {}} {
-			log_writeOutTv 1 "You need to select a channel to be previewed."
+			log_writeOut ::log(tvAppend) 1 "You need to select a channel to be previewed."
 			return
 		}
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
@@ -51,7 +51,7 @@ proc station_editPreview {w} {
 				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
-			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
+			log_writeOut ::log(tvAppend) 2 "Can not read video inputs. Changing stations not possible."
 		}
 	}
 }
@@ -60,7 +60,7 @@ proc station_editZap {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editZap \033\[0m \{$w\}"
 	set status_vid_Playback [vid_callbackMplayerRemote alive]
 	if {$status_vid_Playback != 1} {
-		log_writeOutTv 0 "Changing frequency to [lindex [$w item [lindex [$w selection] end] -values] 1]."
+		log_writeOut ::log(tvAppend) 0 "Changing frequency to [lindex [$w item [lindex [$w selection] end] -values] 1]."
 		catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 		set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 		if {$status_get_input == 0} {
@@ -84,7 +84,7 @@ proc station_editZap {w} {
 				status_feedbMsgs 0 [mc "Now playing %" [lindex [$w item [lindex [$w selection] end] -values] 0]]
 			}
 		} else {
-			log_writeOutTv 2 "Can not read video inputs. Changing stations not possible."
+			log_writeOut ::log(tvAppend) 2 "Can not read video inputs. Changing stations not possible."
 		}
 	}
 }
@@ -92,7 +92,7 @@ proc station_editZap {w} {
 
 proc station_editSave {w} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editSave \033\[0m \{$w\}"
-	log_writeOutTv 0 "Writing stations to $::option(home)/config/stations_$::option(frequency_table).conf"
+	log_writeOut ::log(tvAppend) 0 "Writing stations to $::option(home)/config/stations_$::option(frequency_table).conf"
 	catch {file delete "$::option(home)/config/stations_$::option(frequency_table).conf"}
 	catch {file delete "$::option(home)/config/lastchannel.conf"}
 	foreach sitem [split [$w children {}]] {
@@ -127,15 +127,15 @@ proc station_editExit {handler} {
 		catch {array unset ::kanalinput}
 		catch {array unset ::kanalext}
 		catch {array unset ::kanalextfreq}
-		log_writeOutTv 0 "Rereading all stations and corresponding frequencies for main application."
+		log_writeOut ::log(tvAppend) 0 "Rereading all stations and corresponding frequencies for main application."
 		if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
 			set status_vid_Playback [vid_callbackMplayerRemote alive]
 			if {$status_vid_Playback != 1} {
 				vid_playbackStop 0 nopic
 			}
-			log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
-			log_writeOutTv 2 "Please create one using the Station Editor."
-			log_writeOutTv 2 "Make sure you checked the configuration first!"
+			log_writeOut ::log(tvAppend) 2 "No valid stations_$::option(frequency_table).conf"
+			log_writeOut ::log(tvAppend) 2 "Please create one using the Station Editor."
+			log_writeOut ::log(tvAppend) 2 "Make sure you checked the configuration first!"
 		} else {
 			set file "$::option(home)/config/stations_$::option(frequency_table).conf"
 			set open_channel_file [open $file r]
@@ -166,11 +166,11 @@ proc station_editExit {handler} {
 			}
 			close $open_channel_file
 			if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-				log_writeOutTv 2 "No valid stations_$::option(frequency_table).conf"
-				log_writeOutTv 2 "Please create one using the Station Editor."
-				log_writeOutTv 2 "Make sure you checked the configuration first!"
+				log_writeOut ::log(tvAppend) 2 "No valid stations_$::option(frequency_table).conf"
+				log_writeOut ::log(tvAppend) 2 "Please create one using the Station Editor."
+				log_writeOut ::log(tvAppend) 2 "Make sure you checked the configuration first!"
 			} else {
-				log_writeOutTv 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
+				log_writeOut ::log(tvAppend) 0 "Valid stations_$::option(frequency_table).conf found with $::station(max) stations."
 				if {[file exists "$::option(home)/config/lastchannel.conf"]} {
 					set last_channel_conf "$::option(home)/config/lastchannel.conf"
 					set open_lastchannel [open $last_channel_conf r]
@@ -210,9 +210,9 @@ proc station_editExit {handler} {
 			}
 		}
 		main_frontendChannelHandler sedit
-		log_writeOutTv 0 "Exiting station editor."
+		log_writeOut ::log(tvAppend) 0 "Exiting station editor."
 	} else {
-		log_writeOutTv 0 "Exiting station editor without any changes."
+		log_writeOut ::log(tvAppend) 0 "Exiting station editor without any changes."
 	}
 	vid_wmCursor 1
 	grab release .station
@@ -235,7 +235,7 @@ proc station_editUiMenu {tree x y} {
 		$tree.mCont add separator
 		$tree.mCont add command -label [mc "Preview"] -command [list station_editPreview $tree] -compound left -image $::icon_men(starttv)
 	}
-	log_writeOutTv 0 "Pop up context for station editor"
+	log_writeOut ::log(tvAppend) 0 "Pop up context for station editor"
 	if {[string trim [$tree selection]] == {}} {
 		$tree.mCont entryconfigure 3 -state disabled
 		$tree.mCont entryconfigure 4 -state disabled
@@ -256,8 +256,8 @@ proc station_editUi {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_editUi \033\[0m"
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
-			log_writeOutTv 1 "User attempted to start station editor while main is docked."
-			log_writeOutTv 1 "Will undock main."
+			log_writeOut ::log(tvAppend) 1 "User attempted to start station editor while main is docked."
+			log_writeOut ::log(tvAppend) 1 "Will undock main."
 			 system_trayToggle 0
 		}
 	}
@@ -268,7 +268,7 @@ proc station_editUi {} {
 	
 	# Setting up main Interface
 	
-	log_writeOutTv 0 "Starting Station Editor."
+	log_writeOut ::log(tvAppend) 0 "Starting Station Editor."
 	
 	if {[winfo exists .station] == 0 } {
 		set w [toplevel .station]
@@ -405,13 +405,13 @@ proc station_editUi {} {
 		if {[string trim [auto_execok "ivtv-tune"]] == {} || [string trim [auto_execok "v4l2-ctl"]] == {}} {
 			$wftop.b_station_search state disabled
 			$wftop.b_station_preview state disabled
-			log_writeOutTv 2 "Could not detect ivtv-tune or/and v4l2-ctl."
-			log_writeOutTv 2 "Check the user guide about system requirements."
+			log_writeOut ::log(tvAppend) 2 "Could not detect ivtv-tune or/and v4l2-ctl."
+			log_writeOut ::log(tvAppend) 2 "Check the user guide about system requirements."
 		}
 		if {[string trim [auto_execok mplayer]] == {}} {
 			$wftop.b_station_preview state disabled
-			log_writeOutTv 2 "Could not detect MPlayer."
-			log_writeOutTv 2 "Check the user guide about system requirements."
+			log_writeOut ::log(tvAppend) 2 "Could not detect MPlayer."
+			log_writeOut ::log(tvAppend) 2 "Check the user guide about system requirements."
 		}
 		
 		bind $wfstation.tv_station <B1-Motion> break

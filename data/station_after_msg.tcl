@@ -44,17 +44,17 @@ proc station_after_msg {var0 var1} {
 		regexp {^(\d+).*$} [string trim [lindex $read_signal_strength end]] -> regexp_signal_strength
 		if {[string is digit $regexp_signal_strength]} {
 			if {$regexp_signal_strength < 25 } {
-				log_writeOutTv 1 "Tried to tune station $::kanalid($var0)"
-				log_writeOutTv 1 "No signal detected on $::kanalcall($var0) Mhz (Input $::kanalinput($var0))."
+				log_writeOut ::log(tvAppend) 1 "Tried to tune station $::kanalid($var0)"
+				log_writeOut ::log(tvAppend) 1 "No signal detected on $::kanalcall($var0) Mhz (Input $::kanalinput($var0))."
 			} else {
-				log_writeOutTv 0 "Tuning station $::kanalid($var0) on [lrange $var1 end-1 end] (Input $::kanalinput($var0))."
+				log_writeOut ::log(tvAppend) 0 "Tuning station $::kanalid($var0) on [lrange $var1 end-1 end] (Input $::kanalinput($var0))."
 			}
 		} else {
-			log_writeOutTv 2 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
-			log_writeOutTv 2 "Error message: $read_signal_strength"
+			log_writeOut ::log(tvAppend) 2 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
+			log_writeOut ::log(tvAppend) 2 "Error message: $read_signal_strength"
 		}
 	} else {
-		log_writeOutTv 2 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
-		log_writeOutTv 2 "Error message: $read_signal_strength"
+		log_writeOut ::log(tvAppend) 2 "Tried to tune $::kanalid($var0) (Input $::kanalinput($var0))"
+		log_writeOut ::log(tvAppend) 2 "Error message: $read_signal_strength"
 	}
 }

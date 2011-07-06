@@ -23,7 +23,7 @@ proc font_chooserUi {returnw cvar} {
 		return
 	}
 	
-	log_writeOutTv 0 "Starting TV-Viewer font chooser..."
+	log_writeOut ::log(tvAppend) 0 "Starting TV-Viewer font chooser..."
 	
 	set w [toplevel .config_wizard.fontchooser]
 	place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -135,7 +135,7 @@ proc font_chooserUi {returnw cvar} {
 	bind $mffont.lb_size <<ListboxSelect>> [list font_chooserUiCfont $mffont.lb_fam $mffont.lb_style $mffont.lb_size $mfpre.f_prev.c_abc]
 	
 	if {[info exists fontindex] == 0 || [info exists styleindex] == 0 || [info exists sizeindex] == 0} {
-		log_writeOutTv 2 "Can not identify font. Font chooser will be closed. Report this incident to the Author."
+		log_writeOut ::log(tvAppend) 2 "Can not identify font. Font chooser will be closed. Report this incident to the Author."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Font chooser Ui has finished unexpectedly"]
 		}
@@ -222,7 +222,7 @@ proc font_chooserUiApply {lb1 lb2 lb3 returnw cvar} {
 		$returnw configure -text "$font - $style | $size"
 	}
 	set ::choice($cvar) [list [lindex $::choice($cvar) 0] $font $style $size $::font_chooser(mb_align_value) [$::icon_e(pick-color3) cget -foreground]]
-	log_writeOutTv 0 "Chosen font $::choice($cvar)"
+	log_writeOut ::log(tvAppend) 0 "Chosen font $::choice($cvar)"
 	grab release .config_wizard.fontchooser
 	destroy .config_wizard.fontchooser
 	grab .config_wizard

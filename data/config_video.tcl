@@ -44,7 +44,7 @@ proc option_screen_3 {} {
 			}
 		}
 	} else {
-		log_writeOutTv 0 "Setting up video section in preferences."
+		log_writeOut ::log(tvAppend) 0 "Setting up video section in preferences."
 		set w .config_wizard.frame_configoptions.nb
 		
 		set ::window(video_nb1) [ttk::frame $w.f_video]
@@ -113,8 +113,8 @@ proc option_screen_3 {} {
 		
 		#Additional Code
 		if {[string trim [auto_execok mplayer]] == {}} {
-			log_writeOutTv 2 "Could not detect MPlayer."
-			log_writeOutTv 2 "Please check the system requirements!"
+			log_writeOut ::log(tvAppend) 2 "Could not detect MPlayer."
+			log_writeOut ::log(tvAppend) 2 "Please check the system requirements!"
 			$w tab $::window(video_nb1) -state disabled
 			set ::window(video_nb2) [ttk::frame $w.f_video_error]
 			$w add $::window(video_nb2) -text [mc "Error"]
@@ -139,14 +139,14 @@ proc option_screen_3 {} {
 				set first [string first $resultat_mpl_ver r]
 				set revision [info_helpMplayerRev $first "$resultat_mpl_ver"]
 				if {$revision != -1} {
-					log_writeOutTv 0 "Found MPlayer: SVN r$revision"
+					log_writeOut ::log(tvAppend) 0 "Found MPlayer: SVN r$revision"
 				} else {
-					log_writeOutTv 1 "Found MPlayer, but could not read SVN revision."
-					log_writeOutTv 1 "$resultat_mpl_ver"
+					log_writeOut ::log(tvAppend) 1 "Found MPlayer, but could not read SVN revision."
+					log_writeOut ::log(tvAppend) 1 "$resultat_mpl_ver"
 				}
 			} else {
-				log_writeOutTv 1 "Found MPlayer, but could not detect Version"
-				log_writeOutTv 1 "$resultat_mpl_ver"
+				log_writeOut ::log(tvAppend) 1 "Found MPlayer, but could not detect Version"
+				log_writeOut ::log(tvAppend) 1 "$resultat_mpl_ver"
 			}
 			
 			.config_wizard.frame_buttons.b_default configure -command [list stnd_opt3 $frame_nb1]
@@ -188,7 +188,7 @@ proc option_screen_3 {} {
 			
 			proc default_opt3 {w} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt3 \033\[0m \{$w\}"
-				log_writeOutTv 0 "Starting to collect data for video section."
+				log_writeOut ::log(tvAppend) 0 "Starting to collect data for video section."
 				set vo [list x11 xv xvmc vdpau gl gl(fast) {gl(fast ATI)} gl(yuv) gl2 gl2(yuv)]
 				set deint [list None Lowpass5 Yadif Yadif(1) LinearBlend {Kernel deinterlacer}]
 				set cache {0 512 1024 2048 4096 8192 16384}
@@ -205,7 +205,7 @@ proc option_screen_3 {} {
 					foreach line [split $resultat_grep_xv \n] {
 						$w.mbVo insert $i radiobutton -label "xv adaptor=[string trim [lindex $resultat_grep_xv 1] #:] - [lindex $resultat_grep_xv 2]" -variable choice(mbVo)
 						incr i
-						log_writeOutTv 0 "xvinfo reports found adaptor: [lindex $resultat_grep_xv 2]"
+						log_writeOut ::log(tvAppend) 0 "xvinfo reports found adaptor: [lindex $resultat_grep_xv 2]"
 					}
 				}
 				
@@ -333,7 +333,7 @@ May help in better video playback."]
 			
 			proc stnd_opt3 {w} {
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt3 \033\[0m \{$w\}"
-				log_writeOutTv 1 "Setting video options to default."
+				log_writeOut ::log(tvAppend) 1 "Setting video options to default."
 				set ::choice(mbVo) $::stnd_opt(player_vo)
 				set ::choice(mbDeint) $::stnd_opt(player_deint)
 				set ::choice(sb_autoq) $::stnd_opt(player_autoq)

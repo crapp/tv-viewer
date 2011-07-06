@@ -32,7 +32,7 @@ proc option_screen_7 {} {
 		.config_wizard.frame_configoptions.nb select $::window(rec_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt7 $::window(rec_nb1) $::window(rec_nb2)]
 	} else {
-		log_writeOutTv 0 "Setting up record section in preferences."
+		log_writeOut ::log(tvAppend) 0 "Setting up record section in preferences."
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(rec_nb1) [ttk::frame $w.f_rec]
 		$w add $::window(rec_nb1) -text [mc "Record Settings"] -padding 2
@@ -137,7 +137,7 @@ proc option_screen_7 {} {
 				set ::choice(entry_rec_path) [ttk::chooseDirectory -parent .config_wizard -title [mc "Choose a directory"] -initialdir "$::choice(entry_rec_path)"]
 			}
 			wm protocol .config_wizard WM_DELETE_WINDOW [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb]
-			log_writeOutTv 0 "Chosen record directory $::choice(entry_rec_path)"
+			log_writeOut ::log(tvAppend) 0 "Chosen record directory $::choice(entry_rec_path)"
 			if {[string trim "$::choice(entry_rec_path)"] == {}} {
 				set ::choice(entry_rec_path) "$old_dir"
 			}
@@ -213,7 +213,7 @@ proc option_screen_7 {} {
 				set ::choice(ent_times_folder) [ttk::chooseDirectory -parent .config_wizard -title [mc "Choose a directory"] -initialdir "$::choice(ent_times_folder)"]
 			}
 			wm protocol .config_wizard WM_DELETE_WINDOW [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb]
-			log_writeOutTv 0 "Chosen timeshift directory $::choice(ent_times_folder)"
+			log_writeOut ::log(tvAppend) 0 "Chosen timeshift directory $::choice(ent_times_folder)"
 			if {[string trim "$::choice(ent_times_folder)"] == {}} {
 				set ::choice(ent_times_folder) "$old_dir"
 			}
@@ -221,7 +221,7 @@ proc option_screen_7 {} {
 		
 		proc default_opt7 {w w2} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt7 \033\[0m \{$w\} \{$w2\}"
-			log_writeOutTv 0 "Starting to collect data for record section."
+			log_writeOut ::log(tvAppend) 0 "Starting to collect data for record section."
 			set ::choice(entry_rec_path) "[subst $::option(rec_default_path)]"
 			set ::choice(sb_duration_hour) $::option(rec_duration_hour)
 			set ::choice(sb_duration_min) $::option(rec_duration_min)
@@ -265,7 +265,7 @@ A value of 0 deactivates this feature."]
 		}
 		proc stnd_opt7 {w w2} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt7 \033\[0m \{$w\} \{$w2\}"
-			log_writeOutTv 1 "Setting record options to default."
+			log_writeOut ::log(tvAppend) 1 "Setting record options to default."
 			set ::choice(entry_rec_path) "[subst $::stnd_opt(rec_default_path)]"
 			set ::choice(sb_duration_hour) $::stnd_opt(rec_duration_hour)
 			set ::choice(sb_duration_min) $::stnd_opt(rec_duration_min)

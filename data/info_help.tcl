@@ -23,7 +23,7 @@ proc info_helpHelp {} {
 		event generate . <<wmFull>>
 	}
 	catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Documentation" &}
-	log_writeOutTv 0 "Trying to open userguide with favorite browser using xdg-open..."
+	log_writeOut ::log(tvAppend) 0 "Trying to open userguide with favorite browser using xdg-open..."
 }
 
 proc info_helpMplayerRev {first strg} {
@@ -62,7 +62,7 @@ proc info_helpWebpage {handler} {
 		1 Forum
 		2 IRC
 	}
-	log_writeOutTv 0 "Executing your favorite internet browser and open $websName($handler)"
+	log_writeOut ::log(tvAppend) 0 "Executing your favorite internet browser and open $websName($handler)"
 	catch {exec sh -c "xdg-open $webs($handler)" &}
 }
 
@@ -71,7 +71,7 @@ proc info_helpAbout {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: info_helpAbout \033\[0m"
 	if {[winfo exists .top_about] == 0} {
 		
-		log_writeOutTv 0 "Launching info screen..."
+		log_writeOut ::log(tvAppend) 0 "Launching info screen..."
 		
 		set w [toplevel .top_about]
 		place [ttk::frame $w.bgcolor] -x 0 -y 0 -relwidth 1 -relheight 1
@@ -170,20 +170,20 @@ Christian Rapp"] -justify center
 				set first [string first $resultat_mpl_ver r]
 				set revision [info_helpMplayerRev $first "$resultat_mpl_ver"]
 				if {$revision != -1} {
-					log_writeOutTv 0 "Found MPlayer: SVN r$revision"
+					log_writeOut ::log(tvAppend) 0 "Found MPlayer: SVN r$revision"
 					$nb1.l_version configure -text "Version: [lindex $::option(release_version) 0] (Bazaar r[lindex $::option(release_version) 1]), running on Tcl/Tk [info patchlevel]
 Build date: [lindex $::option(release_version) 2]
 Backend: MPlayer SVN r$revision"
 				} else {
-					log_writeOutTv 1 "Found MPlayer, but could not read SVN revision."
-					log_writeOutTv 1 "$resultat_mpl_ver"
+					log_writeOut ::log(tvAppend) 1 "Found MPlayer, but could not read SVN revision."
+					log_writeOut ::log(tvAppend) 1 "$resultat_mpl_ver"
 					$nb1.l_version configure -text "Version: [lindex $::option(release_version) 0] (Bazaar r[lindex $::option(release_version) 1]), running on Tcl/Tk [info patchlevel]
 Build date: [lindex $::option(release_version) 2]
 Backend: MPlayer SVN rUNKNOWN"
 				}
 			} else {
-				log_writeOutTv 1 "Found MPlayer, but could not detect Version"
-				log_writeOutTv 1 "$resultat_mpl_ver"
+				log_writeOut ::log(tvAppend) 1 "Found MPlayer, but could not detect Version"
+				log_writeOut ::log(tvAppend) 1 "$resultat_mpl_ver"
 				$nb1.l_version configure -text "Version: [lindex $::option(release_version) 0] (Bazaar r[lindex $::option(release_version) 1]), running on Tcl/Tk [info patchlevel]
 Build date: [lindex $::option(release_version) 2]
 Backend: MPlayer SVN rUNKNOWN"

@@ -23,14 +23,14 @@ proc station_itemMove {w direction} {
 		if {[llength [$w selection]] > 1} {
 			if {[string trim [$w next [lindex [$w selection] end]]] == {}} return
 			foreach element [lsort -decreasing [$w selection]] {
-				log_writeOutTv 0 "Moving $element down."
+				log_writeOut ::log(tvAppend) 0 "Moving $element down."
 				$w move $element [$w parent $element] [expr [$w index $element] + 1]
 			}
 			$w see [lindex [$w selection] end]
 			return
 		} else {
 			if {[string trim [$w next [$w selection]]] == {}} return
-			log_writeOutTv 0 "Moving [$w selection] down."
+			log_writeOut ::log(tvAppend) 0 "Moving [$w selection] down."
 			$w move [$w selection] [$w parent [$w selection]] [expr [$w index [$w selection]] + 1]
 			$w see [$w selection]
 			return
@@ -40,14 +40,14 @@ proc station_itemMove {w direction} {
 		if {[llength [$w selection]] > 1} {
 			if {[string trim [$w prev [lindex [$w selection] 0]]] == {}} return
 			foreach element [$w selection] {
-				log_writeOutTv 0 "Moving $element up."
+				log_writeOut ::log(tvAppend) 0 "Moving $element up."
 				$w move $element [$w parent $element] [expr [$w index $element] - 1]
 			}
 			$w see [lindex [$w selection] 0]
 			return
 		} else {
 			if {[string trim [$w prev [$w selection]]] == {}} return
-			log_writeOutTv 0 "Moving [$w selection] up."
+			log_writeOut ::log(tvAppend) 0 "Moving [$w selection] up."
 			$w move [$w selection] [$w parent [$w selection]] [expr [$w index [$w selection]] - 1]
 			$w see [$w selection]
 		return
@@ -98,7 +98,7 @@ proc station_itemDelete {tree} {
 
 proc station_itemDeleteRun {tree top} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: station_itemAdd \033\[0m \{$tree\} \{$top\}"
-	log_writeOutTv 0 "Deleting item [$tree selection]."
+	log_writeOut ::log(tvAppend) 0 "Deleting item [$tree selection]."
 	if {[llength [$tree selection]] > 1} {
 		if {[$tree next [lindex [$tree selection] end]] == {}} {
 			set selitem [$tree prev [lindex [$tree selection] 0]]
@@ -129,11 +129,11 @@ proc station_itemAddEdit {tree handler} {
 	if {$handler == 2} {
 		if {[string trim [$tree selection]] == {}} return
 		if {[llength [$tree selection]] > 1} {
-			log_writeOutTv 1 "You have selected more than one item to edit. Can't open edit dialog."
+			log_writeOut ::log(tvAppend) 1 "You have selected more than one item to edit. Can't open edit dialog."
 			return
 		}
 	}
-	log_writeOutTv 0 "Add/Edit Item"
+	log_writeOut ::log(tvAppend) 0 "Add/Edit Item"
 	
 	
 	set wtop [toplevel .station.top_AddEdit]
@@ -198,7 +198,7 @@ proc station_itemAddEdit {tree handler} {
 			incr i
 		}
 	} else {
-		log_writeOutTv 2 "Can't find any video inputs on device node $::option(video_device), please check the preferences (analog section)."
+		log_writeOut ::log(tvAppend) 2 "Can't find any video inputs on device node $::option(video_device), please check the preferences (analog section)."
 		if {$::option(log_warnDialogue)} {
 			status_feedbWarn 1 [mc "Can't find any video inputs"]
 		}
@@ -281,12 +281,12 @@ proc station_itemApplyAddEdit {w warn tree handler} {
 	#handler 1 = add 2 = edit
 	if {[info exists ::sitem(e_Station)] == 0 || [info exists ::sitem(e_Freq)] == 0} {
 		$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-		log_writeOutTv 1 "Please specify name and frequency for each station."
+		log_writeOut ::log(tvAppend) 1 "Please specify name and frequency for each station."
 		return
 	} else {
 		if {[string trim $::sitem(e_Station)] == {} || [string trim $::sitem(e_Freq)] == {}} {
 			$warn configure -text [mc "Please specify name and frequency for each station"] -image $::icon_m(dialog-warning) -compound left
-			log_writeOutTv 1 "Please specify name and frequency for each station."
+			log_writeOut ::log(tvAppend) 1 "Please specify name and frequency for each station."
 			return
 		}
 	}
@@ -306,11 +306,11 @@ proc station_itemApplyAddEdit {w warn tree handler} {
 			$tree see [$tree next [$tree selection]]
 			$tree selection set [$tree next [$tree selection]]
 		}
-		log_writeOutTv 0 "Adding item $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} [string trim $::sitem(eExternalFreq)] to station list."
+		log_writeOut ::log(tvAppend) 0 "Adding item $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} [string trim $::sitem(eExternalFreq)] to station list."
 	} else {
 		$tree item [$tree selection] -values "{$::sitem(e_Station)} [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} [string trim $::sitem(eExternalFreq)]"
 		$tree see [$tree selection]
-		log_writeOutTv 0 "Edited station $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} [string trim $::sitem(eExternalFreq)]."
+		log_writeOut ::log(tvAppend) 0 "Edited station $::sitem(e_Station) [string trim $::sitem(e_Freq)] $::sitem(mbVinput_nr) {$ext} [string trim $::sitem(eExternalFreq)]."
 	}
 	unset -nocomplain ::sitem(mbVinput_nr) ::sitem(mbVinput) ::sitem(e_Station) ::sitem(e_Freq) ::sitem(eExternal) ::sitem(eExternalFreq) ::sitem(cbExternal)
 	grab release $w
@@ -340,20 +340,20 @@ proc station_itemDeactivate {tree but com} {
 				set selected_item [$tree item $element -values]
 				if {"[$tree item $element -tags]" == "disabled"} {
 					$tree item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]} [lindex $selected_item 4]" -tags ""
-					log_writeOutTv 0 "Enabling item $element."
+					log_writeOut ::log(tvAppend) 0 "Enabling item $element."
 				} else {
 					$tree item $element -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]} [lindex $selected_item 4]" -tags disabled
-					log_writeOutTv 0 "Disabling item $element."
+					log_writeOut ::log(tvAppend) 0 "Disabling item $element."
 				}
 			}
 		} else {
 			set selected_item [$tree item [$tree selection] -values]
 			if {"[$tree item [$tree selection] -tags]" == "disabled"} {
 				$tree item [$tree selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]} [lindex $selected_item 4]" -tags ""
-				log_writeOutTv 0 "Enabling item [$tree selection]."
+				log_writeOut ::log(tvAppend) 0 "Enabling item [$tree selection]."
 			} else {
 				$tree item [$tree selection] -values "{[lindex $selected_item 0]} [lindex $selected_item 1] [lindex $selected_item 2] {[lindex $selected_item 3]} [lindex $selected_item 4]" -tags disabled
-				log_writeOutTv 0 "Disabling item [$tree selection]."
+				log_writeOut ::log(tvAppend) 0 "Disabling item [$tree selection]."
 			}
 		}
 	}

@@ -23,7 +23,7 @@ proc vid_slistLirc {} {
 			if {[string trim [place info .fvidBg.slist_lirc]] == {}} {
 				vid_slistLircPlace
 			} else {
-				log_writeOutTv 0 "Closing OSD station list for remote controls."
+				log_writeOut ::log(tvAppend) 0 "Closing OSD station list for remote controls."
 				if {"[.fvidBg.slist_lirc.lb_station cget -state]" == "disabled"} {
 					if {$::option(rec_allow_sta_change) == 1} {
 						set get_lb_index [expr [.fvidBg.slist_lirc.lb_station curselection] + 1]
@@ -42,9 +42,9 @@ proc vid_slistLirc {} {
 			}
 		} else {
 			if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-				log_writeOutTv 1 "No valid stations list, will not activate lirc station selector."
+				log_writeOut ::log(tvAppend) 1 "No valid stations list, will not activate lirc station selector."
 			} else {
-				log_writeOutTv 0 "Creating stations list lirc."
+				log_writeOut ::log(tvAppend) 0 "Creating stations list lirc."
 				frame .fvidBg.slist_lirc -background #524ADE -padx 5 -pady 5
 				listbox .fvidBg.slist_lirc.lb_station -exportselection false -takefocus 0
 				grid .fvidBg.slist_lirc.lb_station -in .fvidBg.slist_lirc -row 0 -column 0 -sticky nesw
@@ -59,7 +59,7 @@ proc vid_slistLirc {} {
 
 proc vid_slistLircPlace {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_slistLircPlace \033\[0m"
-	log_writeOutTv 0 "Placing OSD station list for remote controls in video frame."
+	log_writeOut ::log(tvAppend) 0 "Placing OSD station list for remote controls in video frame."
 	array set alignment {
 		0 {-anchor nw -x 10 -y 10}
 		1 {-anchor n -relx 0.5 -y 10}

@@ -23,19 +23,12 @@ package require Tcl 8.5
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
+set ::main(debug_msg) [open /dev/null a]
+fconfigure $::main(debug_msg) -blocking no -buffering line
 
-set root_test "/usr/bin/tv-viewer.tst"
-set root_test_open [catch {open $root_test w}]
-catch {close $root_test_open}
-if {[file exists "/usr/bin/tv-viewer.tst"]} {
-	file delete -force "/usr/bin/tv-viewer.tst"
-	if { "$::tcl_platform(user)" == "root" } {
-		puts "
-You are running tv-viewer as root.
-This is not recommended!"
-		exit 1
-	}
-}
+source $option(root)/init.tcl
+
+init_testRoot
 
 if {[file isdirectory "$::option(home)"] == 0} {
 	puts "
@@ -47,155 +40,19 @@ EXIT 1"
 	exit 1
 }
 
-source $option(root)/release_version.tcl
-source $option(root)/agrep.tcl
-source $option(root)/monitor.tcl
-source $option(root)/process_config.tcl
-source $option(root)/stream.tcl
-source $option(root)/difftime.tcl
-source $option(root)/command_socket.tcl
-
-set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"} resultat_lock]
-if { $status_lock != 0 } {
-	set linkread [file readlink "$::option(home)/tmp/scheduler_lockfile.tmp"]
-	catch {exec ps -eo "%p"} read_ps
-	set status_greppid [catch {agrep -w "$read_ps" $linkread} resultat_greppid]
-	if { $status_greppid != 0 } {
-		catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
-		catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"}
-	} else {
-		catch {exec ps -p $linkread -o args=} readarg
-		set status_grepargLink [catch {agrep -m "$readarg" "tv-viewer_scheduler"} resultat_greparg]
-		set status_grepargDirect [catch {agrep -m "$readarg" "scheduler.tcl"} resultat_greparg]
-		if {$status_grepargLink != 0 && $status_grepargDirect != 0} {
-			catch {file delete "$::option(home)/tmp/scheduler_lockfile.tmp"}
-			catch {exec ln -s "[pid]" "$::option(home)/tmp/scheduler_lockfile.tmp"}
-		} else {
-			puts "
-An instance of the TV-Viewer Scheduler is already running."
-			exit 1
-		}
-	}
-}
-unset -nocomplain status_lock resultat_lock linkread status_greppid resultat_greppid
-
 # Save the original one so we can chain to it
 rename unknown scheduler_unknown
 
 # Provide our own implementation
 proc unknown args {
+	#FIXME What is this with lindex args
 	if {"[lindex $args 0]" == "log_writeOutTv"} {
 		set debug_lvl [lindex $args 1]
 		set debug_msg [lindex $args 2]
-		uplevel 1 [list scheduler_logWriteOut $debug_lvl $debug_msg]
+		uplevel 1 [list log_writeOut ::log(schedAppend) $debug_lvl $debug_msg]
 		return
 	}
 	uplevel 1 [list scheduler_unknown {*}$args]
-}
-
-proc scheduler_log {} {
-	if {$::option(log_files) == 1} {
-		if {[file exists "$::option(home)/log/scheduler.log"]} {
-			if {[file size "$::option(home)/log/scheduler.log"] > [expr $::option(log_size_scheduler) * 1000]} {
-				catch {file delete "$::option(home)/log/scheduler.log"}
-				set logf_sched_open [open "$::option(home)/log/scheduler.log" w]
-				puts $logf_sched_open "
-########################################################################
-# Scheduler logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
-# Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
-#"
-				close $logf_sched_open
-				set ::logf_sched_open_append [open "$::option(home)/log/scheduler.log" a]
-			} else {
-				set ::logf_sched_open_append [open "$::option(home)/log/scheduler.log" a]
-				puts $::logf_sched_open_append "
-########################################################################
-# Scheduler logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
-# Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
-#"
-				flush $::logf_sched_open_append
-			}
-		} else {
-			set logf_sched_open [open "$::option(home)/log/scheduler.log" w]
-			puts $logf_sched_open "
-########################################################################
-# Scheduler logfile. Release version [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1]
-# Start new session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
-#"
-			close $logf_sched_open
-			set ::logf_sched_open_append [open "$::option(home)/log/scheduler.log" a]
-		}
-	} else {
-		set ::logf_sched_open_append [open /dev/null a]
-	}
-	set ::logf_tv_open_append $::logf_sched_open_append
-	fconfigure $::logf_sched_open_append -blocking no -buffering line
-}
-
-proc scheduler_logWriteOut {handler text} {
-	set logformat "#"
-	if {$handler == 0} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] DEBUG: "
-	}
-	if {$handler == 1} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] WARNING: "
-	}
-	if {$handler == 2} {
-		append logformat " \[[clock format [clock scan now] -format {%H:%M:%S}]\] ERROR: "
-	}
-	puts $::logf_sched_open_append "$logformat $text"
-	flush $::logf_sched_open_append
-}
-
-proc scheduler_stations {} {
-	if !{[file exists "$::option(home)/config/stations_$::option(frequency_table).conf"]} {
-		scheduler_logWriteOut 2 "No valid stations_$::option(frequency_table).conf"
-		scheduler_logWriteOut 2 "Please create one using the Station Editor."
-		scheduler_logWriteOut 2 "Make sure you checked the configuration first!"
-		scheduler_logWriteOut 2 "Scheduler EXIT 1"
-		exit 1
-	} else {
-		set file "$::option(home)/config/stations_$::option(frequency_table).conf"
-		set open_channel_file [open $file r]
-		catch {array unset ::kanalid}
-		catch {array unset ::kanalcall}
-		catch {array unset ::kanalinput}
-		catch {array unset ::kanalext}
-		catch {array unset ::kanalextfreq}
-		set i 1
-		while {[gets $open_channel_file line]!=-1} {
-			if {[string match #* $line] || [string trim $line] == {} } continue
-			if {[llength $line] < 5} {
-				if {[llength $line] == 2} {
-					lassign $line ::kanalid($i) ::kanalcall($i)
-					set ::kanalinput($i) $::option(video_input)
-					set ::kanalext($i) 0
-					set ::kanalextfreq($i) 0
-				}
-				if {[llength $line] == 3} {
-					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i)
-					set ::kanalext($i) 0
-					set ::kanalextfreq($i) 0
-				}
-				if {[llength $line] == 4} {
-					lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i)
-					set ::kanalextfreq($i) 0
-				}
-			} else {
-				lassign $line ::kanalid($i) ::kanalcall($i) ::kanalinput($i) ::kanalext($i) ::kanalextfreq($i)
-			}
-			set ::scheduler(max_stations) $i
-			incr i
-		}
-		close $open_channel_file
-		if {[array exists ::kanalid] == 0 || [array exists ::kanalcall] == 0 } {
-			scheduler_logWriteOut 2 "No valid stations_$::option(frequency_table).conf"
-			scheduler_logWriteOut 2 "Please create one using the Station Editor."
-			scheduler_logWriteOut 2 "Make sure you checked the configuration first!"
-			scheduler_logWriteOut 2 "Scheduler EXIT 1"
-			exit 1
-		}
-	}
 }
 
 proc scheduler_exit {} {
@@ -208,12 +65,12 @@ proc scheduler_exit {} {
 	if {[lindex $status_main 0] == 0 && [lindex $status_record 0] == 0} {
 		command_WritePipe 1 "tv-viewer_notifyd notifydExit"
 	}
-	puts $::logf_sched_open_append "#
+	puts $::log(schedAppend) "#
 #
 # Stop session [clock format [clock scan now] -format {%d.%m.%Y %H:%M:%S}]
 ########################################################################
 "
-	close $::logf_sched_open_append
+	close $::log(schedAppend)
 	catch {close $::data(comsocketRead)}
 	catch {close $::data(comsocketWrite)}
 	catch {close $::data(comsocketWrite2)}
@@ -248,8 +105,8 @@ proc scheduler_recordings {} {
 				set delta [difftime [clock scan $diffdate] [clock scan [clock format [clock scan now] -format {%Y%m%d}]]]
 				lassign $delta dy dm dd
 				if {$dy < 0 || $dm < 0 || $dd < 0} {
-					scheduler_logWriteOut 1 "Job $::recjob($i) expired."
-					scheduler_logWriteOut 1 "Will be deleted."
+					log_writeOut ::log(schedAppend) 1 "Job $::recjob($i) expired."
+					log_writeOut ::log(schedAppend) 1 "Will be deleted."
 					lappend deljobs $i
 				}
 			}
@@ -259,7 +116,7 @@ proc scheduler_recordings {} {
 			scheduler_delete $deljobs
 		}
 		if {[array exists ::recjob] == 0} {
-			scheduler_logWriteOut 1 "No recordings in config file. Scheduler will be terminated."
+			log_writeOut ::log(schedAppend) 1 "No recordings in config file. Scheduler will be terminated."
 			close $f_open
 			scheduler_exit
 			return
@@ -267,7 +124,7 @@ proc scheduler_recordings {} {
 		close $f_open
 		set ::scheduler(loop_date) [clock format [clock scan now] -format {%Y%m%d}]
 	} else {
-		scheduler_logWriteOut 1 "No recordings in config file. Scheduler will be terminated."
+		log_writeOut ::log(schedAppend) 1 "No recordings in config file. Scheduler will be terminated."
 		scheduler_exit
 	}
 }
@@ -276,10 +133,10 @@ proc scheduler_at {time jobid} {
 	set dt [expr {([clock scan $time]-[clock seconds])*1000}]
 	if { $dt >= -600000 } {
 		lappend ::scheduler(at_id) [after $dt [list scheduler_rec_prestart $jobid]]
-		scheduler_logWriteOut 0 "Job number [lindex $::recjob($jobid) 0] will be recorded today at $time"
+		log_writeOut ::log(schedAppend) 0 "Job number [lindex $::recjob($jobid) 0] will be recorded today at $time"
 	} else {
-		scheduler_logWriteOut 1 "Job $::recjob($jobid) expired."
-		scheduler_logWriteOut 1 "Will be deleted."
+		log_writeOut ::log(schedAppend) 1 "Job $::recjob($jobid) expired."
+		log_writeOut ::log(schedAppend) 1 "Will be deleted."
 		scheduler_delete $jobid
 	}
 }
@@ -295,14 +152,14 @@ proc scheduler_delete {args} {
 				# daily repeat
 				if {[lindex $::recjob($i) 6] == 0} {
 					# no more repetitions
-					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
+					log_writeOut ::log(schedAppend) 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
 					continue
 				} else {
 					# replace start date
 					set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + 86400] -format {%Y-%m-%d}]]
 					# replace repetitions
 					set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
-					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
+					log_writeOut ::log(schedAppend) 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
 					# replace file name
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
@@ -316,7 +173,7 @@ proc scheduler_delete {args} {
 				# weekday repeat
 				if {[lindex $::recjob($i) 6] == 0} {
 					# no more repetitions
-					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
+					log_writeOut ::log(schedAppend) 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
 					continue
 				} else {
 					# replace start date
@@ -327,7 +184,7 @@ proc scheduler_delete {args} {
 					} else {
 						set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + 86400] -format {%Y-%m-%d}]]
 					}
-					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
+					log_writeOut ::log(schedAppend) 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
 					# replace file name
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
@@ -341,14 +198,14 @@ proc scheduler_delete {args} {
 				# weekly repeat
 				if {[lindex $::recjob($i) 6] == 0} {
 					# no more repetitions
-					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
+					log_writeOut ::log(schedAppend) 0 "Job [lindex $::recjob($i) 0] is finished, no more repetitions"
 					continue
 				} else {
 					# replace start date
 					set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + (86400 * 7)] -format {%Y-%m-%d}]]
 					# replace repetitions
 					set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
-					scheduler_logWriteOut 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
+					log_writeOut ::log(schedAppend) 0 "Job [lindex $::recjob($i) 0] will be repeated on [lindex $::recjob($i) 3]. There are [lindex $::recjob($i) 6] repetitions left."
 					# file name
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
@@ -377,11 +234,11 @@ proc scheduler_delete {args} {
 }
 
 proc scheduler_rec_prestart {jobid} {
-	scheduler_logWriteOut 0 "Attempting to record job number [lindex $::recjob($jobid) 0]."
+	log_writeOut ::log(schedAppend) 0 "Attempting to record job number [lindex $::recjob($jobid) 0]."
 	set status_record [monitor_partRunning 3]
 	if {[lindex $status_record 0] == 1} {
-		scheduler_logWriteOut 2 "There is an active recording."
-		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
+		log_writeOut ::log(schedAppend) 2 "There is an active recording."
+		log_writeOut ::log(schedAppend) 2 "Can't record $::recjob($jobid)"
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
@@ -390,19 +247,19 @@ proc scheduler_rec_prestart {jobid} {
 	}
 	set status_time [monitor_partRunning 4]
 	if {[lindex $status_time 0] == 1} {
-		scheduler_logWriteOut 1 "Scheduler detected timeshift process."
-		scheduler_logWriteOut 1 "Will stop timeshift!"
+		log_writeOut ::log(schedAppend) 1 "Scheduler detected timeshift process."
+		log_writeOut ::log(schedAppend) 1 "Will stop timeshift!"
 		command_WritePipe 0 "tv-viewer_main timeshift .ftoolb_Top.bTimeshift"
 	}
 	
 	if {[file exists $::option(video_device)] == 0} {
-		scheduler_logWriteOut 2 "Can not detect Video Device $::option(video_device)"
-		scheduler_logWriteOut 2 "Have a look into the preferences and change it."
+		log_writeOut ::log(schedAppend) 2 "Can not detect Video Device $::option(video_device)"
+		log_writeOut ::log(schedAppend) 2 "Have a look into the preferences and change it."
 		return
 	}
 	set status_main [monitor_partRunning 1]
 	if {[lindex $status_main 0]} {
-		scheduler_logWriteOut 0 "Scheduler detected TV-Viewer is running, sending commands via socket."
+		log_writeOut ::log(schedAppend) 0 "Scheduler detected TV-Viewer is running, sending commands via socket."
 		command_WritePipe 0 "tv-viewer_main record_linkerPrestart record"
 	}
 	stream_videoStandard 0
@@ -420,7 +277,7 @@ proc scheduler_rec_prestart {jobid} {
 		stream_audioV4l2
 	}
 	set match 0
-	for {set i 1} {$i <= $::scheduler(max_stations)} {incr i} {
+	for {set i 1} {$i <= $::station(max)} {incr i} {
 		if {"[lindex $::recjob($jobid) 1]" == "$::kanalid($i)"} {
 			set ::scheduler(change_inputLoop_id) [after 100 [list scheduler_change_inputLoop 0 $i $jobid]]
 			set match 1
@@ -432,8 +289,8 @@ proc scheduler_rec_prestart {jobid} {
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
 		}
-		scheduler_logWriteOut 2 "Station \{[lindex $::recjob($jobid) 1]\} does not exist."
-		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
+		log_writeOut ::log(schedAppend) 2 "Station \{[lindex $::recjob($jobid) 1]\} does not exist."
+		log_writeOut ::log(schedAppend) 2 "Can't record $::recjob($jobid)"
 	}
 }
 
@@ -448,8 +305,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 		return
 	}
 	if {$secs == 3000} {
-		scheduler_logWriteOut 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
-		scheduler_logWriteOut 2 "This didn't work, BAD."
+		log_writeOut ::log(schedAppend) 2 "Waited 3 seconds to change video input to $::kanalinput($snumber)."
+		log_writeOut ::log(schedAppend) 2 "This didn't work, BAD."
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
@@ -479,17 +336,21 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 			catch {file delete "$::option(home)/tmp/record_lockfile.tmp"}
 			set duration [string map {{:} { }} [lindex $::recjob($jobid) 4]]
 			set duration_calc [expr ([scan [lindex $duration 0] %d] * 3600) + ([scan [lindex $duration 1] %d] * 60) + [scan [lindex $duration 2] %d]]
-			set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
-			scheduler_logWriteOut 0 "Recorder has been executed for Job [lindex $::recjob($jobid) 0]."
+			if {$::option(tclkit) == 1} {
+				set rec_pid [exec $::option(tclkit_path) $::option(root)/recorder.tcl [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
+			} else {
+				set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
+			}
+			log_writeOut ::log(schedAppend) 0 "Recorder has been executed for Job [lindex $::recjob($jobid) 0]."
 			after 3000 [list scheduler_rec $jobid 0 $rec_pid $duration_calc]
 		} else {
 			catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$::kanalinput($snumber)}
-			scheduler_logWriteOut 0 "Trying to change video input to $::kanalinput($snumber)..."
+			log_writeOut ::log(schedAppend) 0 "Trying to change video input to $::kanalinput($snumber)..."
 			set ::scheduler(change_inputLoop_id) [after 100 [list scheduler_change_inputLoop [expr $secs + 100] $snumber $jobid]]
 		}
 	} else {
-		scheduler_logWriteOut 2 "Can not change video input to $::kanalinput($snumber)."
-		scheduler_logWriteOut 2 "$resultat_grep_input."
+		log_writeOut ::log(schedAppend) 2 "Can not change video input to $::kanalinput($snumber)."
+		log_writeOut ::log(schedAppend) 2 "$resultat_grep_input."
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
@@ -500,8 +361,8 @@ proc scheduler_change_inputLoop {secs snumber jobid} {
 
 proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	if {$counter == 10} {
-		scheduler_logWriteOut 2 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
-		scheduler_logWriteOut 2 "This was unsuccessful."
+		log_writeOut ::log(schedAppend) 2 "Scheduler tried for 30 seconds to record $::recjob($jobid)"
+		log_writeOut ::log(schedAppend) 2 "This was unsuccessful."
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
@@ -510,8 +371,8 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 	}
 	if {[file exists "[lindex $::recjob($jobid) end]"]} {
 		if {[file size "[lindex $::recjob($jobid) end]"] > 0} {
-			scheduler_logWriteOut 0 "Recording of job $::recjob($jobid) started successfully."
-			scheduler_logWriteOut 0 "Recorder process PID $rec_pid"
+			log_writeOut ::log(schedAppend) 0 "Recording of job $::recjob($jobid) started successfully."
+			log_writeOut ::log(schedAppend) 0 "Recorder process PID $rec_pid"
 			catch {exec ln -s "$rec_pid" "$::option(home)/tmp/record_lockfile.tmp"}
 			set f_open [open "$::option(home)/config/current_rec.conf" w]
 			set endtime [expr $duration_calc + [clock scan now]]
@@ -531,15 +392,19 @@ proc scheduler_rec {jobid counter rec_pid duration_calc} {
 		} else {
 			catch {exec kill $rec_pid}
 			catch {exec ""}
-			set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
+			if {$::option(tclkit) == 1} {
+				set rec_pid [exec $::option(tclkit_path) $::option(root)/recorder.tcl [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
+			} else {
+				set rec_pid [exec "$::option(root)/recorder.tcl" [lindex $::recjob($jobid) end] $::option(video_device) $duration_calc [lindex $::recjob($jobid) 0] &]
+			}
 			incr counter
 			after 3000 [list scheduler_rec $jobid $counter $rec_pid $duration_calc]
 		}
 	} else {
 		catch {exec kill $rec_pid}
 		catch {exec ""}
-		scheduler_logWriteOut 2 "File [lindex $::recjob($jobid) end] doesn't exist."
-		scheduler_logWriteOut 2 "Can't record $::recjob($jobid)"
+		log_writeOut ::log(schedAppend) 2 "File [lindex $::recjob($jobid) end] doesn't exist."
+		log_writeOut ::log(schedAppend) 2 "Can't record $::recjob($jobid)"
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
 			command_WritePipe 0 "tv-viewer_main record_linkerPrestartCancel record"
@@ -573,8 +438,11 @@ proc scheduler_main_loop {} {
 
 proc scheduler_Init {handler} {
 	if {$handler == 0} {
+		init_tclKit
+		init_source "$::option(root)" "release_version.tcl agrep.tcl monitor.tcl process_config.tcl stream.tcl difftime.tcl command_socket.tcl log_viewer.tcl process_station_file.tcl"
+		init_lock "scheduler_lockfile.tmp" "scheduler.tcl" "tv-viewer_scheduler"
 		process_configRead
-		scheduler_log
+		log_viewerPrepareFileSocket scheduler.log ::log(schedAppend) log_size_scheduler
 		command_socket
 		set status [monitor_partRunning 1]
 		if {[lindex $status 0]} {
@@ -583,16 +451,20 @@ proc scheduler_Init {handler} {
 		if {$::option(notify)} {
 			set status_notify [monitor_partRunning 5]
 			if {[lindex $status_notify 0] == 0} {
-				set ntfy_pid [exec $::option(root)/notifyd.tcl &]
-				scheduler_logWriteOut 0 "notification daemon started, PID $ntfy_pid"
+				if {$::option(tclkit) == 1} {
+					set ntfy_pid [exec $::option(tclkit_path) $::option(root)/notifyd.tcl &]
+				} else {
+					set ntfy_pid [exec $::option(root)/notifyd.tcl &]
+				}
+				log_writeOut ::log(schedAppend) 0 "notification daemon started, PID $ntfy_pid"
 			}
 		}
-		scheduler_stations
+		process_StationFile ::log(schedAppend)
 		scheduler_main_loop
 	} else {
 		process_configRead
-		scheduler_stations
-		scheduler_logWriteOut 1 "Scheduler has been reinitiated."
+		process_StationFile ::log(schedAppend)
+		log_writeOut ::log(schedAppend) 1 "Scheduler has been reinitiated."
 		set ::scheduler(loop_date) 0
 		scheduler_main_loop
 	}

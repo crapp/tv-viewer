@@ -1,4 +1,6 @@
-#       release_version.tcl
+#tclkitstarter.sh.in @@
+
+#       tclkitstarter.sh.in
 #       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
@@ -16,6 +18,29 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
+##@@tv-viewer_sym
+then
+##@@tv-viewer
+fi
 
-#Source this file where one needs informations about version number, build date and bazaar revision
-set ::option(release_version) {0.8.2b1 165 06.07.2011}
+##@@tv-viewer_diag_sym
+then
+##@@tv-viewer_diag
+fi
+
+##@@tv-viewer_lirc_sym
+then
+##@@tv-viewer_lirc
+fi
+
+##@@tv-viewer_recext_sym
+then
+##@@tv-viewer_recext
+fi
+
+##@@tv-viewer_scheduler_sym
+then
+##@@tv-viewer_scheduler
+fi
+
+exit 0

@@ -143,7 +143,7 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		if {$::option(player_screens_value) == 0} {
 			lappend mcommand -stop-xscreensaver
 		} else {
-			log_writeOutTv 1 "Using heartbeat hack to stop screensaver."
+			log_writeOut ::log(tvAppend) 1 "Using heartbeat hack to stop screensaver."
 			set ::vid(screensaverId) [winfo id .]
 			catch {exec xdg-screensaver suspend $::vid(screensaverId)}
 			set ::data(heartbeat_id) [after 3000 vid_wmHeartbeatCmd 0]
@@ -173,8 +173,8 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		lappend mcommand -af $::option(player_add_af_commands)
 	}
 	if {"$::option(player_vo)" == "vdpau" || "$::option(player_vo)" == "xvmc"} {
-		log_writeOutTv 1 "Chosen video output driver $::option(player_vo)"
-		log_writeOutTv 1 "When using this video output driver, additional video filter options are not available."
+		log_writeOut ::log(tvAppend) 1 "Chosen video output driver $::option(player_vo)"
+		log_writeOut ::log(tvAppend) 1 "When using this video output driver, additional video filter options are not available."
 	} else {
 		if {[string trim $dopt($::option(player_deint))] == {-vf}} {
 			if {[string trim $::option(player_add_vf_commands)] != {}} {
@@ -208,10 +208,10 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 	
 	if {$file == 0} {
 		lappend mcommand -wid $winid $::option(video_device)
-		log_writeOutTv 0 "Starting tv playback..."
-		log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
-		log_writeOutMpl 1 "MPlayer command line:"
-		log_writeOutMpl 1 "$mcommand"
+		log_writeOut ::log(tvAppend) 0 "Starting tv playback..."
+		log_writeOut ::log(mplAppend) 0 "If playback is not starting see MPlayer logfile for details."
+		log_writeOut ::log(mplAppend) 1 "MPlayer command line:"
+		log_writeOut ::log(mplAppend) 1 "$mcommand"
 		if {[winfo exists .station]} {
 			.station.top_buttons.b_station_preview state pressed
 			.ftoolb_Top.bTv state pressed
@@ -247,16 +247,16 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 		if {$status == 0} {
 			foreach line [split $result \n] {
 				catch {exec kill [lindex $line 0]}
-				log_writeOutTv 2 "killing MPlayer PID [lindex $line 0] this should not be necessary"
-				log_writeOutMpl 2 "killing MPlayer PID [lindex $line 0] this should not be necessary"
+				log_writeOut ::log(tvAppend) 2 "killing MPlayer PID [lindex $line 0] this should not be necessary"
+				log_writeOut ::log(mplAppend) 2 "killing MPlayer PID [lindex $line 0] this should not be necessary"
 			}
 		}
 		
 		set ::data(mplayer) [open "|$mcommand" r+]
 		fconfigure $::data(mplayer) -blocking 0 -buffering line
 		fileevent $::data(mplayer) readable [list vid_callbackVidData]
-		log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
-		log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
+		log_writeOut ::log(mplAppend) 0 "MPlayer process id [pid $::data(mplayer)]"
+		log_writeOut ::log(tvAppend) 0 "MPlayer process id [pid $::data(mplayer)]"
 	} else {
 		if {[file exists "$file"]} {
 			lappend mcommand -wid $winid "$file"
@@ -301,10 +301,10 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 					return
 				}
 			}
-			log_writeOutTv 0 "Starting playback of $file."
-			log_writeOutMpl 0 "If playback is not starting see MPlayer logfile for details."
-			log_writeOutMpl 1 "MPlayer command line:"
-			log_writeOutMpl 1 "$mcommand"
+			log_writeOut ::log(tvAppend) 0 "Starting playback of $file."
+			log_writeOut ::log(mplAppend) 0 "If playback is not starting see MPlayer logfile for details."
+			log_writeOut ::log(mplAppend) 1 "MPlayer command line:"
+			log_writeOut ::log(mplAppend) 1 "$mcommand"
 			if {[winfo exists .fvidBg.l_anigif]} {
 				launch_splashPlay cancel 0 0 0
 				place forget .fvidBg.l_anigif
@@ -325,18 +325,18 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 					set delay 0
 				}
 			}
-			log_writeOutTv 0 "Calculated delay to start file playback $delay\ms."
+			log_writeOut ::log(tvAppend) 0 "Calculated delay to start file playback $delay\ms."
 			after $delay {
 				set ::data(mplayer) [open "|$::vid(mcommand)" r+]
 				fconfigure $::data(mplayer) -blocking 0 -buffering line
 				fileevent $::data(mplayer) readable [list vid_callbackVidData]
-				log_writeOutMpl 0 "MPlayer process id [pid $::data(mplayer)]"
-				log_writeOutTv 0 "MPlayer process id [pid $::data(mplayer)]"
+				log_writeOut ::log(mplAppend) 0 "MPlayer process id [pid $::data(mplayer)]"
+				log_writeOut ::log(tvAppend) 0 "MPlayer process id [pid $::data(mplayer)]"
 			}
 			set ::vid(pbMode) 1
 		} else {
-			log_writeOutTv 2 "Could not locate file for file playback."
-			log_writeOutTv 2 "$file"
+			log_writeOut ::log(tvAppend) 2 "Could not locate file for file playback."
+			log_writeOut ::log(tvAppend) 2 "$file"
 			if {$::option(log_warnDialogue)} {
 				status_feedbWarn 1 [mc "Missing file for file playback"]
 			}
@@ -396,7 +396,7 @@ proc vid_playbackStop {com handler} {
 	if {$com == 0} {
 		vid_fileComputeSize cancel
 	}
-	log_writeOutTv 0 "Stopping playback"
+	log_writeOut ::log(tvAppend) 0 "Stopping playback"
 }
 
 proc vid_playbackRendering {} {

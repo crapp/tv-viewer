@@ -30,7 +30,7 @@ proc option_screen_5 {} {
 		.config_wizard.frame_configoptions.nb select $::window(radio_nb1)
 		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt5 $::window(radio_nb1)]
 	} else {
-		log_writeOutTv 0 "Setting up radio section in preferences."
+		log_writeOut ::log(tvAppend) 0 "Setting up radio section in preferences."
 		set w .config_wizard.frame_configoptions.nb
 		set ::window(radio_nb1) [ttk::frame $w.f_radio]
 		$w add $::window(radio_nb1) -text [mc "Radio Settings"] -padding 2
@@ -49,12 +49,12 @@ proc option_screen_5 {} {
 		proc default_opt5 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt5 \033\[0m \{$w\}"
 			# Nothing to do yet
-			log_writeOutTv 0 "Starting to collect data for radio section."
+			log_writeOut ::log(tvAppend) 0 "Starting to collect data for radio section."
 		}
 		proc stnd_opt5 {w} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt5 \033\[0m \{$w\}"
 			# Nothing to do yet
-			log_writeOutTv 1 "Setting radio options to default."
+			log_writeOut ::log(tvAppend) 1 "Setting radio options to default."
 		}
 	}
 }

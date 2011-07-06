@@ -40,7 +40,7 @@ proc vid_seek {secs direct} {
 	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
 		if {$direct == 1} {
 			if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
-				log_writeOutTv 0 "Seeking +$secs\s"
+				log_writeOut ::log(tvAppend) 0 "Seeking +$secs\s"
 				set seekpos [expr ($::data(file_pos) + $secs)]
 				if {$seekpos < $::data(file_size)} {
 					vid_callbackMplayerRemote "seek $secs 0"
@@ -51,23 +51,23 @@ proc vid_seek {secs direct} {
 			}
 		}
 		if {$direct == 2} {
-			log_writeOutTv 0 "Seeking to the end of actual recording."
+			log_writeOut ::log(tvAppend) 0 "Seeking to the end of actual recording."
 			set calc_secs [expr ($::data(file_size) - $endpos($::option(player_cache))) - $::data(file_pos)]
 			vid_callbackMplayerRemote "seek $calc_secs 0"
 		}
 		if {$direct == -1} {
 			if {[expr ($::data(file_pos) - $secs)] < 0} {
-				log_writeOutTv 0 "Seeking -$secs\s"
+				log_writeOut ::log(tvAppend) 0 "Seeking -$secs\s"
 				set seekpos 0
 				vid_callbackMplayerRemote "seek $seekpos 2"
 			} else {
-				log_writeOutTv 0 "Seeking -$secs\s"
+				log_writeOut ::log(tvAppend) 0 "Seeking -$secs\s"
 				set seekpos [expr ($::data(file_pos) - $secs)]
 				vid_callbackMplayerRemote "seek -$secs 0"
 			}
 		}
 		if {$direct == -2} {
-			log_writeOutTv 0 "Seeking to the beginning of actual recording."
+			log_writeOut ::log(tvAppend) 0 "Seeking to the beginning of actual recording."
 			set seekpos 0
 			vid_callbackMplayerRemote "seek $seekpos 2"
 		}
@@ -76,7 +76,7 @@ proc vid_seek {secs direct} {
 				vid_pmhandlerButton {100 0} {100 0} {{1 !disabled} {2 disabled}}
 				vid_pmhandlerMenuNav {{4 normal} {5 disabled}} {{4 normal} {5 disabled}}
 				vid_pmhandlerMenuTray {{15 normal} {16 disabled}}
-				log_writeOutTv 0 "Pause playback."
+				log_writeOut ::log(tvAppend) 0 "Pause playback."
 				bind . <<forward_10s>> {}
 				bind . <<forward_1m>> {}
 				bind . <<forward_10m>> {}
@@ -91,7 +91,7 @@ proc vid_seek {secs direct} {
 				vid_pmhandlerMenuNav {{4 disabled} {5 normal}} {{4 disabled} {5 normal}}
 				vid_pmhandlerMenuTray {{15 disabled} {16 normal}}
 				set ::data(file_pos_calc) [expr [clock seconds] - $::data(file_pos)]
-				log_writeOutTv 0 "Start playback."
+				log_writeOut ::log(tvAppend) 0 "Start playback."
 				bind . <<forward_end>> {vid_seekInitiate "vid_seek 0 2"}
 				bind . <<forward_10s>> {vid_seekInitiate "vid_seek 10 1"}
 				bind . <<forward_1m>> {vid_seekInitiate "vid_seek 60 1"}
@@ -114,7 +114,7 @@ proc vid_seek {secs direct} {
 			}]
 		}
 	} else {
-		log_writeOutTv 2 "Function vid_seek was invoked while not in file playback mode."
+		log_writeOut ::log(tvAppend) 2 "Function vid_seek was invoked while not in file playback mode."
 	}
 }
 

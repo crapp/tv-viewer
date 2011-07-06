@@ -56,7 +56,7 @@ proc main_newsreaderUi {update_news word_tags hyperlinks} {
 		main_newsreaderApplyTags $mf.t_top_newsr $word_tags $hyperlinks 1
 		$mf.t_top_newsr configure -state disabled
 	} else {
-		log_writeOutTv 1 "Newsreader already opened."
+		log_writeOut ::log(tvAppend) 1 "Newsreader already opened."
 		raise .top_newsreader
 		return
 	}
@@ -75,7 +75,7 @@ proc main_newsreaderUiPre {} {
 proc main_newsreaderCheckUpdate {handler} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderCheckUpdate \033\[0m \{$handler\}"}
 	#handler 0 == check for updates; 1 == autocheck for updates.
-	log_writeOutTv 0 "Checking for news..."
+	log_writeOut ::log(tvAppend) 0 "Checking for news..."
 	set newsTrans [list en de]
 	if {$::option(language_value) == 0} {
 		set locale_split [string trim [lindex [split $::env(LANG) _] 0]]
@@ -160,7 +160,7 @@ proc main_newsreaderCheckUpdate {handler} {
 					set open_last_read_content [read $open_last_read]
 					close $open_last_read
 					if {"$open_last_read_content" == "$update_news"} {
-						log_writeOutTv 0 "There are no news about TV-Viewer"
+						log_writeOut ::log(tvAppend) 0 "There are no news about TV-Viewer"
 						return
 					} else {
 						set showNotifyNews 1
@@ -176,12 +176,12 @@ proc main_newsreaderCheckUpdate {handler} {
 				if {[lindex $status_notify 0] == 0} {
 					set showNews 1 ; #show Newsreader if Notification Daemon is not running
 				} else {
-					log_writeOutTv 0 "There are news about TV-Viewer"
+					log_writeOut ::log(tvAppend) 0 "There are news about TV-Viewer"
 					set open_last_write [open "$::option(home)/config/last_read.conf" w]
 					puts -nonewline $open_last_write "$update_news"
 					close $open_last_write
 					command_WritePipe 1 "tv-viewer_notifyd notifydId"
-					command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 2 "Start Newsreader" "News" "There are News about TV-Viewer"]
+					command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 3 "Start Newsreader" "News" "There are News about TV-Viewer"]
 				}
 			}
 			if {$showNews} {
@@ -191,24 +191,24 @@ proc main_newsreaderCheckUpdate {handler} {
 				main_newsreaderUi "$update_news" "$word_tags" "$hyperlinks"
 			}
 		} else {
-			log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
+			log_writeOut ::log(tvAppend) 2 "Can't check for news. Do you have an active internet connection?"
 			return
 		}
 	} else {
-		log_writeOutTv 2 "Can't check for news. Do you have an active internet connection?"
+		log_writeOut ::log(tvAppend) 2 "Can't check for news. Do you have an active internet connection?"
 		return
 	}
 }
 
 proc main_newsreaderExit {w} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderExit \033\[0m \{$w\}"}
-	log_writeOutTv 0 "Closing Newsreader."
+	log_writeOut ::log(tvAppend) 0 "Closing Newsreader."
 	destroy $w
 }
 
 proc main_newsreaderHomepage {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: main_newsreaderHomepage \033\[0m"}
-	log_writeOutTv 0 "Executing your favorite web browser."
+	log_writeOut ::log(tvAppend) 0 "Executing your favorite web browser."
 	catch {exec sh -c "xdg-open http://tv-viewer.sourceforge.net/mediawiki/index.php/Main_Page" &}
 }
 
@@ -317,32 +317,32 @@ proc main_newsreaderAutomaticUpdate {} {
 	if !{[file exists "$::option(home)/config/last_update.date"]} {
 		set date_file [open "$::option(home)/config/last_update.date" w]
 		close $date_file
-		log_writeOutTv 1 "Newsreader started. Can not determine last check. Will check now."
+		log_writeOut ::log(tvAppend) 1 "Newsreader started. Can not determine last check. Will check now."
 		main_newsreaderCheckUpdate 1
 		return
 	}
 	set actual_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
 	set last_update [clock scan [clock format [file mtime "$::option(home)/config/last_update.date"] -format "%Y%m%d"]]
 	foreach {years months days} [difftime $actual_date $last_update] {}
-	log_writeOutTv 0 "Newsreader started"
-	log_writeOutTv 0 "Last check: [clock format $last_update -format {%d.%m.%Y}]"
-	log_writeOutTv 0 "Offset: $years Year(s) $months Month(s) $days Day(s)"
+	log_writeOut ::log(tvAppend) 0 "Newsreader started"
+	log_writeOut ::log(tvAppend) 0 "Last check: [clock format $last_update -format {%d.%m.%Y}]"
+	log_writeOut ::log(tvAppend) 0 "Offset: $years Year(s) $months Month(s) $days Day(s)"
 	if { $years > 0 } {
-		log_writeOutTv 0 "$years Year(s) since last check"
+		log_writeOut ::log(tvAppend) 0 "$years Year(s) since last check"
 		main_newsreaderCheckUpdate 1
 		return
 	} else {
 		if { $months > 0 } {
-			log_writeOutTv 0 "$months Month(s) since last check"
+			log_writeOut ::log(tvAppend) 0 "$months Month(s) since last check"
 			main_newsreaderCheckUpdate 1
 			return
 		} else {
 			if { $days >= $::option(newsreader_interval) } {
-				log_writeOutTv 0 "$days Day(s) since last check"
+				log_writeOut ::log(tvAppend) 0 "$days Day(s) since last check"
 				main_newsreaderCheckUpdate 1
 				return
 			} else {
-				log_writeOutTv 0 "Next automatic check in [expr $::option(newsreader_interval) - $days] day(s)"
+				log_writeOut ::log(tvAppend) 0 "Next automatic check in [expr $::option(newsreader_interval) - $days] day(s)"
 			}
 		}
 	}

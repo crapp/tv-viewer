@@ -199,7 +199,7 @@ proc process_KeyFile {handler} {
 				dict set ::keyseq {*}$line
 			}
 		} else {
-			catch {log_writeOutTv 0 "Using standard key sequences"}
+			catch {log_writeOut ::log(tvAppend) 0 "Using standard key sequences"}
 		}
 	}
 }

@@ -22,8 +22,8 @@ proc config_wizardMainUi {} {
 	if {[winfo exists .config_wizard]} return
 	if {[winfo exists .tray] == 1} {
 		if {[winfo ismapped .] == 0} {
-			log_writeOutTv 1 "User attempted to start preferences while main is docked."
-			log_writeOutTv 1 "Will undock main."
+			log_writeOut ::log(tvAppend) 1 "User attempted to start preferences while main is docked."
+			log_writeOut ::log(tvAppend) 1 "Will undock main."
 			system_trayToggle 0
 		}
 	}
@@ -42,7 +42,7 @@ proc config_wizardMainUi {} {
 		set ::wizard(Pos) 0
 	}
 	vid_playbackStop 1 pic
-	log_writeOutTv 0 "Starting preferences..."
+	log_writeOut ::log(tvAppend) 0 "Starting preferences..."
 	
 	# Setting up the interface
 	
@@ -111,8 +111,8 @@ proc config_wizardMainUi {} {
 	set status_time [monitor_partRunning 4]
 	set status_record [monitor_partRunning 3]
 	if {[lindex $status_time 0] == 1 || [lindex $status_record 0] == 1 } {
-		log_writeOutTv 1 "There is a running recording/timeshift."
-		log_writeOutTv 1 "Disabling analog settings."
+		log_writeOut ::log(tvAppend) 1 "There is a running recording/timeshift."
+		log_writeOut ::log(tvAppend) 1 "Disabling analog settings."
 		set ::config(rec_running) 1
 	}
 	
@@ -125,7 +125,7 @@ proc config_wizardMainUi {} {
 	option_screen_6
 	option_screen_7
 	option_screen_8
-	log_writeOutTv 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
+	log_writeOut ::log(tvAppend) 0 "Open remembered section $::mem(wizardSec) with tab $::mem(wizardTab)"
 	option_screen_$::mem(wizardSec)
 	if {[winfo exists $::mem(wizardTab)]} {
 		$wfcopt.nb select $::mem(wizardTab)
@@ -158,9 +158,9 @@ proc config_wizardListbox {} {
 
 proc config_wizardExit {lbox nbook} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardExit \033\[0m \{$lbox\} \{$nbook\}"
-	log_writeOutTv 0 "Closing preferences dialog and reread configuration."
+	log_writeOut ::log(tvAppend) 0 "Closing preferences dialog and reread configuration."
 	
-	log_writeOutTv 0 "Saving wizard section and notebook tab"
+	log_writeOut ::log(tvAppend) 0 "Saving wizard section and notebook tab"
 	catch {file delete "$::option(home)/config/tv-viewer_mem.conf"}
 	set wconfig_mem [open "$::option(home)/config/tv-viewer_mem.conf" w+]
 	foreach {okey oelem} [array get ::mem] {
@@ -183,6 +183,8 @@ proc config_wizardExit {lbox nbook} {
 	
 	process_configRead
 	process_configMem
+	
+	array unset ::choice
 	
 	if {$::config(rec_running) == 0} {
 		stream_videoStandard 0
@@ -246,7 +248,7 @@ proc config_wizardExit {lbox nbook} {
 proc config_wizardSaveopts {} {
 	# save options
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: config_wizardSaveopts \033\[0m"
-	log_writeOutTv 0 "Saving configuration values to $::option(home)/config/tv-viewer.conf"
+	log_writeOut ::log(tvAppend) 0 "Saving configuration values to $::option(home)/config/tv-viewer.conf"
 	if {[file exists "$::option(home)/config/tv-viewer.conf"]} {
 		file delete "$::option(home)/config/tv-viewer.conf"
 	}

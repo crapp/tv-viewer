@@ -19,6 +19,8 @@
 proc process_configRead {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configRead \033\[0m"}
 	array set ::option {
+		tclkit 0
+		tclkit_path ""
 		language Autodetect
 		language_value 0
 		starttv_startup 0
@@ -118,30 +120,31 @@ proc process_configRead {} {
 		timeshift_df 1000
 		timeshift_path "$::option(home)/tmp"
 	}
-	if {[info exists ::logf_tv_open_append]} {
+	if {[info exists ::log(tvAppend)]} {
 		if {"$::option(appname)" == "tv-viewer_main"} {
-			log_writeOutTv 0 "Reading configuration values."
+			log_writeOut ::log(tvAppend) 0 "Reading configuration values."
 		}
 	}
+	
 	if {[file exists "$::option(home)/config/tv-viewer.conf"]} {
 		set open_config_file [open "$::option(home)/config/tv-viewer.conf" r]
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::option $line}]} {
-				if {[info exists ::logf_tv_open_append]} {
-					log_writeOutTv 2 "Config file line incorrect: $line"
+				if {[info exists ::log(tvAppend)]} {
+					log_writeOut ::log(tvAppend) 2 "Config file line incorrect: $line"
 				}
 			}
 		}
 		close $open_config_file
 	} else {
-		if {[info exists ::logf_tv_open_append]} {
-			log_writeOutTv 1 "Could not locate a configuration file!"
-			log_writeOutTv 1 "Will use standard values."
+		if {[info exists ::log(tvAppend)]} {
+			log_writeOut ::log(tvAppend) 1 "Could not locate a configuration file!"
+			log_writeOut ::log(tvAppend) 1 "Will use standard values."
 		}
 		foreach {key elem} [array get ::option] {
-			if {[info exists ::logf_tv_open_append]} {
-				log_writeOutTv 1 "$key $elem"
+			if {[info exists ::log(tvAppend)]} {
+				log_writeOut ::log(tvAppend) 1 "$key $elem"
 			}
 		}
 	}
@@ -167,9 +170,9 @@ proc process_configMem {} {
 		wizardTab .config_wizard.frame_configoptions.nb.f_general
 	}
 	
-	if {[info exists ::logf_tv_open_append]} {
+	if {[info exists ::log(tvAppend)]} {
 		if {"$::option(appname)" == "tv-viewer_main"} {
-			log_writeOutTv 0 "Reading memory configuration values."
+			log_writeOut ::log(tvAppend) 0 "Reading memory configuration values."
 		}
 	}
 	if {[file exists "$::option(home)/config/tv-viewer_mem.conf"]} {
@@ -177,20 +180,20 @@ proc process_configMem {} {
 		while {[gets $open_config_file line]!=-1} {
 			if {[string match #* $line] || [string trim $line] == {} } continue
 			if {[catch {array set ::mem $line}]} {
-				if {[info exists ::logf_tv_open_append]} {
-					log_writeOutTv 2 "Mem config file line incorrect: $line"
+				if {[info exists ::log(tvAppend)]} {
+					log_writeOut ::log(tvAppend) 2 "Mem config file line incorrect: $line"
 				}
 			}
 		}
 		close $open_config_file
 	} else {
-		if {[info exists ::logf_tv_open_append]} {
-			log_writeOutTv 1 "Could not locate a mem configuration file!"
-			log_writeOutTv 1 "Will use standard values."
+		if {[info exists ::log(tvAppend)]} {
+			log_writeOut ::log(tvAppend) 1 "Could not locate a mem configuration file!"
+			log_writeOut ::log(tvAppend) 1 "Will use standard values."
 		}
 		foreach {key elem} [array get ::mem] {
-			if {[info exists ::logf_tv_open_append]} {
-				log_writeOutTv 1 "$key $elem"
+			if {[info exists ::log(tvAppend)]} {
+				log_writeOut ::log(tvAppend) 1 "$key $elem"
 			}
 		}
 	}

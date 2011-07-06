@@ -23,19 +23,19 @@ proc record_applyTimeDate {tree lb w handler} {
 	if {$::option(rec_hour_format) == 24} {
 		if {$thour > 23 || $thour < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (%-hour clock)!" $::option(rec_hour_format)]
-			log_writeOutTv 1 "Time format incorrect (24-hour clock)."
+			log_writeOut ::log(tvAppend) 1 "Time format incorrect (24-hour clock)."
 			return
 		}
 	} else {
 		if {$thour > 12 || $thour < 1} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (%-hour clock)!" $::option(rec_hour_format)]
-			log_writeOutTv 1 "Time format incorrect (12-hour clock)."
+			log_writeOut ::log(tvAppend) 1 "Time format incorrect (12-hour clock)."
 			return
 		}
 	}
 	if {$tmin > 59 || $tmin < 0} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time format incorrect (min)!"]
-		log_writeOutTv 1 "Time format incorrect (min)."
+		log_writeOut ::log(tvAppend) 1 "Time format incorrect (min)."
 		return
 	}
 	set curr_date [clock scan [clock format [clock scan now] -format "%Y%m%d"]]
@@ -43,7 +43,7 @@ proc record_applyTimeDate {tree lb w handler} {
 	foreach diff [difftime $chos_date $curr_date] {
 		if {$diff < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Chosen date is in the past!"]
-			log_writeOutTv 1 "Chosen date is in the past."
+			log_writeOut ::log(tvAppend) 1 "Chosen date is in the past."
 			return
 		}
 	}
@@ -59,14 +59,14 @@ proc record_applyTimeDate {tree lb w handler} {
 		set timeoff [expr {([clock scan $thour\:$tmin]-[clock seconds])*1000}]
 		if {$timeoff < -500000} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time is in the past!"]
-			log_writeOutTv 1 "Time is in the past."
+			log_writeOut ::log(tvAppend) 1 "Time is in the past."
 			return
 		}
 	}
 	if {$::option(rec_hour_format) == 24} {
-		log_writeOutTv 0 "Recording time $thour\:$tmin\, date $::record(date)."
+		log_writeOut ::log(tvAppend) 0 "Recording time $thour\:$tmin\, date $::record(date)."
 	} else {
-		log_writeOutTv 0 "Recording time $thour\:$tmin\ $::record(rbAddEditHour), date $::record(date)."
+		log_writeOut ::log(tvAppend) 0 "Recording time $thour\:$tmin\ $::record(rbAddEditHour), date $::record(date)."
 	}
 	record_applyDuration $tree $lb $w $handler
 }
@@ -78,21 +78,21 @@ proc record_applyDuration {tree lb w handler} {
 	set dsec [scan $::record(duration_sec) %d]
 	if {$dhour < 0 || $dhour > 99} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Duration not specified correctly (hour)!"]
-		log_writeOutTv 1 "Duration not specified correctly (hour)."
+		log_writeOut ::log(tvAppend) 1 "Duration not specified correctly (hour)."
 		return
 	}
 	if {$dmin < 0 || $dmin > 59} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Duration not specified correctly (min)!"]
-		log_writeOutTv 1 "Duration not specified correctly (min)."
+		log_writeOut ::log(tvAppend) 1 "Duration not specified correctly (min)."
 		return
 	}
 	if {$dsec < 0 || $dsec > 59} {
 		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Duration not specified correctly (sec)!"]
-		log_writeOutTv 1 "Duration not specified correctly (sec)."
+		log_writeOut ::log(tvAppend) 1 "Duration not specified correctly (sec)."
 		return
 	}
 	set duration_calc [expr ($dhour * 3600) + ($dmin * 60) + $dsec]
-	log_writeOutTv 0 "Duration $duration_calc seconds."
+	log_writeOut ::log(tvAppend) 0 "Duration $duration_calc seconds."
 	record_applyResolution $tree $lb $duration_calc $w $handler
 }
 
@@ -101,17 +101,17 @@ proc record_applyResolution {tree lb duration_calc w handler} {
 	if {[string tolower $::option(video_standard)] == "ntsc" } {
 		if {$::record(resolution_width) > 720 || $::record(resolution_width) < 0 || $::record(resolution_height) > 480 || $::record(resolution_height) < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Resolution format incorrect!"]
-			log_writeOutTv 1 "Resolution format incorrect."
+			log_writeOut ::log(tvAppend) 1 "Resolution format incorrect."
 			return
 		}
 	} else {
 		if {$::record(resolution_width) > 720 || $::record(resolution_width) < 0 || $::record(resolution_height) > 576 || $::record(resolution_height) < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Resolution format incorrect!"]
-			log_writeOutTv 1 "Resolution format incorrect."
+			log_writeOut ::log(tvAppend) 1 "Resolution format incorrect."
 			return
 		}
 	}
-	log_writeOutTv 0 "Resolution $::record(resolution_width)/$::record(resolution_height)."
+	log_writeOut ::log(tvAppend) 0 "Resolution $::record(resolution_width)/$::record(resolution_height)."
 	record_applyFile $tree $lb $duration_calc $w $handler
 }
 
@@ -131,7 +131,7 @@ proc record_applyFile {tree lb duration_calc w handler} {
 			set ::record(file) "[subst $::option(rec_default_path)]/[string map {{ } {}} [string map {{/} {}} $lbcontent]]\_$::record(date)\_$::record(time_hour)\:$::record(time_min).mpeg"
 		}
 	}
-	log_writeOutTv 0 "Record file $::record(file)."
+	log_writeOut ::log(tvAppend) 0 "Record file $::record(file)."
 	record_applyEndgame $tree $lb $duration_calc $w $handler
 }
 
@@ -162,24 +162,24 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	if {"$handler" == "add"} {
 		if {$::option(rec_hour_format) == 24} {
 			$tree insert {} end -values [list $jobid "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-			log_writeOutTv 0 "Adding new recording:"
-			log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+			log_writeOut ::log(tvAppend) 0 "Adding new recording:"
+			log_writeOut ::log(tvAppend) 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 		} else {
 			$tree insert {} end -values [list $jobid "$::record(lbcontent)" "$::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour)" $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-			log_writeOutTv 0 "Adding new recording:"
-			log_writeOutTv 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+			log_writeOut ::log(tvAppend) 0 "Adding new recording:"
+			log_writeOut ::log(tvAppend) 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 		}
 		$tree selection set [lindex [$tree children {}] end]
 		$tree see [$tree selection]
 	} else {
 		if {$::option(rec_hour_format) == 24} {
 			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-			log_writeOutTv 0 "Edit recording:"
-			log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+			log_writeOut ::log(tvAppend) 0 "Edit recording:"
+			log_writeOut ::log(tvAppend) 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 		} else {
 			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" "$::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour)" $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-			log_writeOutTv 0 "Edit recording:"
-			log_writeOutTv 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+			log_writeOut ::log(tvAppend) 0 "Edit recording:"
+			log_writeOut ::log(tvAppend) 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 		}
 		$tree see [$tree selection]
 	}
@@ -191,18 +191,22 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	close $f_open
 	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(rbRepeat) ::record(sbRepeat) ::record(resolution_width) ::record(resolution_height) ::record(file)
 	if {$start} {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
 		catch {exec ""}
-		catch {exec "$::option(root)/data/scheduler.tcl" &}
+		if {$::option(tclkit) == 1} {
+			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+		} else {
+			catch {exec "$::option(root)/data/scheduler.tcl" &}
+		}
 	} else {
-		log_writeOutTv 0 "Writing new scheduled_recordings.conf"
-		log_writeOutTv 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
+		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
 	}
-	log_writeOutTv 0 "Exiting 'add/edit recording'."
+	log_writeOut ::log(tvAppend) 0 "Exiting 'add/edit recording'."
 	vid_wmCursor 1
 	grab release $w
 	destroy $w

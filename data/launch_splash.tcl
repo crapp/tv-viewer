@@ -19,7 +19,7 @@
 proc launch_splash_screen {} {
 	#launch splash screen during start 
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: launch_splash_screen \033\[0m"
-	log_writeOutTv 0 "Launching splash screen..."
+	log_writeOut ::log(tvAppend) 0 "Launching splash screen..."
 	set img_list [launch_splashAnigif "$::option(root)/icons/extras/animated_loading.gif"]
 	set w [toplevel .splash -borderwidth 0 -relief raised -highlightthickness 0]
 	set f_img [frame $w.f_img -background #414141]
@@ -28,7 +28,7 @@ proc launch_splash_screen {} {
 	set ::icon_e(logo-tv-viewer08x-noload_xmas) [image create photo -file $::option(root)/icons/extras/logo-tv-viewer08x-noload_xmas.gif]
 	if {[clock format [clock seconds] -format {%d%m}] == 2412} {
 		label $f_img.l -image $::icon_e(logo-tv-viewer08x-noload_xmas) -borderwidth 0
-		log_writeOutTv 0 "Merry christmas :)"
+		log_writeOut ::log(tvAppend) 0 "Merry christmas :)"
 	} else {
 		label $f_img.l -image $::icon_e(logo-tv-viewer08x-noload) -borderwidth 0
 	}
