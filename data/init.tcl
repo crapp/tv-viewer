@@ -24,7 +24,7 @@ proc init_pkgReq {nrlist} {
 		3 msgcat
 	}
 	foreach nr $nrlist {
-		package require $pkg($nr)
+		package require {*}$pkg($nr)
 		if {$nr == 3} {
 			namespace import msgcat::mc
 		}
@@ -56,14 +56,11 @@ proc init_tclKit {} {
 		set nameofexec [lindex [file split [info nameofexecutable]] end]
 	}
 	
-	puts "nameofexec $nameofexec"
-	
 	foreach path $::auto_path {
 		if {[string match *$nameofexec* $path]} {
 			set ::option(tclkit) 1
 			set tclkit ""
 			foreach elem [file split $path] {
-				puts "elem $elem"
 				set tclkit [file join $tclkit $elem]
 				if {[string match $nameofexec $elem]} {
 					set ::option(tclkit_path) "$tclkit"
@@ -73,6 +70,9 @@ proc init_tclKit {} {
 			break
 		}
 	}
+	puts "::option(appname) $::option(appname)"
+	puts "::option(tclkit) $::option(tclkit)"
+	puts "::option(tclkit_path) $::option(tclkit_path)"
 }
 
 proc init_autoPath {} {

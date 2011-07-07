@@ -47,6 +47,7 @@ set docdir FOO
 set arch FOO
 set tktray FOO
 set tclkit FOO
+set tclkitbin FOO
 
 if {[file exists $where_is/data/release_version.tcl]} {
 	source $where_is/data/release_version.tcl
@@ -125,7 +126,7 @@ proc agrep {switch input modifier} {
 	}
 }
 
-proc install_uninstall {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray} {
+proc install_uninstall {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit tclkitbin} {
 	if {[file isdirectory "$datadir/tv-viewer/"]} {
 		set status_uninstall [catch {file delete -force -- pathname "$datadir/tv-viewer/"} resultat_uninstall]
 		if { $status_uninstall != 0} {
@@ -186,7 +187,7 @@ proc install_checkScheduler {} {
 }
 
 proc install_createFolders {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch} {
-	set dir_list [list "$datadir/tv-viewer/" "$datadir/tv-viewer/data/" "$datadir/tv-viewer/extensions/" "$datadir/tv-viewer/extensions/autoscroll/" "$datadir/tv-viewer/extensions/callib/" "$datadir/tv-viewer/extensions/fsdialog/" "$datadir/tv-viewer/icons/" "$datadir/tv-viewer/icons/16x16/" "$datadir/tv-viewer/icons/22x22/" "$datadir/tv-viewer/icons/32x32/" "$datadir/tv-viewer/icons/extras/" "$datadir/tv-viewer/license/" "$datadir/tv-viewer/msgs/" "$datadir/tv-viewer/themes/" "$datadir/tv-viewer/themes/plastik/" "$datadir/tv-viewer/themes/plastik/plastik/" "$datadir/tv-viewer/themes/keramik/" "$datadir/tv-viewer/themes/keramik/keramik/" "$datadir/tv-viewer/themes/keramik/keramik_alt/"]
+	set dir_list [list "$datadir/tv-viewer/" "$datadir/tv-viewer/data/" "$datadir/tv-viewer/extensions/" "$datadir/tv-viewer/extensions/autoscroll/" "$datadir/tv-viewer/extensions/callib/" "$datadir/tv-viewer/extensions/fsdialog/" "$datadir/tv-viewer/extensions/tclkit/" "$datadir/tv-viewer/icons/" "$datadir/tv-viewer/icons/16x16/" "$datadir/tv-viewer/icons/22x22/" "$datadir/tv-viewer/icons/32x32/" "$datadir/tv-viewer/icons/extras/" "$datadir/tv-viewer/license/" "$datadir/tv-viewer/msgs/" "$datadir/tv-viewer/themes/" "$datadir/tv-viewer/themes/plastik/" "$datadir/tv-viewer/themes/plastik/plastik/" "$datadir/tv-viewer/themes/keramik/" "$datadir/tv-viewer/themes/keramik/keramik/" "$datadir/tv-viewer/themes/keramik/keramik_alt/"]
 	if {[file isdirectory "$datadir/tv-viewer"]} {
 		set status_dir [catch {file delete -force -- pathname "$datadir/tv-viewer/"} result_dir]
 		if {$status_dir != 0} {
@@ -814,23 +815,15 @@ $resultat_permissions_keramik"
 	flush stdout
 }
 
-proc install_copyTclkit {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tclkit} {
-	set filelist [glob "$where_is/tclkit-*"]
-	if {[llength $filelist] > 1} {
-		puts "
-Found more than one tclkit
-
-$filelist"
-		exit 1
-	}
-	lappend filelist "$where_is/tclkitstarter.sh"
+proc install_copyTclkit {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tclkit tclkitbin} {
+	set filelist [list "$where_is/extensions/tclkit/$tclkitbin" "$where_is/extensions/tclkit/tclkitstarter.sh"]
 	set elements [llength $filelist]
 	set pincr [format %.2f [expr 100.0 / $elements.0]]
 	set percentage 0
 	foreach tcfile $filelist {
 		# be carefull, different way of copying files. using system cp \
 		command, because of possible vfs.
-		set status_file_tc [catch {exec cp -f "$tcfile" "$datadir/tv-viewer/data"} resultat_file_tc]
+		set status_file_tc [catch {exec cp -f "$tcfile" "$datadir/tv-viewer/extensions/tclkit"} resultat_file_tc]
 		if { $status_file_tc != 0 } {
 			puts "
 Could not copy file: $tcfile
@@ -842,10 +835,10 @@ Error message: $resultat_file_tc
 			set percentage [format %.2f [expr $percentage + $pincr]]
 			puts -nonewline "\rprocessing tclkit \[${percentage}%\]\033\[K"
 			flush stdout
-			set status_permissions_tcfile [catch {file attributes "$datadir/tv-viewer/data/[lindex [file split $tcfile] end]" -permissions rwxr-xr-x} resultat_permissions_tcfile]
+			set status_permissions_tcfile [catch {file attributes "$datadir/tv-viewer/extensions/tclkit/[lindex [file split $tcfile] end]" -permissions rwxr-xr-x} resultat_permissions_tcfile]
 			if {$status_permissions_tcfile != 0} {
 				puts "
-Could not change permissions for: $datadir/tv-viewer/data/[lindex [file split $tcfile] end]
+Could not change permissions for: $datadir/tv-viewer/extensions/tclkit/[lindex [file split $tcfile] end]
 
 Error message: $resultat_permissions_tcfile"
 				exit 1
@@ -853,13 +846,11 @@ Error message: $resultat_permissions_tcfile"
 		}
 		after 10
 	}
-	#~ set f [glob $datadir/tv-viewer/data/tclkit-*]
-	#~ catch {file rename $f $datadir/tv-viewer/data/tclkit}
 	puts -nonewline "\rprocessing tclkit \[\033\[0;1;32mDONE\033\[0m\]\033\[K"
 	flush stdout
 }
 
-proc install_createSymbolic {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tclkit} {
+proc install_createSymbolic {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tclkit tclkitbin} {
 	catch {file delete -force "$bindir/tv-viewer" "$bindir/tv-viewer_diag" "$bindir/tv-viewer_lirc" "$bindir/tv-viewer_recext" "$bindir/tv-viewer_scheduler"}
 	if {[file isdirectory "$bindir"] == 0} {
 		file mkdir "$bindir/"
@@ -868,7 +859,7 @@ proc install_createSymbolic {where_is prefix eprefix bindir bintarget libdir dat
 	set pincr [format %.2f [expr 100.0 / $elements.0]]
 	set percentage 0
 	if {$tclkit == 1} {
-		catch {exec ln -s "$bintarget/data/tclkitstarter.sh" "$bindir/tv-viewer"}
+		catch {exec ln -s "$bintarget/extensions/tclkit/tclkitstarter.sh" "$bindir/tv-viewer"}
 	} else {
 		catch {exec ln -s "$bintarget/data/tv-viewer_main.tcl" "$bindir/tv-viewer"}
 	}
@@ -888,7 +879,7 @@ $resultat_symbolic
 	}
 	
 	if {$tclkit == 1} {
-		catch {exec ln -s "$bintarget/data/tclkitstarter.sh" "$bindir/tv-viewer_diag"}
+		catch {exec ln -s "$bintarget/extensions/tclkit/tclkitstarter.sh" "$bindir/tv-viewer_diag"}
 	} else {
 		catch {exec ln -s "$bintarget/data/diag_runtime.tcl" "$bindir/tv-viewer_diag"}
 	}
@@ -908,7 +899,7 @@ $resultat_symbolic
 	}
 	
 	if {$tclkit == 1} {
-		catch {exec ln -s "$bintarget/data/tclkitstarter.sh" "$bindir/tv-viewer_lirc"}
+		catch {exec ln -s "$bintarget/extensions/tclkit/tclkitstarter.sh" "$bindir/tv-viewer_lirc"}
 	} else {
 		catch {exec ln -s "$bintarget/data/lirc_emitter.tcl" "$bindir/tv-viewer_lirc"}
 	}
@@ -928,7 +919,7 @@ $resultat_symbolic
 	}
 	
 	if {$tclkit == 1} {
-		catch {exec ln -s "$bintarget/data/tclkitstarter.sh" "$bindir/tv-viewer_recext"}
+		catch {exec ln -s "$bintarget/extensions/tclkit/tclkitstarter.sh" "$bindir/tv-viewer_recext"}
 	} else {
 		catch {exec ln -s "$bintarget/data/record_external.tcl" "$bindir/tv-viewer_recext"}
 	}
@@ -948,7 +939,7 @@ $resultat_symbolic
 	}
 	
 	if {$tclkit == 1} {
-		catch {exec ln -s "$bintarget/data/tclkitstarter.sh" "$bindir/tv-viewer_scheduler"}
+		catch {exec ln -s "$bintarget/extensions/tclkit/tclkitstarter.sh" "$bindir/tv-viewer_scheduler"}
 	} else {
 		catch {exec ln -s "$bintarget/data/scheduler.tcl" "$bindir/tv-viewer_scheduler"}
 	}
@@ -970,7 +961,7 @@ $resultat_symbolic
 	flush stdout
 }
 
-proc install_steps {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit} {
+proc install_steps {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit tclkitbin} {
 	install_welcomeMsg
 	after 500
 	
@@ -1018,13 +1009,13 @@ processings themes \[00%\]"
 		puts -nonewline "
 processing tclkit \[00%\]"
 		after 100
-		install_copyTclkit $where_is $prefix $eprefix $bindir $bintarget $libdir $datadir $mandir $docdir $arch $tclkit
+		install_copyTclkit $where_is $prefix $eprefix $bindir $bintarget $libdir $datadir $mandir $docdir $arch $tclkit $tclkitbin
 	}
 	
 	puts -nonewline "
 processing symbolic links \[00%\]"
 	after 100
-	install_createSymbolic $where_is $prefix $eprefix $bindir $bintarget $libdir $datadir $mandir $docdir $arch $tclkit
+	install_createSymbolic $where_is $prefix $eprefix $bindir $bintarget $libdir $datadir $mandir $docdir $arch $tclkit $tclkitbin
 	
 	puts "
 build all done"

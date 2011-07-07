@@ -19,8 +19,6 @@
 proc process_configRead {} {
 	catch {puts $::main(debug_msg) "\033\[0;1;33mDebug: process_configRead \033\[0m"}
 	array set ::option {
-		tclkit 0
-		tclkit_path ""
 		language Autodetect
 		language_value 0
 		starttv_startup 0

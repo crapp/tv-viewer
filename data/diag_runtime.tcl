@@ -125,6 +125,20 @@ proc diag_checkPkg {diag_file_append} {
 #######@@@ diag_checkPkg @@@#######"
 	set insertLocal 1
 	set insertGlob 1
+	
+	# Checking package Tk available and version
+	set status_tk [catch {package require Tk} resultat_tk]
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Tk:
+$resultat_tk"
+	
+	# Checking version of package Tcl.
+	diag_writeOut $diag_file_append "
+***********************************************************************
+Tcl:
+[info patchlevel]"
+	
 	foreach pa $::auto_path {
 		if {[string match /usr/local/lib $pa]} {
 			set insertLocal 0
@@ -143,19 +157,6 @@ proc diag_checkPkg {diag_file_append} {
 			set ::auto_path [linsert $::auto_path 0 "/usr/lib"]
 		}
 	}
-	
-	# Checking package Tk available and version
-	set status_tk [catch {package require Tk} resultat_tk]
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Tk:
-$resultat_tk"
-	
-	# Checking version of package Tcl.
-	diag_writeOut $diag_file_append "
-***********************************************************************
-Tcl:
-[info patchlevel]"
 	
 	# Checking package tkimg available and version.
 	set status_img [catch {package require Img} resultat_img]

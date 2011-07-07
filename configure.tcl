@@ -44,6 +44,7 @@ set docdir $prefix/doc/tv-viewer
 set arch 32
 set tktray 1
 set tclkit 0
+set tclkitbin "n/a"
 set printchan stdout
 
 if {[file exists $where_is/data/release_version.tcl]} {
@@ -288,7 +289,7 @@ Configuring build environment for TV-Viewer [lindex $::option(release_version) 0
 "
 }
 
-proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit log} {
+proc configure_depCheck {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit tclkitbin log} {
 	puts $::printchan "
 checking dependencies
 "
@@ -408,7 +409,34 @@ no support for high resolution PNG icons"
 	}
 }
 
-proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit log} {
+proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit tclkitbin log} {
+	if {$tclkit == 1} {
+		set status_link [catch {file link [info nameofexecutable]} result_link]
+		if {$status_link == 0} {
+			set tclkitbin [lindex [file split [file link [info nameofexecutable]]] end]
+		} else {
+			set tclkitbin [lindex [file split [info nameofexecutable]] end]
+		}
+		if {[string match "tclkit-*" $tclkitbin] == 0} {
+			set filelist [glob "$where_is/extensions/tclkit/tclkit-*"]
+			if {[llength $filelist] != 1} {
+				puts "
+found more than one or no tclkit
+
+$filelist"
+				exit 1
+			}
+			set tclkitbin [lindex [file split $filelist] end]
+		}
+		if !{[file exists "$where_is/extensions/tclkit/$tclkitbin"]} {
+			puts "
+tclkit not found. file needs to in 
+
+$where_is/extensions/tclkit
+"
+		}
+	}
+	
 	puts $::printchan "
 configuring TV-Viewer:
 prefix        $prefix
@@ -422,6 +450,7 @@ docdir        $docdir
 
 tktray        $tktray
 tclkit        $tclkit
+tclkitbin     $tclkitbin
 architecture  ${arch}bit
 "
 	puts $log "
@@ -440,17 +469,12 @@ docdir        $docdir
 
 tktray        $tktray
 tclkit        $tclkit
+tclkitbin     $tclkitbin
 architecture  ${arch}bit"
 	after 250
 	
 	if {$tclkit == 1} {
-		set status_link [catch {file link [info nameofexecutable]} result_link]
-		if {$status_link == 0} {
-			set nameofexec [lindex [file split [file link [info nameofexecutable]]] end]
-		} else {
-			set nameofexec [lindex [file split [info nameofexecutable]] end]
-		}
-		configure_writeTclkitStarter "$where_is" "$prefix" "$eprefix" "$bindir" "$datadir" "$tclkit" "$log" "$nameofexec"
+		configure_writeTclkitStarter "$where_is" "$prefix" "$eprefix" "$bindir" "$datadir" "$tclkit" "$log" "$tclkitbin"
 	}
 	
 	if {[file exists $where_is/installer.tcl]} {
@@ -481,7 +505,7 @@ $result_out"
 		exit 1
 	}
 	
-	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit}
+	set conf_vars {prefix eprefix bindir bintarget libdir datadir mandir docdir arch tktray tclkit tclkitbin}
 		while {[gets $inst_in line]!=-1} {
 		foreach var $conf_vars {
 			set line [string map [list "$var FOO" "$var \{[set $var]\}"] "$line"]
@@ -490,16 +514,15 @@ $result_out"
 			}
 		}
 		if {[string match *##@@install_steps* "$line"]} {
-			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$tclkit" 
+			set line "	install_steps \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$tclkit \$tclkitbin" 
 		}
 		if {[string match *##@@install_uninstall* "$line"]} {
-			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$tclkit"
+			set line "	install_uninstall \$where_is \$prefix \$eprefix \$bindir \$bintarget \$libdir \$datadir \$mandir \$docdir \$arch \$tktray \$tclkit \$tclkitbin"
 		}
 		if {[string match "*#install.tcl.in @@*" "$line"]} {
 			set line "#!/usr/bin/env tclsh" 
 		}
 		puts $inst_out "$line"
-		flush $inst_out
 	}
 	close $inst_in
 	close $inst_out
@@ -510,7 +533,7 @@ exit 0"
 	if {$tclkit == 1} {
 		puts $::printchan "
 configure: creating ./configure.log
-configure: creating ./tclkitstarter.sh
+configure: creating   extensions/tclkit/tclkitstarter.sh
 configure: creating ./install.tcl"
 	} else {
 		puts $::printchan "
@@ -528,27 +551,27 @@ as root to install TV-Viewer
 	exit 0
 }
 
-proc configure_writeTclkitStarter {where_is prefix eprefix bindir datadir tclkit log nameofexec} {
+proc configure_writeTclkitStarter {where_is prefix eprefix bindir datadir tclkit log tclkitbin} {
 	array set opt {
 		"##@@tv-viewer_sym" {if \[ "\$0" == "$bindir/tv-viewer" \]}
-		"##@@tv-viewer" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/tv-viewer_main.tcl \$@ &}
+		"##@@tv-viewer" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/tv-viewer_main.tcl \$@ &}
 		"##@@tv-viewer_diag_sym" {if \[ "\$0" == "$bindir/tv-viewer_diag" \]}
-		"##@@tv-viewer_diag" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/diag_runtime.tcl \$@ &}
+		"##@@tv-viewer_diag" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/diag_runtime.tcl \$@ &}
 		"##@@tv-viewer_lirc_sym" {if \[ "\$0" == "$bindir/tv-viewer_lirc" \]}
-		"##@@tv-viewer_lirc" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/lirc_emitter.tcl \$@ &}
-		"##@@tv-viewer_recext_sym" {if \[ "\$0" == "/usr/bin/tv-viewer_recext" \]}
-		"##@@tv-viewer_recext" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/record_external.tcl \$@ &}
-		"##@@tv-viewer_scheduler_sym" {if \[ "\$0" == "/usr/bin/tv-viewer_scheduler" \]}
-		"##@@tv-viewer_scheduler" {$datadir/tv-viewer/data/$nameofexec $datadir/tv-viewer/data/scheduler.tcl \$@ &}
+		"##@@tv-viewer_lirc" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/lirc_emitter.tcl \$@ &}
+		"##@@tv-viewer_recext_sym" {if \[ "\$0" == "$bindir/tv-viewer_recext" \]}
+		"##@@tv-viewer_recext" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/record_external.tcl \$@ &}
+		"##@@tv-viewer_scheduler_sym" {if \[ "\$0" == "$bindir/tv-viewer_scheduler" \]}
+		"##@@tv-viewer_scheduler" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/scheduler.tcl \$@ &}
 		"#tclkitstarter.sh.in @@" "#!/bin/bash"
 	}
 	
-	if {[file exists $where_is/tclkitstarter.sh]} {
+	if {[file exists $where_is/extensions/tclkit/tclkitstarter.sh]} {
 		puts $::printchan "
 deleting old tclkitstarter"
-		file delete -force $where_is/tclkitstarter.sh
+		file delete -force $where_is/extensions/tclkit/tclkitstarter.sh
 	}
-	set stat_in [catch {set inst_in [open "$where_is/tclkitstarter.sh.in" r]} result_in]
+	set stat_in [catch {set inst_in [open "$where_is/extensions/tclkit/tclkitstarter.sh.in" r]} result_in]
 	if {$stat_in != 0} {
 		puts $log "
 fatal, can not open tclkitstarter.sh.in
@@ -559,7 +582,7 @@ fatal error, can not open tclkitstarter.sh.in
 $result_in"
 		exit 1
 	}
-	set stat_out [catch {set inst_out [open "$where_is/tclkitstarter.sh" w+]} result_out]
+	set stat_out [catch {set inst_out [open "$where_is/extensions/tclkit/tclkitstarter.sh" w+]} result_out]
 	if {$stat_out != 0} {
 		puts $log "
 fatal, can not write tclkitstarter.sh
@@ -583,7 +606,7 @@ $result_out"
 	}
 	close $inst_in
 	close $inst_out
-	file attributes "$where_is/tclkitstarter.sh" -permissions a+x
+	file attributes "$where_is/extensions/tclkit/tclkitstarter.sh" -permissions a+x
 }
 
 set status_log [catch {set log [open "$where_is/configure.log" w+]} result_log]
@@ -631,10 +654,10 @@ configure_welcomeMsg
 after 500
 
 if {$start_options(--nodepcheck) == 0} {
-	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$tclkit" "$log"
+	configure_depCheck "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$tclkit" "$tclkitbin" "$log"
 	after 1250
 }
 
-configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$tclkit" "$log"
+configure_writeInstaller "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$libdir" "$datadir" "$mandir" "$docdir" "$arch" "$tktray" "$tclkit" "$tclkitbin" "$log"
 
 exit 0

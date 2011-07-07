@@ -18,8 +18,6 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-package require Tcl 8.5
-
 set ::option(appname) tv-viewer_recorder
 
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
@@ -27,6 +25,7 @@ set option(home) "$::env(HOME)/.tv-viewer"
 
 source $option(root)/init.tcl
 
+init_pkgReq "0"
 init_autoPath
 init_tclKit
 init_source "$option(root)" "agrep.tcl monitor.tcl command_socket.tcl process_config.tcl"

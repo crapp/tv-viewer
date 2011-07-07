@@ -18,8 +18,6 @@
 #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #       MA 02110-1301, USA.
 
-package require Tcl 8.5
-
 set option(appname) tv-viewer_scheduler
 set option(root) "[file dirname [file dirname [file normalize [file join [info script] bogus]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
@@ -28,6 +26,7 @@ fconfigure $::main(debug_msg) -blocking no -buffering line
 
 source $option(root)/init.tcl
 
+init_pkgReq "0"
 init_testRoot
 
 if {[file isdirectory "$::option(home)"] == 0} {

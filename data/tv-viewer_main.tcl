@@ -179,6 +179,7 @@ init_testRoot
 source $::option(root)/data/agrep.tcl
 init_lock "lockfile.tmp" "tv-viewer_main.tcl" "tv-viewer"
 init_autoPath
+init_tclKit
 init_source "$::option(root)/data" "all"
 
 startupCheckVer

@@ -36,8 +36,6 @@
 # 
 # *These options are mandatory to schedule a recording
 
-package require Tcl 8.5
-
 set option(root) "[file dirname [file dirname [file dirname [file normalize [file join [info script] bogus]]]]]"
 set option(home) "$::env(HOME)/.tv-viewer"
 set option(appname) "tv-viewer_recext"
@@ -46,6 +44,7 @@ set main(debug_msg) [open /dev/null a]
 
 source $option(root)/data/init.tcl
 
+init_pkgReq "0"
 init_source "$option(root)/data" "release_version.tcl agrep.tcl process_config.tcl process_station_file.tcl log_viewer.tcl command_socket.tcl monitor.tcl"
 
 process_configRead
