@@ -418,13 +418,12 @@ proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir d
 			set tclkitbin [lindex [file split [info nameofexecutable]] end]
 		}
 		if {[string match "tclkit-*" $tclkitbin] == 0} {
-			set status_glob [catch {[glob "$where_is/extensions/tclkit/tclkit-*"]} result_glob]
+			set status_glob [catch {glob "$where_is/extensions/tclkit/tclkit-*"} result_glob]
 			if {$status_glob == 1} {
 				puts "
 no tclkit detected, file needs to be in 
 
-$where_is/extensions/tclkit
-"
+$where_is/extensions/tclkit"
 				exit 1
 			}
 			if {[llength $result_glob] != 1} {
@@ -436,12 +435,12 @@ $result_glob"
 			}
 			set tclkitbin [lindex [file split $result_glob] end]
 		}
-		if !{[file exists "$where_is/extensions/tclkit/$tclkitbin"]} {
+		puts "tclkitbin $tclkitbin"
+		if {[file exists "$where_is/extensions/tclkit/$tclkitbin"] == 0} {
 			puts "
 no tclkit detected, file needs to be in
 
-$where_is/extensions/tclkit
-"
+$where_is/extensions/tclkit"
 		}
 	}
 	
