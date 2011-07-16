@@ -37,6 +37,11 @@ them to be installed or not.
              Depends on glibc; libxdmcp; libxau; libxcb; libx11
              These dependencies should be installed by default on every linux
              distribution.
+* tclkit -   Install TV-Viewer using a tclkit. A tclkit provides a 
+             complete TCL/TK environment. You may use this if your 
+             distribution does not ship an appropriate version of Tcl/Tk.
+             Download the tclkit from tv-viewer.sourceforge.net and place 
+             it in extensions/tclkit/             
 
 If you do not want to install one of this features use the switch
 

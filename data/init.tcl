@@ -70,9 +70,6 @@ proc init_tclKit {} {
 			break
 		}
 	}
-	puts "::option(appname) $::option(appname)"
-	puts "::option(tclkit) $::option(tclkit)"
-	puts "::option(tclkit_path) $::option(tclkit_path)"
 }
 
 proc init_autoPath {} {

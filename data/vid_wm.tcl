@@ -198,7 +198,7 @@ proc vid_wmViewToolb {bar} {
 	}
 	if {[wm attributes . -fullscreen]} {
 		#Do nothing in fullscreen mode
-		log_writeOut ::log(tvAppend) 1 "Can not show/hide toolbars in fullscreen mode"
+		log_writeOut ::log(tvAppend) 1 "Can not show/hide toolbars in fullscreen mode, use mouse cursor"
 		return
 	}
 	if {$::main(compactMode)} {
@@ -674,6 +674,7 @@ proc vid_wmCursorToolbar {xpos ypos} {
 		if {$::option(floatStation)} {
 			if {[string trim [grid info .fstations]] == {}} {
 				if {$xpos < 20} {
+					grid .fvidBg -in . -row 3 -column 1 -sticky nesw
 					grid .fstations -in . -row 3 -column 0 -sticky nesw
 					log_writeOut ::log(tvAppend) 0 "Adding station list with grid window manager."
 				}
@@ -681,6 +682,7 @@ proc vid_wmCursorToolbar {xpos ypos} {
 			if {[string trim [grid info .fstations]] != {}} {
 				if {$xpos > 80} {
 					grid remove .fstations
+					grid .fvidBg -in . -row 3 -column 0 -columnspan 2 -sticky nesw
 					log_writeOut ::log(tvAppend) 0 "Removing station list with grid window manager."
 				}
 			}
