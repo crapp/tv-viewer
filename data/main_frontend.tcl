@@ -498,7 +498,7 @@ proc main_frontendUi {} {
 	wm protocol . WM_DELETE_WINDOW [list event generate . <<exit>>]
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
-	bind . <Key-x> {status_feedbWarn 2 "Error in X. Please check the logfiles"}
+	bind . <Key-x> {command_WritePipe 1 "tv-viewer_notifyd notifydId"; command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 3 "Start Newsreader" "News" "There are News about TV-Viewer"]}
 	bind . <Key-y> {status_feedbWardn 1 "Test Message 1 can be very long, so we need to check what happens with the stats_feedbWarn"}
 	
 	

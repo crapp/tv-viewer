@@ -45,6 +45,7 @@ set main(debug_msg) [open /dev/null a]
 source $option(root)/data/init.tcl
 
 init_pkgReq "0"
+init_tclKit
 init_source "$option(root)/data" "release_version.tcl agrep.tcl process_config.tcl process_station_file.tcl log_viewer.tcl command_socket.tcl monitor.tcl"
 
 process_configRead
@@ -180,9 +181,11 @@ proc record_externalTime {} {
 				}
 			} else {
 				if {$::option(rec_hour_format) == 24} {
-					record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM (24-hours clock)." 1
+					record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM (24-hours clock).
+You have chosen the 24-hour system in the preferences" 1
 				} else {
-					record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM am/pm (12-hours clock)." 1
+					record_externalExit "External record scheduler: Time incorrect format." 2 "Time incorrect format, HH:MM am/pm (12-hours clock).
+You have chosen the 12-hour system in the preferences" 1
 				}
 			}
 		} else {

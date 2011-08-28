@@ -43,9 +43,9 @@ them to be installed or not.
              of Tcl/Tk. Download the tclkit from tv-viewer.sourceforge.net
              and place it in extensions/tclkit/
 
-If you do not want to install one of this features use the switch
+Use the following switch if you want to enable or disable one of these features
 
---enable-FEATURE=ARG (e.g. --enable-tktray=yes ; --enable-tclkit=yes)
+--enable-FEATURE=ARG (e.g. --enable-tktray=yes/no ; --enable-tclkit=yes/no)
 
 with the configure.tcl script.
 

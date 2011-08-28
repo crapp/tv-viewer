@@ -32,6 +32,7 @@ set option(appname) tv-viewer_notifyd
 source $option(root)/data/init.tcl
 
 init_pkgReq "3"
+init_tclKit
 init_source "$option(root)/data" "agrep.tcl process_config.tcl monitor.tcl command_socket.tcl"
 init_lock "notifyd_lockfile.tmp" "notifyd.tcl" "tv-viewer_notifyd"
 
