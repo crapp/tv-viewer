@@ -458,6 +458,9 @@ mcset da {License} {Licens}
 mcset da {Changelog} {Changelog}
 mcset da {About TV-Viewer} {Om TV-Viewer}
 
+### ../data/init.tcl ###
+
+
 ### ../data/key_sequences.tcl ###
 
 mcset da {Available Key Sequences} {Tilgængelige Tastekombinationer}
@@ -490,7 +493,7 @@ mcset da {Conflict detected with %} {Konflikt opdaget med %s}
 ### ../data/log_viewer.tcl ###
 
 mcset da {Choose output file} {Vælg output fil}
-mcset da {$ident(name($handler)) Log} {$ident(name($handler)) Log}
+mcset da {$ident(name($logfile)) Log} {$ident(name($logfile)) Log}
 mcset da {Save logfile to disk} {Gem logfil på disk}
 mcset da {Send logfile by e-mail to the authors} {Send logfil med e-mail til udviklerne}
 mcset da {Show/hide Debug messages} {Vis/skjul debug meddelelser}
@@ -704,7 +707,7 @@ Started: % %
 Ends:    % %} {Recording "%s"
 
 Started: %s %s
-Ends:    %s %s} ;#Newline
+Ends:    %s %s}
 mcset da {Timeshift %} {Timeshift %s}
 mcset da {Recording % - Ends at % %} {Optager %s - Stopper %s %s}
 mcset da {Station
@@ -802,6 +805,7 @@ mcset da {Frequency:} {Frekvens:}
 mcset da {Video input:} {Videoindgang:}
 mcset da {Command:} {Kommando:}
 mcset da {Internal frequency:} {Intern frekvens:}
+mcset da {Can't find any video inputs} {Can't find any video inputs} ;#Newline
 mcset da {Add a new station} {Tilføj ny station}
 mcset da {Edit Station / Frequency} {Rediger Station / Frekvens}
 mcset da {Provide a name for the television station} {Angiv et navn for TV-stationen}
@@ -863,7 +867,6 @@ mcset da {Frequency: %} {Frekvens: %s}
 ### ../data/status_feedb.tcl ###
 
 mcset da {Show log} {Vis log}
-mcset da {TV-Viewer Error} {TV-Viewer Fejl}
 
 ### ../data/stream.tcl ###
 

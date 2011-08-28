@@ -487,6 +487,9 @@ mcset de {License} {Lizenz}
 mcset de {Changelog} {Changelog}
 mcset de {About TV-Viewer} {Über TV-Viewer}
 
+### ../data/init.tcl ###
+
+
 ### ../data/key_sequences.tcl ###
 
 mcset de {Available Key Sequences} {Verfügbare Tastenkombinationen}
@@ -519,7 +522,7 @@ mcset de {Conflict detected with %} {Konflikt mit %s}
 ### ../data/log_viewer.tcl ###
 
 mcset de {Choose output file} {Choose output file}
-mcset de {$ident(name($handler)) Log} {$ident(name($handler)) Log}
+mcset de {$ident(name($logfile)) Log} {$ident(name($logfile)) Log}
 mcset de {Save logfile to disk} {Logfile speichern}
 mcset de {Send logfile by e-mail to the authors} {Logdatei per E-Mail an die Entwickler schicken}
 mcset de {Show/hide Debug messages} {Debug-Meldungen anzeigen / verbergen}
@@ -840,6 +843,7 @@ mcset de {Frequency:} {Frequenz:}
 mcset de {Video input:} {Videoeingang:}
 mcset de {Command:} {Befehl:}
 mcset de {Internal frequency:} {Interne Frequenz:}
+mcset de {Can't find any video inputs} {Konnte keinen Videoeingang finden}
 mcset de {Add a new station} {Neuen Sender hinzufügen}
 mcset de {Edit Station / Frequency} {Sender / Frequenz bearbeiten}
 mcset de {Provide a name for the television station} {Einen Namen für den Sender angeben}
@@ -911,7 +915,6 @@ mcset de {Frequency: %} {Frequenz: %s}
 ### ../data/status_feedb.tcl ###
 
 mcset de {Show log} {Log anzeigen}
-mcset de {TV-Viewer Error} {TV-Viewer Fehler}
 
 ### ../data/stream.tcl ###
 
