@@ -162,6 +162,10 @@ You've installed a new version of TV-Viewer."
 			close $new_version_file
 		}
 	}
+	if {$::init(restartLock)} {
+		#restart init_tclkit because there was no config directory
+		init_tclKit
+	}
 }
 
 wm withdraw .

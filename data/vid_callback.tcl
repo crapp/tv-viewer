@@ -88,7 +88,7 @@ proc vid_callbackVidData {} {
 			}
 			set ::vid(pbStatus) 0
 		} else {
-			if {[string match "A:*V:*A-V:*" $line] != 1} {
+			if {[string match "A:*V:*A-V:*" $line] != 1 && [string match {A:*(*.[0-9])*} $line] != 1} {
 				log_writeOut ::log(mplAppend) 0 "$line"
 				puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_callbackVidData \033\[0m \{$line\}"
 			} else {
@@ -96,40 +96,47 @@ proc vid_callbackVidData {} {
 					catch {launch_splashPlay cancel 0 0 0}
 					catch {place forget .fvidBg.l_anigif}
 					catch {destroy .fvidBg.l_anigif}
-					if {$::option(player_aspect) == 1} {
-						if {$::option(player_keepaspect) == 1} {
-							place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
-							bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
-						} else {
-							place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
-						}
-					} else {
-						place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
-						bind .fvidBg.cont <Configure> {}
-					}
-					if {[string trim [place info .fvidBg.cont]] != {}} {
-						if {$::data(movevidX) != 0} {
-							place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
-						}
-						if {$::data(movevidY) != 0} {
-							place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
-						}
-					} else {
-						log_writeOut ::log(tvAppend) 1 "Warning container frame not managed with place. Report this incident."
-					}
-					if {$::data(panscanAuto) == 1} {
-						set ::vid(id_panscanAuto) [after 500 {
-							catch {after cancel $::vid(id_panscanAuto)}
-							set ::data(panscanAuto) 0
-							event generate . <<wmZoomAuto>>
-						}]
-					} else {
-						if {$::data(panscan) != 0} {
-							if {[string trim [place info .fvidBg.cont]] != {}} {
-								place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
+					if {[string match {A:*(*.[0-9])*} $line] != 1} {
+						if {$::option(player_aspect) == 1} {
+							if {$::option(player_keepaspect) == 1} {
+								place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1
+								bind .fvidBg.cont <Configure> {place %W -width [expr (%h * ($::option(resolx).0 / $::option(resoly).0))]}
 							} else {
-								log_writeOut ::log(tvAppend) 1 "Warning container frame not managed with place. Report this incident."
+								place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -relheight 1 -relwidth 1
 							}
+						} else {
+							place .fvidBg.cont -in .fvidBg -relx 0.5 -rely 0.5 -anchor center -width $::option(resolx) -height $::option(resoly)
+							bind .fvidBg.cont <Configure> {}
+						}
+						if {[string trim [place info .fvidBg.cont]] != {}} {
+							if {$::data(movevidX) != 0} {
+								place .fvidBg.cont -relx [expr ([dict get [place info .fvidBg.cont] -relx] + [expr $::data(movevidX) * 0.005])]
+							}
+							if {$::data(movevidY) != 0} {
+								place .fvidBg.cont -rely [expr ([dict get [place info .fvidBg.cont] -rely] + [expr $::data(movevidY) * 0.005])]
+							}
+						} else {
+							log_writeOut ::log(tvAppend) 1 "Warning container frame not managed with place. Report this incident."
+						}
+						if {$::data(panscanAuto) == 1} {
+							set ::vid(id_panscanAuto) [after 500 {
+								catch {after cancel $::vid(id_panscanAuto)}
+								set ::data(panscanAuto) 0
+								event generate . <<wmZoomAuto>>
+							}]
+						} else {
+							if {$::data(panscan) != 0} {
+								if {[string trim [place info .fvidBg.cont]] != {}} {
+									place .fvidBg.cont -relheight [expr ([dict get [place info .fvidBg.cont] -relheight] + [expr $::data(panscan).0 / 100])]
+								} else {
+									log_writeOut ::log(tvAppend) 1 "Warning container frame not managed with place. Report this incident."
+								}
+							}
+						}
+					} else {
+						log_writeOut ::log(mplAppend) 2 "No video stream available. Try a different video ouput driver or check additional mplayer options, if you provided any."
+						if {$::option(log_warnDialogue)} {
+							status_feedbWarn 2 [mc "No video stream available"]
 						}
 					}
 					vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)

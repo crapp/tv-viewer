@@ -27,7 +27,7 @@ proc vid_seekInitiate {seek_com} {
 
 proc vid_seek {secs direct} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_seek \033\[0m \{$secs\} \{$direct\}"
-	# direct 1 --> forward; 2 end of file; -1 --> backward; -2 beginning of the file; 0 toggles pause
+	# direct 1 --> forward; 2 end of file; -1 --> backward; -2 beginning of the file; 3 -> absolut position in secs; 0 toggles pause
 	array set endpos {
 		0 10
 		512 10
@@ -38,6 +38,9 @@ proc vid_seek {secs direct} {
 		16384 18
 	}
 	if {[info exists ::vid(pbMode)] && $::vid(pbMode) == 1} {
+		if {$direct == 3} {
+			vid_callbackMplayerRemote "seek $secs 2"
+		}
 		if {$direct == 1} {
 			if {[expr ($::data(file_pos) + $secs)] < [expr ($::data(file_size) - 20)]} {
 				log_writeOut ::log(tvAppend) 0 "Seeking +$secs\s"

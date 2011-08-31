@@ -422,8 +422,8 @@ proc configure_writeInstaller {where_is prefix eprefix bindir bintarget libdir d
 			if {$status_glob == 1} {
 				puts "
 no tclkit detected, file needs to be in 
-
 $where_is/extensions/tclkit"
+
 				exit 1
 			}
 			if {[llength $result_glob] != 1} {
@@ -439,8 +439,8 @@ $result_glob"
 		if {[file exists "$where_is/extensions/tclkit/$tclkitbin"] == 0} {
 			puts "
 no tclkit detected, file needs to be in
-
 $where_is/extensions/tclkit"
+
 		}
 	}
 	

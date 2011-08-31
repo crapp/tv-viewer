@@ -2,7 +2,6 @@ TV-Viewer uses different icons that were not developed by the author. Here is a 
 
 ---------------------------------------
 tv-viewer_icon.png/gif
-systray_icon.png/gif
 animated_loading.gif
 BigBlackIceRoller.gif
 
@@ -93,10 +92,11 @@ arrow-d.gif
 logo-tv-viewer08x-noload.png/gif
 pick-color3.xbm
 placeholder.png/gif
+systray_icon.png/gif
 systray_icon_rec.png/gif
-systray_icon_video.png/gif
-systray_icon_tv.png/gif
 systray_icon_time.png/gif
+systray_icon_tv.png/gif
+systray_icon_video.png/gif
 
 Created by Christian Rapp in cooperation with revealed using the Gimp. License GPL
 saedelaere.tv_at_googlemail_dot_com

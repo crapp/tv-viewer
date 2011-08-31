@@ -121,41 +121,46 @@ proc init_langSupport {} {
 }
 
 proc init_lock {lockfile scriptfile appname} {
-	set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/$lockfile"} resultat_lock]
-	if { $status_lock != 0 } {
-		set linkread [file readlink "$::option(home)/tmp/$lockfile"]
-		catch {exec ps -eo "%p"} read_ps
-		set status_greppid [catch {agrep -w "$read_ps" $linkread} resultat_greppid]
-		if { $status_greppid != 0 } {
-			catch {file delete "$::option(home)/tmp/$lockfile"}
-			catch {exec ln -s "[pid]" "$::option(home)/tmp/$lockfile"}
-		} else {
-			catch {exec ps -p $linkread -o args=} readarg
-			set status_grepargLink [catch {agrep -m "$readarg" "$appname"} resultat_greparg]
-			set status_grepargDirect [catch {agrep -m "$readarg" "$scriptfile"} resultat_greparg]
-			if {$status_grepargLink != 0 && $status_grepargDirect != 0} {
+	if {[file isdirectory "$::option(home)"]} {
+		set ::init(restartLock) 0
+		set status_lock [catch {exec ln -s "[pid]" "$::option(home)/tmp/$lockfile"} resultat_lock]
+		if { $status_lock != 0 } {
+			set linkread [file readlink "$::option(home)/tmp/$lockfile"]
+			catch {exec ps -eo "%p"} read_ps
+			set status_greppid [catch {agrep -w "$read_ps" $linkread} resultat_greppid]
+			if { $status_greppid != 0 } {
 				catch {file delete "$::option(home)/tmp/$lockfile"}
 				catch {exec ln -s "[pid]" "$::option(home)/tmp/$lockfile"}
 			} else {
-				if {"$appname" == "tv-viewer_scheduler"} {
-					puts "
-An instance of the TV-Viewer Scheduler is already running"
+				catch {exec ps -p $linkread -o args=} readarg
+				set status_grepargLink [catch {agrep -m "$readarg" "$appname"} resultat_greparg]
+				set status_grepargDirect [catch {agrep -m "$readarg" "$scriptfile"} resultat_greparg]
+				if {$status_grepargLink != 0 && $status_grepargDirect != 0} {
+					catch {file delete "$::option(home)/tmp/$lockfile"}
+					catch {exec ln -s "[pid]" "$::option(home)/tmp/$lockfile"}
+				} else {
+					if {"$appname" == "tv-viewer_scheduler"} {
+						puts "
+	An instance of the TV-Viewer Scheduler is already running"
+					}
+					if {"$appname" == "tv-viewer"} {
+						puts "
+	An instance of TV-Viewer is already running."
+						#FIXME - This messageBox is really ugly - Will be changed in the future
+						tk_messageBox -icon warning -title "Instance already running" -message "An instance of TV-Viewer is already running.
+	Otherwise you have to delete the file
+	$::option(home)/tmp/lockfile.tmp"
+					}
+					if {"$appname" == "tv-viewer_notifyd"} {
+						puts "
+	An instance of the TV-Viewer notification daemon is already running"
+					}
+					exit 1
 				}
-				if {"$appname" == "tv-viewer"} {
-					puts "
-An instance of TV-Viewer is already running."
-					#FIXME - This messageBox is really ugly - Will be changed in the future
-					tk_messageBox -icon warning -title "Instance already running" -message "An instance of TV-Viewer is already running.
-Otherwise you have to delete the file
-$::option(home)/tmp/lockfile.tmp"
-				}
-				if {"$appname" == "tv-viewer_notifyd"} {
-					puts "
-An instance of the TV-Viewer notification daemon is already running"
-				}
-				exit 1
 			}
 		}
+	} else {
+		set ::init(restartLock) 1
 	}
 }
 
