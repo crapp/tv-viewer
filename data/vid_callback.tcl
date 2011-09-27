@@ -43,7 +43,7 @@ proc vid_callbackVidData {} {
 					log_writeOut ::log(mplAppend) 2 "$line"
 				}
 				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 2 [mc "MPlayer has finished unexpectedly"]
+					status_feedbWarn 2 2 [mc "MPlayer has finished unexpectedly"]
 				}
 			}
 			unset -nocomplain ::data(mplayer)
@@ -136,7 +136,7 @@ proc vid_callbackVidData {} {
 					} else {
 						log_writeOut ::log(mplAppend) 2 "No video stream available. Try a different video ouput driver or check additional mplayer options, if you provided any."
 						if {$::option(log_warnDialogue)} {
-							status_feedbWarn 2 [mc "No video stream available"]
+							status_feedbWarn 2 2 [mc "No video stream available"]
 						}
 					}
 					vid_audioVolumeControl .ftoolb_Play.scVolume .ftoolb_Play.bVolMute $::main(volume_scale)
@@ -218,7 +218,7 @@ proc vid_callbackVidData {} {
 		log_writeOut ::log(tvAppend) 2 "Tried to read channel ::data(mplayer)."
 		log_writeOut ::log(tvAppend) 2 "Socket seems to be broken, you should report this incident"
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Can not read callback channel"]
+			status_feedbWarn 1 0 [mc "Can not read callback channel"]
 		}
 	}
 }

@@ -87,10 +87,13 @@ $::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
 	}
 	set new_version_file [open "$::option(home)/config/tv-viewer-[lindex $version 0]_build[lindex $version 1]\.ver" w]
 	close $new_version_file
+	set ::init(restartLock) 1
+	set ::main(upgrade) 1
 	puts "$messageFin"
 }
 
 proc startupCheckVer {} {
+	set ::main(upgrade) 0
 	set get_installed_version [glob -nocomplain "$::option(home)/config/tv-viewer-*.ver"]
 	if {[string trim $get_installed_version] != {}} {
 		set normalized_version_file [file normalize "$get_installed_version"]
@@ -103,12 +106,12 @@ You've installed a new version of TV-Viewer."
 	#			Upgrade or downgrade?
 				if {[package vcompare [lindex $::option(release_version) 0] $read_version] == -1} {
 	#				Downgrade
-					puts "This seems to be a downgrade!"
+					puts "This is a downgrade!"
 					startupCpF "$::option(release_version)" $read_version $read_build
 				}
 				if {[package vcompare [lindex $::option(release_version) 0] $read_version] == 1} {
 	#			Upgrade
-					puts "This seems to be an upgrade."
+					puts "This is an upgrade."
 					startupCpF "$::option(release_version)" $read_version $read_build
 				}
 			} else {
@@ -116,11 +119,11 @@ You've installed a new version of TV-Viewer."
 					puts "
 You've installed a new version of TV-Viewer."
 					if {[lindex $::option(release_version) 1] < $read_build} {
-						puts "This seems to be a downgrade!"
+						puts "This is a downgrade!"
 						startupCpF "$::option(release_version)" $read_version $read_build
 					}
 					if {[lindex $::option(release_version) 1] > $read_build} {
-						puts "This seems to be an upgrade."
+						puts "This is an upgrade."
 						startupCpF "$::option(release_version)" $read_version $read_build
 					}
 				}
@@ -134,19 +137,19 @@ You've installed a new version of TV-Viewer."
 	#			Upgrade or downgrade?
 				if {[package vcompare [lindex $::option(release_version) 0] $read_version] == -1} {
 	#				Downgrade
-					puts "This seems to be a downgrade!"
+					puts "This is a downgrade!"
 					startupCpF "$::option(release_version)" $read_version nobuild
 				}
 				if {[package vcompare [lindex $::option(release_version) 0] $read_version] == 1} {
 	#				Upgrade
-					puts "This seems to be an upgrade."
+					puts "This is an upgrade."
 					startupCpF "$::option(release_version)" $read_version nobuild
 				}
 			} else {
 				#This must be a new version because of new build concept.
 				puts "
 You've installed a new version of TV-Viewer."
-				puts "This seems to be an upgrade."
+				puts "This is an upgrade."
 				startupCpF "$::option(release_version)" $read_version nobuild
 			}
 		}
@@ -160,11 +163,13 @@ You've installed a new version of TV-Viewer."
 			file mkdir "$::env(HOME)/.tv-viewer/" "$::env(HOME)/.tv-viewer/config/" "$::env(HOME)/.tv-viewer/tmp/" "$::env(HOME)/.tv-viewer/log/"
 			set new_version_file [open "$::env(HOME)/.tv-viewer/config/tv-viewer-[lindex $::option(release_version) 0]_build[lindex $::option(release_version) 1]\.ver" w]
 			close $new_version_file
+			set ::main(upgrade) 1
 		}
 	}
 	if {$::init(restartLock)} {
-		#restart init_tclkit because there was no config directory
-		init_tclKit
+		#restart init_lock because there was no config directory or config \
+		was rewritten because of up-, downgrade
+		init_lock "lockfile.tmp" "tv-viewer_main.tcl" "tv-viewer"
 	}
 }
 

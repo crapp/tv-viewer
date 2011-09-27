@@ -213,7 +213,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 		log_writeOut ::log(tvAppend) 2 "Waited 3 seconds to change video input to $input."
 		log_writeOut ::log(tvAppend) 2 "This didn't work, BAD."
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Timeout for changing video input"]
+			status_feedbWarn 1 2 [mc "Timeout for changing video input"]
 		}
 		return
 	}
@@ -221,7 +221,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 		log_writeOut ::log(tvAppend) 2 "The Video Device $::option(video_device) does not exist."
 		log_writeOut ::log(tvAppend) 2 "Have a look into the preferences and change it."
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
+			status_feedbWarn 1 2 [mc "Video device % does not exist" $::option(video_device)]
 		}
 		return
 	}
@@ -301,7 +301,7 @@ proc chan_zapperInputQuery {secs input restart} {
 		log_writeOut ::log(tvAppend) 2 "Waited 3 seconds to change video input to $input."
 		log_writeOut ::log(tvAppend) 2 "This didn't work, BAD."
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Timeout for changing video input"]
+			status_feedbWarn 1 2 [mc "Timeout for changing video input"]
 		}
 		return
 	}
@@ -309,7 +309,7 @@ proc chan_zapperInputQuery {secs input restart} {
 		log_writeOut ::log(tvAppend) 2 "The Video Device $::option(video_device) does not exist."
 		log_writeOut ::log(tvAppend) 2 "Have a look into the preferences and change it."
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
+			status_feedbWarn 1 2 [mc "Video device % does not exist" $::option(video_device)]
 		}
 		return
 	}

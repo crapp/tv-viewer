@@ -41,7 +41,7 @@ proc timeshift {tbutton} {
 		log_writeOut ::log(tvAppend) 2 "The Video Device $::option(video_device) does not exist."
 		log_writeOut ::log(tvAppend) 2 "Have a look into the preferences and change it."
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Video device % does not exist" $::option(video_device)]
+			status_feedbWarn 1 2 [mc "Video device % does not exist" $::option(video_device)]
 		}
 		return
 	}

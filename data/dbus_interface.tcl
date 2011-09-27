@@ -29,7 +29,7 @@ proc dbus_interfaceStart {} {
 				log_writeOut ::log(tvAppend) 2 "Can not load shared library dbus-tcl"
 				log_writeOut ::log(tvAppend) 2 "$result_dbustcl"
 				log_writeOut ::log(tvAppend) 2 "Deactivate D-Bus in the interface section of the preferences"
-				status_feedbWarn 1 [mc "Can not load shared library dbus-tcl"]
+				status_feedbWarn 1 0 [mc "Can not load shared library dbus-tcl"]
 			}
 			if {"$::option(appname)" == "tv-viewer_scheduler"} {
 				log_writeOut ::log(schedAppend) 2 "Can not load shared library dbus-tcl"

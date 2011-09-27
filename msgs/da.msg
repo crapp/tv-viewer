@@ -512,6 +512,11 @@ mcset da {View} {View}
 mcset da {Help} {Hjælp}
 mcset da {Welcome to TV-Viewer %} {Velkommen til TV-Viewer %s}
 mcset da {Could not detect MPlayer} {Kunne ikke finde MPlayer}
+mcset da {Congratulations! You have installed a new version of TV-Viewer:
+% (Bazaar r%), running on Tcl/tk %
+Build date: %} {Congratulations! You have installed a new version of TV-Viewer:
+%s (Bazaar r%s), running on Tcl/tk %s
+Build date: %s} ;#Newline
 
 ### ../data/main_menu.tcl ###
 
@@ -917,6 +922,7 @@ mcset da {Jump to the end} {Hop til slutning}
 
 mcset da {MPlayer has finished unexpectedly} {MPlayer er stoppet uventet}
 mcset da {idle} {klar}
+mcset da {No video stream available} {No video stream available} ;#Newline
 mcset da {Can not read callback channel} {Kan ikke læse callback kanal}
 
 ### ../data/vid_file_calc.tcl ###

@@ -53,12 +53,12 @@ proc stream_videoStandard {handler} {
 				log_writeOut ::log(tvAppend) 2 "Error message: \"$result\""
 				if {$handler} {
 					if {$::option(show_splash) == 1} {
-						after 3500 {status_feedbWarn 1 [mc "Can not change video standard"]}
+						after 3500 {status_feedbWarn 1 2 [mc "Can not change video standard"]}
 					} else {
-						after 2500 {status_feedbWarn 1 [mc "Can not change video standard"]}
+						after 2500 {status_feedbWarn 1 2 [mc "Can not change video standard"]}
 					}
 				} else {
-					status_feedbWarn 1 [mc "Can not change video standard"]
+					status_feedbWarn 1 2 [mc "Can not change video standard"]
 				}
 			}
 			if {"$::option(appname)" == "tv-viewer_scheduler"} {

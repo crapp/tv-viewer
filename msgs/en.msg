@@ -467,6 +467,9 @@ mcset en {View}
 mcset en {Help}
 mcset en {Welcome to TV-Viewer %} {Welcome to TV-Viewer %s}
 mcset en {Could not detect MPlayer}
+mcset en {Congratulations! You have installed a new version of TV-Viewer:
+% (Bazaar r%), running on Tcl/tk %
+Build date: %}
 
 ### ../data/main_menu.tcl ###
 
@@ -853,6 +856,7 @@ mcset en {Jump to the end}
 
 mcset en {MPlayer has finished unexpectedly}
 mcset en {idle}
+mcset en {No video stream available}
 mcset en {Can not read callback channel}
 
 ### ../data/vid_file_calc.tcl ###

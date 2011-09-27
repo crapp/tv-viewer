@@ -338,7 +338,7 @@ proc vid_Playback {vid_bg vid_cont handler file} {
 			log_writeOut ::log(tvAppend) 2 "Could not locate file for file playback."
 			log_writeOut ::log(tvAppend) 2 "$file"
 			if {$::option(log_warnDialogue)} {
-				status_feedbWarn 1 [mc "Missing file for file playback"]
+				status_feedbWarn 1 2 [mc "Missing file for file playback"]
 			}
 			return
 		}

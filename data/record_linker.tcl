@@ -38,7 +38,7 @@ proc record_linkerPrestart {handler} {
 			log_writeOut ::log(tvAppend) 2 "You are running a station search while a recording fired."
 			log_writeOut ::log(tvAppend) 2 "The recording might be screwed up."
 			if {$::option(log_warnDialogue)} {
-				status_feedbWarn 1 [mc "Station search running while a recording fired"]
+				status_feedbWarn 1 2 [mc "Station search running while a recording fired"]
 			}
 			station_search 0 cancel 0 0 0 0
 			grab release .station.top_search
@@ -147,7 +147,7 @@ proc record_linkerRec {handler} {
 		} else {
 			log_writeOut ::log(tvAppend) 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
 			if {$::option(log_warnDialogue)} {
-				status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+				status_feedbWarn 1 0 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 			}
 		}
 	}
@@ -280,7 +280,7 @@ File size %" $file_size]
 			log_writeOut ::log(tvAppend) 2 "Can not detect timeshift video file."
 			log_writeOut ::log(tvAppend) 2 "Saving timeshift video file not possible"
 			if {$::option(log_warnDialogue)} {
-				status_feedbWarn 1 [mc "Missing file $::option(timeshift_path)/timeshift.mpeg"]
+				status_feedbWarn 1 0 [mc "Missing file $::option(timeshift_path)/timeshift.mpeg"]
 			}
 		}
 	}

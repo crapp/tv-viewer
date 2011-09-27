@@ -28,7 +28,7 @@ proc system_trayActivate {handler} {
 			set ::menu(cbSystray) 0
 			log_writeOut ::log(tvAppend) 2 "Can not load shared library tktray"
 			log_writeOut ::log(tvAppend) 2 "$result_tktray"
-			status_feedbWarn 1 [mc "Can not load shared library tktray"]
+			status_feedbWarn 1 0 [mc "Can not load shared library tktray"]
 		}
 	}
 	if {[winfo exists .tray] == 0} {
@@ -78,7 +78,7 @@ proc system_trayActivate {handler} {
 				} else {
 					set ::menu(cbSystray) 0
 					if {$::option(log_warnDialogue)} {
-						status_feedbWarn 1 [mc "Can not create system tray icon"]
+						status_feedbWarn 1 0 [mc "Can not create system tray icon"]
 					}
 					log_writeOut ::log(tvAppend) 2 "Can not create an icon in the system tray"
 					log_writeOut ::log(tvAppend) 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
@@ -87,7 +87,7 @@ proc system_trayActivate {handler} {
 		} else {
 			set ::menu(cbSystray) 0
 			if {$::option(log_warnDialogue)} {
-				status_feedbWarn 1 [mc "Can not create system tray icon"]
+				status_feedbWarn 1 0 [mc "Can not create system tray icon"]
 			}
 			log_writeOut ::log(tvAppend) 2 "Can not create an icon in the system tray"
 			log_writeOut ::log(tvAppend) 2 "Start TV-Viewer from a terminal to see why tktray is not loading, you may want to report this incident."
@@ -156,7 +156,7 @@ Ends:    % %" $station $sdate $stime $edate $etime]
 			} else {
 				log_writeOut ::log(tvAppend) 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
 				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+					status_feedbWarn 1 0 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
 				}
 				settooltip .tray [mc "TV-Viewer idle"]
 			}
@@ -318,7 +318,7 @@ proc system_trayToggle {handler} {
 	#handler 0 == -- 1 == 
 	if {[winfo exists .tray] == 1} {
 		set doIt 0
-		set w {.station .station.delete .station.top_AddEdit .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .record_wizard.delete .error_w .topWarn .key.default .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
+		set w {.station .station.delete .station.top_AddEdit .station.top_searchUi .station.top_search .config_wizard .config_wizard.fontchooser .top_about .top_cp_progress .top_diagnostic .record_wizard.add_edit .record_wizard.add_edit.date .record_wizard.delete .error_w .key.default .key.f_key_treeview.tv_key.w_keyEdit .__ttk_filedialog .log_viewer.__ttk_filedialog}
 		foreach window $w {
 			if {[winfo exists $window]} {
 				set doIt 1

@@ -139,7 +139,7 @@ proc config_wizardMainUi {} {
 	
 	if {[info exists ::config(errorMsg)]} {
 		foreach msg $::config(errorMsg) {
-			status_feedbWarn 1 "$msg"
+			status_feedbWarn 1 2 "$msg"
 		}
 		unset -nocomplain ::config(errorMsg)
 	}

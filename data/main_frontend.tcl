@@ -499,7 +499,7 @@ proc main_frontendUi {} {
 	wm iconphoto . $::icon_e(tv-viewer_icon)
 	
 	bind . <Key-x> {command_WritePipe 1 "tv-viewer_notifyd notifydId"; command_WritePipe 1 [list tv-viewer_notifyd notifydUi 1 $::option(notifyPos) $::option(notifyTime) 3 "Start Newsreader" "News" "There are News about TV-Viewer"]}
-	bind . <Key-y> {status_feedbWardn 1 "Test Message 1 can be very long, so we need to check what happens with the stats_feedbWarn"}
+	bind . <Key-y> {status_feedbWarn 1 0 "Test Message 1 can be very long, so we need to check what happens with the stats_feedbWarn"}
 	
 	
 	command_socket
@@ -575,7 +575,7 @@ proc main_frontendUi {} {
 	if {[string trim [auto_execok mplayer]] == {}} {
 		log_writeOut ::log(tvAppend) 2 "Could not detect MPlayer, have a look at the system requirements"
 		if {$::option(log_warnDialogue)} {
-			status_feedbWarn 1 [mc "Could not detect MPlayer"]
+			status_feedbWarn 1 0 [mc "Could not detect MPlayer"]
 		}
 		vid_pmhandlerButton {{1 disabled} {2 disabled} {4 disabled} {5 disabled}} {100 0} {100 0}
 		vid_pmhandlerMenuTv {{2 disabled} {4 disabled} {5 disabled} {7 disabled} {8 disabled}} {{6 disabled} {8 disabled} {9 disabled} {11 disabled} {12 disabled}}
@@ -584,6 +584,16 @@ proc main_frontendUi {} {
 	}
 	after [lindex $startCommand 0] [list main_frontendStartCommand $startCommand]
 	vid_wmCursor 1
+	
+	if {$::main(upgrade)} {
+		log_writeOut ::log(tvAppend) 1 "Congratulations! You have installed a new version of TV-Viewer"
+		if {$::option(log_warnDialogue)} {
+			after 5000 {status_feedbWarn 1 1 [mc "Congratulations! You have installed a new version of TV-Viewer:
+% (Bazaar r%), running on Tcl/tk %
+Build date: %" [lindex $::option(release_version) 0] [lindex $::option(release_version) 1] [info patchlevel] [lindex $::option(release_version) 2]]}
+		}
+	}
+	unset -nocomplain ::main(upgrade)
 	
 	if {$::mem(systray) == 1} {
 		system_trayActivate 1
@@ -594,7 +604,7 @@ proc main_frontendUi {} {
 		}
 	}
 	
-	#Do everything that needs to be done after root is visible
+	#Do everything that needs to be done after root window is visible
 	tkwait visibility .
 	log_writeOut ::log(tvAppend) 0 "Main is visible, processing things that need to be done now."
 	autoscroll $stations.scrbSlist
@@ -627,9 +637,6 @@ proc main_frontendStartCommand {startCommand} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: main_frontendStartCommand \033\[0m \{$startCommand\}"
 	for {set i 1} {$i <= [llength $startCommand]} {incr i} {
 		{*}[lindex $startCommand $i]
-	}
-	if {[winfo exists .topWarn]} {
-		wm deiconify .topWarn
 	}
 }
 
