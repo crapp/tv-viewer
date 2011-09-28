@@ -72,7 +72,7 @@ proc status_feedbWarn {logfile msgIcon msg} {
 		set i 0
 		foreach line [split $msg \n] {
 			if {$i > 0} {
-				$fMain.txt insert end $line "\n"
+				$fMain.txt insert end "\n"
 				$fMain.txt insert end $line standardText
 			} else {
 				$fMain.txt insert end $line standardTextFirst

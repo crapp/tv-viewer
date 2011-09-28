@@ -116,7 +116,7 @@ Note: The lower this factor the more duplicates will be found and
 the search takes more time."]
 			settooltip $mf.mb_lf_search_full_time [mc "Time in milliseconds to wait for the driver to respond.
 The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver won't have
+Note: If this value is too low the driver won't have
 enough time to report if there is a signal on the current frequency.
 As a result not all stations will be found."]
 			settooltip $bf.b_ok [mc "Start station search"]
@@ -302,7 +302,8 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			.station.top_search.f_main.b_search_abort state disabled
 			after 3000 {grab release .station.top_search
 			destroy .station.top_search
-			grab .station
+			focus .station
+			catch {grab .station}
 			wm protocol .station WM_DELETE_WINDOW "station_editExit cancel"
 			wm resizable .station 1 1}
 		}
@@ -336,7 +337,8 @@ proc station_search {max_channels counter freq search_range_max pgb_incr tree} {
 			.station.top_search.f_main.b_search_abort state disabled
 			after 3000 {grab release .station.top_search
 			destroy .station.top_search
-			grab .station
+			focus .station
+			catch {grab .station}
 			wm protocol .station WM_DELETE_WINDOW "station_editExit cancel"
 			wm resizable .station 1 1}
 		}

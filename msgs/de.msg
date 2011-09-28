@@ -900,7 +900,7 @@ Achtung: Desto niedriger dieser Wert desto mehr Duplikate eines
 Senders werden gefunden und die Sendersuche dauert länger.}
 mcset de {Time in milliseconds to wait for the driver to respond.
 The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver won't have
+Note: If this value is too low the driver won't have
 enough time to report if there is a signal on the current frequency.
 As a result not all stations will be found.} {Zeit in Millisekunden die auf den Treiber gewartet wird.
 Je niedriger diesert Wert ist, desto schneller wird die Suche

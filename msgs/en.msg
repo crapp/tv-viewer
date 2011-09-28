@@ -469,7 +469,9 @@ mcset en {Welcome to TV-Viewer %} {Welcome to TV-Viewer %s}
 mcset en {Could not detect MPlayer}
 mcset en {Congratulations! You have installed a new version of TV-Viewer:
 % (Bazaar r%), running on Tcl/tk %
-Build date: %}
+Build date: %} {Congratulations! You have installed a new version of TV-Viewer:
+%s (Bazaar r%s), running on Tcl/tk %s
+Build date: %s}
 
 ### ../data/main_menu.tcl ###
 
@@ -794,7 +796,7 @@ Note: The lower this factor the more duplicates will be found and
 the search takes more time.}
 mcset en {Time in milliseconds to wait for the driver to respond.
 The lower this value the faster the full frequency sweep will be.
-Note: If this value is too small the driver won't have
+Note: If this value is too low the driver won't have
 enough time to report if there is a signal on the current frequency.
 As a result not all stations will be found.}
 mcset en {Start station search}

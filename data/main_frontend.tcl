@@ -198,10 +198,6 @@ proc main_frontendChannelHandler {handler} {
 		foreach widget [split [winfo children .fstations.ftoolb_ChanCtrl]] {
 			catch {$widget state disabled}
 		}
-		foreach widget [split [winfo children .ftoolb_Play]] {
-			if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
-			catch {$widget state disabled}
-		}
 		if {"$handler" == "main"} {
 			event_constr 0
 		} else {
@@ -282,10 +278,6 @@ proc main_frontendChannelHandler {handler} {
 				catch {$widget state !disabled}
 			}
 			foreach widget [split [winfo children .fstations.ftoolb_ChanCtrl]] {
-				catch {$widget state disabled}
-			}
-			foreach widget [split [winfo children .ftoolb_Play]] {
-				if {[string match *bVolMute $widget] || [string match *scVolume $widget]} continue
 				catch {$widget state !disabled}
 			}
 			set status [monitor_partRunning 2]

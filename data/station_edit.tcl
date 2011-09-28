@@ -176,19 +176,9 @@ proc station_editExit {handler} {
 					set open_lastchannel [open $last_channel_conf r]
 					set open_lastchannel_read [read $open_lastchannel]
 					lassign $open_lastchannel_read kanal channel sendernummer
+					close $open_lastchannel
 					set ::station(last) "\{$kanal\} $channel $sendernummer"
 					set ::station(old) "\{$kanal\} $channel $sendernummer"
-					if {$::kanalext([lindex $::station(last) 2]) == 0} {
-						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-					} else {
-						if {$::kanalextfreq([lindex $::station(last) 2]) != 0} {
-							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq([lindex $::station(last) 2])} resultat_v4l2ctl
-						}
-						catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
-						set resultat_v4l2ctl External
-					}
-					close $open_lastchannel
-					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 				} else {
 					set last_channel_conf "$::option(home)/config/lastchannel.conf"
 					set fileId [open $last_channel_conf "w"]
@@ -196,17 +186,17 @@ proc station_editExit {handler} {
 					close $fileId
 					set ::station(last) "\{$::kanalid(1)\} $::kanalcall(1) 1"
 					set ::station(old) "\{$::kanalid(1)\} $::kanalcall(1) 1"
-					if {$::kanalext([lindex $::station(last) 2]) == 0} {
-						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
-					} else {
-						if {$::kanalextfreq([lindex $::station(last) 2]) != 0} {
-							catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq([lindex $::station(last) 2])} resultat_v4l2ctl
-						}
-						catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
-						set resultat_v4l2ctl External
-					}
-					after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 				}
+				if {$::kanalext([lindex $::station(last) 2]) == 0} {
+					catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=[lindex $::station(last) 1]} resultat_v4l2ctl
+				} else {
+					if {$::kanalextfreq([lindex $::station(last) 2]) != 0} {
+						catch {exec v4l2-ctl --device=$::option(video_device) --set-freq=$::kanalextfreq([lindex $::station(last) 2])} resultat_v4l2ctl
+					}
+					catch {exec {*}$::kanalext([lindex $::station(last) 2]) &}
+					set resultat_v4l2ctl External
+				}
+				after 1000 [list station_after_msg [lindex $::station(last) 2] $resultat_v4l2ctl]
 			}
 		}
 		main_frontendChannelHandler sedit

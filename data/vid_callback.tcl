@@ -152,7 +152,11 @@ proc vid_callbackVidData {} {
 							set fileSplitReformatted "[lindex $fileSplit 0][lindex $fileSplit 1]/../[lindex $fileSplit end]"
 							status_feedbMsgs 3 [mc "Playing file: %" $fileSplitReformatted]
 						} else {
-							status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
+							#catch this because station(last) may not be exist when preview from \
+							station editor
+							if {[info exists ::station(last)]} {
+								status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]
+							}
 						}
 					}
 					if {[info exists ::wizard(Pos)] && $::wizard(Pos) > 0} {
