@@ -481,7 +481,7 @@ architecture  ${arch}bit"
 	after 250
 	
 	if {$tclkit == 1} {
-		configure_writeTclkitStarter "$where_is" "$prefix" "$eprefix" "$bindir" "$datadir" "$tclkit" "$log" "$tclkitbin"
+		configure_writeTclkitStarter "$where_is" "$prefix" "$eprefix" "$bindir" "$bintarget" "$datadir" "$tclkit" "$log" "$tclkitbin"
 	}
 	
 	if {[file exists $where_is/installer.tcl]} {
@@ -558,18 +558,18 @@ as root to install TV-Viewer
 	exit 0
 }
 
-proc configure_writeTclkitStarter {where_is prefix eprefix bindir datadir tclkit log tclkitbin} {
+proc configure_writeTclkitStarter {where_is prefix eprefix bindir bintarget datadir tclkit log tclkitbin} {
 	array set opt {
 		"##@@tv-viewer_sym" {if \[ "\$0" == "$bindir/tv-viewer" \]}
-		"##@@tv-viewer" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/tv-viewer_main.tcl \$@ &}
+		"##@@tv-viewer" {$bintarget/extensions/tclkit/$tclkitbin $bintarget/data/tv-viewer_main.tcl \$@ &}
 		"##@@tv-viewer_diag_sym" {if \[ "\$0" == "$bindir/tv-viewer_diag" \]}
-		"##@@tv-viewer_diag" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/diag_runtime.tcl \$@ &}
+		"##@@tv-viewer_diag" {$bintarget/extensions/tclkit/$tclkitbin $bintarget/data/diag_runtime.tcl \$@ &}
 		"##@@tv-viewer_lirc_sym" {if \[ "\$0" == "$bindir/tv-viewer_lirc" \]}
-		"##@@tv-viewer_lirc" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/lirc_emitter.tcl \$@ &}
+		"##@@tv-viewer_lirc" {$bintarget/extensions/tclkit/$tclkitbin $bintarget/data/lirc_emitter.tcl \$@ &}
 		"##@@tv-viewer_recext_sym" {if \[ "\$0" == "$bindir/tv-viewer_recext" \]}
-		"##@@tv-viewer_recext" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/record_external.tcl \$@ &}
+		"##@@tv-viewer_recext" {$bintarget/extensions/tclkit/$tclkitbin $bintarget/data/record_external.tcl \$@ &}
 		"##@@tv-viewer_scheduler_sym" {if \[ "\$0" == "$bindir/tv-viewer_scheduler" \]}
-		"##@@tv-viewer_scheduler" {$datadir/tv-viewer/extensions/tclkit/$tclkitbin $datadir/tv-viewer/data/scheduler.tcl \$@ &}
+		"##@@tv-viewer_scheduler" {$bintarget/extensions/tclkit/$tclkitbin $bintarget/data/scheduler.tcl \$@ &}
 		"#tclkitstarter.sh.in @@" "#!/bin/bash"
 	}
 	
