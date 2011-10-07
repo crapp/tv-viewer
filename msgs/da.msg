@@ -244,10 +244,10 @@ mcset da {Full-screen mode} {Fuldskærm modus}
 mcset da {Volume | Video input | Pan&Scan} {Volumen | Video input | Pan&Scan}
 mcset da {Key Input} {Tastatur Input}
 mcset da {OSD Station list lirc} {OSD Stationliste lirc}
-mcset da {Notifications} {Notifications} ;#Newline
-mcset da {Notification Daemon} {Notification Daemon} ;#Newline
-mcset da {Display:} {Display:} ;#Newline
-mcset da {Display time:} {Display time:} ;#Newline
+mcset da {Notifications} {Meddelelser} 
+mcset da {Notification Daemon} {Meddelelsestjeneste} 
+mcset da {Display:} {Display:} 
+mcset da {Display time:} {Display tid:} 
 mcset da {top right} {top højre}
 mcset da {bottom right} {bund højre}
 mcset da {bottom left} {bund venstre}
@@ -280,11 +280,10 @@ mcset da {OSD for change stations via numbers input in windowed mode} {OSD for a
 mcset da {OSD for change stations via numbers input in full-screen mode} {OSD for at skifte station med tal i fuldskærm modus}
 mcset da {(De)Activate the notification daemon.
 This daemon provides you with a notification system
-for important TV-Viewer messages.} {(De)Activate the notification daemon.
-This daemon provides you with a notification system
-for important TV-Viewer messages.}
-mcset da {Choose the postion where the notification window should appear.} {Choose the postion where the notification window should appear.} ;#Newline
-mcset da {Timeout for the notification window.} {Timeout for the notification window.} ;#Newline
+for important TV-Viewer messages.} {(De)Aktiver meddelelsestjenesten.
+Denne tjeneste giver dig et meddelelsessystem for vigtige TV-Viewer meddelelser.} 
+mcset da {Choose the postion where the notification window should appear.} {Vælg positionen hvor meddelelsesvinduet skal vises.} 
+mcset da {Timeout for the notification window.} {Timeout for meddelelsesvinduet.} 
 
 ### ../data/config_radio.tcl ###
 
@@ -306,7 +305,7 @@ mcset da {Space to be left free} {Min fri plads på harddisken}
 mcset da {Choose a directory} {Vælg en mappe}
 mcset da {Set the default directory for all recordings} {Vælg en standard mappe for alle optagelser}
 mcset da {Define the default duration for recordings (Hours)} {Standard varighed for optagelser (timer)}
-mcset da {Define the default duration for recordings (Minutes)} {Standard varighedfor optagelser (Minutter)}
+mcset da {Define the default duration for recordings (Minutes)} {Standard varighed for optagelser (Minutter)}
 mcset da {Define the default duration for recordings (Seconds)} {Standard varighed for optagelser (Sekunder)}
 mcset da {Choose if you want to use a 24-hour clock or 12-hour clock to schedule recordings} {Vælg om du ønsker et 24-timer ur eller et 12-timer ur til at planlægge optagelser}
 mcset da {Allow station change during recording} {Tillad Stationsskift under optagelse}
@@ -514,9 +513,9 @@ mcset da {Welcome to TV-Viewer %} {Velkommen til TV-Viewer %s}
 mcset da {Could not detect MPlayer} {Kunne ikke finde MPlayer}
 mcset da {Congratulations! You have installed a new version of TV-Viewer:
 % (Bazaar r%), running on Tcl/tk %
-Build date: %} {Congratulations! You have installed a new version of TV-Viewer:
-%s (Bazaar r%s), running on Tcl/tk %s
-Build date: %s} ;#Newline
+Build date: %} {Til lykke! Du har installeret en ny version af TV-Viewer:
+%s (Bazaar r%s), kører på Tcl/tk %s
+Build dato: %s} 
 
 ### ../data/main_menu.tcl ###
 
@@ -579,14 +578,14 @@ mcset da {TV-Viewer Log} {TV-Viewer Log}
 
 ### ../data/notifyd.tcl ###
 
-mcset da {Start Newsreader} {Start Newsreader} ;#Newline
-mcset da {News} {News} ;#Newline
-mcset da {There are News about TV-Viewer} {There are News about TV-Viewer} ;#Newline
-mcset da {Start TV-Viewer} {Start TV-Viewer} ;#Newline
-mcset da {Recording started} {Recording started} ;#Newline
-mcset da {Recording of job % started successfully} {Recording of job %s started successfully} ;#Newline
-mcset da {Recording finished} {Recording finished} ;#Newline
-mcset da {Recording of job % has been finished} {Recording of job %s has been finished} ;#Newline
+mcset da {Start Newsreader} {Start Newsreader} 
+mcset da {News} {Nyheder} 
+mcset da {There are News about TV-Viewer} {Der er nyheder om TV-Viewer} 
+mcset da {Start TV-Viewer} {Start TV-Viewer} 
+mcset da {Recording started} {Optagelse startet} 
+mcset da {Recording of job % started successfully} {Optagelse af job %s startede problemfrit} 
+mcset da {Recording finished} {Recording slut} 
+mcset da {Recording of job % has been finished} {Optagelse af job %s er afsluttet} 
 
 ### ../data/process_config.tcl ###
 
@@ -810,7 +809,7 @@ mcset da {Frequency:} {Frekvens:}
 mcset da {Video input:} {Videoindgang:}
 mcset da {Command:} {Kommando:}
 mcset da {Internal frequency:} {Intern frekvens:}
-mcset da {Can't find any video inputs} {Can't find any video inputs} ;#Newline
+mcset da {Can't find any video inputs} {Kan ikke finde nogen video input} 
 mcset da {Add a new station} {Tilføj ny station}
 mcset da {Edit Station / Frequency} {Rediger Station / Frekvens}
 mcset da {Provide a name for the television station} {Angiv et navn for TV-stationen}
@@ -922,7 +921,7 @@ mcset da {Jump to the end} {Hop til slutning}
 
 mcset da {MPlayer has finished unexpectedly} {MPlayer er stoppet uventet}
 mcset da {idle} {klar}
-mcset da {No video stream available} {No video stream available} ;#Newline
+mcset da {No video stream available} {Ingen video stream tilgængelig} 
 mcset da {Can not read callback channel} {Kan ikke læse callback kanal}
 
 ### ../data/vid_file_calc.tcl ###
