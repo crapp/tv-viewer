@@ -432,7 +432,7 @@ proc scheduler_main_loop {} {
 		array unset ::recjob
 		scheduler_recordings
 	}
-	after 20000 [list scheduler_main_loop]
+	set ::scheduler(mainLoop_id) [after 20000 [list scheduler_main_loop]]
 }
 
 proc scheduler_Init {handler} {
@@ -465,6 +465,12 @@ proc scheduler_Init {handler} {
 		process_StationFile ::log(schedAppend)
 		log_writeOut ::log(schedAppend) 1 "Scheduler has been reinitiated."
 		set ::scheduler(loop_date) 0
+		if {[info exists ::scheduler(mainLoop_id)]} {
+			foreach id $::scheduler(mainLoop_id) {
+				catch {after cancel $id}
+			}
+			unset -nocomplain ::scheduler(mainLoop_id)
+		}
 		scheduler_main_loop
 	}
 }
