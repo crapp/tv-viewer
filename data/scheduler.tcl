@@ -144,7 +144,6 @@ proc scheduler_delete {args} {
 	catch {file delete "$::option(home)/config/scheduled_recordings.conf"}
 	set f_open [open "$::option(home)/config/scheduled_recordings.conf" w+]
 	lappend ::scheduler(delJobList) [join $args]
-	set reInit 0
 	for {set i 1} {$i <= $::scheduler(max_recordings)} {incr i} {
 		if {[lsearch $::scheduler(delJobList) $i] != -1} {
 			if {[lindex $::recjob($i) 5] == 1} {
@@ -177,7 +176,7 @@ proc scheduler_delete {args} {
 				} else {
 					# replace start date
 					if {[clock format [clock scan [lindex $::recjob($i) 3]] -format %u] == 5} {
-						# on friday replace with next moday and reduce repetitions
+						# on friday replace with next monday and reduce repetitions
 						set ::recjob($i) [lreplace $::recjob($i) 3 3 [clock format [expr [clock scan [lindex $::recjob($i) 3]] + (86400 * 3)] -format {%Y-%m-%d}]]
 						set ::recjob($i) [lreplace $::recjob($i) 6 6 [expr [lindex $::recjob($i) 6] - 1]]
 					} else {
@@ -188,7 +187,6 @@ proc scheduler_delete {args} {
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
 					set ::scheduler(delJobList) [lreplace $::scheduler(delJobList) [lsearch $::scheduler(delJobList) $i] [lsearch $::scheduler(delJobList) $i]]
-					set reInit 1
 					puts $f_open "$::recjob($i)"
 					continue
 				}
@@ -209,7 +207,6 @@ proc scheduler_delete {args} {
 					set ::recjob($i) [lreplace $::recjob($i) 8 8 [file dirname [lindex $::recjob($i) end]]/[string map {{ } {}} [string map {{/} {}} [lindex $::recjob($i) 1]]]\_[lindex $::recjob($i) 3]\_[string map {{am} {}} [string map {{pm} {}} [string map {{ } {}} [lindex $::recjob($i) 2]]]].mpeg]
 					# delete number from list
 					set ::scheduler(delJobList) [lreplace $::scheduler(delJobList) [lsearch $::scheduler(delJobList) $i] [lsearch $::scheduler(delJobList) $i]]
-					set reInit 1
 					puts $f_open "$::recjob($i)"
 					continue
 				}
@@ -223,12 +220,9 @@ proc scheduler_delete {args} {
 	if {[lindex $status_main 0]} {
 		command_WritePipe 0 "tv-viewer_main record_linkerWizardReread"
 	}
-	if {$reInit == 1} {
-		#scheduler_Init 1
-	} else {
-		if {[llength $::scheduler(delJobList)] == $::scheduler(max_recordings)} {
-			scheduler_exit
-		}
+	if {[llength $::scheduler(delJobList)] == $::scheduler(max_recordings)} {
+		log_writeOut ::log(schedAppend) 1 "No more pending recordings. Scheduler will be terminated"
+		scheduler_exit
 	}
 }
 
@@ -471,6 +465,7 @@ proc scheduler_Init {handler} {
 			}
 			unset -nocomplain ::scheduler(mainLoop_id)
 		}
+		unset -nocomplain ::scheduler(delJobList)
 		scheduler_main_loop
 	}
 }

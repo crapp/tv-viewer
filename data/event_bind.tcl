@@ -124,7 +124,7 @@ proc event_constr {handler} {
 		event add <<stationPrior>> {*}[dict get $::keyseq stationPrior seq]
 		event add <<stationNext>> {*}[dict get $::keyseq stationNext seq]
 		event add <<stationJump>> {*}[dict get $::keyseq stationJump seq]
-		event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
+		event add <<station_key>> <Key-0> <Key-1> <Key-2> <Key-3> <Key-4> <Key-5> <Key-6> <Key-7> <Key-8> <Key-9> <Key-KP_0> <Key-KP_1> <Key-KP_2> <Key-KP_3> <Key-KP_4> <Key-KP_5> <Key-KP_6> <Key-KP_7> <Key-KP_8> <Key-KP_9> <Key-KP_Insert> <Key-KP_End> <Key-KP_Down> <Key-KP_Next> <Key-KP_Left> <Key-KP_Begin> <Key-KP_Right> <Key-KP_Home> <Key-KP_Up> <Key-KP_Prior>
 		event add <<station_key_lirc>> station_key_lirc
 		event add <<station_key_ext>> station_key_ext
 		bind . <<stationPrior>> [list chan_zapperPrior .fstations.treeSlist]
