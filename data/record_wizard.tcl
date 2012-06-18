@@ -1,5 +1,5 @@
 #       record_wizard.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -240,9 +240,6 @@ proc record_wizardUi {} {
 		bind $treef.cv.f.tv_rec <Double-ButtonPress-1> [list record_add_edit $treef.cv.f.tv_rec 1]
 		bind $treef.cv.f.tv_rec <Key-Delete> [list record_add_editDelete $treef.cv.f.tv_rec]
 		bind $treef.cv.f.tv_rec <ButtonPress-3> [list record_wizardUiMenu $treef.cv.f.tv_rec %X %Y]
-		#FIXME Test bindings for width height of rec wizard
-		#~ bind $w <Key-x> {puts [winfo width .record_wizard]}
-		#~ bind $w <Key-y> {puts [winfo height .record_wizard]}
 		bind $w <Control-Key-x> {record_wizardExit}
 		bind $w <<help>> [list info_helpHelp]
 		
@@ -250,26 +247,21 @@ proc record_wizardUi {} {
 		
 		set status_record [monitor_partRunning 3]
 		if {[lindex $status_record 0] == 1} {
-			if {[file exists "$::option(home)/config/current_rec.conf"]} {
-				set f_open [open "$::option(home)/config/current_rec.conf" r]
-				while {[gets $f_open line]!=-1} {
-					if {[string trim $line] == {}} continue
-					lassign $line station sdate stime edate etime duration recfile
-					$statf.l_rec_current_station configure -text [mc "Station
-%" $station]
-					$statf.l_rec_current_start configure -text [mc "Started
-% at %" $sdate $stime]
-					$statf.l_rec_current_end configure -text [mc "Ends
-% at %" $edate $etime]
-					$statf.lf_status.f_btn.b_rec_current state !disabled
-					log_writeOut ::log(tvAppend) 0 "Found an active recording (PID [lindex $status_record 1])."
-				}
-				close $f_open
+			set activeRec [db_interfaceGetActiveRec]
+			if {"$activeRec" != ""} {
+				$statf.l_rec_current_station configure -text [mc "Station
+%" [lindex $activeRec 1]]
+				$statf.l_rec_current_start configure -text [mc "Started
+at %" [clock format [lindex $activeRec 2] -format {%Y-%m-%d %H:%M}]]
+				$statf.l_rec_current_end configure -text [mc "Ends
+at %" [clock format [expr [lindex $activeRec 2] + [lindex $activeRec 3]] -format {%Y-%m-%d %H:%M}]]
+				$statf.lf_status.f_btn.b_rec_current state !disabled
+				log_writeOut ::log(tvAppend) 0 "Found an active recording (PID [lindex $status_record 1])."
 			} else {
-				log_writeOut ::log(tvAppend) 2 "Although there is an active recording, no current_rec.conf in config path."
+				log_writeOut ::log(tvAppend) 2 "Although there is an active recording no database entry is marked as running"
 				log_writeOut ::log(tvAppend) 2 "You may want to report this incident."
 				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 0 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+					status_feedbWarn 1 0 [mc "Database inconsistent"]
 				}
 			}
 		} else {
@@ -288,13 +280,12 @@ proc record_wizardUi {} {
 			log_writeOut ::log(tvAppend) 0 "Scheduler is not running."
 			record_wizardExecSchedulerCback 1
 		}
-		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
-			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
-			while {[gets $f_open line]!=-1} {
-				if {[string trim $line] == {} || [string match #* $line]} continue
-				$treef.cv.f.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6] [lindex $line 7] [lindex $line 8]]
-			}
+		
+		set ts [clock seconds]
+		database eval {SELECT * FROM RECORDINGS WHERE DATETIME > :ts} recording {
+			$treef.cv.f.tv_rec insert {} end -values [list $recording(ID) $recording(STATION) [clock format $recording(DATETIME) -format {%H:%M}] [clock format $recording(DATETIME) -format {%Y-%m-%d}] [clock format $recording(DURATION) -format {%H:%M:%S} -timezone :UTC] $recording(RERUN) $recording(RERUNS) $recording(RESOLUTION) $recording(OUTPUT)]
 		}
+		
 		if {$::option(tooltips) == 1} {
 			if {$::option(tooltips_record) == 1} {
 				settooltip $topf.b_add_rec [mc "Add a scheduled recording or

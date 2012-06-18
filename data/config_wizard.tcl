@@ -1,5 +1,5 @@
 #       config_wizard.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -59,9 +59,8 @@ proc config_wizardMainUi {} {
 	set wfcopt [ttk::frame $w.frame_configoptions]
 	set wfbtn [ttk::frame $w.frame_buttons -style TLabelframe]
 	
-	#FIXME Strange way of setting some font, why?
-	#FIXME Switch to a treeview widget? Would be possible to use images.
-	listbox $wfbox.listbox_clist -font -*-*-Bold-R-Normal-*-*-100-*-*-*-*-*-* -width 0 -height 0 -exportselection 0
+	#TODO Switch to a treeview widget? Would be possible to use images.
+	listbox $wfbox.listbox_clist -font -*-*-Bold-R-Normal-*-*-*-*-*-*-*-*-* -width 0 -height 0 -exportselection 0
 	ttk::button $wfbtn.button_save -text [mc "Apply"] -command config_wizardSaveopts -compound left -image $::icon_s(dialog-ok-apply)
 	ttk::button $wfbtn.b_default -text [mc "Default"]
 	ttk::button $wfbtn.button_quit -text [mc "Cancel"] -command [list config_wizardExit .config_wizard.frame_configbox.listbox_clist .config_wizard.frame_configoptions.nb] -compound left -image $::icon_s(dialog-cancel)

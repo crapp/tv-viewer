@@ -244,10 +244,10 @@ mcset da {Full-screen mode} {Fuldskærm modus}
 mcset da {Volume | Video input | Pan&Scan} {Volumen | Video input | Pan&Scan}
 mcset da {Key Input} {Tastatur Input}
 mcset da {OSD Station list lirc} {OSD Stationliste lirc}
-mcset da {Notifications} {Meddelelser} 
-mcset da {Notification Daemon} {Meddelelsestjeneste} 
-mcset da {Display:} {Display:} 
-mcset da {Display time:} {Display tid:} 
+mcset da {Notifications} {Meddelelser} ;#Newline
+mcset da {Notification Daemon} {Meddelelsestjeneste} ;#Newline
+mcset da {Display:} {Display:} ;#Newline
+mcset da {Display time:} {Display tid:} ;#Newline
 mcset da {top right} {top højre}
 mcset da {bottom right} {bund højre}
 mcset da {bottom left} {bund venstre}
@@ -281,9 +281,9 @@ mcset da {OSD for change stations via numbers input in full-screen mode} {OSD fo
 mcset da {(De)Activate the notification daemon.
 This daemon provides you with a notification system
 for important TV-Viewer messages.} {(De)Aktiver meddelelsestjenesten.
-Denne tjeneste giver dig et meddelelsessystem for vigtige TV-Viewer meddelelser.} 
-mcset da {Choose the postion where the notification window should appear.} {Vælg positionen hvor meddelelsesvinduet skal vises.} 
-mcset da {Timeout for the notification window.} {Timeout for meddelelsesvinduet.} 
+Denne tjeneste giver dig et meddelelsessystem for vigtige TV-Viewer meddelelser.}
+mcset da {Choose the postion where the notification window should appear.} {Vælg positionen hvor meddelelsesvinduet skal vises.} ;#Newline
+mcset da {Timeout for the notification window.} {Timeout for meddelelsesvinduet.} ;#Newline
 
 ### ../data/config_radio.tcl ###
 
@@ -381,6 +381,9 @@ mcset da {Discard changes and close preferences dialog} {Kasser ændringerne og 
 ### ../data/create_icons.tcl ###
 
 
+### ../data/db_interface.tcl ###
+
+
 ### ../data/dbus_interface.tcl ###
 
 mcset da {Can not load shared library dbus-tcl} {Kan ikke indlæse det delte bibliotek dbus-tcl}
@@ -449,8 +452,8 @@ mcset da {A small and simple frontend to watch and record television} {Et lille 
 mcset da {Homepage} {Hjemmeside}
 mcset da {Forum} {Forum}
 mcset da {IRC channel} {IRC channel}
-mcset da {© Copyright 2007 - 2011
-Christian Rapp} {© Copyright 2007 - 2011
+mcset da {© Copyright 2007 - 2012
+Christian Rapp} {© Copyright 2007 - 2012
 Christian Rapp}
 mcset da {Credits} {Bidragsydere}
 mcset da {License} {Licens}
@@ -515,7 +518,7 @@ mcset da {Congratulations! You have installed a new version of TV-Viewer:
 % (Bazaar r%), running on Tcl/tk %
 Build date: %} {Til lykke! Du har installeret en ny version af TV-Viewer:
 %s (Bazaar r%s), kører på Tcl/tk %s
-Build dato: %s} 
+Build dato: %s}
 
 ### ../data/main_menu.tcl ###
 
@@ -578,14 +581,14 @@ mcset da {TV-Viewer Log} {TV-Viewer Log}
 
 ### ../data/notifyd.tcl ###
 
-mcset da {Start Newsreader} {Start Newsreader} 
-mcset da {News} {Nyheder} 
-mcset da {There are News about TV-Viewer} {Der er nyheder om TV-Viewer} 
-mcset da {Start TV-Viewer} {Start TV-Viewer} 
-mcset da {Recording started} {Optagelse startet} 
-mcset da {Recording of job % started successfully} {Optagelse af job %s startede problemfrit} 
-mcset da {Recording finished} {Recording slut} 
-mcset da {Recording of job % has been finished} {Optagelse af job %s er afsluttet} 
+mcset da {Start Newsreader} {Start Newsreader} ;#Newline
+mcset da {News} {Nyheder} ;#Newline
+mcset da {There are News about TV-Viewer} {Der er nyheder om TV-Viewer} ;#Newline
+mcset da {Start TV-Viewer} {Start TV-Viewer} ;#Newline
+mcset da {Recording started} {Optagelse startet} ;#Newline
+mcset da {Recording of job % started successfully} {Optagelse af job %s startede problemfrit} ;#Newline
+mcset da {Recording finished} {Recording slut} ;#Newline
+mcset da {Recording of job % has been finished} {Optagelse af job %s er afsluttet} ;#Newline
 
 ### ../data/process_config.tcl ###
 
@@ -699,30 +702,31 @@ mcset da {Time is in the past!} {Den valgte tid er forbi!}
 mcset da {Duration not specified correctly (hour)!} {Forkert angivet varighed (time)!}
 mcset da {Duration not specified correctly (min)!} {Forkert angivet varighed (minut)!}
 mcset da {Duration not specified correctly (sec)!} {Forkert angivet varighed (sekund)!}
+mcset da {Time collision detected. Check scheduled or running recordings.} {Time collision detected. Check scheduled or running recordings.} ;#Newline
 mcset da {Resolution format incorrect!} {Forkert format for opløsning!}
 
 ### ../data/record_linker.tcl ###
 
 mcset da {Station search running while a recording fired} {Stationssøging igang da en optagelse startede}
-mcset da {Missing file ../.tv-viewer/config/current_rec.conf} {Manglende fil ../.tv-viewer/config/current_rec.conf}
+mcset da {Database inconsistent} {Database inconsistent} ;#Newline
 mcset da {Recording "%"
 
-Started: % %
-Ends:    % %} {Recording "%s"
+Started: %
+Ends:    %} {Recording "%s"
 
-Started: %s %s
-Ends:    %s %s}
+Started: %s
+Ends:    %s}
 mcset da {Timeshift %} {Timeshift %s}
 mcset da {Recording % - Ends at % %} {Optager %s - Stopper %s %s}
 mcset da {Station
 %} {Station
 %s}
 mcset da {Started
-% at %} {Startede
-%s kl. %s}
+at %} {Started
+at %s}
 mcset da {Ends
-% at %} {Slutter
-%s kl. %s}
+at %} {Ends
+at %s}
 mcset da {Playing file: %} {Afspiller fil: %s}
 mcset da {Idle} {Klar}
 mcset da {Save timeshift video file
@@ -809,7 +813,7 @@ mcset da {Frequency:} {Frekvens:}
 mcset da {Video input:} {Videoindgang:}
 mcset da {Command:} {Kommando:}
 mcset da {Internal frequency:} {Intern frekvens:}
-mcset da {Can't find any video inputs} {Kan ikke finde nogen video input} 
+mcset da {Can't find any video inputs} {Kan ikke finde nogen video input} ;#Newline
 mcset da {Add a new station} {Tilføj ny station}
 mcset da {Edit Station / Frequency} {Rediger Station / Frekvens}
 mcset da {Provide a name for the television station} {Angiv et navn for TV-stationen}
@@ -921,7 +925,7 @@ mcset da {Jump to the end} {Hop til slutning}
 
 mcset da {MPlayer has finished unexpectedly} {MPlayer er stoppet uventet}
 mcset da {idle} {klar}
-mcset da {No video stream available} {Ingen video stream tilgængelig} 
+mcset da {No video stream available} {Ingen video stream tilgængelig} ;#Newline
 mcset da {Can not read callback channel} {Kan ikke læse callback kanal}
 
 ### ../data/vid_file_calc.tcl ###

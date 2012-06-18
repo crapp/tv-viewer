@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       configure.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ if {$start_options(--version)} {
 	puts "
 tv-viewer configure tcl script version [lindex $option(release_version) 0]"
 	puts "
-© Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+© Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 
 This script is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -332,7 +332,7 @@ EXIT 1"
 		exit 1
 	}
 	
-	set dependencies [dict create ivtv-tune ivtv-utils v4l2-ctl ivtv-utils mplayer MPlayer xdg-email xdg-utils xdg-open xdg-utils xdg-screensaver xdg-utils]
+	set dependencies [dict create ivtv-tune ivtv-utils v4l2-ctl ivtv-utils mplayer MPlayer xdg-email xdg-utils xdg-open xdg-utils xdg-screensaver xdg-utils sqlite3 sqlite]
 	
 	foreach {key elem} [dict get $dependencies] {
 		puts -nonewline $::printchan "$key "
@@ -355,6 +355,28 @@ see the README for system requirements
 EXIT 1"
 			exit 1
 		}
+	}
+	
+	puts -nonewline $::printchan "sqlite3 Tcl extension "
+	set status_sql [catch {package require sqlite3} version_sql]
+	set i 0
+	while { $i != 3 } {
+		puts -nonewline $::printchan "*"
+		flush stdout
+		after 50
+		incr i
+	}
+	if {$status_sql == 0} {
+		puts $::printchan "\033\[0;1;32m OK\033\[0m"
+		puts $log "sqlite3 Tcl extension $version_sql OK"
+	} else {
+		puts $log "sqlite3 Tcl FAILED" 
+		puts $::printchan "\033\[0;1;31m FAILED\033\[0m"
+		puts $::printchan "
+TV-Viewer needs sqlite3 Tcl extension
+see the README for system requirements
+EXIT 1"
+		exit 1
 	}
 	
 	puts $::printchan "

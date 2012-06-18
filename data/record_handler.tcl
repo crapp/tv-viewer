@@ -1,5 +1,5 @@
 #       record_add.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -65,14 +65,16 @@ proc record_applyTimeDate {tree lb w handler} {
 	}
 	if {$::option(rec_hour_format) == 24} {
 		log_writeOut ::log(tvAppend) 0 "Recording time $thour\:$tmin\, date $::record(date)."
+		set recTimestamp [clock scan "$thour\:$tmin $::record(date)"]
 	} else {
 		log_writeOut ::log(tvAppend) 0 "Recording time $thour\:$tmin\ $::record(rbAddEditHour), date $::record(date)."
+		set recTimestamp [clock scan "$thour\:$tmin $::record(rbAddEditHour) $::record(date)"]
 	}
-	record_applyDuration $tree $lb $w $handler
+	record_applyDuration $tree $lb $w $handler $recTimestamp
 }
 
-proc record_applyDuration {tree lb w handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyDuration \033\[0m \{$tree\} \{$lb\} \{$w\} \{$handler\}"
+proc record_applyDuration {tree lb w handler recTimestamp} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyDuration \033\[0m \{$tree\} \{$lb\} \{$w\} \{$handler\} \{$recTimestamp\}"
 	set dhour [scan $::record(duration_hour) %d]
 	set dmin [scan $::record(duration_min) %d]
 	set dsec [scan $::record(duration_sec) %d]
@@ -92,12 +94,55 @@ proc record_applyDuration {tree lb w handler} {
 		return
 	}
 	set duration_calc [expr ($dhour * 3600) + ($dmin * 60) + $dsec]
+	set recEndStamp [expr $recTimestamp + $duration_calc]
+	#Check for collisions
+	set ts [clock seconds]
+	puts "recTimestamp $recTimestamp"
+	database eval {SELECT ID FROM RECORDINGS WHERE DATETIME > :ts AND :recTimestamp > DATETIME AND :recTimestamp <= DATETIME+DURATION} testrec {
+		puts "Collision check 1: $testrec(ID)"
+	}
+	database eval {SELECT ID FROM RECORDINGS WHERE RUNNING = 1 AND :recTimestamp <= DATETIME+DURATION} testrec {
+		puts "Collision check 2: $testrec(ID)"
+	}
+	database eval {SELECT ID FROM RECORDINGS WHERE DATETIME > :ts AND :recTimestamp < DATETIME AND :recEndStamp >= DATETIME} testrec {
+		puts "Collision check 3: $testrec(ID)"
+	}
+	set collision 0
+	if {"$handler" == "add"} {
+		if {[database exists {SELECT ID FROM RECORDINGS WHERE DATETIME > :ts AND :recTimestamp > DATETIME AND :recTimestamp <= DATETIME+DURATION}] || [database exists {SELECT ID FROM RECORDINGS WHERE DATETIME > :ts AND :recTimestamp < DATETIME AND :recEndStamp >= DATETIME}]} {
+			set collision 1
+		}
+		set status_record [monitor_partRunning 3]
+		if {[lindex $status_record 0] == 1} {
+			#running recording, now check if starttime is smaller/similar to endtime of recording already running
+			if {[database exists {SELECT ID FROM RECORDINGS WHERE RUNNING = 1 AND :recTimestamp <= DATETIME+DURATION}]} {
+				set collision 1
+			}
+		}
+	} else {
+		set jobID [lindex [$tree item [$tree selection] -values] 0]
+		if {[database exists {SELECT ID FROM RECORDINGS WHERE DATETIME > :ts AND :recTimestamp > DATETIME AND :recTimestamp <= DATETIME+DURATION AND ID <> :jobID}] || [database exists {SELECT ID FROM RECORDINGS WHERE DATETIME > :ts AND :recTimestamp < DATETIME AND :recEndStamp >= DATETIME AND ID <> :jobID}]} {
+			set collision 1
+		}
+		set status_record [monitor_partRunning 3]
+		if {[lindex $status_record 0] == 1} {
+			#running recording, now check if starttime is smaller/similar to endtime of recording already running
+			if {[database exists {SELECT ID FROM RECORDINGS WHERE RUNNING = 1 AND :recTimestamp <= DATETIME+DURATION}]} {
+				set collision 1
+			}
+		}
+	}
+	if {$collision} {
+		$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Time collision detected. Check scheduled or running recordings."]
+		log_writeOut ::log(tvAppend) 1 "Time collision detected. Check scheduled or running recordings."
+		return
+	}
 	log_writeOut ::log(tvAppend) 0 "Duration $duration_calc seconds."
-	record_applyResolution $tree $lb $duration_calc $w $handler
+	record_applyResolution $tree $lb $duration_calc $w $handler $recTimestamp
 }
 
-proc record_applyResolution {tree lb duration_calc w handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyResolution \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
+proc record_applyResolution {tree lb duration_calc w handler recTimestamp} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyResolution \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\} \{$recTimestamp\}"
 	if {[string tolower $::option(video_standard)] == "ntsc" } {
 		if {$::record(resolution_width) > 720 || $::record(resolution_width) < 0 || $::record(resolution_height) > 480 || $::record(resolution_height) < 0} {
 			$w.record_frame.l_warning configure -image $::icon_m(dialog-warning) -text [mc "Resolution format incorrect!"]
@@ -112,11 +157,11 @@ proc record_applyResolution {tree lb duration_calc w handler} {
 		}
 	}
 	log_writeOut ::log(tvAppend) 0 "Resolution $::record(resolution_width)/$::record(resolution_height)."
-	record_applyFile $tree $lb $duration_calc $w $handler
+	record_applyFile $tree $lb $duration_calc $w $handler $recTimestamp
 }
 
-proc record_applyFile {tree lb duration_calc w handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyFile \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
+proc record_applyFile {tree lb duration_calc w handler recTimestamp} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyFile \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\} \{$recTimestamp\}"
 	if {[string trim [string length $::record(time_min)]] < 2} {
 		set ::record(time_min) "0$::record(time_min)"
 	}
@@ -132,25 +177,12 @@ proc record_applyFile {tree lb duration_calc w handler} {
 		}
 	}
 	log_writeOut ::log(tvAppend) 0 "Record file $::record(file)."
-	record_applyEndgame $tree $lb $duration_calc $w $handler
+	record_applyEndgame $tree $lb $duration_calc $w $handler $recTimestamp
 }
 
-proc record_applyEndgame {tree lb duration_calc w handler} {
-	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyEndgame \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\}"
-	if {[file exist "$::option(home)/config/scheduler.conf"]} {
-		set open_f [open "$::option(home)/config/scheduler.conf" r]
-		set jobid [read $open_f]
-		incr jobid
-		close $open_f
-		set f_open [open "$::option(home)/config/scheduler.conf" w]
-		puts -nonewline $f_open "$jobid"
-		close $f_open
-	} else {
-		set jobid 1
-		set f_open [open "$::option(home)/config/scheduler.conf" w]
-		puts -nonewline $f_open "$jobid"
-		close $f_open
-	}
+proc record_applyEndgame {tree lb duration_calc w handler recTimestamp} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_applyEndgame \033\[0m \{$tree\} \{$lb\} \{$duration_calc\} \{$w\} \{$handler\} \{$recTimestamp\}"
+	
 	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		set start 0
@@ -159,39 +191,51 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 	}
 	set lbindex [$lb curselection]
 	set ::record(lbcontent) [$lb get $lbindex]
+	set recResolution $::record(resolution_width)\/$::record(resolution_height)
+	
 	if {"$handler" == "add"} {
-		if {$::option(rec_hour_format) == 24} {
-			$tree insert {} end -values [list $jobid "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-			log_writeOut ::log(tvAppend) 0 "Adding new recording:"
-			log_writeOut ::log(tvAppend) 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
-		} else {
-			$tree insert {} end -values [list $jobid "$::record(lbcontent)" "$::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour)" $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
-			log_writeOut ::log(tvAppend) 0 "Adding new recording:"
-			log_writeOut ::log(tvAppend) 0 "$jobid $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		database transaction {
+			database eval {INSERT INTO RECORDINGS (STATION, DATETIME, DURATION, RERUN, RERUNS, RESOLUTION, OUTPUT) VALUES (:::record(lbcontent), :recTimestamp, :duration_calc, :::record(rbRepeat), :::record(sbRepeat), :recResolution, :::record(file))}
 		}
+		set lastID [database last_insert_rowid]
+		
+		if {$::option(rec_hour_format) == 24} {
+			log_writeOut ::log(tvAppend) 0 "Adding new recording:"
+			log_writeOut ::log(tvAppend) 0 "$lastID $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		} else {
+			log_writeOut ::log(tvAppend) 0 "Adding new recording:"
+			log_writeOut ::log(tvAppend) 0 "$lastID $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		}
+		
+		database eval {SELECT * FROM RECORDINGS WHERE ID = :lastID} newRec {
+			$tree insert {} end -values [list $newRec(ID) $newRec(STATION) [clock format $newRec(DATETIME) -format {%H:%M}] [clock format $newRec(DATETIME) -format {%Y-%m-%d}] [clock format $newRec(DURATION) -format {%H:%M:%S} -timezone :UTC] $newRec(RERUN) $newRec(RERUNS) $newRec(RESOLUTION) $newRec(OUTPUT)]
+		}
+		
 		$tree selection set [lindex [$tree children {}] end]
 		$tree see [$tree selection]
 	} else {
+		set jobID [lindex [$tree item [$tree selection] -values] 0]
+		database transaction {
+			database eval {UPDATE RECORDINGS SET STATION = :::record(lbcontent), DATETIME = :recTimestamp, DURATION = :duration_calc, RERUN = :::record(rbRepeat), RERUNS = :::record(sbRepeat), RESOLUTION = :recResolution, OUTPUT = :::record(file) WHERE ID = :jobID}
+		}
+		
 		if {$::option(rec_hour_format) == 24} {
-			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
 			log_writeOut ::log(tvAppend) 0 "Edit recording:"
-			log_writeOut ::log(tvAppend) 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+			log_writeOut ::log(tvAppend) 0 "$jobID $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
 		} else {
-			$tree item [$tree selection] -values [list [lindex [$tree item [$tree selection] -values] 0] "$::record(lbcontent)" "$::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour)" $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) "$::record(file)"]
 			log_writeOut ::log(tvAppend) 0 "Edit recording:"
-			log_writeOut ::log(tvAppend) 0 "[lindex [$tree item [$tree selection] -values] 0] $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+			log_writeOut ::log(tvAppend) 0 "$jobID $::record(lbcontent) $::record(time_hour)\:$::record(time_min) $::record(rbAddEditHour) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+		}
+		
+		database eval {SELECT * FROM RECORDINGS WHERE ID = :jobID} newRec {
+			$tree item [$tree selection] -values [list $newRec(ID) $newRec(STATION) [clock format $newRec(DATETIME) -format {%H:%M}] [clock format $newRec(DATETIME) -format {%Y-%m-%d}] [clock format $newRec(DURATION) -format {%H:%M:%S} -timezone :UTC] $newRec(RERUN) $newRec(RERUNS) $newRec(RESOLUTION) $newRec(OUTPUT)]
 		}
 		$tree see [$tree selection]
 	}
-	catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
-	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
-	foreach ritem [split [$tree children {}]] {
-		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} \{[lindex [$tree item $ritem -values] 2]\} [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] [lindex [$tree item $ritem -values] 6] [lindex [$tree item $ritem -values] 7] \{[lindex [$tree item $ritem -values] 8]\}"
-	}
-	close $f_open
+	
 	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(date) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(rbRepeat) ::record(sbRepeat) ::record(resolution_width) ::record(resolution_height) ::record(file)
 	if {$start} {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Updating database and execute scheduler"
 		catch {exec ""}
 		if {$::option(tclkit) == 1} {
 			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
@@ -199,8 +243,7 @@ proc record_applyEndgame {tree lb duration_calc w handler} {
 			catch {exec "$::option(root)/data/scheduler.tcl" &}
 		}
 	} else {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
-		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Updating database and reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"

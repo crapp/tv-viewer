@@ -1,5 +1,5 @@
 #       init.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ proc init_pkgReq {nrlist} {
 		1 "Tk 8.5"
 		2 http
 		3 msgcat
+		4 sqlite3
 	}
 	foreach nr $nrlist {
 		package require {*}$pkg($nr)

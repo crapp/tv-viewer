@@ -1,5 +1,5 @@
 #       main_frontend.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -111,6 +111,9 @@ proc main_frontendExitViewer {} {
 			}
 		}
 	}
+	
+	db_interfaceClose
+	
 	set status_scheduler [monitor_partRunning 2]
 	if {[lindex $status_scheduler 0] == 0} {
 		catch {file delete -force "$::option(home)/tmp/ComSocketMain"}

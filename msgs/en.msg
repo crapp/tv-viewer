@@ -341,6 +341,9 @@ mcset en {Discard changes and close preferences dialog}
 ### ../data/create_icons.tcl ###
 
 
+### ../data/db_interface.tcl ###
+
+
 ### ../data/dbus_interface.tcl ###
 
 mcset en {Can not load shared library dbus-tcl}
@@ -408,7 +411,7 @@ mcset en {A small and simple frontend to watch and record television}
 mcset en {Homepage}
 mcset en {Forum}
 mcset en {IRC channel}
-mcset en {© Copyright 2007 - 2011
+mcset en {© Copyright 2007 - 2012
 Christian Rapp}
 mcset en {Credits}
 mcset en {License}
@@ -652,30 +655,31 @@ mcset en {Time is in the past!}
 mcset en {Duration not specified correctly (hour)!}
 mcset en {Duration not specified correctly (min)!}
 mcset en {Duration not specified correctly (sec)!}
+mcset en {Time collision detected. Check scheduled or running recordings.}
 mcset en {Resolution format incorrect!}
 
 ### ../data/record_linker.tcl ###
 
 mcset en {Station search running while a recording fired}
-mcset en {Missing file ../.tv-viewer/config/current_rec.conf}
+mcset en {Database inconsistent}
 mcset en {Recording "%"
 
-Started: % %
-Ends:    % %} {Recording "%s"
+Started: %
+Ends:    %} {Recording "%s"
 
-Started: %s %s
-Ends:    %s %s}
+Started: %s
+Ends:    %s}
 mcset en {Timeshift %} {Timeshift %s}
 mcset en {Recording % - Ends at % %} {Recording %s - Ends at %s %s}
 mcset en {Station
 %} {Station
 %s}
 mcset en {Started
-% at %} {Started
-%s at %s}
+at %} {Started
+at %s}
 mcset en {Ends
-% at %} {Ends
-%s at %s}
+at %} {Ends
+at %s}
 mcset en {Playing file: %} {Playing file: %s}
 mcset en {Idle}
 mcset en {Save timeshift video file

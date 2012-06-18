@@ -1,7 +1,7 @@
 #!/usr/bin/env wish
 
 #       tv-viewer_main.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -75,10 +75,15 @@ $::env(HOME)/.tv-viewer/backup_folder/unknown_version/"
 	foreach {station_file} [split "$get_channels"] {
 		catch {file copy -force "$station_file" "$::option(home)/config/"}
 	}
-	set confFiles {tv-viewer key-sequences scheduler scheduled_recordings}
+	set confFiles {tv-viewer key-sequences}
 	foreach conf $confFiles {
 		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf"] == 0} continue
 		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$conf\.conf" "$::option(home)/config/"}
+	}
+	set dbFiles {tv-viewer}
+	foreach db $dbFiles {
+		if {[file exists "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$db\.sqlite"] == 0} continue
+		catch {file copy -force "$::env(HOME)/.tv-viewer/backup_folder/$target\/config/$db\.sqlite" "$::option(home)/config/"}
 	}
 	set logFiles {tvviewer scheduler videoplayer}
 	foreach log $logFiles {
@@ -181,7 +186,7 @@ set option(appname) tv-viewer_main
 
 source $::option(root)/data/init.tcl
 
-init_pkgReq [list 2 3]
+init_pkgReq [list 2 3 4]
 init_testRoot
 # source agrep here because we need to check lockfile before sourcing \
   all files
@@ -221,6 +226,8 @@ create_icons
 interp bgerror {} [namespace which error_interpUi]
 #Execute reading of station list
 process_StationFile ::log(tvAppend)
+#Connect to database
+db_interfaceInit
 puts "This is TV-Viewer [lindex $::option(release_version) 0] Build [lindex $::option(release_version) 1] ..."
 #FIXME cding into the users home directory is a hack so the screenshots can be saved somewhere.
 cd "$::env(HOME)"

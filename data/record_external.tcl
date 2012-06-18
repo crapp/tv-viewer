@@ -1,7 +1,7 @@
 #!/usr/bin/env tclsh
 
 #       record_external.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -44,9 +44,9 @@ set main(debug_msg) [open /dev/null a]
 
 source $option(root)/data/init.tcl
 
-init_pkgReq "0"
+init_pkgReq "0 4"
 init_tclKit
-init_source "$option(root)/data" "release_version.tcl agrep.tcl process_config.tcl process_station_file.tcl log_viewer.tcl command_socket.tcl monitor.tcl"
+init_source "$option(root)/data" "release_version.tcl agrep.tcl process_config.tcl process_station_file.tcl log_viewer.tcl command_socket.tcl monitor.tcl db_interface.tcl"
 
 process_configRead
 
@@ -65,10 +65,12 @@ if {[file exists "$::option(home)/log/tvviewer.log"]} {
 
 process_StationFile ::log(tvAppend)
 command_socket
+db_interfaceInit
 
 proc record_externalExit {logw logc returnm returnc} {
 	log_writeOut ::log(tvAppend) $logc "$logw"
 	puts "$returnm"
+	db_interfaceClose
 	exit $returnc
 }
 
@@ -132,6 +134,7 @@ if {$::start_options(--help)} {
  Delete recording:
   --delete             delete the recording with start_time, start_date and station_ext
 "
+	db_interfaceClose
 	exit 0
 }
 
@@ -329,20 +332,6 @@ proc record_externalTitle {} {
 }
 
 proc record_externalAdd {} {
-	if {[file exist "$::option(home)/config/scheduler.conf"]} {
-		set open_f [open "$::option(home)/config/scheduler.conf" r]
-		set jobid [read $open_f]
-		incr jobid
-		close $open_f
-		set f_open [open "$::option(home)/config/scheduler.conf" w]
-		puts -nonewline $f_open "$jobid"
-		close $f_open
-	} else {
-		set jobid 1
-		set f_open [open "$::option(home)/config/scheduler.conf" w]
-		puts -nonewline $f_open "$jobid"
-		close $f_open
-	}
 	set status [monitor_partRunning 2]
 	if {[lindex $status 0] == 1} {
 		set start 0
@@ -350,44 +339,39 @@ proc record_externalAdd {} {
 		set start 1
 	}
 	log_writeOut ::log(tvAppend) 0 "Adding new recording:"
-	log_writeOut ::log(tvAppend) 0 "$jobid $::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
-	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
-		set fh [open "$::option(home)/config/scheduled_recordings.conf" r]
-		while {[gets $fh line]!=-1} {
-			if {[string trim $line] == {}} continue
-			lappend recordings $line
-		}
-		close $fh
-		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
-		lappend recordings $new_recording
-		catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
-		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
-		foreach rec $recordings {
-			puts $sched_rec $rec
-		}
-		close $sched_rec
-	} else {
-		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
-		set new_recording "$jobid \{$::record(lbcontent)\} \{$::record(time)\} $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) \{$::record(file)\}"
-		puts $sched_rec $new_recording
-		close $sched_rec
+	log_writeOut ::log(tvAppend) 0 "$::record(lbcontent) $::record(time) $::record(date) $::record(duration_hour)\:$::record(duration_min)\:$::record(duration_sec) $::record(rbRepeat) $::record(sbRepeat) $::record(resolution_width)\/$::record(resolution_height) $::record(file)"
+	
+	set recTimestamp [clock scan "$::record(time) $::record(date)"]
+	set recResolution "$::record(resolution_width)\/$::record(resolution_height)"
+	
+	database transaction {
+		database eval {INSERT INTO RECORDINGS (STATION, DATETIME, DURATION, RERUN, RERUNS, RESOLUTION, OUTPUT) VALUES (:::record(lbcontent), :recTimestamp, :::start_values(--duration), :::record(rbRepeat), :::record(sbRepeat), :recResolution, :::record(file))}
 	}
+	
 	unset -nocomplain ::record(lbcontent) ::record(time_hour) ::record(time_min) ::record(time) ::record(date) ::record(sbRepeat) ::record(rbRepeat) ::record(duration_hour) ::record(duration_min) ::record(duration_sec) ::record(resolution_width) ::record(resolution_height) ::record(file)
-	if {$start} {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
-		catch {exec ""}
-		if {$::option(tclkit) == 1} {
-			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+	
+	if {[database errorcode] == 0} {
+		if {$start} {
+			log_writeOut ::log(tvAppend) 0 "Updating database and execute scheduler"
+			catch {exec ""}
+			if {$::option(tclkit) == 1} {
+				catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
+			} else {
+				catch {exec "$::option(root)/data/scheduler.tcl" &}
+			}
 		} else {
-			catch {exec "$::option(root)/data/scheduler.tcl" &}
+			log_writeOut ::log(tvAppend) 0 "Updating database and reinitiating scheduler"
+			set status [monitor_partRunning 2]
+			if {[lindex $status 0] == 1} {
+				command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
+			}
 		}
 	} else {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
-		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
-		set status [monitor_partRunning 2]
-		if {[lindex $status 0] == 1} {
-			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
-		}
+		log_writeOut ::log(tvAppend) 2 "Failed to insert recording into database"
+		puts "Failed to insert recording into database"
+		flush stdout
+		db_interfaceClose
+		exit 1
 	}
 }
 
@@ -398,47 +382,30 @@ proc record_externalDelete {} {
 	} else {
 		set start 0
 	}
-	if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
-		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" r]
-		set recmatch 0
-		while {[gets $sched_rec line]!=-1} {
-			if {[string trim $line] == {} || [string match #* $line]} continue
-			if {"[lindex $line 1] [lindex $line 2] [lindex $line 3]" == "$::record(lbcontent) $::record(time) $::record(date)"} {
-				log_writeOut ::log(tvAppend) 0 "Deleting recording $::record(lbcontent) $::record(time) $::record(date)"
-				set recmatch 1
-				continue
-			}
-			lappend recordings $line
+	set recmatch 0
+	set recTimestamp [clock scan "$::record(time) $::record(date)"]
+	if {[database exists {SELECT 1 FROM RECORDINGS WHERE DATETIME = :recTimestamp}]} {
+		database eval {DELETE FROM RECORDINGS WHERE DATETIME = :recTimestamp}
+		if {[database errorcode] == 0} {
+			set recmatch 1
 		}
-		close $sched_rec
-		set sched_rec [open "$::option(home)/config/scheduled_recordings.conf" w+]
-		if {[info exists recordings]} {
-			foreach rec $recordings {
-				puts $sched_rec $rec
-			}
-		}
-		close $sched_rec
-	} else {
-		record_externalExit "Config file for scheduled recordings is missing" 2 "Config file for scheduled recordings is missing" 1
 	}
 	if {$start == 0} {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Updating database and execute scheduler"
 		catch {exec ""}
 		if {$::option(tclkit) == 1} {
 			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
 		} else {
 			catch {exec "$::option(root)/data/scheduler.tcl" &}
 		}
-		return $recmatch
 	} else {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
-		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Updating database and reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"
 		}
-		return $recmatch
 	}
+	return $recmatch
 }
 
 if {$start_options(--delete) == 0} {
@@ -461,6 +428,7 @@ if {$start_options(--delete) == 0} {
 	puts "Successfully scheduled recording:
 [string map {{ } {_}} $::start_values(--title)] $start_values(--start_date) $start_values(--start_time)"
 	flush stdout
+	db_interfaceClose
 	exit 0
 } else {
 	record_externalTime
@@ -477,8 +445,9 @@ $::kanalid($::start_values(--station_ext)) $start_values(--start_date) $start_va
 	} else {
 		puts "Can not delete recording:
 $::kanalid($::start_values(--station_ext)) $start_values(--start_date) $start_values(--start_time)
-Not found in scheduled recordings file."
+Not found in database"
 	}
 	flush stdout
+	db_interfaceClose
 	exit 0
 }

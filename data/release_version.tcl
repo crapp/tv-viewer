@@ -1,5 +1,5 @@
 #       release_version.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -18,4 +18,4 @@
 
 
 #Source this file where one needs informations about version number, build date and bazaar revision
-set ::option(release_version) {0.8.2b1 181 29.12.2011}
+set ::option(release_version) {0.8.2b2 182 18.06.2012}

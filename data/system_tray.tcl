@@ -1,5 +1,5 @@
 #       system_tray.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -143,20 +143,27 @@ proc system_trayCheckEnvironment {} {
 		b {
 			# Recording
 			system_trayChangeIc 1
-			if {[file exists "$::option(home)/config/current_rec.conf"]} {
-				set open_f [open "$::option(home)/config/current_rec.conf" r]
-				while {[gets $open_f line]!=-1} {
-					if {[string trim $line] == {}} continue
-					lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
-				}
+			set activeRec [db_interfaceGetActiveRec]
+			if {"$activeRec" != ""} {
+				set rec(ID) [lindex $activeRec 0]
+				set rec(STATION) [lindex $activeRec 1]
+				set rec(DATETIME) [lindex $activeRec 2]
+				set rec(DURATION) [lindex $activeRec 3]
+				set rec(RERUN) [lindex $activeRec 4]
+				set rec(RERUNS) [lindex $activeRec 5]
+				set rec(RESOLUTION) [lindex $activeRec 6]
+				set rec(OUTPUT) [lindex $activeRec 7]
+				set rec(RUNNING) [lindex $activeRec 8]
+				set rec(TIMESTAMP) [lindex $activeRec 9]
 				settooltip .tray [mc "Recording \"%\"
 
-Started: % %
-Ends:    % %" $station $sdate $stime $edate $etime]
+Started: %
+Ends:    %" $rec(STATION) [clock format $rec(DATETIME) -format {%Y-%m-%d %H:%M:%S}] [clock format [expr $rec(DATETIME) + $rec(DURATION)] -format {%Y-%m-%d %H:%M:%S}]]
 			} else {
-				log_writeOut ::log(tvAppend) 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
+				log_writeOut ::log(tvAppend) 2 "Although there is an active recording no database entry is marked as running"
+				log_writeOut ::log(tvAppend) 2 "You may want to report this incident."
 				if {$::option(log_warnDialogue)} {
-					status_feedbWarn 1 0 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+					status_feedbWarn 1 0 [mc "Database inconsistent"]
 				}
 				settooltip .tray [mc "TV-Viewer idle"]
 			}

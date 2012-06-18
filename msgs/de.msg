@@ -410,6 +410,9 @@ mcset de {Discard changes and close preferences dialog} {Änderungen verwerfen u
 ### ../data/create_icons.tcl ###
 
 
+### ../data/db_interface.tcl ###
+
+
 ### ../data/dbus_interface.tcl ###
 
 mcset de {Can not load shared library dbus-tcl} {Kann das Shared Library dbus-tcl nicht laden}
@@ -479,8 +482,8 @@ mcset de {A small and simple frontend to watch and record television} {Ein klein
 mcset de {Homepage} {Homepage}
 mcset de {Forum} {Forum}
 mcset de {IRC channel} {IRC Kanal}
-mcset de {© Copyright 2007 - 2011
-Christian Rapp} {© Copyright 2007 - 2011
+mcset de {© Copyright 2007 - 2012
+Christian Rapp} {© Copyright 2007 - 2012
 Christian Rapp}
 mcset de {Credits} {Credits}
 mcset de {License} {Lizenz}
@@ -738,30 +741,31 @@ mcset de {Time is in the past!} {Gewählte Zeit ist vergangen!}
 mcset de {Duration not specified correctly (hour)!} {Dauer nicht korrekt angegeben (Stunde)!}
 mcset de {Duration not specified correctly (min)!} {Dauer nicht korrekt angegeben (Minute)!}
 mcset de {Duration not specified correctly (sec)!} {Dauer nicht korrekt angegeben (Sekunde)!}
+mcset de {Time collision detected. Check scheduled or running recordings.} {Time collision detected. Check scheduled or running recordings.} ;#Newline
 mcset de {Resolution format incorrect!} {Format der Auflösung falsch!}
 
 ### ../data/record_linker.tcl ###
 
 mcset de {Station search running while a recording fired} {Sendersuche lief während eine Aufnahme gestartet wurde}
-mcset de {Missing file ../.tv-viewer/config/current_rec.conf} {Datei ../.tv-viewer/config/current_rec.conf fehlt}
+mcset de {Database inconsistent} {Database inconsistent} ;#Newline
 mcset de {Recording "%"
 
-Started: % %
-Ends:    % %} {Aufnahme "%s"
+Started: %
+Ends:    %} {Recording "%s"
 
-Gestartet: %s %s
-Endet:     %s %s}
+Started: %s
+Ends:    %s}
 mcset de {Timeshift %} {Timeshift %s}
 mcset de {Recording % - Ends at % %} {Aufnahme %s - Endet am %s um %s}
 mcset de {Station
 %} {Sender
 %s}
 mcset de {Started
-% at %} {Gestartet
-%s at %s}
+at %} {Started
+at %s}
 mcset de {Ends
-% at %} {Endet
-%s at %s}
+at %} {Ends
+at %s}
 mcset de {Playing file: %} {Dateiwiedergabe: %s}
 mcset de {Idle} {Idle}
 mcset de {Save timeshift video file

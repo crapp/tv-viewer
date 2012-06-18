@@ -1,5 +1,5 @@
 #       record_add_edit.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 proc record_add_edit {tree com} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_add_edit \033\[0m \{$tree\} \{$com\}"
-	#com 0 add new station - 1 edit selected station
+	#com 0 add new recording - 1 edit selected recording
 	if {$com == 1} {
 		if {[string trim [$tree selection]] == {}} {
 			log_writeOut ::log(tvAppend) 1 "No recording selected to edit."
@@ -324,6 +324,7 @@ proc record_add_edit {tree com} {
 			set ::record(resolution_height) 576
 		}
 	} else {
+		#FIXME Read entry from DB?!
 		set station [lindex [$tree item [$tree selection] -values] 1]
 		for {set i 1} {$i <= $::station(max)} {incr i} {
 			if {"$::kanalid($i)" == "$station"} {
@@ -599,19 +600,26 @@ proc record_add_editDeleteRun {tree top} {
 	log_writeOut ::log(tvAppend) 0 "Deleting recording [$tree selection]."
 	if {[llength [$tree selection]] > 1} {
 		foreach element [$tree selection] {
-			$tree delete $element
+			set delID [lindex [$tree item $element -values] 0]
+			database transaction {
+				database eval {DELETE FROM RECORDINGS WHERE ID = :delID}
+			}
+			if {[database errorcode] == 0} {
+				$tree delete $element
+			}
 		}
 	} else {
-		$tree delete [$tree selection]
+		set delID [lindex [$tree item [$tree selection] -values] 0]
+		database transaction {
+			database eval {DELETE FROM RECORDINGS WHERE ID = :delID}
+		}
+		if {[database errorcode] == 0} {
+			$tree delete [$tree selection]
+		}
 	}
-	catch {file delete -force "$::option(home)/config/scheduled_recordings.conf"}
-	set f_open [open "$::option(home)/config/scheduled_recordings.conf" a]
-	foreach ritem [split [$tree children {}]] {
-		puts $f_open "[lindex [$tree item $ritem -values] 0] \{[lindex [$tree item $ritem -values] 1]\} \{[lindex [$tree item $ritem -values] 2]\} [lindex [$tree item $ritem -values] 3] [lindex [$tree item $ritem -values] 4] [lindex [$tree item $ritem -values] 5] \{[lindex [$tree item $ritem -values] 6]\}"
-	}
-	close $f_open
+	
 	if {$start} {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf and execute scheduler."
+		log_writeOut ::log(tvAppend) 0 "Updating database and execute scheduler."
 		catch {exec ""}
 		if {$::option(tclkit) == 1} {
 			catch {exec $::option(tclkit_path) $::option(root)/data/scheduler.tcl &}
@@ -619,8 +627,7 @@ proc record_add_editDeleteRun {tree top} {
 			catch {exec "$::option(root)/data/scheduler.tcl" &}
 		}
 	} else {
-		log_writeOut ::log(tvAppend) 0 "Writing new scheduled_recordings.conf"
-		log_writeOut ::log(tvAppend) 0 "Reinitiating scheduler"
+		log_writeOut ::log(tvAppend) 0 "Updating database and reinitiating scheduler"
 		set status [monitor_partRunning 2]
 		if {[lindex $status 0] == 1} {
 			command_WritePipe 0 "tv-viewer_scheduler scheduler_Init 1"

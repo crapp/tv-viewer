@@ -1,5 +1,5 @@
 #       record_linker.tcl
-#       © Copyright 2007-2011 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -138,16 +138,24 @@ proc record_linkerRec {handler} {
 		bind . <<start>> {vid_Playback .fvidBg .fvidBg.cont timeshift "$::vid(current_rec_file)"}
 	}
 	if {"$handler" != "timeshift"} {
-		if {[file exists "$::option(home)/config/current_rec.conf"]} {
-			set open_f [open "$::option(home)/config/current_rec.conf" r]
-			while {[gets $open_f line]!=-1} {
-				if {[string trim $line] == {}} continue
-				lassign $line station sdate stime edate etime duration ::vid(current_rec_file)
-			}
+		set activeRec [db_interfaceGetActiveRec]
+		if {"$activeRec" != ""} {
+			set rec(ID) [lindex $activeRec 0]
+			set rec(STATION) [lindex $activeRec 1]
+			set rec(DATETIME) [lindex $activeRec 2]
+			set rec(DURATION) [lindex $activeRec 3]
+			set rec(RERUN) [lindex $activeRec 4]
+			set rec(RERUNS) [lindex $activeRec 5]
+			set rec(RESOLUTION) [lindex $activeRec 6]
+			set rec(OUTPUT) [lindex $activeRec 7]
+			set rec(RUNNING) [lindex $activeRec 8]
+			set rec(TIMESTAMP) [lindex $activeRec 9]
+			set ::vid(current_rec_file) $rec(OUTPUT)
 		} else {
-			log_writeOut ::log(tvAppend) 2 "Fatal, could not detect current_rec.conf, you may want to report this incident."
+			log_writeOut ::log(tvAppend) 2 "Although there is an active recording no database entry is marked as running"
+			log_writeOut ::log(tvAppend) 2 "You may want to report this incident."
 			if {$::option(log_warnDialogue)} {
-				status_feedbWarn 1 0 [mc "Missing file ../.tv-viewer/config/current_rec.conf"]
+				status_feedbWarn 1 0 [mc "Database inconsistent"]
 			}
 		}
 	}
@@ -155,14 +163,14 @@ proc record_linkerRec {handler} {
 		if {"$handler" != "timeshift"} {
 			settooltip .tray [mc "Recording \"%\"
 
-Started: % %
-Ends:    % %" $station $sdate $stime $edate $etime]
+Started: %
+Ends:    %" $rec(STATION) [clock format $rec(DATETIME) -format {%Y-%m-%d %H:%M:%S}] [clock format [expr $rec(DATETIME) + $rec(DURATION)] -format {%Y-%m-%d %H:%M:%S}]]
 		} else {
 			settooltip .tray [mc "Timeshift %" [lindex $::station(last) 0]]
 		}
 	}
 	if {"$handler" != "timeshift"} {
-		status_feedbMsgs 1 [mc "Recording % - Ends at % %" $station $edate $etime]
+		status_feedbMsgs 1 [mc "Recording % - Ends at % %" $rec(STATION) [clock format $rec(DATETIME) -format {%Y-%m-%d}] [clock format [expr $rec(DATETIME) + $rec(DURATION)] -format {%H:%M:%S}]]
 	} else {
 		status_feedbMsgs 2 [mc "Timeshift %" [lindex $::station(last) 0]]
 	}
@@ -179,36 +187,32 @@ Ends:    % %" $station $sdate $stime $edate $etime]
 		if {[winfo exists .record_wizard]} {
 			.record_wizard configure -cursor left_ptr
 			.record_wizard.status_frame.l_rec_current_station configure -text [mc "Station
-%" $station]
+%" $rec(STATION)]
 			.record_wizard.status_frame.l_rec_current_start configure -text [mc "Started
-% at %" $sdate $stime]
+at %" [clock format $rec(DATETIME) -format {%Y-%m-%d %H:%M:%S}]]
 			.record_wizard.status_frame.l_rec_current_end configure -text [mc "Ends
-% at %" $edate $etime]
+at %" [clock format [expr $rec(DATETIME) + $rec(DURATION)] -format {%Y-%m-%d %H:%M:%S}]]
 			.record_wizard.status_frame.lf_status.f_btn.b_rec_current state !disabled
 			record_linkerWizardReread
 		}
 		if {$::main(running_recording) == 1} {
-			set timed [clock format [clock scan $edate] -format "%Y%m%d"]
-			set timet [clock format [clock scan $etime] -format "%H%M%S"]
-			set dt [expr {([clock scan $timed\T$timet]-[clock seconds])*1000}]
+			set dt [expr {(($rec(DATETIME) + $rec(DURATION)) - [clock seconds]) * 1000}]
 			set ::record(after_prestop_id) [after $dt {record_linkerPreStop record}]
 		} else {
-			set ::record(after_prestop_id) [after [expr {$duration * 1000}] {record_linkerPreStop record}]
+			set ::record(after_prestop_id) [after [expr {$rec(DURATION) * 1000}] {record_linkerPreStop record}]
 		}
 	}
 }
 
 proc record_linkerWizardReread {} {
+	puts $::main(debug_msg) "\033\[0;1;33mDebug: record_linkerWizardReread \033\[0m"
 	if {[winfo exists .record_wizard]} {
 		foreach ritem [split [.record_wizard.tree_frame.cv.f.tv_rec children {}]] {
 			.record_wizard.tree_frame.cv.f.tv_rec delete $ritem
 		}
-		if {[file exists "$::option(home)/config/scheduled_recordings.conf"]} {
-			set f_open [open "$::option(home)/config/scheduled_recordings.conf" r]
-			while {[gets $f_open line]!=-1} {
-				if {[string trim $line] == {} || [string match #* $line]} continue
-				.record_wizard.tree_frame.cv.f.tv_rec insert {} end -values [list [lindex $line 0] [lindex $line 1] [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 5] [lindex $line 6] [lindex $line 7] [lindex $line 8]]
-			}
+		set ts [clock seconds]
+		database eval {SELECT * FROM RECORDINGS WHERE DATETIME > :ts} recording {
+			.record_wizard.tree_frame.cv.f.tv_rec insert {} end -values [list $recording(ID) $recording(STATION) [clock format $recording(DATETIME) -format {%H:%M}] [clock format $recording(DATETIME) -format {%Y-%m-%d}] [clock format $recording(DURATION) -format {%H:%M:%S} -timezone :UTC] $recording(RERUN) $recording(RERUNS) $recording(RESOLUTION) $recording(OUTPUT)]
 		}
 	}
 }
