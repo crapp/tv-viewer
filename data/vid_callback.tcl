@@ -133,6 +133,10 @@ proc vid_callbackVidData {} {
 								}
 							}
 						}
+						if {[.ftoolb_Play.scVolume instate disabled]} {
+							#set video stream to mute if volume scale is disabled
+							vid_callbackMplayerRemote "volume 0 1"
+						}
 					} else {
 						log_writeOut ::log(mplAppend) 2 "No video stream available. Try a different video ouput driver or check additional mplayer options, if you provided any."
 						if {$::option(log_warnDialogue)} {
@@ -152,7 +156,7 @@ proc vid_callbackVidData {} {
 							set fileSplitReformatted "[lindex $fileSplit 0][lindex $fileSplit 1]/../[lindex $fileSplit end]"
 							status_feedbMsgs 3 [mc "Playing file: %" $fileSplitReformatted]
 						} else {
-							#catch this because station(last) may not be exist when preview from \
+							#catch this because station(last) may not exist when preview from \
 							station editor
 							if {[info exists ::station(last)]} {
 								status_feedbMsgs 0 [mc "Now playing %" [lindex $::station(last) 0]]

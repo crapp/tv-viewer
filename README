@@ -18,7 +18,7 @@ Requirements
 ------------
 In order to install and use the program you'll need:
  * Tcl and Tk >= 8.5
- * sqlite3 and sqlite3 Tcl interface
+ * sqlite3 and sqlite3 Tcl bindings
  * ivtv-tune and v4l2-ctl (ivtv-utils).
  * Mplayer >= 1.0rc2 (A most recent version of mplayer is recommended)
  * xdg-utils
