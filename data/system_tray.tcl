@@ -26,9 +26,12 @@ proc system_trayActivate {handler} {
 		set status_tray [catch {package require tktray 1.3.9} result_tktray]
 		if {$status_tray == 1} {
 			set ::menu(cbSystray) 0
+			set ::mem(systray) $::menu(cbSystray)
+			.foptions_bar.mbTvviewer.mTvviewer entryconfigure 11 -state disabled ;#Disable System Tray activator in Menu
 			log_writeOut ::log(tvAppend) 2 "Can not load shared library tktray"
 			log_writeOut ::log(tvAppend) 2 "$result_tktray"
 			status_feedbWarn 1 0 [mc "Can not load shared library tktray"]
+			return
 		}
 	}
 	if {[winfo exists .tray] == 0} {
