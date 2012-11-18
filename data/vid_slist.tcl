@@ -89,7 +89,7 @@ proc vid_slistLircPlace {} {
 
 proc vid_slistLircMoveUp {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_slistLircMoveUp \033\[0m"
-	if {[string trim [place info .fvidBg.slist_lirc]] != {}} {
+	if {[winfo exists .fvidBg.slist_lirc] && [string trim [place info .fvidBg.slist_lirc]] != {}} {
 		if {[.fvidBg.slist_lirc.lb_station curselection] > 0} {
 			set new_index [expr [.fvidBg.slist_lirc.lb_station curselection] - 1]
 			.fvidBg.slist_lirc.lb_station selection clear 0 end
@@ -108,7 +108,7 @@ proc vid_slistLircMoveUp {} {
 
 proc vid_slistLircMoveDown {} {
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: vid_slistLircMoveDown \033\[0m"
-	if {[string trim [place info .fvidBg.slist_lirc]] != {}} {
+	if {[winfo exists .fvidBg.slist_lirc] && [string trim [place info .fvidBg.slist_lirc]] != {}} {
 		if {[.fvidBg.slist_lirc.lb_station curselection] < [expr [.fvidBg.slist_lirc.lb_station index end] - 1]} {
 			set new_index [expr [.fvidBg.slist_lirc.lb_station curselection] + 1]
 			.fvidBg.slist_lirc.lb_station selection clear 0 end
