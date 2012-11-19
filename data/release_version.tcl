@@ -18,4 +18,4 @@
 
 
 #Source this file where one needs informations about version number, build date and bazaar revision
-set ::option(release_version) {0.8.2b2 185 18.11.2012}
+set ::option(release_version) {0.8.2b2 186 19.11.2012}

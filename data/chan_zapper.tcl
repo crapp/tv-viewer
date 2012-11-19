@@ -272,6 +272,7 @@ proc chan_zapperInputLoop {secs input freq snumber restart aftmsg} {
 				if {$restart == 1} {
 					vid_playbackRendering
 				}
+				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
 				return
 			} else {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-input=$input}
@@ -340,6 +341,7 @@ proc chan_zapperInputQuery {secs input restart} {
 proc chan_zapperInputStart {tree lasts} {
 	#Invoked by all channel changer procs. Changing video input if necessary then frequency.
 	puts $::main(debug_msg) "\033\[0;1;33mDebug: chan_zapperInputStart \033\[0m \{$tree\} \{$lasts\}"
+	catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=1}
 	catch {exec v4l2-ctl --device=$::option(video_device) --get-input} read_vinput
 	set status_get_input [catch {agrep -m "$read_vinput" video} resultat_get_input]
 	if {$status_get_input == 0} {
@@ -353,6 +355,7 @@ proc chan_zapperInputStart {tree lasts} {
 				catch {exec {*}$::kanalext([lindex $::station($lasts) 2]) &}
 				set resultat_v4l2ctl External
 			}
+			catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=mute=0}
 			after 1000 [list station_after_msg [lindex $::station($lasts) 2] $resultat_v4l2ctl]
 		} else {
 			set status_tv [vid_callbackMplayerRemote alive]
