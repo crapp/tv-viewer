@@ -482,8 +482,8 @@ mcset de {A small and simple frontend to watch and record television} {Ein klein
 mcset de {Homepage} {Homepage}
 mcset de {Forum} {Forum}
 mcset de {IRC channel} {IRC Kanal}
-mcset de {© Copyright 2007 - 2012
-Christian Rapp} {© Copyright 2007 - 2012
+mcset de {© Copyright 2007 - 2013
+Christian Rapp} {© Copyright 2007 - 2013
 Christian Rapp}
 mcset de {Credits} {Credits}
 mcset de {License} {Lizenz}

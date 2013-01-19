@@ -1,5 +1,5 @@
 #       config_interface.tcl
-#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2013 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ proc option_screen_6 {} {
 		
 		#Additional Code
 		
-		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3)]
+		.config_wizard.frame_buttons.b_default configure -command [list stnd_opt6 $::window(interface_nb1) $::window(interface_nb2) $::window(interface_nb3) $::window(interface_nb4)]
 		
 		foreach athemes [split [lsort [ttk::style theme names]]] {
 			log_writeOut ::log(tvAppend) 0 "Found theme: $athemes"
@@ -316,7 +316,7 @@ proc option_screen_6 {} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: config_interfaceMousew \033\[0m \{$window\} \{$delta\}"
 			$window yview scroll [expr {-$delta/120}] units
 		}
-		proc default_opt6 {w1 w2 w3} {
+		proc default_opt6 {w1 w2 w3 w4} {
 			puts $::main(debug_msg) "\033\[0;1;33mDebug: default_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
 			log_writeOut ::log(tvAppend) 0 "Starting to collect data for interface section."
 			
@@ -477,8 +477,8 @@ for important TV-Viewer messages."]
 				}
 			}
 		}
-		proc stnd_opt6 {w1 w2 w3} {
-			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\}"
+		proc stnd_opt6 {w1 w2 w3 w4} {
+			puts $::main(debug_msg) "\033\[0;1;33mDebug: stnd_opt6 \033\[0m \{$w1\} \{$w2\} \{$w3\} \{$w4\}"
 			log_writeOut ::log(tvAppend) 1 "Setting interface options to default."
 			
 			set lf_systray $::window(interface_nb2_cont).f_windowprop2.lf_systray
@@ -556,11 +556,11 @@ for important TV-Viewer messages."]
 			}
 			set ::choice(cb_notification) $::stnd_opt(notify)
 			config_interfaceNotification $lf_notification 0
-			set ::choice(rb_notificationPos) $::stnd_optnotifyPos)
+			set ::choice(rb_notificationPos) $::stnd_opt(notifyPos)
 			config_interfaceNotificationPos $lf_notification.mb_pos.mbPos
 			set ::choice(sb_notificationTime) $::stnd_opt(notifyTime)
 			config_interfaceChangeTooltips $w1
 		}
-		default_opt6 $::window(interface_nb1) $::window(interface_nb2) $frame_nb3
+		default_opt6 $::window(interface_nb1) $::window(interface_nb2) $frame_nb3 $::window(interface_nb4)
 	}
 }

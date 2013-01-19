@@ -452,8 +452,8 @@ mcset da {A small and simple frontend to watch and record television} {Et lille 
 mcset da {Homepage} {Hjemmeside}
 mcset da {Forum} {Forum}
 mcset da {IRC channel} {IRC channel}
-mcset da {© Copyright 2007 - 2012
-Christian Rapp} {© Copyright 2007 - 2012
+mcset da {© Copyright 2007 - 2013
+Christian Rapp} {© Copyright 2007 - 2013
 Christian Rapp}
 mcset da {Credits} {Bidragsydere}
 mcset da {License} {Licens}

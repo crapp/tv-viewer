@@ -411,7 +411,7 @@ mcset en {A small and simple frontend to watch and record television}
 mcset en {Homepage}
 mcset en {Forum}
 mcset en {IRC channel}
-mcset en {© Copyright 2007 - 2012
+mcset en {© Copyright 2007 - 2013
 Christian Rapp}
 mcset en {Credits}
 mcset en {License}

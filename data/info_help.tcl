@@ -1,5 +1,5 @@
 #       info_help.tcl
-#       © Copyright 2007-2012 Christian Rapp <christianrapp@users.sourceforge.net>
+#       © Copyright 2007-2013 Christian Rapp <christianrapp@users.sourceforge.net>
 #       
 #       This program is free software; you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ proc info_helpAbout {} {
 		ttk::label $linkf.l_irc -text [mc "IRC channel"]
 		ttk::button $linkf.b_irc -text "http://webchat.freenode.net/" -command [list info_helpWebpage 2] -style Toolbutton
 		ttk::label $nb1.l_version
-		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2012
+		ttk::label $nb1.l_copy -text [mc "© Copyright 2007 - 2013
 Christian Rapp"] -justify center
 		
 		set nb2 [ttk::frame $mf.nb.f_credits]
