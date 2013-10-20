@@ -110,7 +110,7 @@ proc stream_vbitrate {} {
 	if {$::option(streambitrate) == 1} {
 		if {[info exists ::option(videopeakbitrate)]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_peak_bitrate} read_peak_bitrate
-			if {[expr ([lindex $read_peak_bitrate 1] / 8) / 1024] != $::option(videopeakbitrate)} {
+			if {[string is integer $read_peak_bitrate] == 1  && [expr ([lindex $read_peak_bitrate 1] / 8) / 1024] != $::option(videopeakbitrate)} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=video_peak_bitrate=[expr ($::option(videopeakbitrate) * 1024) * 8]}
 				catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_peak_bitrate} read_peak_bitrate
 				if {[expr ([lindex $read_peak_bitrate 1] / 8) / 1024] == $::option(videopeakbitrate)} {
@@ -122,7 +122,7 @@ proc stream_vbitrate {} {
 		}
 		if {[info exists ::option(videobitrate)]} {
 			catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_bitrate} read_bitrate
-			if {[expr ([lindex $read_bitrate 1] / 8) / 1024] != $::option(videobitrate)} {
+			if {[string is integer $read_bitrate] == 1  && [expr ([lindex $read_bitrate 1] / 8) / 1024] != $::option(videobitrate)} {
 				catch {exec v4l2-ctl --device=$::option(video_device) --set-ctrl=video_bitrate=[expr ($::option(videobitrate) * 1024) * 8]}
 				catch {exec v4l2-ctl --device=$::option(video_device) --get-ctrl=video_bitrate} read_bitrate
 				if {[expr ([lindex $read_bitrate 1] / 8) / 1024] == $::option(videobitrate)} {
