@@ -75,8 +75,9 @@ Uninstall
 You can uninstall TV-Viewer with the installation script. This will
 delete all program files but your configuration will still be present
 ("~/.tv-viewer/").
-
+<pre>
 % ./install.tcl --uninstal (You may need root privileges)
+</pre>
 
 
 Usage
@@ -98,7 +99,7 @@ as published by the Free Software Foundation; either version 2 of the
 License, or (at your option) any later version. A copy of this license
 can be found in .../tv-viewer/license/license_gpl-2.0.txt.
 The icons, distributed with TV-Viewer, are covered by different licenses. See 
-.../tv-viewer/license/icons_license.txt
+<pre>.../tv-viewer/license/icons_license.txt</pre>
 --
 tktray:
 
@@ -116,7 +117,7 @@ http://wiki.tcl.tk/13497
 autoscroll:
 
 Autoscroll is part of tklib. The library was originally written by Kevin B Kenny.
-For copyright infos see .../tv-viewer/extensions/autoscroll/license.terms
+For copyright infos see <pre>.../tv-viewer/extensions/autoscroll/license.terms</pre>
 --
 fsdialog:
 
