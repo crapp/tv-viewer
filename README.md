@@ -47,7 +47,7 @@ them to be installed or not.
 
 Use the following switch if you want to enable or disable one of these features
 
---enable-FEATURE=ARG (e.g. --enable-tktray=yes/no ; --enable-tclkit=yes/no)
+    --enable-FEATURE=ARG (e.g. --enable-tktray=yes/no ; --enable-tclkit=yes/no)
 
 with the configure.tcl script.
 
@@ -136,6 +136,7 @@ http://wiki.tcl.tk/15897
 ## Ideas, questions, patches and bug reports ##
 
 Project site https://github.com/crapp/tv-viewer
+
 Homepage http://tv-viewer.sourceforge.net
 
 
